@@ -1,0 +1,11 @@
+name: uSurvive
+version: 1.0
+author: killercreepr
+main: killercreepr.usurvive.USurvivePlugin
+api-version: '1.19'
+dependencies:
+  server:
+    CruxCore:
+      load: BEFORE
+      required: true # Defaults to true
+      join-classpath: true # Defaults to true
