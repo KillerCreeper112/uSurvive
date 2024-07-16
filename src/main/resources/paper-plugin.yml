@@ -1,5 +1,5 @@
 name: uSurvive
-version: 1.0
+version: '1.0'
 author: killercreepr
 main: killercreepr.usurvive.USurvivePlugin
 api-version: '1.19'

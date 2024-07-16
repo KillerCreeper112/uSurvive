@@ -1,0 +1,73 @@
+package killercreepr.usurvive.death;
+
+import killercreepr.crux.data.LocationPos;
+import killercreepr.crux.data.world.standard.MultiVerseBlockPosedStorage;
+import killercreepr.usurvive.entity.USurviveMobs;
+import killercreepr.usurvive.event.PlayerEchoDeathEvent;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.function.Predicate;
+
+public class DeathManager implements Listener {
+    protected final MultiVerseBlockPosedStorage<PlayerDeath> deaths = new MultiVerseBlockPosedStorage<>(new HashMap<>());
+    protected final Map<UUID, PlayerDeath> echoToPlayerDeath = new HashMap<>();
+    public @NotNull Collection<PlayerDeath> getAllDeaths(@Nullable Predicate<PlayerDeath> filter){
+        Collection<PlayerDeath> list = new HashSet<>();
+        deaths.forEach(world ->{
+            world.forEach(chunk ->{
+                chunk.forEach(l ->{
+                    if(filter != null && !filter.test(l)) return;
+                    list.add(l);
+                });
+            });
+        });
+        return list;
+    }
+
+    public @NotNull Collection<PlayerDeath> getAllDeaths(@NotNull UUID player){
+        return getAllDeaths(e -> e.getPlayerUUID().equals(player));
+    }
+
+    public @NotNull Collection<PlayerDeath> getAllDeaths(@NotNull Player player){
+        return getAllDeaths(player.getUniqueId());
+    }
+
+    public MultiVerseBlockPosedStorage<PlayerDeath> getDeaths() {
+        return deaths;
+    }
+
+    public Map<UUID, PlayerDeath> getEchoToPlayerDeath() {
+        return echoToPlayerDeath;
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Player p = event.getPlayer();
+
+        Entity echo = USurviveMobs.ECHO.spawn(p.getLocation());
+
+        PlayerDeath death = new PlayerDeath(
+            p.getUniqueId(), p.getWorld().getUID(),
+            LocationPos.from(p.getLocation()), echo.getUniqueId(),
+            new ArrayList<>(event.getDrops()), event.getDroppedExp()
+        );
+
+        PlayerEchoDeathEvent deathEvent = new PlayerEchoDeathEvent(this, death);
+        if(!deathEvent.callEvent()){
+            echo.remove();
+            return;
+        }
+        //todo maybe make something to take care of multiple deaths taken place at the same block location.
+        deaths.add(death.getWorldUUID(), p.getChunk().getChunkKey(), death);
+        event.getDrops().clear();
+        event.setDroppedExp(0);
+    }
+}
