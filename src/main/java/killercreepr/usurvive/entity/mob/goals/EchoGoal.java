@@ -11,6 +11,7 @@ import org.bukkit.Chunk;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Mob;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -91,7 +92,6 @@ public class EchoGoal extends CruxMobGoal {
         });
         spawnExp(exp==null?death.getExperience():exp);
     }
-
     @EventHandler(
         ignoreCancelled = true,
         priority = EventPriority.MONITOR

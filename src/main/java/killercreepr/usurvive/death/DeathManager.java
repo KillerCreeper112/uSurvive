@@ -51,10 +51,11 @@ public class DeathManager implements Listener {
         return echoToPlayerDeath;
     }
 
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player p = event.getPlayer();
-        int totalExperience = p.getTotalExperience();
+        int totalExperience = p.calculateTotalExperiencePoints();
 
         if(event.getDrops().isEmpty() && totalExperience < 1){
             event.getDrops().clear();
