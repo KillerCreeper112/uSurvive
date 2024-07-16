@@ -54,6 +54,7 @@ public class EchoGoal extends CruxMobGoal {
     @Override
     protected void onRemovalOrDeath(boolean died) {
         super.onRemovalOrDeath(died);
+        if(!died) return;
         DeathManager deathManager = USurvivePlugin.inst().getDeathManager();
         PlayerDeath death = getPlayerDeath();
         deathManager.getDeaths().remove(
@@ -81,6 +82,7 @@ public class EchoGoal extends CruxMobGoal {
     public void spawnExp(int value){
         if(value < 1) return;
         mob.getWorld().spawn(mob.getLocation(), ExperienceOrb.class, e ->{
+            e.setCount(1);
             e.setExperience(value);
         });
     }
