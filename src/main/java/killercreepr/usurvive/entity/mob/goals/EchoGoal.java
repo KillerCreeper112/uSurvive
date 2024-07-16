@@ -10,6 +10,7 @@ import org.bukkit.Chunk;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.persistence.PersistentDataType;
@@ -51,8 +52,8 @@ public class EchoGoal extends CruxMobGoal {
     }
 
     @Override
-    public void onEntityDeath(EntityDeathEvent event) {
-        super.onEntityDeath(event);
+    protected void onRemovalOrDeath(boolean died) {
+        super.onRemovalOrDeath(died);
         DeathManager deathManager = USurvivePlugin.inst().getDeathManager();
         PlayerDeath death = getPlayerDeath();
         deathManager.getDeaths().remove(
@@ -65,6 +66,16 @@ public class EchoGoal extends CruxMobGoal {
             mob.getWorld().dropItem(mob.getLocation(), drop);
         });
         spawnExp(exp==null?death.getExperience():exp);
+    }
+
+    @EventHandler(
+        ignoreCancelled = true,
+        priority = EventPriority.MONITOR
+    )
+    public void death(EntityDeathEvent event) {
+        if (!event.getEntity().equals(this.mob)) return;
+        event.getDrops().clear();
+        event.setDroppedExp(0);
     }
 
     public void spawnExp(int value){

@@ -2,8 +2,10 @@ package killercreepr.usurvive.death;
 
 import killercreepr.crux.data.LocationPos;
 import killercreepr.crux.data.world.standard.MultiVerseBlockPosedStorage;
+import killercreepr.usurvive.death.storage.MultiVerseDeathStorage;
 import killercreepr.usurvive.entity.USurviveMobs;
 import killercreepr.usurvive.event.PlayerEchoDeathEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,7 +19,9 @@ import java.util.*;
 import java.util.function.Predicate;
 
 public class DeathManager implements Listener {
-    protected final MultiVerseBlockPosedStorage<PlayerDeath> deaths = new MultiVerseBlockPosedStorage<>(new HashMap<>());
+    protected final MultiVerseDeathStorage deaths = new MultiVerseDeathStorage(
+        new HashMap<>(), this
+    );
     protected final Map<UUID, PlayerDeath> echoToPlayerDeath = new HashMap<>();
     public @NotNull Collection<PlayerDeath> getAllDeaths(@Nullable Predicate<PlayerDeath> filter){
         Collection<PlayerDeath> list = new HashSet<>();
@@ -40,7 +44,7 @@ public class DeathManager implements Listener {
         return getAllDeaths(player.getUniqueId());
     }
 
-    public MultiVerseBlockPosedStorage<PlayerDeath> getDeaths() {
+    public MultiVerseDeathStorage getDeaths() {
         return deaths;
     }
 
@@ -59,6 +63,7 @@ public class DeathManager implements Listener {
             LocationPos.from(p.getLocation()), echo.getUniqueId(),
             new ArrayList<>(event.getDrops()), event.getDroppedExp()
         );
+        Bukkit.broadcastMessage(event.getDroppedExp() + " dropped exp");
 
         PlayerEchoDeathEvent deathEvent = new PlayerEchoDeathEvent(this, death);
         if(!deathEvent.callEvent()){
