@@ -10,15 +10,29 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerEchoDeathEvent extends Event implements Cancellable {
     private static final HandlerList HANDLER_LIST = new HandlerList();
     protected final @NotNull DeathManager deathManager;
-    protected final @NotNull PlayerDeath death;
+    protected @NotNull PlayerDeath death;
     protected boolean cancel = false;
     public PlayerEchoDeathEvent(@NotNull DeathManager deathManager, @NotNull PlayerDeath death) {
         this.deathManager = deathManager;
         this.death = death;
     }
 
-    public boolean shouldSpawn(){
+    public boolean wouldSpawnNormally(){
+        return !death.getDrops().isEmpty() || death.getExperience() > 0;
+    }
 
+    @NotNull
+    public DeathManager getDeathManager() {
+        return deathManager;
+    }
+
+    @NotNull
+    public PlayerDeath getDeath() {
+        return death;
+    }
+
+    public void setDeath(@NotNull PlayerDeath death) {
+        this.death = death;
     }
 
     @Override

@@ -99,7 +99,7 @@ public class EchoGoal extends CruxMobGoal {
     public void death(EntityDeathEvent event) {
         if (!event.getEntity().equals(this.mob)) return;
         event.getDrops().clear();
-        event.setDroppedExp(Math.max(exp == null ? getPlayerDeath().getExperience() : exp, 0));
+        event.setDroppedExp(0);
     }
 
     public void spawnExp(int value){

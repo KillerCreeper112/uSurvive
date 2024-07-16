@@ -76,8 +76,10 @@ public class DeathManager implements Listener {
             echo.remove();
             return;
         }
+        PlayerDeath newDeath = deathEvent.getDeath();
+        if(!newDeath.getGuardianUUID().equals(death.getGuardianUUID())) echo.remove();
         //todo maybe make something to take care of multiple deaths taken place at the same block location.
-        deaths.add(death.getWorldUUID(), p.getChunk().getChunkKey(), death);
+        deaths.add(newDeath.getWorldUUID(), p.getChunk().getChunkKey(), newDeath);
         event.getDrops().clear();
         event.setDroppedExp(0);
     }
