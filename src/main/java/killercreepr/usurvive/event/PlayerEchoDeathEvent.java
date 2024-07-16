@@ -17,6 +17,10 @@ public class PlayerEchoDeathEvent extends Event implements Cancellable {
         this.death = death;
     }
 
+    public boolean shouldSpawn(){
+
+    }
+
     @Override
     public @NotNull HandlerList getHandlers() {
         return HANDLER_LIST;

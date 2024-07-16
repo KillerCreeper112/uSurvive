@@ -1,7 +1,6 @@
 package killercreepr.usurvive.death;
 
 import killercreepr.crux.data.LocationPos;
-import killercreepr.crux.data.world.standard.MultiVerseBlockPosedStorage;
 import killercreepr.usurvive.death.storage.MultiVerseDeathStorage;
 import killercreepr.usurvive.entity.USurviveMobs;
 import killercreepr.usurvive.event.PlayerEchoDeathEvent;
@@ -55,15 +54,22 @@ public class DeathManager implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player p = event.getPlayer();
+        int totalExperience = p.getTotalExperience();
+
+        if(event.getDrops().isEmpty() && totalExperience < 1){
+            event.getDrops().clear();
+            event.setDroppedExp(0);
+            return;
+        }
 
         Entity echo = USurviveMobs.ECHO.spawn(p.getLocation());
 
         PlayerDeath death = new PlayerDeath(
             p.getUniqueId(), p.getWorld().getUID(),
             LocationPos.from(p.getLocation()), echo.getUniqueId(),
-            new ArrayList<>(event.getDrops()), event.getDroppedExp()
+            new ArrayList<>(event.getDrops()), totalExperience
         );
-        Bukkit.broadcastMessage(event.getDroppedExp() + " dropped exp");
+        Bukkit.broadcastMessage(totalExperience + " dropped exp");
 
         PlayerEchoDeathEvent deathEvent = new PlayerEchoDeathEvent(this, death);
         if(!deathEvent.callEvent()){
