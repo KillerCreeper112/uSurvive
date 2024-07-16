@@ -4,7 +4,6 @@ import killercreepr.crux.data.LocationPos;
 import killercreepr.usurvive.death.storage.MultiVerseDeathStorage;
 import killercreepr.usurvive.entity.USurviveMobs;
 import killercreepr.usurvive.event.PlayerEchoDeathEvent;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -70,7 +69,6 @@ public class DeathManager implements Listener {
             LocationPos.from(p.getLocation()), echo.getUniqueId(),
             new ArrayList<>(event.getDrops()), totalExperience
         );
-        Bukkit.broadcastMessage(totalExperience + " dropped exp");
 
         PlayerEchoDeathEvent deathEvent = new PlayerEchoDeathEvent(this, death);
         if(!deathEvent.callEvent()){

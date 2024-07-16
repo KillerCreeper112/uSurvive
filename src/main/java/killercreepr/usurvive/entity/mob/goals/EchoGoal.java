@@ -6,12 +6,10 @@ import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.usurvive.USurvivePlugin;
 import killercreepr.usurvive.death.DeathManager;
 import killercreepr.usurvive.death.PlayerDeath;
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Mob;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -61,7 +59,6 @@ public class EchoGoal extends CruxMobGoal {
         if(exp < 1) return;
 
         expToDropEachHit = calculateExpToDropEachHit(event.getFinalDamage(), mob.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(), exp);
-        Bukkit.broadcastMessage("exp to drop: " + expToDropEachHit);
 
         exp = Math.max(exp - expToDropEachHit, 0);
         spawnExp(expToDropEachHit);
