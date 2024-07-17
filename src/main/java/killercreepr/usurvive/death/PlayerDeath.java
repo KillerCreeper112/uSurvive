@@ -19,14 +19,20 @@ public class PlayerDeath implements PositionPosed {
     protected final @NotNull UUID guardianUUID;
     protected final @NotNull Collection<ItemStack> drops;
     protected final int experience;
+    protected final long time;
 
-    public PlayerDeath(@NotNull UUID playerUUID, @NotNull UUID worldUUID, @NotNull CruxPosition position, @NotNull UUID guardianUUID, @NotNull Collection<ItemStack> drops, int experience) {
+    public PlayerDeath(@NotNull UUID playerUUID, @NotNull UUID worldUUID, @NotNull CruxPosition position, @NotNull UUID guardianUUID, @NotNull Collection<ItemStack> drops, int experience, long time) {
         this.playerUUID = playerUUID;
         this.worldUUID = worldUUID;
         this.position = position;
         this.guardianUUID = guardianUUID;
         this.drops = drops;
         this.experience = experience;
+        this.time = time;
+    }
+
+    public long getTime() {
+        return time;
     }
 
     @NotNull

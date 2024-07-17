@@ -1,15 +1,19 @@
 package killercreepr.usurvive.death;
 
+import com.google.common.base.Preconditions;
 import killercreepr.crux.data.LocationPos;
+import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.usurvive.death.storage.MultiVerseDeathStorage;
 import killercreepr.usurvive.entity.USurviveMobs;
 import killercreepr.usurvive.event.PlayerEchoDeathEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.world.EntitiesLoadEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,10 +50,32 @@ public class DeathManager implements Listener {
         return deaths;
     }
 
+    public @Nullable PlayerDeath getPlayerDeathByGrave(@NotNull UUID echo){
+        return echoToPlayerDeath.get(echo);
+    }
+
     public Map<UUID, PlayerDeath> getEchoToPlayerDeath() {
         return echoToPlayerDeath;
     }
 
+    public @NotNull PlayerDeath getOldestDeath(@NotNull Collection<PlayerDeath> list){
+        Preconditions.checkArgument(!list.isEmpty(), "PlayerDeath collection must not be empty!");
+        PlayerDeath oldest = null;
+        for(PlayerDeath d : list){
+            if(oldest == null || d.getTime() < oldest.getTime()) oldest = d;
+        }
+        return Objects.requireNonNull(oldest);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEntitiesLoad(EntitiesLoadEvent event) {
+        //remove old player deaths that were removed while the echo mob was saved in chunks
+        for(Entity e : event.getEntities()){
+            if(!CruxMob.is(e, USurviveMobs.ECHO)) continue;
+            PlayerDeath death = getPlayerDeathByGrave(e.getUniqueId());
+            if(death==null) e.remove();
+        }
+    }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPlayerDeath(PlayerDeathEvent event) {
@@ -67,7 +93,8 @@ public class DeathManager implements Listener {
         PlayerDeath death = new PlayerDeath(
             p.getUniqueId(), p.getWorld().getUID(),
             LocationPos.from(p.getLocation()), echo.getUniqueId(),
-            new ArrayList<>(event.getDrops()), totalExperience
+            new ArrayList<>(event.getDrops()), totalExperience,
+            System.currentTimeMillis()
         );
 
         PlayerEchoDeathEvent deathEvent = new PlayerEchoDeathEvent(this, death);
@@ -77,9 +104,19 @@ public class DeathManager implements Listener {
         }
         PlayerDeath newDeath = deathEvent.getDeath();
         if(!newDeath.getGuardianUUID().equals(death.getGuardianUUID())) echo.remove();
+
         //todo maybe make something to take care of multiple deaths taken place at the same block location.
         deaths.add(newDeath.getWorldUUID(), p.getChunk().getChunkKey(), newDeath);
         event.getDrops().clear();
         event.setDroppedExp(0);
+
+        Collection<PlayerDeath> list = getAllDeaths(p);
+        if(list.size() > 3){
+            PlayerDeath oldest = getOldestDeath(list);
+            deaths.remove(oldest.getWorldUUID(), oldest.getPosition().toChunkKey(), oldest.getPosition());
+
+            Entity e = Bukkit.getEntity(oldest.getGuardianUUID());
+            if(e!=null) e.remove();
+        }
     }
 }
