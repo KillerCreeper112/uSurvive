@@ -2,11 +2,14 @@ package killercreepr.usurvive.death;
 
 import com.google.common.base.Preconditions;
 import killercreepr.crux.data.LocationPos;
+import killercreepr.crux.data.world.WorldChunkStorage;
 import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.usurvive.death.storage.ChunkDeathStorage;
 import killercreepr.usurvive.death.storage.MultiVerseDeathStorage;
 import killercreepr.usurvive.entity.USurviveMobs;
 import killercreepr.usurvive.event.PlayerEchoDeathEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -33,6 +36,22 @@ public class DeathManager implements Listener {
                     if(filter != null && !filter.test(l)) return;
                     list.add(l);
                 });
+            });
+        });
+        return list;
+    }
+
+    public @NotNull Collection<PlayerDeath> getAllDeathsInWorld(@NotNull Player p){
+        return getAllDeathsInWorld(p.getUniqueId(), p.getWorld().getUID());
+    }
+
+    public @NotNull Collection<PlayerDeath> getAllDeathsInWorld(@NotNull UUID player, @NotNull UUID world){
+        WorldChunkStorage<PlayerDeath> storage = deaths.get(world);
+        if(storage==null) return Set.of();
+        Collection<PlayerDeath> list = new HashSet<>();
+        storage.forEach(s ->{
+            s.forEach(death ->{
+                if(death.getPlayerUUID().equals(player)) list.add(death);
             });
         });
         return list;
