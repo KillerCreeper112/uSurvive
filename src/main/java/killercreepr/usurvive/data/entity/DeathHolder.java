@@ -39,7 +39,6 @@ public class DeathHolder extends PlayerDataHolder {
     public void tick(@NotNull Player p) {
         tick++;
         int every = cfg.DEATH_GUIDE_TICK_EVERY().value().intValue();
-        Bukkit.broadcastMessage(tick + " /" + every);
         if(every==0) return;
         if(tick % every != 0) return;
         tick = 0;
@@ -48,7 +47,6 @@ public class DeathHolder extends PlayerDataHolder {
 
     public void tickDeathGuide(@NotNull Player p){
         Collection<PlayerDeath> deaths = deathManager.getAllDeathsInWorld(p);
-        Bukkit.broadcastMessage(deaths.size() + "");
         if(deaths.isEmpty()) return;
 
         for(PlayerDeath death : deaths){
@@ -60,6 +58,6 @@ public class DeathHolder extends PlayerDataHolder {
         Location pos = death.getPosition().toLocation(p.getWorld());
 
         //Location startingPoint = CruxLoc.shiftToward(p.getEyeLocation(), pos, 1D);
-        new DeathGuide(p, p.getLocation(), pos, 10).setStarted();
+        new DeathGuide(p, p.getLocation().add(0, p.getHeight()/2, 0), pos, cfg.DEATH_GUIDE_PARTICLE_AMOUNT().value().intValue(), cfg).setStarted();
     }
 }

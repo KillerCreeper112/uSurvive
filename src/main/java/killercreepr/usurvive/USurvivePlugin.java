@@ -8,7 +8,6 @@ import killercreepr.crux.data.entity.EntityMemory;
 import killercreepr.crux.data.entity.PlayerMemory;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.crux.registries.CruxRegistries;
-import killercreepr.cruxconfig.config.bukkit.standard.LangConfig;
 import killercreepr.usurvive.block.USurviveBlocks;
 import killercreepr.usurvive.config.Config;
 import killercreepr.usurvive.config.SurviveLangConfig;
@@ -20,7 +19,6 @@ import killercreepr.usurvive.lang.Lang;
 import killercreepr.usurvive.lang.Msg;
 import killercreepr.usurvive.values.DefaultValues;
 import killercreepr.usurvive.values.ValuesProvider;
-import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
@@ -75,7 +73,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
         EntityMemory.registerFunction(this, mem ->{
             if(!(mem instanceof PlayerMemory m)) return;
-            m.getHolders().register(new DeathHolder(m, values(), getDeathManager()));
+            m.getPlayerSpecificHolders().register(new DeathHolder(m, values(), getDeathManager()));
         });
 
         super.enabled();

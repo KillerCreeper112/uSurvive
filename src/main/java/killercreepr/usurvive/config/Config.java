@@ -14,7 +14,10 @@ import java.io.File;
 
 public class Config extends Cfg implements ValuesProvider {
     public final NumCfgValue DEATH_GUIDE_TICK_EVERY = new NumCfgValue(DefaultValues.DEATH_GUIDE_TICK_EVERY.value()){};
-
+    public final NumCfgValue DEATH_GUIDE_PARTICLE_AMOUNT = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_AMOUNT.value()){};
+    public final NumCfgValue DEATH_GUIDE_PARTICLE_SHIFT_START = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_SHIFT_START.value()){};
+    public final NumCfgValue DEATH_GUIDE_PARTICLE_SHIFT = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_SHIFT.value()){};
+    public final NumCfgValue DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER.value()){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -37,5 +40,29 @@ public class Config extends Cfg implements ValuesProvider {
     @Override
     public NumberProvider DEATH_GUIDE_TICK_EVERY() {
         return DEATH_GUIDE_TICK_EVERY.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider DEATH_GUIDE_PARTICLE_AMOUNT() {
+        return DEATH_GUIDE_PARTICLE_AMOUNT.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider DEATH_GUIDE_PARTICLE_SHIFT_START() {
+        return DEATH_GUIDE_PARTICLE_SHIFT_START.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider DEATH_GUIDE_PARTICLE_SHIFT() {
+        return DEATH_GUIDE_PARTICLE_SHIFT.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER() {
+        return DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER.value();
     }
 }
