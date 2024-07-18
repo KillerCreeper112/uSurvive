@@ -49,7 +49,7 @@ public class DeathGuide extends SimpleStatutable {
     @Override
     public void tick() {
         double distance = currentLocation.distance(to);
-        Vector dir = currentLocation.getDirection();
+        Vector dir = currentLocation.getDirection().normalize();
         double speed = CruxMath.clamp(
             distance*cfg.DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER().value().doubleValue(),
             .5, 1.5
@@ -63,6 +63,6 @@ public class DeathGuide extends SimpleStatutable {
             setStopped();
             return;
         }
-        CruxLoc.shiftToward(currentLocation, from, cfg.DEATH_GUIDE_PARTICLE_SHIFT().value().doubleValue());
+        CruxLoc.shiftToward(currentLocation, to, cfg.DEATH_GUIDE_PARTICLE_SHIFT().value().doubleValue());
     }
 }

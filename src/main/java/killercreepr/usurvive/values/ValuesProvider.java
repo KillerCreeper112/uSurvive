@@ -1,18 +1,19 @@
 package killercreepr.usurvive.values;
 
 import killercreepr.crux.data.Reloadable;
+import killercreepr.crux.valueproviders.number.NumberHolder;
 import killercreepr.crux.valueproviders.number.NumberProvider;
 import org.jetbrains.annotations.NotNull;
 
 public interface ValuesProvider extends Reloadable {
     @NotNull
-    NumberProvider DEATH_GUIDE_TICK_EVERY();
+    NumberHolder DEATH_GUIDE_TICK_EVERY();
     @NotNull
-    NumberProvider DEATH_GUIDE_PARTICLE_AMOUNT();
+    NumberHolder DEATH_GUIDE_PARTICLE_AMOUNT();
     @NotNull
-    NumberProvider DEATH_GUIDE_PARTICLE_SHIFT_START();
+    NumberHolder DEATH_GUIDE_PARTICLE_SHIFT_START();
     @NotNull
-    NumberProvider DEATH_GUIDE_PARTICLE_SHIFT();
+    NumberHolder DEATH_GUIDE_PARTICLE_SHIFT();
     @NotNull
-    NumberProvider DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER();
+    NumberHolder DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER();
 }

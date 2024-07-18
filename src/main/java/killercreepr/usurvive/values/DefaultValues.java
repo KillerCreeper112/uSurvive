@@ -1,6 +1,7 @@
 package killercreepr.usurvive.values;
 
 import killercreepr.crux.valueproviders.number.ConstantNumber;
+import killercreepr.crux.valueproviders.number.NumberHolder;
 import killercreepr.crux.valueproviders.number.NumberProvider;
 import killercreepr.crux.valueproviders.number.UniformNumber;
 import org.jetbrains.annotations.NotNull;
@@ -14,13 +15,31 @@ public class DefaultValues implements ValuesProvider {
 
     @NotNull
     @Override
-    public NumberProvider DEATH_GUIDE_TICK_EVERY() {
+    public NumberHolder DEATH_GUIDE_TICK_EVERY() {
         return DEATH_GUIDE_TICK_EVERY;
     }
 
     @NotNull
     @Override
-    public NumberProvider DEATH_GUIDE_PARTICLE_AMOUNT() {
+    public NumberHolder DEATH_GUIDE_PARTICLE_AMOUNT() {
         return DEATH_GUIDE_PARTICLE_AMOUNT;
+    }
+
+    @NotNull
+    @Override
+    public NumberHolder DEATH_GUIDE_PARTICLE_SHIFT_START() {
+        return DEATH_GUIDE_PARTICLE_SHIFT_START;
+    }
+
+    @NotNull
+    @Override
+    public NumberHolder DEATH_GUIDE_PARTICLE_SHIFT() {
+        return DEATH_GUIDE_PARTICLE_SHIFT;
+    }
+
+    @NotNull
+    @Override
+    public NumberHolder DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER() {
+        return DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER;
     }
 }
