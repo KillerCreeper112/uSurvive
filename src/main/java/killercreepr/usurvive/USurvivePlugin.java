@@ -8,11 +8,15 @@ import killercreepr.crux.data.entity.EntityMemory;
 import killercreepr.crux.data.entity.PlayerMemory;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.crux.registries.CruxRegistries;
+import killercreepr.cruxconfig.config.common.FileRegistry;
+import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.usurvive.block.USurviveBlocks;
 import killercreepr.usurvive.config.Config;
 import killercreepr.usurvive.config.SurviveLangConfig;
+import killercreepr.usurvive.config.handler.FilePlayerDeath;
 import killercreepr.usurvive.data.entity.DeathHolder;
 import killercreepr.usurvive.death.DeathManager;
+import killercreepr.usurvive.death.PlayerDeath;
 import killercreepr.usurvive.entity.USurviveMobs;
 import killercreepr.usurvive.item.USurviveItems;
 import killercreepr.usurvive.lang.Lang;
@@ -26,7 +30,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     private static USurvivePlugin instance;
     public static USurvivePlugin inst(){ return instance; }
 
-    protected final DeathManager deathManager = new DeathManager();
+    protected final DeathManager deathManager = new DeathManager(this);
     public DeathManager getDeathManager() {
         return deathManager;
     }
@@ -57,6 +61,9 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             values(new DefaultValues());
         }
 
+        registerCfgHandlers(CfgRegistries.JSON);
+        registerCfgHandlers(CfgRegistries.YAML);
+
         USurviveBlocks.register();
         USurviveItems.register();
         USurviveMobs.register();
@@ -82,6 +89,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     @Override
     public void disabled() {
         super.disabled();
+        deathManager.save();
     }
 
     @Override
@@ -89,5 +97,9 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         super.reload();
         values.reload(this);
         langProvider.reload(this);
+    }
+
+    public void registerCfgHandlers(@NotNull FileRegistry registry){
+        registry.registerHandler(PlayerDeath.class, new FilePlayerDeath());
     }
 }

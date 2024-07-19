@@ -2,11 +2,18 @@ package killercreepr.usurvive.death;
 
 import com.google.common.base.Preconditions;
 import killercreepr.crux.data.LocationPos;
+import killercreepr.crux.data.world.ChunkBlockStorage;
 import killercreepr.crux.data.world.WorldChunkStorage;
+import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
+import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
+import killercreepr.cruxconfig.config.common.element.FileArray;
+import killercreepr.cruxconfig.config.common.yaml.element.YamlArray;
+import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.usurvive.death.storage.MultiVerseDeathStorage;
 import killercreepr.usurvive.entity.USurviveMobs;
 import killercreepr.usurvive.event.PlayerEchoDeathEvent;
+import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -15,13 +22,22 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.world.EntitiesLoadEvent;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.function.Predicate;
 
 public class DeathManager implements Listener {
+    protected final @NotNull Plugin plugin;
+
+    public DeathManager(@NotNull Plugin plugin) {
+        this.plugin = plugin;
+    }
+
     protected final MultiVerseDeathStorage deaths = new MultiVerseDeathStorage(
         new HashMap<>(), this
     );
@@ -135,5 +151,57 @@ public class DeathManager implements Listener {
             Entity e = Bukkit.getEntity(oldest.getGuardianUUID());
             if(e!=null) e.remove();
         }
+    }
+
+    public void save(){
+        deaths.getData().forEach(this::save);
+    }
+
+    public void save(@NotNull UUID world, @NotNull WorldChunkStorage<PlayerDeath> chunk){
+        try{
+            FileUtils.deleteDirectory(new CruxFolder(plugin, "deaths/" + world).file());
+        }catch (IOException ignored){}
+        chunk.getData().forEach((key, block) ->{
+            save(world, key, block);
+        });
+    }
+
+    public void save(@NotNull UUID world, long chunk, @NotNull ChunkBlockStorage<PlayerDeath> block){
+        CruxConfig file = new CruxConfig(plugin, "deaths/" + world + "/" + chunk);
+        FileArray a = new FileArray(block.getData().size());
+        block.getData().forEach((key, death) ->{
+            a.add(CfgRegistries.YAML.serializeToFileElement(death));
+        });
+        file.setElement("values", a.toYaml());
+        file.save();
+    }
+
+    public void load(){
+        File[] files = new CruxFolder(plugin, "deaths").file().listFiles();
+        if(files==null) return;
+        for(File f : files){
+            load(f);
+        }
+    }
+
+    public void load(@NotNull File worldFolder){
+        File[] files = worldFolder.listFiles();
+        if(files==null) return;
+        for(File f : files){
+            load(new CruxConfig(f));
+        }
+    }
+
+    public void load(@NotNull CruxConfig chunkFile){
+        if(!(chunkFile.getAsYamlObject("values") instanceof YamlArray a)) return;
+        a.forEach(ele ->{
+            PlayerDeath death = chunkFile.yamlRegistry().deserialize(PlayerDeath.class, ele);
+            if(death==null) return;
+            deaths.add(
+                death.getWorldUUID(),
+                death.getPosition().toChunkKey(),
+                death
+            );
+        });
     }
 }
