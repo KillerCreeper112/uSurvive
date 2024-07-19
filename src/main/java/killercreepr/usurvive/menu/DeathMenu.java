@@ -4,7 +4,6 @@ import killercreepr.crux.Crux;
 import killercreepr.crux.util.CruxItem;
 import killercreepr.cruxmenus.menu.bukkit.BukkitMenu;
 import killercreepr.usurvive.death.PlayerDeath;
-import killercreepr.usurvive.entity.mob.Echo;
 import killercreepr.usurvive.entity.mob.goals.EchoGoal;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.HumanEntity;

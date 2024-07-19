@@ -11,6 +11,7 @@ import killercreepr.usurvive.menu.DeathMenu;
 import org.bukkit.Chunk;
 import org.bukkit.Particle;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -18,6 +19,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -44,6 +46,10 @@ public class EchoGoal extends CruxMobGoal {
         this.targetLogic();
         this.sound();
         deathTick();
+
+        if(target == null){
+            if(mob.getTarget() != null) mob.setTarget(null);
+        }
     }
 
     protected int deathLeaving = 200;
@@ -96,6 +102,14 @@ public class EchoGoal extends CruxMobGoal {
     }
 
     @EventHandler(ignoreCancelled = true)
+    public void onEntityTarget(EntityTargetEvent event) {
+        if(!event.getEntity().equals(mob)) return;
+        Entity target = event.getTarget();
+        if(target==null) return;
+        if(!target.equals(this.target)) event.setCancelled(true);
+    }
+
+    @EventHandler(ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event) {
         if(!event.getEntity().equals(mob)) return;
         if(exp == null){
@@ -123,9 +137,24 @@ public class EchoGoal extends CruxMobGoal {
     }
 
     public void removed(){
+        if(state == State.LEAVING){
+            removeDeath();
+        }
+
         if(inventory==null) return;
         inventory.close();
         inventory = null;
+    }
+
+    public void removeDeath(){
+        PlayerDeath death = getPlayerDeathOrNull();
+        if(death==null) return;
+        DeathManager deathManager = USurvivePlugin.inst().getDeathManager();
+        deathManager.getDeaths().remove(
+            death.getWorldUUID(),
+            Chunk.getChunkKey(death.getPosition().toLocation(null)),
+            death.getPosition()
+        );
     }
 
     @Override
@@ -133,13 +162,8 @@ public class EchoGoal extends CruxMobGoal {
         super.onRemovalOrDeath(died);
         removed();
         if(!died) return;
-        DeathManager deathManager = USurvivePlugin.inst().getDeathManager();
         PlayerDeath death = getPlayerDeath();
-        deathManager.getDeaths().remove(
-            death.getWorldUUID(),
-            Chunk.getChunkKey(death.getPosition().toLocation(null)),
-            death.getPosition()
-        );
+        removeDeath();
 
         death.getDrops().forEach(drop ->{
             mob.getWorld().dropItem(mob.getLocation(), drop);

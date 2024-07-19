@@ -1,6 +1,7 @@
 package killercreepr.usurvive.config;
 
-import killercreepr.crux.data.communication.*;
+import killercreepr.crux.data.communication.CreateLang;
+import killercreepr.crux.data.communication.LangProvider;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
 import killercreepr.cruxconfig.config.bukkit.standard.LangConfig;

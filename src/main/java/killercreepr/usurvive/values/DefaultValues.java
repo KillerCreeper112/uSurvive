@@ -1,6 +1,5 @@
 package killercreepr.usurvive.values;
 
-import killercreepr.crux.valueproviders.number.ConstantNumber;
 import killercreepr.crux.valueproviders.number.NumberHolder;
 import killercreepr.crux.valueproviders.number.NumberProvider;
 import killercreepr.crux.valueproviders.number.UniformNumber;
