@@ -18,6 +18,8 @@ public class Config extends Cfg implements ValuesProvider {
     public final NumCfgValue DEATH_GUIDE_PARTICLE_SHIFT_START = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_SHIFT_START){};
     public final NumCfgValue DEATH_GUIDE_PARTICLE_SHIFT = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_SHIFT){};
     public final NumCfgValue DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER){};
+    public final NumCfgValue DEATH_GUIDE_PARTICLE_OFFSET_SIDE = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_OFFSET_SIDE){};
+    public final NumCfgValue DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -64,5 +66,17 @@ public class Config extends Cfg implements ValuesProvider {
     @Override
     public NumberHolder DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER() {
         return DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberHolder DEATH_GUIDE_PARTICLE_OFFSET_SIDE() {
+        return DEATH_GUIDE_PARTICLE_OFFSET_SIDE.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberHolder DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL() {
+        return DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL.value();
     }
 }

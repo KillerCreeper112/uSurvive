@@ -16,4 +16,8 @@ public interface ValuesProvider extends Reloadable {
     NumberHolder DEATH_GUIDE_PARTICLE_SHIFT();
     @NotNull
     NumberHolder DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER();
+    @NotNull
+    NumberHolder DEATH_GUIDE_PARTICLE_OFFSET_SIDE();
+    @NotNull
+    NumberHolder DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL();
 }

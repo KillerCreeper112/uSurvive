@@ -18,22 +18,28 @@ public class DeathGuide extends SimpleStatutable {
     protected final @NotNull Location to;
     protected final int particleAmount;
     protected final @NotNull ValuesProvider cfg;
+    protected final Location toCloneSameY;
     public DeathGuide(@NotNull Player p, @NotNull Location from, @NotNull Location to, int particleAmount, @NotNull ValuesProvider cfg) {
         this.p = p;
         this.from = from;
         this.to = to;
         this.particleAmount = particleAmount;
         this.cfg = cfg;
+
+        this.toCloneSameY = to.clone();
+        toCloneSameY.setY(from.getY());
     }
 
     protected int currentParticleAmount;
     protected Location currentLocation;
-
+    protected Vector dir;
     @Override
     public void started() {
         super.started();
         currentParticleAmount = particleAmount;
-        currentLocation = CruxLoc.shiftToward(from.clone(), to, cfg.DEATH_GUIDE_PARTICLE_SHIFT_START().value().doubleValue());
+        currentLocation = CruxLoc.shiftToward(from.clone(), toCloneSameY, cfg.DEATH_GUIDE_PARTICLE_SHIFT_START().value().doubleValue());
+        dir = currentLocation.getDirection();
+        distance = p.getLocation().distance(to);
         new BukkitRunnable(){
             @Override
             public void run() {
@@ -46,16 +52,25 @@ public class DeathGuide extends SimpleStatutable {
         }.runTaskTimer(Crux.getMainPlugin(), 0L, 3L);
     }
 
+    public double getParticleY(){
+        if(p.getY() >= to.getY()){
+            return CruxMath.random(-.3D, -.2D);
+        }
+        return CruxMath.random(.2D, .3D);
+    }
+
+    protected double distance;
     @Override
     public void tick() {
-        double distance = currentLocation.distance(to);
-        Vector dir = currentLocation.getDirection().normalize();
         double speed = CruxMath.clamp(
             distance*cfg.DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER().value().doubleValue(),
-            .5, 1.5
+            .01, .6
         );
-        p.spawnParticle(Particle.SOUL_FIRE_FLAME, currentLocation, 0,
-            dir.getX(), 0D, dir.getZ(), speed
+        Location spawn = CruxLoc.shift(currentLocation.clone(), 0D,
+            cfg.DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL().value().doubleValue(),
+            cfg.DEATH_GUIDE_PARTICLE_OFFSET_SIDE().value().doubleValue());
+        p.spawnParticle(Particle.SOUL_FIRE_FLAME, spawn, 0,
+            dir.getX(), getParticleY(), dir.getZ(), speed
         );
 
         currentParticleAmount--;
@@ -63,6 +78,7 @@ public class DeathGuide extends SimpleStatutable {
             setStopped();
             return;
         }
-        CruxLoc.shiftToward(currentLocation, to, cfg.DEATH_GUIDE_PARTICLE_SHIFT().value().doubleValue());
+
+        currentLocation = CruxLoc.shiftToward(currentLocation, toCloneSameY, cfg.DEATH_GUIDE_PARTICLE_SHIFT().value().doubleValue());
     }
 }
