@@ -14,10 +14,10 @@ import java.util.UUID;
 
 public class PlayerDeath implements PositionPosed {
     protected final @NotNull UUID playerUUID;
-    protected final @NotNull UUID worldUUID;
-    protected final @NotNull CruxPosition position;
+    protected @NotNull UUID worldUUID;
+    protected @NotNull CruxPosition position;
     protected final @NotNull UUID guardianUUID;
-    protected final @NotNull Collection<ItemStack> drops;
+    protected @NotNull Collection<ItemStack> drops;
     protected final int experience;
     protected final long time;
 
@@ -29,6 +29,18 @@ public class PlayerDeath implements PositionPosed {
         this.drops = drops;
         this.experience = experience;
         this.time = time;
+    }
+
+    public void setWorldUUID(@NotNull UUID worldUUID) {
+        this.worldUUID = worldUUID;
+    }
+
+    public void setPosition(@NotNull CruxPosition position) {
+        this.position = position;
+    }
+
+    public void setDrops(@NotNull Collection<ItemStack> drops) {
+        this.drops = drops;
     }
 
     public long getTime() {
