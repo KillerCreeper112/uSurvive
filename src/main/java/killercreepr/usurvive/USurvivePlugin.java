@@ -84,6 +84,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         });
 
         super.enabled();
+
+        deathManager.load();
     }
 
     @Override
