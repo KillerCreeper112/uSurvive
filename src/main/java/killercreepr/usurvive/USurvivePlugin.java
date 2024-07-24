@@ -82,6 +82,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             if(!(mem instanceof PlayerMemory m)) return;
             m.getPlayerSpecificHolders().register(new DeathHolder(m, values(), getDeathManager()));
         });
+        
 
         super.enabled();
 
