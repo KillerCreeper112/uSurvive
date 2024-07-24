@@ -51,6 +51,23 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         return lang;
     }
 
+    @Override
+    public void onLoad() {
+        super.onLoad();
+
+        registerCfgHandlers(CfgRegistries.JSON);
+        registerCfgHandlers(CfgRegistries.YAML);
+
+        USurviveBlocks.register();
+        USurviveItems.register();
+        USurviveMobs.register();
+
+        EntityMemory.registerFunction(this, mem ->{
+            if(!(mem instanceof PlayerMemory m)) return;
+            m.getPlayerSpecificHolders().register(new DeathHolder(m, values(), getDeathManager()));
+        });
+    }
+
     protected LangProvider langProvider;
     @Override
     public void enabled() {
@@ -61,12 +78,6 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             values(new DefaultValues());
         }
 
-        registerCfgHandlers(CfgRegistries.JSON);
-        registerCfgHandlers(CfgRegistries.YAML);
-
-        USurviveBlocks.register();
-        USurviveItems.register();
-        USurviveMobs.register();
         registerListeners(
             deathManager
         );
@@ -77,12 +88,6 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             langProvider = this;
             LangPopulator.populate(lang, Msg.class);
         }
-
-        EntityMemory.registerFunction(this, mem ->{
-            if(!(mem instanceof PlayerMemory m)) return;
-            m.getPlayerSpecificHolders().register(new DeathHolder(m, values(), getDeathManager()));
-        });
-        
 
         super.enabled();
 
