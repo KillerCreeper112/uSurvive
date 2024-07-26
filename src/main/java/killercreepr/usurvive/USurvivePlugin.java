@@ -8,8 +8,10 @@ import killercreepr.crux.data.entity.EntityMemory;
 import killercreepr.crux.data.entity.PlayerMemory;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.crux.registries.CruxRegistries;
+import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
+import killercreepr.cruxcore.CruxCore;
 import killercreepr.usurvive.block.USurviveBlocks;
 import killercreepr.usurvive.config.Config;
 import killercreepr.usurvive.config.SurviveLangConfig;
@@ -105,6 +107,10 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         super.reload();
         values.reload(this);
         langProvider.reload(this);
+
+        CruxCore.inst().cruxMenus().menuRegistry().loadConfiguration(
+            new CruxFolder(this, "menus").file()
+        );
     }
 
     public void registerCfgHandlers(@NotNull FileRegistry registry){
