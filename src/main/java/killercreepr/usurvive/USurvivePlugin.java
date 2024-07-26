@@ -23,6 +23,7 @@ import killercreepr.usurvive.entity.USurviveMobs;
 import killercreepr.usurvive.item.USurviveItems;
 import killercreepr.usurvive.lang.Lang;
 import killercreepr.usurvive.lang.Msg;
+import killercreepr.usurvive.listener.CommandLimiterListener;
 import killercreepr.usurvive.values.DefaultValues;
 import killercreepr.usurvive.values.ValuesProvider;
 import org.bukkit.event.Listener;
@@ -81,7 +82,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         }
 
         registerListeners(
-            deathManager
+            deathManager,
+            new CommandLimiterListener(values)
         );
 
         if(CruxRegistries.MODULES.containsKey("CruxConfigs")){
