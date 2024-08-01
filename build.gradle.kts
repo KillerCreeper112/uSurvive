@@ -14,7 +14,8 @@ repositories {
 dependencies {
     paperweight.paperDevBundle(libs.versions.paper)
     compileOnly(files(
-        "E:\\Plugins\\YO\\CruxCore\\build\\libs\\CruxCore-1.0-all.jar"
+        "E:\\Plugins\\YO\\CruxCore\\build\\libs\\CruxCore-1.0-all.jar",
+        "E:\\Plugins\\YO\\CruxCore\\run\\plugins\\CrazyAdvancementsAPI-2.1.19.jar"
     ))
 
     compileOnly(fileTree("libs"){

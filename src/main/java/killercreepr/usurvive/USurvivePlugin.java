@@ -1,13 +1,21 @@
 package killercreepr.usurvive;
 
+import eu.endercentral.crazy_advancements.advancement.AdvancementDisplay;
+import eu.endercentral.crazy_advancements.advancement.AdvancementFlag;
+import eu.endercentral.crazy_advancements.advancement.AdvancementVisibility;
 import killercreepr.crux.data.communication.CreateLang;
 import killercreepr.crux.data.communication.LangPopulator;
 import killercreepr.crux.data.communication.LangProvider;
 import killercreepr.crux.data.communication.SimpleCreateLang;
 import killercreepr.crux.data.entity.EntityMemory;
 import killercreepr.crux.data.entity.PlayerMemory;
+import killercreepr.crux.item.dynamic.BukkitDynamicItem;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.crux.registries.CruxRegistries;
+import killercreepr.cruxadvancements.advancement.criteria.NumberCriteria;
+import killercreepr.cruxadvancements.crazy.CfgCrazyAdvancementManager;
+import killercreepr.cruxadvancements.crazy.CrazyAdvancement;
+import killercreepr.cruxadvancements.crazy.CrazyAdvancementDisplay;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
@@ -23,10 +31,14 @@ import killercreepr.usurvive.entity.USurviveMobs;
 import killercreepr.usurvive.item.USurviveItems;
 import killercreepr.usurvive.lang.Lang;
 import killercreepr.usurvive.lang.Msg;
-import killercreepr.usurvive.listener.CommandLimiterListener;
 import killercreepr.usurvive.values.DefaultValues;
 import killercreepr.usurvive.values.ValuesProvider;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider {
@@ -54,6 +66,9 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         return lang;
     }
 
+    protected final CfgCrazyAdvancementManager MAIN_ADVANCEMENTS = CfgCrazyAdvancementManager.createNew(
+        key("main"), this
+    );
     @Override
     public void onLoad() {
         super.onLoad();
@@ -83,7 +98,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
         registerListeners(
             deathManager,
-            new CommandLimiterListener(values)
+            this
         );
 
         if(CruxRegistries.MODULES.containsKey("CruxConfigs")){
@@ -96,6 +111,41 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         super.enabled();
 
         deathManager.load();
+
+        MAIN_ADVANCEMENTS.registerAdvancement(test);
+        MAIN_ADVANCEMENTS.loadAllCrazyAdvancements();
+    }
+
+    protected final CrazyAdvancement test = new CrazyAdvancement(
+        key("test"), null, new NumberCriteria(1),
+        new CrazyAdvancementDisplay(new BukkitDynamicItem("stone", "1", null),
+            "Title", "Description", AdvancementDisplay.AdvancementFrame.CHALLENGE,
+            AdvancementVisibility.ALWAYS,
+            "textures/gui/advancements/backgrounds/stone.png", 0, 0, null
+        ),
+        AdvancementFlag.TOAST_AND_MESSAGE);
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockPlace(BlockPlaceEvent event) {
+        MAIN_ADVANCEMENTS.grantAdvancement(event.getPlayer().getUniqueId(), test);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player p = event.getPlayer();
+        getServer().getScheduler().runTaskLater(this, task ->{
+            MAIN_ADVANCEMENTS.loadProgress(p.getUniqueId());
+            MAIN_ADVANCEMENTS.getCrazyManager().addPlayer(p);
+        }, 20L);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Player p = event.getPlayer();
+        getServer().getScheduler().runTask(this, task ->{
+            MAIN_ADVANCEMENTS.saveProgress(p.getUniqueId());
+            MAIN_ADVANCEMENTS.getCrazyManager().removePlayer(p);
+        });
     }
 
     @Override
