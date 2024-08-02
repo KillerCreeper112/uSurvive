@@ -30,7 +30,7 @@ public class DeathHolder extends PlayerTickedDataHolder {
 
     protected int tick = 0;
     @Override
-    public void tick(@NotNull Player p) {
+    public void onTick(@NotNull Player p) {
         tick++;
         int every = cfg.DEATH_GUIDE_TICK_EVERY().value().intValue();
         if(every==0) return;

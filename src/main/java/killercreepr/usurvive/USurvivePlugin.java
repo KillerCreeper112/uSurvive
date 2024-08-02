@@ -82,7 +82,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
         EntityMemory.registerFunction(this, mem ->{
             if(!(mem instanceof PlayerMemory m)) return;
-            m.getPlayerSpecificHolders().register(new DeathHolder(m, values(), getDeathManager()));
+            m.getDataHolders().register(new DeathHolder(m, values(), getDeathManager()));
         });
     }
 
