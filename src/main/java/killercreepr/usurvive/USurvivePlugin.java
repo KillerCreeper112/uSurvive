@@ -117,7 +117,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     }
 
     protected final CrazyAdvancement test = new CrazyAdvancement(
-        key("test"), null, new NumberCriteria(1),
+        key("test"), null, new NumberCriteria(5),
         new CrazyAdvancementDisplay(new BukkitDynamicItem("stone", "1", null),
             "Title", "Description", AdvancementDisplay.AdvancementFrame.CHALLENGE,
             AdvancementVisibility.ALWAYS,
@@ -127,7 +127,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
-        MAIN_ADVANCEMENTS.grantAdvancement(event.getPlayer().getUniqueId(), test);
+        MAIN_ADVANCEMENTS.setCriteriaProgress(event.getPlayer().getUniqueId(), test,
+            test.getProgress(event.getPlayer()).getCriteriaProgress() + 1);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -145,6 +146,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         getServer().getScheduler().runTask(this, task ->{
             MAIN_ADVANCEMENTS.saveProgress(p.getUniqueId());
             MAIN_ADVANCEMENTS.getCrazyManager().removePlayer(p);
+            MAIN_ADVANCEMENTS.unloadProgress(p.getUniqueId());
         });
     }
 
