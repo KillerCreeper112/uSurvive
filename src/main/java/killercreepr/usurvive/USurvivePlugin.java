@@ -119,6 +119,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
     protected final CrazyAdvancement test = new CrazyAdvancement(
         key("test"), null, new NumberCriteria(5),
+        null,
         new CrazyAdvancementDisplay(new BukkitDynamicItem("stone", "1", null),
             "Test", "Description", AdvancementDisplay.AdvancementFrame.CHALLENGE,
             AdvancementVisibility.ALWAYS,

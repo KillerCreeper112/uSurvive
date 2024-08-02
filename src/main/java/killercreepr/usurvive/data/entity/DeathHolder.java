@@ -1,8 +1,8 @@
 package killercreepr.usurvive.data.entity;
 
 import killercreepr.crux.Crux;
-import killercreepr.crux.data.entity.PlayerDataHolder;
 import killercreepr.crux.data.entity.PlayerMemory;
+import killercreepr.crux.data.entity.PlayerTickedDataHolder;
 import killercreepr.usurvive.data.DeathGuide;
 import killercreepr.usurvive.death.DeathManager;
 import killercreepr.usurvive.death.PlayerDeath;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-public class DeathHolder extends PlayerDataHolder {
+public class DeathHolder extends PlayerTickedDataHolder {
     public static final Key KEY = Crux.key("death");
     protected final @NotNull ValuesProvider cfg;
     protected final @NotNull DeathManager deathManager;
