@@ -6,7 +6,6 @@ import killercreepr.crux.valueproviders.number.NumberProvider;
 import killercreepr.crux.valueproviders.number.UniformNumber;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,9 +17,9 @@ public class DefaultValues implements ValuesProvider {
     public static final NumberProvider DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER = new UniformNumber(.01, .03);
     public static final NumberProvider DEATH_GUIDE_PARTICLE_OFFSET_SIDE = new UniformNumber(-.5, .5);
     public static final NumberProvider DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL = new UniformNumber(-.5, .5);
-    public static final Holder<Map<String, List<String>>> DIMENSION_DISABLED_COMMANDS = Holder.direct(new HashMap<>(){{
-        put("abyss", List.of("sethome"));
-    }});
+    public static final Holder<Map<String, List<String>>> DIMENSION_DISABLED_COMMANDS = Holder.direct(Map.of(
+        "abyss", List.of("sethome")
+    ));
 
     @NotNull
     @Override
