@@ -112,6 +112,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
         deathManager.load();
 
+        MAIN_ADVANCEMENTS.load(this);
         MAIN_ADVANCEMENTS.registerAdvancement(test);
         MAIN_ADVANCEMENTS.loadAllCrazyAdvancements();
     }
@@ -119,7 +120,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     protected final CrazyAdvancement test = new CrazyAdvancement(
         key("test"), null, new NumberCriteria(5),
         new CrazyAdvancementDisplay(new BukkitDynamicItem("stone", "1", null),
-            "Title", "Description", AdvancementDisplay.AdvancementFrame.CHALLENGE,
+            "Test", "Description", AdvancementDisplay.AdvancementFrame.CHALLENGE,
             AdvancementVisibility.ALWAYS,
             "textures/gui/advancements/backgrounds/stone.png", 0, 0, null
         ),
@@ -165,6 +166,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         CruxCore.inst().cruxMenus().menuRegistry().loadConfiguration(
             new CruxFolder(this, "menus").file()
         );
+        MAIN_ADVANCEMENTS.refresh(this);
     }
 
     public void registerCfgHandlers(@NotNull FileRegistry registry){
