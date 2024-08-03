@@ -1,21 +1,15 @@
 package killercreepr.usurvive;
 
-import eu.endercentral.crazy_advancements.advancement.AdvancementDisplay;
-import eu.endercentral.crazy_advancements.advancement.AdvancementFlag;
-import eu.endercentral.crazy_advancements.advancement.AdvancementVisibility;
 import killercreepr.crux.data.communication.CreateLang;
 import killercreepr.crux.data.communication.LangPopulator;
 import killercreepr.crux.data.communication.LangProvider;
 import killercreepr.crux.data.communication.SimpleCreateLang;
 import killercreepr.crux.data.entity.EntityMemory;
 import killercreepr.crux.data.entity.PlayerMemory;
-import killercreepr.crux.item.dynamic.BukkitDynamicItem;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.crux.registries.CruxRegistries;
-import killercreepr.cruxadvancements.advancement.criteria.NumberCriteria;
 import killercreepr.cruxadvancements.crazy.CfgCrazyAdvancementManager;
-import killercreepr.cruxadvancements.crazy.CrazyAdvancement;
-import killercreepr.cruxadvancements.crazy.CrazyAdvancementDisplay;
+import killercreepr.cruxadvancements.registries.AdvancementRegistries;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
@@ -36,7 +30,6 @@ import killercreepr.usurvive.values.ValuesProvider;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
@@ -66,8 +59,10 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         return lang;
     }
 
-    protected final CfgCrazyAdvancementManager MAIN_ADVANCEMENTS = CfgCrazyAdvancementManager.createNew(
-        key("main"), this
+    protected final CfgCrazyAdvancementManager MAIN_ADVANCEMENTS = AdvancementRegistries.ADVANCEMENT_MANAGERS.register(
+        CfgCrazyAdvancementManager.createNew(
+            key("main"), this
+        )
     );
     @Override
     public void onLoad() {
@@ -113,11 +108,11 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         deathManager.load();
 
         MAIN_ADVANCEMENTS.load(this);
-        MAIN_ADVANCEMENTS.registerAdvancement(test);
+        //MAIN_ADVANCEMENTS.registerAdvancement(test);
         MAIN_ADVANCEMENTS.loadAllCrazyAdvancements();
     }
 
-    protected final CrazyAdvancement test = new CrazyAdvancement(
+    /*protected final CrazyAdvancement test = new CrazyAdvancement(
         key("test"), null, new NumberCriteria(5),
         null,
         new CrazyAdvancementDisplay(new BukkitDynamicItem("stone", "1", null),
@@ -125,13 +120,13 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             AdvancementVisibility.ALWAYS,
             "textures/gui/advancements/backgrounds/stone.png", 0, 0, null
         ),
-        AdvancementFlag.TOAST_AND_MESSAGE);
+        AdvancementFlag.TOAST_AND_MESSAGE);*/
 
-    @EventHandler(ignoreCancelled = true)
+    /*@EventHandler(ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
         MAIN_ADVANCEMENTS.setCriteriaProgress(event.getPlayer().getUniqueId(), test,
             test.getProgress(event.getPlayer()).getCriteriaProgress() + 1);
-    }
+    }*/
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
