@@ -15,7 +15,8 @@ dependencies {
     paperweight.paperDevBundle(libs.versions.paper)
     compileOnly(files(
         "E:\\Plugins\\YO\\CruxCore\\build\\libs\\CruxCore-1.0-all.jar",
-        "E:\\Plugins\\YO\\CruxCore\\run\\plugins\\CrazyAdvancementsAPI-2.1.19.jar"
+        "E:\\Plugins\\YO\\CruxCore\\run\\plugins\\CrazyAdvancementsAPI-2.1.19.jar",
+        "D:\\ModelEngine-4.0.7.jar"
     ))
 
     compileOnly(fileTree("libs"){
