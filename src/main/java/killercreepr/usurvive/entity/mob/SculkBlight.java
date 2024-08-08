@@ -3,6 +3,7 @@ package killercreepr.usurvive.entity.mob;
 import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.GenericCruxMob;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import killercreepr.usurvive.entity.mob.goals.SculkBlightGoal;
@@ -14,6 +15,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Pig;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SculkBlight extends GenericCruxMob {
     public SculkBlight(@NotNull Key key) {
@@ -31,8 +33,16 @@ public class SculkBlight extends GenericCruxMob {
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_AOE, new CruxAttributeModifier(.25D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_SPEED, new CruxAttributeModifier(6D));
             new ModelEntity(e, key.value());
+            e.setInvisible(true);
             load(e);
         });
+    }
+
+    @Override
+    public MobCategory @Nullable [] getCategories() {
+        return new MobCategory[]{
+            MobCategory.MONSTER, MobCategory.SCULK
+        };
     }
 
     @Override
