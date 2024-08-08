@@ -126,6 +126,7 @@ public class SculkBlightGoal extends CruxMobModeledGoal {
         return isValidTarget(target) && hasLineOfSight(target);
     }
 
+    protected int digAnimation = 0;
     public boolean noTargetTick(){
         if(goUnderGround){
             if(targetLoc != null) targetLoc = null;
@@ -145,6 +146,31 @@ public class SculkBlightGoal extends CruxMobModeledGoal {
             Block b = mob.getLocation().getBlock().getRelative(BlockFace.DOWN);
             if(b.isSolid() && b.getRelative(BlockFace.DOWN).isSolid() &&
                 b.getRelative(BlockFace.DOWN).getRelative(BlockFace.DOWN).isSolid()){
+                if(isPlayingAnimation("dig")){
+                    stopAnimation("idle", true);
+                    digAnimation++;
+                    //34
+                    if(digAnimation >= 17){
+                        digSound.playAt(mob.getLocation());
+
+                        new ParticleBuilder(Particle.BLOCK)
+                            .count(10)
+                            .location(mob.getLocation())
+                            .offset(.5, .5, .5)
+                            .extra(.1)
+                            .data(b.getBlockData())
+                            .spawn()
+                        ;
+                    }
+                    if(digAnimation < 21) return true;
+                }
+
+                if(digAnimation == 0){
+                    digAnimation = 1;
+                    playAnimation("dig", true);
+                    return true;
+                }
+
                 Location l = mob.getLocation();
                 l.setPitch(90f);
                 l.subtract(0, moveDistance, 0);
@@ -162,12 +188,17 @@ public class SculkBlightGoal extends CruxMobModeledGoal {
             }
             return true;
         }
+        digAnimation = 0;
         if(noTargetTicks++ > goUndergroundAfterNoTarget){
             noTargetTicks = 0;
-            goUnderGround = true;
+            setGoUnderGround(true);
             return true;
         }
         return false;
+    }
+
+    public void setGoUnderGround(boolean goUnderGround) {
+        this.goUnderGround = goUnderGround;
     }
 
     protected int circleAround = 0;
@@ -193,7 +224,7 @@ public class SculkBlightGoal extends CruxMobModeledGoal {
 
             Block surface = mob.getLocation().add(0, .3, 0).getBlock();
             if(surface.isEmpty() || surface.isPassable()){
-                goUnderGround = false;
+                setGoUnderGround(false);
                 Vector vel = target.getEyeLocation().toVector().subtract(mob.getLocation().toVector()).normalize();
                 vel.setY(CruxMath.random(.5D, .6D));
                 mob.setVelocity(vel);
@@ -241,7 +272,7 @@ public class SculkBlightGoal extends CruxMobModeledGoal {
             }
             return true;
         }
-        goUnderGround = false;
+        setGoUnderGround(false);
         targetLoc = null;
         return false;
     }

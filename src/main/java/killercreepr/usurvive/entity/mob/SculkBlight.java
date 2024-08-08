@@ -15,7 +15,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Pig;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class SculkBlight extends GenericCruxMob {
     public SculkBlight(@NotNull Key key) {
@@ -33,13 +32,14 @@ public class SculkBlight extends GenericCruxMob {
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_AOE, new CruxAttributeModifier(.25D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_SPEED, new CruxAttributeModifier(6D));
             new ModelEntity(e, key.value());
-            e.setInvisible(true);
+            e.setInvisible(true); //todo remove this maybe if ModelEngine updates
+            e.setSilent(true);
             load(e);
         });
     }
 
     @Override
-    public MobCategory @Nullable [] getCategories() {
+    public MobCategory[] getCategories() {
         return new MobCategory[]{
             MobCategory.MONSTER, MobCategory.SCULK
         };
