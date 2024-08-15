@@ -11,6 +11,7 @@ import killercreepr.crux.registries.CruxRegistries;
 import killercreepr.cruxadvancements.crazy.CfgCrazyAdvancementManager;
 import killercreepr.cruxadvancements.registries.AdvancementRegistries;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
+import killercreepr.cruxconfig.config.bukkit.loot.LootTableLoader;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxcore.CruxCore;
@@ -68,8 +69,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     public void onLoad() {
         super.onLoad();
 
-        registerCfgHandlers(CfgRegistries.JSON);
-        registerCfgHandlers(CfgRegistries.YAML);
+        CfgRegistries.FILE.forEach(this::registerCfgHandlers);
 
         USurviveBlocks.register();
         USurviveItems.register();
@@ -162,10 +162,15 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         CruxCore.inst().cruxMenus().menuRegistry().loadConfiguration(
             new CruxFolder(this, "menus").file()
         );
+
+        new LootTableLoader().loadConfiguration(
+            new CruxFolder(this, "loot_tables").file()
+        );
+
         MAIN_ADVANCEMENTS.refresh(this);
     }
 
     public void registerCfgHandlers(@NotNull FileRegistry registry){
-        registry.registerHandler(PlayerDeath.class, new FilePlayerDeath());
+        registry.registerFileHandler(PlayerDeath.class, new FilePlayerDeath());
     }
 }

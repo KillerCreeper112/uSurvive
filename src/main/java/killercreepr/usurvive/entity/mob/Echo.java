@@ -3,6 +3,7 @@ package killercreepr.usurvive.entity.mob;
 import killercreepr.crux.Crux;
 import killercreepr.crux.util.CruxGoalUtil;
 import killercreepr.cruxentities.entity.GenericCruxMob;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.usurvive.entity.mob.goals.EchoGoal;
 import net.kyori.adventure.key.Key;
@@ -38,5 +39,12 @@ public class Echo extends GenericCruxMob {
         CruxGoalUtil.addIfNotPresent(mob, CruxMobGoal.defaultKey(), 0, () ->{
             return new EchoGoal(mob);//todo
         });
+    }
+
+    @Override
+    public MobCategory[] getCategories() {
+        return new MobCategory[]{
+            MobCategory.ETERNAL
+        };
     }
 }

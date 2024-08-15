@@ -1,14 +1,12 @@
 package killercreepr.usurvive.death;
 
 import com.google.common.base.Preconditions;
+import com.google.common.reflect.TypeToken;
 import killercreepr.crux.data.LocationPos;
 import killercreepr.crux.data.world.ChunkBlockStorage;
 import killercreepr.crux.data.world.WorldChunkStorage;
-import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
-import killercreepr.cruxconfig.config.common.element.FileArray;
-import killercreepr.cruxconfig.config.common.yaml.element.YamlArray;
-import killercreepr.cruxconfig.config.registry.CfgRegistries;
+import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.usurvive.death.storage.MultiVerseDeathStorage;
 import killercreepr.usurvive.entity.USurviveMobs;
@@ -167,12 +165,13 @@ public class DeathManager implements Listener {
     }
 
     public void save(@NotNull UUID world, long chunk, @NotNull ChunkBlockStorage<PlayerDeath> block){
-        CruxConfig file = new CruxConfig(plugin, "deaths/" + world + "/" + chunk);
-        FileArray a = new FileArray(block.getData().size());
+        CruxJson file = new CruxJson(plugin, "deaths/" + world + "/" + chunk);
+        file.serialize("values", block.getData().values());
+        /*FileArray a = new FileArray(block.getData().size());
         block.getData().forEach((key, death) ->{
-            a.add(CfgRegistries.YAML.serializeToFileElement(death));
+            a.add(file.fileRegistry().serializeToFile(death));
         });
-        file.setElement("values", a.toYaml());
+        file.setElement("values", a.toYaml());*/
         file.save();
     }
 
@@ -188,12 +187,19 @@ public class DeathManager implements Listener {
         File[] files = worldFolder.listFiles();
         if(files==null) return;
         for(File f : files){
-            load(new CruxConfig(f));
+            load(new CruxJson(f));
         }
     }
 
-    public void load(@NotNull CruxConfig chunkFile){
-        if(!(chunkFile.getAsYamlObject("values") instanceof YamlArray a)) return;
+    public void load(@NotNull CruxJson chunkFile){
+        Collection<PlayerDeath> list = chunkFile.deserialize("values", new TypeToken<Collection<PlayerDeath>>(){}.getType());
+        if(list == null) return;
+        list.forEach(death -> deaths.add(
+            death.getWorldUUID(),
+            death.getPosition().toChunkKey(),
+            death
+        ));
+        /*if(!(chunkFile.getAsYamlObject("values") instanceof YamlArray a)) return;
         a.forEach(ele ->{
             PlayerDeath death = chunkFile.yamlRegistry().deserialize(PlayerDeath.class, ele);
             if(death==null) return;
@@ -202,6 +208,6 @@ public class DeathManager implements Listener {
                 death.getPosition().toChunkKey(),
                 death
             );
-        });
+        });*/
     }
 }
