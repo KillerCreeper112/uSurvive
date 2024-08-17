@@ -11,6 +11,7 @@ import killercreepr.usurvive.data.entity.GrapplerHolder;
 import killercreepr.usurvive.mechanics.grapple.GrappleHookHolder;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class GrappleItem extends CfgPluginItem implements InteractableItem {
@@ -24,14 +25,25 @@ public class GrappleItem extends CfgPluginItem implements InteractableItem {
         CruxItem item = ctx.getItem();
 
         GrapplerHolder grappler = PlayerMemory.getOrCreate(p)
-            .getPlayerDataHolderOrCompute(GrapplerHolder.class, GrapplerHolder::new);
-        if(grappler.getGrapples().size() > 2) return ItemUseResult.empty();
+            .getPlayerDataHolderOrCompute(GrapplerHolder.class, mem ->{
+                GrapplerHolder holder = new GrapplerHolder(mem);
+                holder.setMaxGrapples(2);
+                return holder;
+            });
 
-        GrappleHookHolder hook = GrappleHookHolder.createNew(
-            p, p.getEyeLocation(), p.getEyeLocation().getDirection()
-        );
-        grappler.addGrapple(hook);
+        int id = ctx.getAction().isRightClick() ? 0 : 1;
+        GrappleHookHolder previous = grappler.getGrapple(id);
+        if(previous != null){
+            previous.remove();
+            return ItemUseResult.cancelled();
+        }
+        GrappleHookHolder hook = grappler.throwNewHook(p.getEyeLocation(), p, id, null);
+        grappler.putGrapple(hook);
 
         return ItemUseResult.cancelled();
+    }
+
+    public int getMaxGrapples(@NotNull ItemStack item){
+        return 3;
     }
 }

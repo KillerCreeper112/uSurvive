@@ -6,39 +6,31 @@ import killercreepr.crux.data.entity.EntityMemory;
 import killercreepr.crux.data.entity.EntityTickedDataHolder;
 import killercreepr.crux.util.CruxEntity;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.PufferFish;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class GrappleHookHolder extends EntityTickedDataHolder {
-    public static GrappleHookHolder createNew(@NotNull Entity owner, @NotNull Location start, @NotNull Vector vel){
-        LivingEntity hook = start.getWorld().spawn(start, PufferFish.class, e ->{
-            e.setInvulnerable(true);
-            e.setInvisible(true);
-            e.setVelocity(vel);
-            e.setAware(false);
-            e.setLeashHolder(owner);
-            e.setPuffState(3);
-        });
-
-        EntityMemory mem = EntityMemory.getOrCreate(hook);
-        GrappleHookHolder holder = new GrappleHookHolder(mem);
-        holder.setHolder(owner);
-        mem.getDataHolders().register(holder);
-        return holder;
-    }
-
     public static final Key KEY = Crux.key("grapple_hook");
-    public GrappleHookHolder(@NotNull Key key, @NotNull EntityMemory parent) {
+    protected final int id;
+    public GrappleHookHolder(@NotNull Key key, @NotNull EntityMemory parent, int id) {
         super(key, parent);
+        this.id = id;
     }
 
-    public GrappleHookHolder(@NotNull EntityMemory parent) {
-        this(KEY, parent);
+    public GrappleHookHolder(@NotNull EntityMemory parent, int id) {
+        this(KEY, parent, id);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public boolean isValid(){
+        Entity entity = parent.value();
+        return entity != null && entity.isValid();
     }
 
     protected Holder<Entity> holder;
@@ -82,7 +74,7 @@ public class GrappleHookHolder extends EntityTickedDataHolder {
         if(entity.wouldCollideUsing(entity.getBoundingBox().expand(.001))){
             Vector vel = entity.getLocation().toVector().subtract(CruxEntity.getEyeOrLocation(holder).toVector())
                 .multiply(.04f);
-            entity.setVelocity(entity.getVelocity().add(vel));
+            holder.setVelocity(holder.getVelocity().add(vel));
             mob.setAI(false);
             return;
         }
