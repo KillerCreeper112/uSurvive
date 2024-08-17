@@ -6,15 +6,21 @@ import killercreepr.crux.data.communication.LangProvider;
 import killercreepr.crux.data.communication.SimpleCreateLang;
 import killercreepr.crux.data.entity.EntityMemory;
 import killercreepr.crux.data.entity.PlayerMemory;
+import killercreepr.crux.item.dynamic.DynamicItem;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.crux.registries.CruxRegistries;
 import killercreepr.cruxadvancements.crazy.CfgCrazyAdvancementManager;
 import killercreepr.cruxadvancements.registries.AdvancementRegistries;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.loot.LootTableLoader;
+import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
+import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxitems.config.CruxItemsConfigHook;
+import killercreepr.cruxitems.config.handler.FilePluginItemHandler;
+import killercreepr.cruxitems.item.plugin.PluginItem;
 import killercreepr.usurvive.block.USurviveBlocks;
 import killercreepr.usurvive.config.Config;
 import killercreepr.usurvive.config.SurviveLangConfig;
@@ -23,11 +29,13 @@ import killercreepr.usurvive.data.entity.DeathHolder;
 import killercreepr.usurvive.death.DeathManager;
 import killercreepr.usurvive.death.PlayerDeath;
 import killercreepr.usurvive.entity.USurviveMobs;
+import killercreepr.usurvive.item.GrappleItem;
 import killercreepr.usurvive.item.USurviveItems;
 import killercreepr.usurvive.lang.Lang;
 import killercreepr.usurvive.lang.Msg;
 import killercreepr.usurvive.values.DefaultValues;
 import killercreepr.usurvive.values.ValuesProvider;
+import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -71,9 +79,18 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
         CfgRegistries.FILE.forEach(this::registerCfgHandlers);
 
-        USurviveBlocks.register();
-        USurviveItems.register();
-        USurviveMobs.register();
+        CruxItemsConfigHook.filePluginItem().registerTypeHandler(new FilePluginItemHandler(){
+            @Override
+            public @NotNull Key key() {
+                return USurvivePlugin.this.key("grapple");
+            }
+
+            @NotNull
+            @Override
+            public PluginItem deserialize(@NotNull FileContext<?> ctx, @NotNull FileElement e, @NotNull Key key, @NotNull DynamicItem item) {
+                return new GrappleItem(key, item);
+            }
+        });
 
         EntityMemory.registerFunction(this, mem ->{
             if(!(mem instanceof PlayerMemory m)) return;
@@ -90,6 +107,10 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         }else{
             values(new DefaultValues());
         }
+
+        USurviveBlocks.register();
+        USurviveItems.register();
+        USurviveMobs.register();
 
         registerListeners(
             deathManager,
