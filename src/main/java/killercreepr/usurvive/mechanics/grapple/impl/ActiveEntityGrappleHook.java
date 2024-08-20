@@ -14,17 +14,20 @@ public class ActiveEntityGrappleHook implements ActiveGrappleHook, Holder<Entity
     protected final @NotNull UUID uuid;
     protected final @NotNull Holder<Entity> entity;
     protected final int id;
+    protected final double pullForce; //.04
 
-    public ActiveEntityGrappleHook(@NotNull UUID uuid, @NotNull Holder<Entity> entity, int id) {
+    public ActiveEntityGrappleHook(@NotNull UUID uuid, @NotNull Holder<Entity> entity, int id, double pullForce) {
         this.uuid = uuid;
         this.entity = entity;
         this.id = id;
+        this.pullForce = pullForce;
     }
 
-    public ActiveEntityGrappleHook(@NotNull Entity entity, int id) {
+    public ActiveEntityGrappleHook(@NotNull Entity entity, int id, double pullForce) {
         this.uuid = entity.getUniqueId();
         this.entity = Holder.weakReference(entity);
         this.id = id;
+        this.pullForce = pullForce;
     }
 
     @Override
@@ -51,7 +54,7 @@ public class ActiveEntityGrappleHook implements ActiveGrappleHook, Holder<Entity
 
         if(entity.wouldCollideUsing(entity.getBoundingBox().expand(.001))){
             Vector vel = entity.getLocation().toVector().subtract(CruxEntity.getEyeOrLocation(owner).toVector())
-                .multiply(.04f);
+                .multiply(pullForce);
             owner.setVelocity(owner.getVelocity().add(vel));
             mob.setAI(false);
             return;

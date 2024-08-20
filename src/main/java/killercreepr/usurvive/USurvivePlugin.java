@@ -33,6 +33,7 @@ import killercreepr.usurvive.item.GrappleItem;
 import killercreepr.usurvive.item.USurviveItems;
 import killercreepr.usurvive.lang.Lang;
 import killercreepr.usurvive.lang.Msg;
+import killercreepr.usurvive.listener.GrappleListener;
 import killercreepr.usurvive.mechanics.grapple.standard.StandardGrappleHooks;
 import killercreepr.usurvive.registries.USurviveRegistries;
 import killercreepr.usurvive.values.DefaultValues;
@@ -117,7 +118,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
         registerListeners(
             deathManager,
-            this
+            this,
+            new GrappleListener()
         );
 
         if(CruxRegistries.MODULES.containsKey("CruxConfigs")){
