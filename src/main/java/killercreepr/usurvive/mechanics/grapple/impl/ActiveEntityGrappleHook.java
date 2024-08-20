@@ -1,0 +1,67 @@
+package killercreepr.usurvive.mechanics.grapple.impl;
+
+import killercreepr.crux.data.Holder;
+import killercreepr.crux.util.CruxEntity;
+import killercreepr.usurvive.mechanics.grapple.ActiveGrappleHook;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
+
+public class ActiveEntityGrappleHook implements ActiveGrappleHook, Holder<Entity> {
+    protected final @NotNull UUID uuid;
+    protected final @NotNull Holder<Entity> entity;
+    protected final int id;
+
+    public ActiveEntityGrappleHook(@NotNull UUID uuid, @NotNull Holder<Entity> entity, int id) {
+        this.uuid = uuid;
+        this.entity = entity;
+        this.id = id;
+    }
+
+    public ActiveEntityGrappleHook(@NotNull Entity entity, int id) {
+        this.uuid = entity.getUniqueId();
+        this.entity = Holder.weakReference(entity);
+        this.id = id;
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+    @Override
+    public boolean isValid(@NotNull Entity owner){
+        Entity entity = value();
+        return entity != null && entity.isValid() && owner.getWorld().equals(entity.getWorld());
+    }
+
+    @Override
+    public void remove(){
+        Entity entity = value();
+        if(entity==null) return;
+        entity.remove();
+    }
+
+    @Override
+    public void tick(@NotNull Entity owner) {
+        Entity entity = value();
+        if(!(entity instanceof LivingEntity mob)) return;
+
+        if(entity.wouldCollideUsing(entity.getBoundingBox().expand(.001))){
+            Vector vel = entity.getLocation().toVector().subtract(CruxEntity.getEyeOrLocation(owner).toVector())
+                .multiply(.04f);
+            owner.setVelocity(owner.getVelocity().add(vel));
+            mob.setAI(false);
+            return;
+        }
+        //todo particle
+        mob.setAI(true);
+    }
+
+    @Override
+    public Entity value() {
+        return entity.value();
+    }
+}

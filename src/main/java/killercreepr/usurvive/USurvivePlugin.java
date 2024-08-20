@@ -33,6 +33,8 @@ import killercreepr.usurvive.item.GrappleItem;
 import killercreepr.usurvive.item.USurviveItems;
 import killercreepr.usurvive.lang.Lang;
 import killercreepr.usurvive.lang.Msg;
+import killercreepr.usurvive.mechanics.grapple.standard.StandardGrappleHooks;
+import killercreepr.usurvive.registries.USurviveRegistries;
 import killercreepr.usurvive.values.DefaultValues;
 import killercreepr.usurvive.values.ValuesProvider;
 import net.kyori.adventure.key.Key;
@@ -96,6 +98,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             if(!(mem instanceof PlayerMemory m)) return;
             m.getDataHolders().register(new DeathHolder(m, values(), getDeathManager()));
         });
+        StandardGrappleHooks.register(USurviveRegistries.GRAPPLE_HOOK);
     }
 
     protected LangProvider langProvider;
