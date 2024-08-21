@@ -51,4 +51,9 @@ public class PufferFishGrappleHook extends EntityGrappleHook{
         LivingEntity hook = spawnEntity(ctx);
         return new ActiveEntityGrappleHook(hook, ctx.getId(), pullForce.value().doubleValue());
     }
+
+    @Override
+    public int defaultMaxHooks() {
+        return 3;
+    }
 }

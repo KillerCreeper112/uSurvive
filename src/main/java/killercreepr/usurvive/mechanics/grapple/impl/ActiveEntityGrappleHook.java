@@ -1,5 +1,6 @@
 package killercreepr.usurvive.mechanics.grapple.impl;
 
+import killercreepr.crux.Crux;
 import killercreepr.crux.data.Holder;
 import killercreepr.crux.util.CruxEntity;
 import killercreepr.crux.util.CruxMath;
@@ -47,7 +48,7 @@ public class ActiveEntityGrappleHook implements ActiveGrappleHook, Holder<Entity
     public void remove(){
         Entity entity = value();
         if(entity==null) return;
-        entity.remove();
+        Crux.getServer().getScheduler().runTask(Crux.getMainPlugin(), task -> entity.remove());
     }
 
     protected boolean wasCollidingLastTick = false;
@@ -56,6 +57,12 @@ public class ActiveEntityGrappleHook implements ActiveGrappleHook, Holder<Entity
         Entity entity = value();
         if(!(entity instanceof LivingEntity mob)) return;
 
+        Crux.getServer().getScheduler().runTask(Crux.getMainPlugin(), task ->{
+            onTick(owner, mob);
+        });
+    }
+
+    public void onTick(@NotNull Entity owner, @NotNull LivingEntity mob){
         wasCollidingLastTick = checkCollisionTick(owner, mob);
         if(wasCollidingLastTick) return;
 
