@@ -27,6 +27,8 @@ public class Echo extends GenericCruxMob {
         return location.getWorld().spawn(location, Skeleton.class, e ->{
             e.setShouldBurnInDay(false);
             e.getEquipment().clear();
+            e.setPersistent(true);
+            e.setRemoveWhenFarAway(false);
             //todo model
             load(e);
         });

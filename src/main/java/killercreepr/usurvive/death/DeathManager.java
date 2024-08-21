@@ -104,7 +104,7 @@ public class DeathManager implements Listener {
         for(Entity e : event.getEntities()){
             if(!CruxMob.is(e, USurviveMobs.ECHO)) continue;
             PlayerDeath death = getPlayerDeathByGrave(e.getUniqueId());
-            if(death==null) e.remove();
+            if(death==null)  e.remove();
         }
     }
 

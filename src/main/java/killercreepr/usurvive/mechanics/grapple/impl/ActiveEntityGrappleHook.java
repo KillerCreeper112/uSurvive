@@ -2,8 +2,11 @@ package killercreepr.usurvive.mechanics.grapple.impl;
 
 import killercreepr.crux.data.Holder;
 import killercreepr.crux.util.CruxEntity;
+import killercreepr.crux.util.CruxMath;
+import killercreepr.cruxentities.combat.CruxEntityDamager;
 import killercreepr.usurvive.lang.Lang;
 import killercreepr.usurvive.mechanics.grapple.ActiveGrappleHook;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
@@ -56,7 +59,6 @@ public class ActiveEntityGrappleHook implements ActiveGrappleHook, Holder<Entity
         wasCollidingLastTick = checkCollisionTick(owner, mob);
         if(wasCollidingLastTick) return;
 
-        //todo particle
         mob.setAI(true);
     }
 
@@ -70,6 +72,18 @@ public class ActiveEntityGrappleHook implements ActiveGrappleHook, Holder<Entity
                 .multiply(pullForce);
             owner.setVelocity(owner.getVelocity().add(vel));
             entity.setAI(false);
+            return true;
+        }
+        for(Entity e : entity.getWorld().getNearbyEntities(entity.getBoundingBox().expand(.001),
+            e -> !e.equals(entity) && !e.equals(owner))){
+            new CruxEntityDamager(e, entity).attack(4D, 8D);
+            Vector dir = entity.getEyeLocation().getDirection();
+            Location hitLoc = e.getLocation();
+            hitLoc.setY(entity.getY());
+            Vector hit = hitLoc.toVector().normalize();
+            Vector vel = CruxMath.reflect(dir, hit);
+            vel.multiply(.75D);
+            entity.setVelocity(entity.getVelocity().add(vel));
             return true;
         }
         return false;
