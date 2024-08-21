@@ -54,6 +54,6 @@ public class PufferFishGrappleHook extends EntityGrappleHook{
 
     @Override
     public int defaultMaxHooks() {
-        return 3;
+        return 1;
     }
 }

@@ -13,7 +13,7 @@ import killercreepr.usurvive.mechanics.grapple.ActiveGrappleHook;
 import killercreepr.usurvive.mechanics.grapple.Grapple;
 import killercreepr.usurvive.mechanics.grapple.GrappleContext;
 import killercreepr.usurvive.mechanics.grapple.GrappleHook;
-import killercreepr.usurvive.mechanics.grapple.impl.ParticleGrappleHook;
+import killercreepr.usurvive.mechanics.grapple.standard.StandardGrappleHooks;
 import killercreepr.usurvive.persistence.USurvivePersist;
 import killercreepr.usurvive.registries.USurviveRegistries;
 import net.kyori.adventure.key.Key;
@@ -34,7 +34,7 @@ public class GrappleItem extends CfgPluginItem implements InteractableItem {
         GrappleHook hook;
         int maxGrapples;
         if(hookData == null){
-            hook = new ParticleGrappleHook();//StandardGrappleHooks.PUFFERFISH;
+            hook = StandardGrappleHooks.PUFFERFISH;
             maxGrapples = hook.defaultMaxHooks();
         }else{
             hook = USurviveRegistries.GRAPPLE_HOOK.get(hookData.getHook());
