@@ -13,10 +13,22 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 public class PufferFishGrappleHook extends EntityGrappleHook{
-    protected final @NotNull NumberProvider force;
-    public PufferFishGrappleHook(@NotNull Key key, @NotNull NumberProvider force) {
+    protected final @NotNull NumberProvider throwForce;
+    protected final @NotNull NumberProvider pullForce;
+    public PufferFishGrappleHook(@NotNull Key key, @NotNull NumberProvider throwForce, @NotNull NumberProvider pullForce) {
         super(key);
-        this.force = force;
+        this.throwForce = throwForce;
+        this.pullForce = pullForce;
+    }
+
+    @NotNull
+    public NumberProvider getThrowForce() {
+        return throwForce;
+    }
+
+    @NotNull
+    public NumberProvider getPullForce() {
+        return pullForce;
     }
 
     @NotNull
@@ -27,7 +39,7 @@ public class PufferFishGrappleHook extends EntityGrappleHook{
             e.setLeashHolder(owner);
             e.setPuffState(3);
             Vector vel = CruxEntity.getEyeOrLocation(owner).getDirection().multiply(
-                force.value().doubleValue() * ctx.getForce()
+                throwForce.value().doubleValue() * ctx.getForce()
             );
             e.setVelocity(vel);
         });
@@ -37,6 +49,6 @@ public class PufferFishGrappleHook extends EntityGrappleHook{
     @Override
     public ActiveGrappleHook throwNew(@NotNull GrappleContext ctx) {
         LivingEntity hook = spawnEntity(ctx);
-        return new ActiveEntityGrappleHook(hook, ctx.getId(), .02D);
+        return new ActiveEntityGrappleHook(hook, ctx.getId(), pullForce.value().doubleValue());
     }
 }

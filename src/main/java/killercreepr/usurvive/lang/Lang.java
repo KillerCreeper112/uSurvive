@@ -1,9 +1,8 @@
 package killercreepr.usurvive.lang;
 
-import killercreepr.crux.data.communication.CreateLang;
-import killercreepr.crux.data.communication.CreateSound;
-import killercreepr.crux.data.communication.MsgContainer;
+import killercreepr.crux.data.communication.*;
 import org.bukkit.Sound;
+import org.jetbrains.annotations.NotNull;
 
 public class Lang {
     private static CreateLang lang;
@@ -15,11 +14,24 @@ public class Lang {
         return l;
     }
 
-    public static final Msg ENTER_CLAIM_VIEW = new Msg("claim_enter_view",
+    public static final Msg GRAPPLE_USE = create(
         new MsgContainer.Builder()
-            .actionBar("<red><latinfont:Astraclaim Entered>")
-            .sound(new CreateSound(Sound.BLOCK_BEACON_ACTIVATE, 1.5f))
+            .sound(new CreateSound(Sound.ENTITY_LEASH_KNOT_BREAK, 1.5f))
             .build()
     );
+
+    public static final Msg GRAPPLE_HOOK = create(
+        new MsgContainer.Builder()
+            .sound(new CreateSound(Sound.ENTITY_LEASH_KNOT_PLACE, 1.5f))
+            .build()
+    );
+
+    public static Msg create(@NotNull String id, @NotNull Communicator communicator){
+        return new Msg(id, communicator, Lang::lang);
+    }
+
+    public static Msg create(@NotNull Communicator communicator){
+        return new Msg(communicator, Lang::lang);
+    }
 
 }

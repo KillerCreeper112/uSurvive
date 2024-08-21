@@ -2,6 +2,7 @@ package killercreepr.usurvive.mechanics.grapple.impl;
 
 import killercreepr.crux.data.Holder;
 import killercreepr.crux.util.CruxEntity;
+import killercreepr.usurvive.lang.Lang;
 import killercreepr.usurvive.mechanics.grapple.ActiveGrappleHook;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -15,7 +16,6 @@ public class ActiveEntityGrappleHook implements ActiveGrappleHook, Holder<Entity
     protected final @NotNull Holder<Entity> entity;
     protected final int id;
     protected final double pullForce; //.04
-
     public ActiveEntityGrappleHook(@NotNull UUID uuid, @NotNull Holder<Entity> entity, int id, double pullForce) {
         this.uuid = uuid;
         this.entity = entity;
@@ -47,18 +47,24 @@ public class ActiveEntityGrappleHook implements ActiveGrappleHook, Holder<Entity
         entity.remove();
     }
 
+    protected boolean wasCollidingLastTick = false;
     @Override
     public void tick(@NotNull Entity owner) {
         Entity entity = value();
         if(!(entity instanceof LivingEntity mob)) return;
 
         if(entity.wouldCollideUsing(entity.getBoundingBox().expand(.001))){
+            if(!wasCollidingLastTick){
+                Lang.GRAPPLE_HOOK.playAt(entity);
+            }
+            wasCollidingLastTick = true;
+
             Vector vel = entity.getLocation().toVector().subtract(CruxEntity.getEyeOrLocation(owner).toVector())
                 .multiply(pullForce);
             owner.setVelocity(owner.getVelocity().add(vel));
             mob.setAI(false);
             return;
-        }
+        }else wasCollidingLastTick = false;
         //todo particle
         mob.setAI(true);
     }

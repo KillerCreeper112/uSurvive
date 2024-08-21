@@ -25,7 +25,8 @@ public class GrapplePersistence implements PersistentDataType<PersistentDataCont
     @Override
     public @NotNull PersistentDataContainer toPrimitive(@NotNull Grapple complex, @NotNull PersistentDataAdapterContext ctx) {
         PersistentDataContainer c = ctx.newPersistentDataContainer();
-        CruxTag.set(c, "hook", CruxPersistence.CRUX_KEY, complex.getGrappleHook());
+        CruxTag.set(c, "hook", CruxPersistence.CRUX_KEY, complex.getHook());
+        CruxTag.set(c, "max_hooks", PersistentDataType.INTEGER, complex.getMaxHooks());
         return c;
     }
 
@@ -33,6 +34,6 @@ public class GrapplePersistence implements PersistentDataType<PersistentDataCont
     public @NotNull Grapple fromPrimitive(@NotNull PersistentDataContainer c, @NotNull PersistentDataAdapterContext ctx) {
         Key hook = CruxTag.get(c, "hook", CruxPersistence.CRUX_KEY);
         Objects.requireNonNull(hook);
-        return new Grapple(hook);
+        return new Grapple(hook, CruxTag.get(c, "max_hooks", PersistentDataType.INTEGER));
     }
 }

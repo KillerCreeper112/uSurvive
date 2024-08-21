@@ -8,6 +8,7 @@ import killercreepr.cruxitems.item.interaction.ItemUseContext;
 import killercreepr.cruxitems.item.interaction.ItemUseResult;
 import killercreepr.cruxitems.item.plugin.CfgPluginItem;
 import killercreepr.usurvive.data.entity.GrapplerHolder;
+import killercreepr.usurvive.lang.Lang;
 import killercreepr.usurvive.mechanics.grapple.ActiveGrappleHook;
 import killercreepr.usurvive.mechanics.grapple.Grapple;
 import killercreepr.usurvive.mechanics.grapple.GrappleContext;
@@ -17,7 +18,6 @@ import killercreepr.usurvive.persistence.USurvivePersist;
 import killercreepr.usurvive.registries.USurviveRegistries;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class GrappleItem extends CfgPluginItem implements InteractableItem {
@@ -32,35 +32,32 @@ public class GrappleItem extends CfgPluginItem implements InteractableItem {
 
         Grapple hookData = USurvivePersist.GRAPPLE.get(item.item(), null);
         GrappleHook hook;
+        int maxGrapples;
         if(hookData == null){
             hook = StandardGrappleHooks.PUFFERFISH;
+            maxGrapples = 1;
         }else{
-            hook = USurviveRegistries.GRAPPLE_HOOK.get(hookData.getGrappleHook());
+            hook = USurviveRegistries.GRAPPLE_HOOK.get(hookData.getHook());
+            maxGrapples = hookData.getMaxHooks();
         }
-        if(hook==null) return ItemUseResult.empty();
+        if(hook==null || maxGrapples < 1) return ItemUseResult.empty();
 
         GrapplerHolder grappler = PlayerMemory.getOrCreate(p)
-            .getPlayerDataHolderOrCompute(GrapplerHolder.class, mem ->{
-                GrapplerHolder holder = new GrapplerHolder(mem);
-                holder.setMaxGrapples(2);
-                return holder;
-            });
+            .getPlayerDataHolderOrCompute(GrapplerHolder.class, GrapplerHolder::new);
 
-        int id = ctx.getAction().isRightClick() ? 0 : 1;
+        int id;
+        if(maxGrapples > 1) id = ctx.getAction().isRightClick() ? 0 : 1;
+        else id = 0;
+
         ActiveGrappleHook previous = grappler.getGrapple(id);
         if(previous != null){
             previous.remove();
             return ItemUseResult.cancelled();
         }
-        ActiveGrappleHook active = grappler.throwNewHook(hook, new GrappleContext(
+        grappler.throwNewHook(hook, new GrappleContext(
             p.getEyeLocation(), p, id, 1D
         ));
-        grappler.putGrapple(active);
-
+        Lang.GRAPPLE_USE.playAt(p.getLocation());
         return ItemUseResult.cancelled();
-    }
-
-    public int getMaxGrapples(@NotNull ItemStack item){
-        return 3;
     }
 }

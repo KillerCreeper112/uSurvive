@@ -24,20 +24,13 @@ public class GrapplerHolder extends PlayerTickedDataHolder {
     }
 
     public ActiveGrappleHook throwNewHook(@NotNull GrappleHook hook, @NotNull GrappleContext ctx){
-        return createNewHook(hook, ctx);
+        ActiveGrappleHook active = createNewHook(hook, ctx);
+        putGrapple(active);
+        return active;
     }
 
     public ActiveGrappleHook createNewHook(@NotNull GrappleHook hook, @NotNull GrappleContext ctx){
         return hook.throwNew(ctx);
-    }
-
-    protected int maxGrapples;
-    public int getMaxGrapples() {
-        return maxGrapples;
-    }
-
-    public void setMaxGrapples(int maxGrapples) {
-        this.maxGrapples = maxGrapples;
     }
 
     protected final Map<Integer, ActiveGrappleHook> grapples = new HashMap<>();
@@ -60,7 +53,6 @@ public class GrapplerHolder extends PlayerTickedDataHolder {
     }
 
     public void reset(){
-        maxGrapples = 0;
         remove();
     }
 
@@ -82,7 +74,7 @@ public class GrapplerHolder extends PlayerTickedDataHolder {
 
     @Override
     public boolean shouldRemoveFromMemory(@Nullable Player e) {
-        return grapples.isEmpty() || maxGrapples < 1;
+        return grapples.isEmpty();
     }
 
     @Override

@@ -1,9 +1,6 @@
 package killercreepr.usurvive;
 
-import killercreepr.crux.data.communication.CreateLang;
-import killercreepr.crux.data.communication.LangPopulator;
-import killercreepr.crux.data.communication.LangProvider;
-import killercreepr.crux.data.communication.SimpleCreateLang;
+import killercreepr.crux.data.communication.*;
 import killercreepr.crux.data.entity.EntityMemory;
 import killercreepr.crux.data.entity.PlayerMemory;
 import killercreepr.crux.item.dynamic.DynamicItem;
@@ -13,6 +10,7 @@ import killercreepr.cruxadvancements.crazy.CfgCrazyAdvancementManager;
 import killercreepr.cruxadvancements.registries.AdvancementRegistries;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.loot.LootTableLoader;
+import killercreepr.cruxconfig.config.bukkit.standard.SimpleLangConfig;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileElement;
@@ -23,7 +21,6 @@ import killercreepr.cruxitems.config.handler.FilePluginItemHandler;
 import killercreepr.cruxitems.item.plugin.PluginItem;
 import killercreepr.usurvive.block.USurviveBlocks;
 import killercreepr.usurvive.config.Config;
-import killercreepr.usurvive.config.SurviveLangConfig;
 import killercreepr.usurvive.config.handler.FilePlayerDeath;
 import killercreepr.usurvive.data.entity.DeathHolder;
 import killercreepr.usurvive.death.DeathManager;
@@ -32,7 +29,6 @@ import killercreepr.usurvive.entity.USurviveMobs;
 import killercreepr.usurvive.item.GrappleItem;
 import killercreepr.usurvive.item.USurviveItems;
 import killercreepr.usurvive.lang.Lang;
-import killercreepr.usurvive.lang.Msg;
 import killercreepr.usurvive.listener.GrappleListener;
 import killercreepr.usurvive.mechanics.grapple.standard.StandardGrappleHooks;
 import killercreepr.usurvive.registries.USurviveRegistries;
@@ -123,7 +119,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         );
 
         if(CruxRegistries.MODULES.containsKey("CruxConfigs")){
-            langProvider = new SurviveLangConfig(this, "lang", lang);
+            langProvider = new SimpleLangConfig(this, "lang", this::lang, Lang.class);
         }else{
             langProvider = this;
             LangPopulator.populate(lang, Msg.class);
