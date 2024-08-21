@@ -48,25 +48,37 @@ public class ActiveEntityGrappleHook implements ActiveGrappleHook, Holder<Entity
     }
 
     protected boolean wasCollidingLastTick = false;
+    protected int tick = 0;
     @Override
     public void tick(@NotNull Entity owner) {
         Entity entity = value();
         if(!(entity instanceof LivingEntity mob)) return;
+        tick++;
 
+        if(tick < 5){
+            wasCollidingLastTick = false;
+        }else{
+            wasCollidingLastTick = checkCollisionTick(owner, mob);
+            if(wasCollidingLastTick) return;
+        }
+
+        //todo particle
+        mob.setAI(true);
+    }
+
+    public boolean checkCollisionTick(@NotNull Entity owner, @NotNull LivingEntity entity){
         if(entity.wouldCollideUsing(entity.getBoundingBox().expand(.001))){
             if(!wasCollidingLastTick){
                 Lang.GRAPPLE_HOOK.playAt(entity);
             }
-            wasCollidingLastTick = true;
 
             Vector vel = entity.getLocation().toVector().subtract(CruxEntity.getEyeOrLocation(owner).toVector())
                 .multiply(pullForce);
             owner.setVelocity(owner.getVelocity().add(vel));
-            mob.setAI(false);
-            return;
-        }else wasCollidingLastTick = false;
-        //todo particle
-        mob.setAI(true);
+            entity.setAI(false);
+            return true;
+        }
+        return false;
     }
 
     @Override

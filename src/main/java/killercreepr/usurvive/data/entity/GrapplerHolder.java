@@ -65,6 +65,10 @@ public class GrapplerHolder extends PlayerTickedDataHolder {
 
     @Override
     protected void onTick(@NotNull Player e) {
+        if(!e.isValid()){
+            reset();
+            return;
+        }
         grapples.values().removeIf(d ->{
             if(!d.isValid(e)) return true;
             d.tick(e);
