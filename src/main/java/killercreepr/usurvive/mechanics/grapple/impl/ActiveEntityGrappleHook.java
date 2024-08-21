@@ -48,19 +48,13 @@ public class ActiveEntityGrappleHook implements ActiveGrappleHook, Holder<Entity
     }
 
     protected boolean wasCollidingLastTick = false;
-    protected int tick = 0;
     @Override
     public void tick(@NotNull Entity owner) {
         Entity entity = value();
         if(!(entity instanceof LivingEntity mob)) return;
-        tick++;
 
-        if(tick < 5){
-            wasCollidingLastTick = false;
-        }else{
-            wasCollidingLastTick = checkCollisionTick(owner, mob);
-            if(wasCollidingLastTick) return;
-        }
+        wasCollidingLastTick = checkCollisionTick(owner, mob);
+        if(wasCollidingLastTick) return;
 
         //todo particle
         mob.setAI(true);
