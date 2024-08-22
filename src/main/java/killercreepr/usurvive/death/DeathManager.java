@@ -2,8 +2,8 @@ package killercreepr.usurvive.death;
 
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
-import killercreepr.crux.data.LocationPos;
 import killercreepr.crux.data.world.ChunkBlockStorage;
+import killercreepr.crux.data.world.CruxPosition;
 import killercreepr.crux.data.world.WorldChunkStorage;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
@@ -123,7 +123,7 @@ public class DeathManager implements Listener {
 
         PlayerDeath death = new PlayerDeath(
             p.getUniqueId(), p.getWorld().getUID(),
-            LocationPos.from(p.getLocation()), echo.getUniqueId(),
+            CruxPosition.location(p.getLocation()), echo.getUniqueId(),
             new ArrayList<>(event.getDrops()), totalExperience,
             System.currentTimeMillis()
         );
