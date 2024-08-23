@@ -3,6 +3,7 @@ package killercreepr.usurvive.entity.mob;
 import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.GenericCruxMob;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import killercreepr.usurvive.entity.mob.goals.DownmanGoal;
@@ -62,5 +63,12 @@ public class Downman extends GenericCruxMob {
         new DesignEntity(m).getModel(key.value()).ifPresent(model ->{
             Bukkit.getMobGoals().addGoal(m, 0, new DownmanGoal(m, model));
         });
+    }
+
+    @Override
+    public MobCategory[] getCategories() {
+        return new MobCategory[]{
+            MobCategory.MONSTER
+        };
     }
 }

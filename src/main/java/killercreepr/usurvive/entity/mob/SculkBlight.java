@@ -32,7 +32,6 @@ public class SculkBlight extends GenericCruxMob {
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_AOE, new CruxAttributeModifier(.25D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_SPEED, new CruxAttributeModifier(-6D));
             new ModelEntity(e, key.value());
-            e.setInvisible(true); //todo remove this maybe if ModelEngine updates
             e.setSilent(true);
             load(e);
         });

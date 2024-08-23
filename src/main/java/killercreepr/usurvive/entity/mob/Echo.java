@@ -2,12 +2,17 @@ package killercreepr.usurvive.entity.mob;
 
 import killercreepr.crux.Crux;
 import killercreepr.crux.util.CruxGoalUtil;
+import killercreepr.cruxattributes.attribute.CruxAttribute;
+import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.GenericCruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
+import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
+import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import killercreepr.usurvive.entity.mob.goals.EchoGoal;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Skeleton;
@@ -29,7 +34,13 @@ public class Echo extends GenericCruxMob {
             e.getEquipment().clear();
             e.setPersistent(true);
             e.setRemoveWhenFarAway(false);
-            //todo model
+
+            CruxAttribute.addModifier(e, CruxAttribute.MOVEMENT_SPEED, new CruxAttributeModifier(
+                e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue()
+            ));
+            e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0D);
+
+            new ModelEntity(e, "grave").setLockPitch(true).setLockYaw(true);
             load(e);
         });
     }
@@ -38,8 +49,8 @@ public class Echo extends GenericCruxMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
-        CruxGoalUtil.addIfNotPresent(mob, CruxMobGoal.defaultKey(), 0, () ->{
-            return new EchoGoal(mob);//todo
+        new DesignEntity(mob).getModel("grave").ifPresent(model ->{
+            CruxGoalUtil.addIfNotPresent(mob, CruxMobGoal.defaultKey(), 0, () -> new EchoGoal(mob, model));
         });
     }
 

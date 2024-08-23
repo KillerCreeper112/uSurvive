@@ -1,12 +1,19 @@
 package killercreepr.usurvive.entity.mob.goals;
 
 import com.destroystokyo.paper.entity.ai.GoalKey;
+import com.ticxo.modelengine.api.model.ActiveModel;
+import com.ticxo.modelengine.api.model.ModeledEntity;
 import killercreepr.crux.util.CruxTag;
+import killercreepr.crux.util.GetEntityNear;
+import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
+import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import killercreepr.cruxmenus.menu.bukkit.Menu;
 import killercreepr.usurvive.USurvivePlugin;
 import killercreepr.usurvive.death.DeathManager;
 import killercreepr.usurvive.death.PlayerDeath;
+import killercreepr.usurvive.entity.mob.Echo;
 import killercreepr.usurvive.menu.DeathMenu;
 import org.bukkit.Chunk;
 import org.bukkit.Particle;
@@ -27,18 +34,41 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-public class EchoGoal extends CruxMobGoal {
-    public EchoGoal(@NotNull Mob mob) {
-        this(CruxMobGoal.defaultKey(), mob);
+public class EchoGoal extends CruxMobModeledGoal {
+    public EchoGoal(@NotNull Mob mob, ActiveModel model) {
+        this(CruxMobGoal.defaultKey(), mob, model);
     }
 
-    public EchoGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob) {
-        super(key, mob);
+    public EchoGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob, ActiveModel model) {
+        super(key, mob, model);
         exp = CruxTag.get(mob, "exp", PersistentDataType.INTEGER, null);
     }
+
     protected Integer exp;
     protected Integer expToDropEachHit;
     protected State state;
+
+    public void transformToEcho(){
+        ModeledEntity modeled = getModeledEntity();
+        modeled.removeModel("grave");
+        model.destroy();
+        setModel(new ModelEntity(mob, Echo.KEY.value()).getModel());
+
+        playAnimation("wings_flap", true);
+        playAnimation("hover", true);
+    }
+
+    public void transformToGrave(){
+        ModeledEntity modeled = getModeledEntity();
+        new ModelEntity(mob, "grave");
+        modeled.removeModel(Echo.KEY.value());
+    }
+
+    public boolean isInGraveTransformation(){
+        return getModeledEntity().getModel("grave").isPresent();
+    }
+
+    protected int checkNearbyPlayersCooldown = 100;
 
     @Override
     public void tick() {
@@ -50,6 +80,21 @@ public class EchoGoal extends CruxMobGoal {
         if(target == null){
             if(mob.getTarget() != null) mob.setTarget(null);
         }
+        checkNearbyPlayersTick();
+    }
+
+    public void checkNearbyPlayersTick(){
+        if(checkNearbyPlayersCooldown > 0){
+            checkNearbyPlayersCooldown--;
+            return;
+        }
+        checkNearbyPlayersCooldown = 100;
+        if(!isInGraveTransformation()) return;
+        if(new GetEntityNear<>(Player.class).center(mob).range(8D).find().isEmpty()) return;
+        transformToEcho();
+        mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(
+            CruxAttribute.get(mob, CruxAttribute.MOVEMENT_SPEED)
+        );
     }
 
     protected int deathLeaving = 200;
