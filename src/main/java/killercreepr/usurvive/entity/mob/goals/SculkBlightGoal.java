@@ -3,7 +3,6 @@ package killercreepr.usurvive.entity.mob.goals;
 import com.destroystokyo.paper.ParticleBuilder;
 import com.destroystokyo.paper.entity.ai.GoalKey;
 import com.ticxo.modelengine.api.model.ActiveModel;
-import io.papermc.paper.entity.TeleportFlag;
 import killercreepr.crux.Crux;
 import killercreepr.crux.data.communication.CreateSound;
 import killercreepr.crux.event.CruxEntityDamageEvent;
@@ -55,8 +54,10 @@ public class SculkBlightGoal extends CruxMobModeledGoal {
     @Override
     protected void attacked(@NotNull CruxEntityDamageEvent event) {
         super.attacked(event);
+        if(event.getEntity().getVehicle() != null) return;
         drag = event.getEntity();
         mob.addPassenger(drag);
+        playAnimation("attacking", .25D, .25D, 1D, true);
     }
 
     public boolean isUnderground(@NotNull Entity mob){
@@ -71,19 +72,38 @@ public class SculkBlightGoal extends CruxMobModeledGoal {
     }
 
     protected void onEntityDragged(@NotNull Entity e){
-        e.leaveVehicle();
-        if(e instanceof LivingEntity le){
+        stopAnimation("idle", true);
+        //e.leaveVehicle();
+        attemptAttack((LivingEntity) e, 0D);
+        //new CruxEntityDamager(e, mob).attack(.1D, 0D);
+        /*if(e instanceof LivingEntity le){
+            new CruxEntityDamager(e, mob).attack(.1D, 0D);
             double damage = CruxMath.random(1D, 30D);
             le.damage(damage, mob);
             if(!e.isValid()) return;
-        }
+        }*/
         //todo new SculkedMob(e).infect();
     }
 
     @Override
     public void tick() {
         if(drag != null){
-            Location tp = mob.getLocation().subtract(0, dragDownSpeed, 0);
+            if(!drag.isValid()){
+                drag = null;
+                stopAnimation("attacking", true);
+                playAnimation("idle", .2D, .2D, 1D, false);
+
+                new ParticleBuilder(Particle.SCULK_SOUL)
+                    .count(CruxMath.random(1, 3))
+                    .location(mob.getEyeLocation().add(0, 1, 0))
+                    .offset(0,0,0)
+                    .extra(.1)
+                    .spawn()
+                ;
+                return;
+            }
+            onEntityDragged(drag);
+            /*Location tp = mob.getLocation().subtract(0, dragDownSpeed, 0);
 
             if(isUnderground(mob)){
                 new ParticleBuilder(Particle.SCULK_SOUL)
@@ -100,8 +120,11 @@ public class SculkBlightGoal extends CruxMobModeledGoal {
             }
 
             mob.teleport(tp, TeleportFlag.EntityState.RETAIN_PASSENGERS);
+            diggingUndergroundTick();*/
             return;
         }
+        stopAnimation("digging");
+
         if(target == null){
             if(noTargetTick()) return;
         }
@@ -225,14 +248,18 @@ public class SculkBlightGoal extends CruxMobModeledGoal {
             Block surface = mob.getLocation().add(0, .3, 0).getBlock();
             if(surface.isEmpty() || surface.isPassable()){
                 setGoUnderGround(false);
+                playAnimation("dig_jump", .2D, .2D, 1D, false);
+                //mob.lookAt(target);
                 Vector vel = target.getEyeLocation().toVector().subtract(mob.getLocation().toVector()).normalize();
                 vel.setY(CruxMath.random(.5D, .6D));
                 mob.setVelocity(vel);
                 targetLoc = null;
+                mob.lookAt(target);
                 mob.getWorld().playSound(mob.getLocation(), Sound.ENTITY_HOGLIN_ANGRY, 1f, 1.6f);
                 return false;
             }
             Location l = CruxLoc.lookAt(mob.getLocation(), target.getEyeLocation());
+            mob.lookAt(targetLoc);
             mob.teleport(CruxLoc.shiftToward(l, targetLoc, moveDistance));
 
             if(circleAround < circleAmountMax){
