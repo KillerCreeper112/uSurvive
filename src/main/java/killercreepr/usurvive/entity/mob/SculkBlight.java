@@ -2,8 +2,8 @@ package killercreepr.usurvive.entity.mob;
 
 import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
-import killercreepr.cruxentities.entity.GenericCruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
+import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import killercreepr.usurvive.entity.mob.goals.SculkBlightGoal;
@@ -15,14 +15,17 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Pig;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class SculkBlight extends GenericCruxMob {
+import java.util.function.Consumer;
+
+public class SculkBlight extends SimpleCruxMob {
     public SculkBlight(@NotNull Key key) {
         super(key);
     }
 
     @Override
-    protected @NotNull Entity spawnAt(@NotNull Location location) {
+    protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
         return location.getWorld().spawn(location, Pig.class, e ->{
             e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(
                 e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue() * 1.5
@@ -34,6 +37,7 @@ public class SculkBlight extends GenericCruxMob {
             new ModelEntity(e, key.value());
             e.setSilent(true);
             load(e);
+            if(consumer != null) consumer.accept(e);
         });
     }
 

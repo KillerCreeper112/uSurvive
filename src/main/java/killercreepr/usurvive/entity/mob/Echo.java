@@ -4,8 +4,8 @@ import killercreepr.crux.Crux;
 import killercreepr.crux.util.CruxGoalUtil;
 import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
-import killercreepr.cruxentities.entity.GenericCruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
+import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
@@ -17,8 +17,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Skeleton;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class Echo extends GenericCruxMob {
+import java.util.function.Consumer;
+
+public class Echo extends SimpleCruxMob {
     public static final Key KEY = Crux.key("echo");
     public Echo(@NotNull Key key) {
         super(key);
@@ -28,7 +31,7 @@ public class Echo extends GenericCruxMob {
     }
 
     @Override
-    protected @NotNull Entity spawnAt(@NotNull Location location) {
+    protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
         return location.getWorld().spawn(location, Skeleton.class, e ->{
             e.setShouldBurnInDay(false);
             e.getEquipment().clear();
@@ -42,6 +45,7 @@ public class Echo extends GenericCruxMob {
 
             new ModelEntity(e, "grave").setLockPitch(true).setLockYaw(true);
             load(e);
+            if(consumer != null) consumer.accept(e);
         });
     }
 

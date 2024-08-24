@@ -2,8 +2,8 @@ package killercreepr.usurvive.entity.mob;
 
 import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
-import killercreepr.cruxentities.entity.GenericCruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
+import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import killercreepr.usurvive.entity.mob.goals.DownmanGoal;
@@ -15,14 +15,17 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Husk;
 import org.bukkit.entity.Mob;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class Downman extends GenericCruxMob {
+import java.util.function.Consumer;
+
+public class Downman extends SimpleCruxMob {
     public Downman(@NotNull Key key) {
         super(key);
     }
 
     @Override
-    protected @NotNull Entity spawnAt(@NotNull Location location) {
+    protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
         return location.getWorld().spawn(location, Husk.class, e ->{
             new ModelEntity(e, key.value());
             load(e);
@@ -53,6 +56,7 @@ public class Downman extends GenericCruxMob {
             CruxAttribute.addModifier(e, CruxAttribute.MOVEMENT_SPEED, new CruxAttributeModifier(
                 e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue()
             ));
+            if(consumer != null) consumer.accept(e);
         });
     }
 
