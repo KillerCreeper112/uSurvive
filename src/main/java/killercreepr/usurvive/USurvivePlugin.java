@@ -19,6 +19,7 @@ import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxitems.config.CruxItemsConfigHook;
 import killercreepr.cruxitems.config.handler.FilePluginItemHandler;
 import killercreepr.cruxitems.item.plugin.PluginItem;
+import killercreepr.cruxworlds.world.manager.CruxWorldManager;
 import killercreepr.usurvive.block.USurviveBlocks;
 import killercreepr.usurvive.config.Config;
 import killercreepr.usurvive.config.handler.FilePlayerDeath;
@@ -34,6 +35,8 @@ import killercreepr.usurvive.mechanics.grapple.standard.StandardGrappleHooks;
 import killercreepr.usurvive.registries.USurviveRegistries;
 import killercreepr.usurvive.values.DefaultValues;
 import killercreepr.usurvive.values.ValuesProvider;
+import killercreepr.usurvive.world.USurviveOverworld;
+import killercreepr.usurvive.world.entity.StandardOverworldGroups;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -96,6 +99,10 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             m.getDataHolders().register(new DeathHolder(m, values(), getDeathManager()));
         });
         StandardGrappleHooks.register(USurviveRegistries.GRAPPLE_HOOK);
+        StandardOverworldGroups.register(USurviveRegistries.OVERWORLD_NATURAL_ENTITY_SPAWN_GROUP);
+
+        CruxWorldManager worldManager = CruxCore.inst().worldManager();
+        worldManager.getCreatorRegistry().register("world", USurviveOverworld::new);
     }
 
     protected LangProvider langProvider;
