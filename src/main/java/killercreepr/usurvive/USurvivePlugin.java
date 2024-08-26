@@ -77,6 +77,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     );
     @Override
     public void onLoad() {
+        instance = this;
         super.onLoad();
 
         CfgRegistries.FILE.forEach(this::registerCfgHandlers);
@@ -108,7 +109,6 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     protected LangProvider langProvider;
     @Override
     public void enabled() {
-        instance = this;
         if(CruxRegistries.MODULES.containsKey("CruxConfigs")){
             values(new Config(this, "config"));
         }else{

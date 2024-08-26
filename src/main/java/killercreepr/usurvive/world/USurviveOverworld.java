@@ -1,5 +1,6 @@
 package killercreepr.usurvive.world;
 
+import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxworlds.world.NaturalEntitySpawnManager;
 import killercreepr.cruxworlds.world.SimpleWorld;
 import killercreepr.cruxworlds.world.entity.entity.NaturalEntitySpawner;
@@ -20,7 +21,18 @@ public class USurviveOverworld extends SimpleWorld {
 
     public USurviveOverworld(@NotNull World world, @NotNull Random random) {
         super(world, random);
-        entitySpawnManager = new NaturalEntitySpawnManager(this, createEntitySpawner());
+        entitySpawnManager = new NaturalEntitySpawnManager(this, createEntitySpawner()){
+            @Override
+            public boolean onSpawnNavigation() {
+                USurvivePlugin.inst().log("Navigating overworld spawns");
+                return super.onSpawnNavigation();
+            }
+
+            @Override
+            public int maxNaturalSpawnTick() {
+                return CruxMath.random(1, 4);
+            }
+        };
     }
 
     public NaturalEntitySpawner createEntitySpawner(){
@@ -50,13 +62,13 @@ public class USurviveOverworld extends SimpleWorld {
     }
 
     public void tick(){
-
+        entitySpawnManager.tick();
     }
 
     @Override
     public void onLoad() {
         active = true;
-        buildRunnable().runTaskTimer(USurvivePlugin.inst(), tickInterval(), tickInterval());
+        buildRunnable().runTaskTimerAsynchronously(USurvivePlugin.inst(), tickInterval(), tickInterval());
     }
 
     public int tickInterval(){
