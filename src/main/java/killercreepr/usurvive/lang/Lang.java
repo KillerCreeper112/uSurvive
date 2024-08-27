@@ -1,6 +1,9 @@
 package killercreepr.usurvive.lang;
 
-import killercreepr.crux.data.communication.*;
+import killercreepr.crux.data.communication.Communicator;
+import killercreepr.crux.data.communication.CreateLang;
+import killercreepr.crux.data.communication.CreateSound;
+import killercreepr.crux.data.communication.Msg;
 import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
 

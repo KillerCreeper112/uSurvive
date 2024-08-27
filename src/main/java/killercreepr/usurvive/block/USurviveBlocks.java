@@ -1,7 +1,6 @@
 package killercreepr.usurvive.block;
 
 import killercreepr.crux.Crux;
-import killercreepr.crux.data.communication.CreateBlockSoundGroup;
 import killercreepr.cruxblocks.block.group.CruxBlockGroup;
 import killercreepr.cruxblocks.block.group.CruxDirectionalBlockGroup;
 import killercreepr.cruxblocks.block.group.GenericDirectionalBlockGroup;
@@ -9,10 +8,7 @@ import killercreepr.cruxblocks.block.texture.NoteTextureData;
 import killercreepr.cruxblocks.registeries.CruxBlocksRegistries;
 import org.bukkit.Instrument;
 import org.bukkit.Note;
-import org.bukkit.Sound;
-import org.bukkit.SoundGroup;
 import org.bukkit.block.BlockFace;
-import org.jetbrains.annotations.NotNull;
 
 public class USurviveBlocks {
     public static void register(){}
