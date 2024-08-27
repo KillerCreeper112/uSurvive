@@ -1,6 +1,7 @@
 package killercreepr.usurvive.block;
 
 import killercreepr.crux.Crux;
+import killercreepr.crux.data.communication.CreateBlockSoundGroup;
 import killercreepr.cruxblocks.block.group.CruxBlockGroup;
 import killercreepr.cruxblocks.block.group.CruxDirectionalBlockGroup;
 import killercreepr.cruxblocks.block.group.GenericDirectionalBlockGroup;
@@ -25,46 +26,6 @@ public class USurviveBlocks {
         @Override
         public float getHardness() {
             return 1f;
-        }
-
-        @Override
-        public @NotNull SoundGroup getSoundGroup() {
-            return new SoundGroup() {
-                @Override
-                public float getVolume() {
-                    return 1f;
-                }
-
-                @Override
-                public float getPitch() {
-                    return 1f;
-                }
-
-                @Override
-                public @NotNull Sound getBreakSound() {
-                    return Sound.BLOCK_WOOD_BREAK;
-                }
-
-                @Override
-                public @NotNull Sound getStepSound() {
-                    return null;
-                }
-
-                @Override
-                public @NotNull Sound getPlaceSound() {
-                    return Sound.BLOCK_WOOD_PLACE;
-                }
-
-                @Override
-                public @NotNull Sound getHitSound() {
-                    return null;
-                }
-
-                @Override
-                public @NotNull Sound getFallSound() {
-                    return null;
-                }
-            };
         }
     });
 }

@@ -15,14 +15,14 @@ public class Lang {
     }
 
     public static final Msg GRAPPLE_USE = create(
-        new MsgContainer.Builder()
-            .sound(new CreateSound(Sound.ENTITY_LEASH_KNOT_BREAK, 1.5f))
+        Communicator.builder()
+            .sound(CreateSound.sound(Sound.ENTITY_LEASH_KNOT_BREAK, 1.5f))
             .build()
     );
 
     public static final Msg GRAPPLE_HOOK = create(
-        new MsgContainer.Builder()
-            .sound(new CreateSound(Sound.ENTITY_LEASH_KNOT_PLACE, 1.5f))
+        Communicator.builder()
+            .sound(CreateSound.sound(Sound.ENTITY_LEASH_KNOT_PLACE, 1.5f))
             .build()
     );
 

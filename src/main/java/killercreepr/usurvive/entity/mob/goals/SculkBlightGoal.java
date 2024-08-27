@@ -140,7 +140,7 @@ public class SculkBlightGoal extends CruxMobModeledGoal {
     private Location targetLoc;
 
     private final double moveDistance = .35D;
-    private final CreateSound digSound = new CreateSound(Sound.BLOCK_SCULK_BREAK, 1.6f);
+    private final CreateSound digSound = CreateSound.sound(Sound.BLOCK_SCULK_BREAK, 1.6f);
 
     @Override
     public boolean isValidNaturalTarget(@NotNull LivingEntity target){
