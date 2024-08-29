@@ -3,6 +3,7 @@ package killercreepr.usurvive.world;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxworlds.world.NaturalEntitySpawnManager;
 import killercreepr.cruxworlds.world.SimpleWorld;
+import killercreepr.cruxworlds.world.creator.CruxWorldModuleCreator;
 import killercreepr.cruxworlds.world.entity.entity.NaturalEntitySpawner;
 import killercreepr.cruxworlds.world.entity.entity.impl.SimpleNaturalEntitySpawner;
 import killercreepr.usurvive.USurvivePlugin;
@@ -11,16 +12,18 @@ import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.Random;
 
 public class USurviveOverworld extends SimpleWorld {
     protected final NaturalEntitySpawnManager entitySpawnManager;
-    public USurviveOverworld(@NotNull World world) {
-        this(world, new Random(world.getSeed()));
+
+    public USurviveOverworld(@NotNull World world, @NotNull Collection<CruxWorldModuleCreator> modules) {
+        this(world, new Random(world.getSeed()), modules);
     }
 
-    public USurviveOverworld(@NotNull World world, @NotNull Random random) {
-        super(world, random);
+    public USurviveOverworld(@NotNull World world, @NotNull Random random, @NotNull Collection<CruxWorldModuleCreator> modules) {
+        super(world, random, modules);
         entitySpawnManager = new NaturalEntitySpawnManager(this, createEntitySpawner()){
             @Override
             public boolean onSpawnNavigation() {

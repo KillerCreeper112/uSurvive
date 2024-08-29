@@ -9,7 +9,6 @@ import killercreepr.crux.registries.CruxRegistries;
 import killercreepr.cruxadvancements.crazy.CfgCrazyAdvancementManager;
 import killercreepr.cruxadvancements.registries.AdvancementRegistries;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
-import killercreepr.cruxconfig.config.bukkit.loot.LootTableLoader;
 import killercreepr.cruxconfig.config.bukkit.standard.SimpleLangConfig;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
@@ -190,10 +189,6 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
         CruxCore.inst().cruxMenus().menuRegistry().loadConfiguration(
             new CruxFolder(this, "menus").file()
-        );
-
-        new LootTableLoader().loadConfiguration(
-            new CruxFolder(this, "loot_tables").file()
         );
 
         MAIN_ADVANCEMENTS.refresh(this);
