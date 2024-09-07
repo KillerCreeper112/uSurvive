@@ -1,7 +1,6 @@
 package killercreepr.usurvive.values;
 
 import killercreepr.crux.data.Holder;
-import killercreepr.crux.valueproviders.number.NumberHolder;
 import killercreepr.crux.valueproviders.number.NumberProvider;
 import killercreepr.crux.valueproviders.number.UniformNumber;
 import org.jetbrains.annotations.NotNull;
@@ -20,46 +19,49 @@ public class DefaultValues implements ValuesProvider {
     public static final Holder<Map<String, List<String>>> DIMENSION_DISABLED_COMMANDS = Holder.direct(Map.of(
         "abyss", List.of("sethome")
     ));
+    public static final NumberProvider ECHO_MAX_HEALTH = NumberProvider.equation(
+        "10 + (<exp> / 50)"
+    );
 
     @NotNull
     @Override
-    public NumberHolder DEATH_GUIDE_TICK_EVERY() {
+    public NumberProvider DEATH_GUIDE_TICK_EVERY() {
         return DEATH_GUIDE_TICK_EVERY;
     }
 
     @NotNull
     @Override
-    public NumberHolder DEATH_GUIDE_PARTICLE_AMOUNT() {
+    public NumberProvider DEATH_GUIDE_PARTICLE_AMOUNT() {
         return DEATH_GUIDE_PARTICLE_AMOUNT;
     }
 
     @NotNull
     @Override
-    public NumberHolder DEATH_GUIDE_PARTICLE_SHIFT_START() {
+    public NumberProvider DEATH_GUIDE_PARTICLE_SHIFT_START() {
         return DEATH_GUIDE_PARTICLE_SHIFT_START;
     }
 
     @NotNull
     @Override
-    public NumberHolder DEATH_GUIDE_PARTICLE_SHIFT() {
+    public NumberProvider DEATH_GUIDE_PARTICLE_SHIFT() {
         return DEATH_GUIDE_PARTICLE_SHIFT;
     }
 
     @NotNull
     @Override
-    public NumberHolder DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER() {
+    public NumberProvider DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER() {
         return DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER;
     }
 
     @NotNull
     @Override
-    public NumberHolder DEATH_GUIDE_PARTICLE_OFFSET_SIDE() {
+    public NumberProvider DEATH_GUIDE_PARTICLE_OFFSET_SIDE() {
         return DEATH_GUIDE_PARTICLE_OFFSET_SIDE;
     }
 
     @NotNull
     @Override
-    public NumberHolder DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL() {
+    public NumberProvider DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL() {
         return DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL;
     }
 
@@ -67,5 +69,11 @@ public class DefaultValues implements ValuesProvider {
     @Override
     public Holder<Map<String, List<String>>> DIMENSION_DISABLED_COMMANDS() {
         return DIMENSION_DISABLED_COMMANDS;
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider ECHO_MAX_HEALTH() {
+        return ECHO_MAX_HEALTH;
     }
 }

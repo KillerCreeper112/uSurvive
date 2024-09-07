@@ -2,7 +2,7 @@ package killercreepr.usurvive.config;
 
 import killercreepr.crux.data.Holder;
 import killercreepr.crux.plugin.CruxPlugin;
-import killercreepr.crux.valueproviders.number.NumberHolder;
+import killercreepr.crux.valueproviders.number.NumberProvider;
 import killercreepr.cruxconfig.config.bukkit.file.Cfg;
 import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
 import killercreepr.cruxconfig.config.bukkit.value.CommonValue;
@@ -25,6 +25,7 @@ public class Config extends Cfg implements ValuesProvider {
     public final NumCfgValue DEATH_GUIDE_PARTICLE_OFFSET_SIDE = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_OFFSET_SIDE){};
     public final NumCfgValue DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL){};
     public final CommonValue<Map<String, List<String>>> DIMENSION_DISABLED_COMMANDS = new CommonValue<>(DefaultValues.DIMENSION_DISABLED_COMMANDS.value()){};
+    public final NumCfgValue ECHO_MAX_HEALTH = new NumCfgValue(DefaultValues.ECHO_MAX_HEALTH){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -45,43 +46,43 @@ public class Config extends Cfg implements ValuesProvider {
 
     @NotNull
     @Override
-    public NumberHolder DEATH_GUIDE_TICK_EVERY() {
+    public NumberProvider DEATH_GUIDE_TICK_EVERY() {
         return DEATH_GUIDE_TICK_EVERY.value();
     }
 
     @NotNull
     @Override
-    public NumberHolder DEATH_GUIDE_PARTICLE_AMOUNT() {
+    public NumberProvider DEATH_GUIDE_PARTICLE_AMOUNT() {
         return DEATH_GUIDE_PARTICLE_AMOUNT.value();
     }
 
     @NotNull
     @Override
-    public NumberHolder DEATH_GUIDE_PARTICLE_SHIFT_START() {
+    public NumberProvider DEATH_GUIDE_PARTICLE_SHIFT_START() {
         return DEATH_GUIDE_PARTICLE_SHIFT_START.value();
     }
 
     @NotNull
     @Override
-    public NumberHolder DEATH_GUIDE_PARTICLE_SHIFT() {
+    public NumberProvider DEATH_GUIDE_PARTICLE_SHIFT() {
         return DEATH_GUIDE_PARTICLE_SHIFT.value();
     }
 
     @NotNull
     @Override
-    public NumberHolder DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER() {
+    public NumberProvider DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER() {
         return DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER.value();
     }
 
     @NotNull
     @Override
-    public NumberHolder DEATH_GUIDE_PARTICLE_OFFSET_SIDE() {
+    public NumberProvider DEATH_GUIDE_PARTICLE_OFFSET_SIDE() {
         return DEATH_GUIDE_PARTICLE_OFFSET_SIDE.value();
     }
 
     @NotNull
     @Override
-    public NumberHolder DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL() {
+    public NumberProvider DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL() {
         return DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL.value();
     }
 
@@ -89,5 +90,11 @@ public class Config extends Cfg implements ValuesProvider {
     @Override
     public Holder<Map<String, List<String>>> DIMENSION_DISABLED_COMMANDS() {
         return DIMENSION_DISABLED_COMMANDS;
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider ECHO_MAX_HEALTH() {
+        return ECHO_MAX_HEALTH.value();
     }
 }
