@@ -5,15 +5,18 @@ import com.google.common.reflect.TypeToken;
 import killercreepr.crux.data.world.ChunkBlockStorage;
 import killercreepr.crux.data.world.CruxPosition;
 import killercreepr.crux.data.world.WorldChunkStorage;
+import killercreepr.crux.util.CruxGoalUtil;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.usurvive.death.storage.MultiVerseDeathStorage;
 import killercreepr.usurvive.entity.USurviveMobs;
+import killercreepr.usurvive.entity.mob.goals.EchoGoal;
 import killercreepr.usurvive.event.PlayerEchoDeathEvent;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -127,6 +130,10 @@ public class DeathManager implements Listener {
             new ArrayList<>(event.getDrops()), totalExperience,
             System.currentTimeMillis()
         );
+        if(echo instanceof Mob m){
+            EchoGoal goal = CruxGoalUtil.getGoal(m, EchoGoal.class, EchoGoal.defaultKey());
+            if(goal != null) goal.firstSetup(death);
+        }
 
         PlayerEchoDeathEvent deathEvent = new PlayerEchoDeathEvent(this, death);
         if(!deathEvent.callEvent()){
@@ -135,6 +142,12 @@ public class DeathManager implements Listener {
         }
         PlayerDeath newDeath = deathEvent.getDeath();
         if(!newDeath.getGuardianUUID().equals(death.getGuardianUUID())) echo.remove();
+        else if(!newDeath.equals(death)){
+            if(echo instanceof Mob m){
+                EchoGoal goal = CruxGoalUtil.getGoal(m, EchoGoal.class, EchoGoal.defaultKey());
+                if(goal != null) goal.firstSetup(newDeath);
+            }
+        }
 
         //todo maybe make something to take care of multiple deaths taken place at the same block location.
         deaths.add(newDeath.getWorldUUID(), p.getChunk().getChunkKey(), newDeath);

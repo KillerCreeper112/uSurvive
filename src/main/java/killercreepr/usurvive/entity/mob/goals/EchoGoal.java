@@ -3,10 +3,12 @@ package killercreepr.usurvive.entity.mob.goals;
 import com.destroystokyo.paper.entity.ai.GoalKey;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
+import killercreepr.crux.Crux;
 import killercreepr.crux.context.InputContext;
 import killercreepr.crux.tags.container.TagContainer;
 import killercreepr.crux.tags.provider.StringTagProvider;
 import killercreepr.crux.tags.resolver.Tag;
+import killercreepr.crux.util.CruxMath;
 import killercreepr.crux.util.CruxTag;
 import killercreepr.crux.util.GetEntityNear;
 import killercreepr.cruxattributes.attribute.CruxAttribute;
@@ -38,6 +40,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.logging.Level;
 
 public class EchoGoal extends CruxMobModeledGoal {
     public EchoGoal(@NotNull Mob mob, ActiveModel model) {
@@ -159,14 +162,16 @@ public class EchoGoal extends CruxMobModeledGoal {
         if(!target.equals(this.target)) event.setCancelled(true);
     }
 
-    public void firstSetup(){
-        PlayerDeath death = getPlayerDeath();
+    public void firstSetup(PlayerDeath death){
         exp = death.getExperience();
 
         ValuesProvider cfg = USurvivePlugin.inst().values();
         mob.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(
             cfg.ECHO_MAX_HEALTH().sample(InputContext.simple(StringTagProvider.build(
-                TagContainer.string(Tag.parsed("exp", exp + ""))
+                TagContainer.string(
+                    Tag.parsed("exp", exp + ""),
+                    Tag.parsed("level", CruxMath.calculateLevelsForExperiencePoints(exp) + "")
+                )
             ))).doubleValue()
         );
         mob.setHealth(mob.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
@@ -176,7 +181,8 @@ public class EchoGoal extends CruxMobModeledGoal {
     public void onEntityDamage(EntityDamageEvent event) {
         if(!event.getEntity().equals(mob)) return;
         if(exp == null){
-            firstSetup();
+            Crux.log(Level.WARNING, "Echo was damaged without first setup! " + mob.getUniqueId() + ", " + mob.getWorld());
+            return;
         }
 
         if(exp < 1) return;
