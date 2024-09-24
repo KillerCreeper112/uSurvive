@@ -2,7 +2,7 @@ package killercreepr.usurvive.menu;
 
 import killercreepr.crux.Crux;
 import killercreepr.crux.util.CruxItem;
-import killercreepr.cruxmenus.menu.bukkit.BukkitMenu;
+import killercreepr.cruxmenus.core.menu.BukkitMenu;
 import killercreepr.usurvive.death.PlayerDeath;
 import killercreepr.usurvive.entity.mob.goals.EchoGoal;
 import net.kyori.adventure.text.Component;
