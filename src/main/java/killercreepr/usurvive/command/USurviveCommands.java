@@ -54,6 +54,7 @@ public class USurviveCommands {
                             .successMsg(Lang.DEFAULT_TELEPORT_SUCCESS_MSG)
                             .failedMsg(Lang.DEFAULT_TELEPORT_FAIL_MSG)
                             .tickMsg(Lang.DEFAULT_TELEPORT_TICK_MSG)
+                            .msgInterval(cfg.SPAWN_TELEPORT_MSG_INTERVAL().value().intValue())
                         .build());
 
                     CruxTeleporter.teleporter().scheduleTeleport(p, tp.build());

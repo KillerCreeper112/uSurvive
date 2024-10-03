@@ -18,9 +18,10 @@ import java.util.List;
 import java.util.Map;
 
 public class Config extends Cfg implements ValuesProvider {
-    public final CfgValue<String> SPAWN_WORLD = new CommonValue<>(DefaultValues.SPAWN_WORLD.value());
+    public final CfgValue<String> SPAWN_WORLD = new CommonValue<>(DefaultValues.SPAWN_WORLD.value()){};
     public final NumCfgValue SPAWN_TELEPORT_TIME = new NumCfgValue(DefaultValues.SPAWN_TELEPORT_TIME);
-    public final CfgValue<String> SPAWN_TELEPORT_MODULES = new CommonValue<>(DefaultValues.SPAWN_TELEPORT_MODULES.value());
+    public final NumCfgValue SPAWN_TELEPORT_MSG_INTERVAL = new NumCfgValue(DefaultValues.SPAWN_TELEPORT_MSG_INTERVAL);
+    public final CfgValue<String> SPAWN_TELEPORT_MODULES = new CommonValue<>(DefaultValues.SPAWN_TELEPORT_MODULES.value()){};
     public final NumCfgValue DEATH_GUIDE_TICK_EVERY = new NumCfgValue(DefaultValues.DEATH_GUIDE_TICK_EVERY);
     public final NumCfgValue DEATH_GUIDE_PARTICLE_AMOUNT = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_AMOUNT);
     public final NumCfgValue DEATH_GUIDE_PARTICLE_SHIFT_START = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_SHIFT_START);
@@ -58,6 +59,12 @@ public class Config extends Cfg implements ValuesProvider {
     @Override
     public NumberProvider SPAWN_TELEPORT_TIME() {
         return SPAWN_TELEPORT_TIME.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider SPAWN_TELEPORT_MSG_INTERVAL() {
+        return SPAWN_TELEPORT_MSG_INTERVAL.value();
     }
 
     @NotNull

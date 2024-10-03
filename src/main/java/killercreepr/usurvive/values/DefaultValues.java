@@ -12,6 +12,7 @@ public class DefaultValues implements ValuesProvider {
     public static final Holder<String> SPAWN_WORLD = Holder.direct("world_spawn");
     public static final Holder<String> SPAWN_TELEPORT_MODULES = Holder.direct("dontmove,nocmds");
     public static final NumberProvider SPAWN_TELEPORT_TIME = NumberProvider.constant(100);
+    public static final NumberProvider SPAWN_TELEPORT_MSG_INTERVAL = NumberProvider.constant(20);
     public static final NumberProvider DEATH_GUIDE_TICK_EVERY = new UniformNumber(60, 100);
     public static final NumberProvider DEATH_GUIDE_PARTICLE_AMOUNT = new UniformNumber(3, 5);
     public static final NumberProvider DEATH_GUIDE_PARTICLE_SHIFT_START = new UniformNumber(1D, 3D);
@@ -36,6 +37,12 @@ public class DefaultValues implements ValuesProvider {
     @Override
     public NumberProvider SPAWN_TELEPORT_TIME() {
         return SPAWN_TELEPORT_TIME;
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider SPAWN_TELEPORT_MSG_INTERVAL() {
+        return SPAWN_TELEPORT_MSG_INTERVAL;
     }
 
     @NotNull

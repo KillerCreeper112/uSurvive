@@ -14,6 +14,8 @@ public interface ValuesProvider extends Reloadable {
     @NotNull
     NumberProvider SPAWN_TELEPORT_TIME();
     @NotNull
+    NumberProvider SPAWN_TELEPORT_MSG_INTERVAL();
+    @NotNull
     Holder<String> SPAWN_TELEPORT_MODULES();
     @NotNull
     NumberProvider DEATH_GUIDE_TICK_EVERY();
