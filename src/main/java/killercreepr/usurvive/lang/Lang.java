@@ -32,16 +32,19 @@ public class Lang {
     public static final Msg DEFAULT_TELEPORT_TICK_MSG = create(
         Communicator.builder()
             .actionBar("<yellow>Teleporting in <gold>{{<time_left> / 20}[1]} seconds")
+            .sound(CreateSound.sound(Sound.ENTITY_SLIME_SQUISH, 2))
             .build()
     );
     public static final Msg DEFAULT_TELEPORT_SUCCESS_MSG = create(
         Communicator.builder()
             .actionBar("<green>Successfully teleported!")
+            .sound(CreateSound.sound(Sound.ENTITY_PLAYER_TELEPORT))
             .build()
     );
     public static final Msg DEFAULT_TELEPORT_FAIL_MSG = create(
         Communicator.builder()
             .actionBar("<red>Teleport failed.")
+            .sound(CreateSound.sound(Sound.ENTITY_VILLAGER_NO))
             .build()
     );
 
