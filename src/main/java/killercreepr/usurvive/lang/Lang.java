@@ -29,6 +29,22 @@ public class Lang {
             .build()
     );
 
+    public static final Msg DEFAULT_TELEPORT_TICK_MSG = create(
+        Communicator.builder()
+            .actionBar("<yellow>Teleporting in <gold>{{<time_left> / 20}[1]} seconds")
+            .build()
+    );
+    public static final Msg DEFAULT_TELEPORT_SUCCESS_MSG = create(
+        Communicator.builder()
+            .actionBar("<green>Successfully teleported!")
+            .build()
+    );
+    public static final Msg DEFAULT_TELEPORT_FAIL_MSG = create(
+        Communicator.builder()
+            .actionBar("<red>Teleport failed.")
+            .build()
+    );
+
     public static Msg create(@NotNull String id, @NotNull Communicator communicator){
         return new Msg(id, communicator, Lang::lang);
     }

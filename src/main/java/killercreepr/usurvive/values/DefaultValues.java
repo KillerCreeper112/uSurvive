@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 public class DefaultValues implements ValuesProvider {
+    public static final Holder<String> SPAWN_WORLD = Holder.direct("world_spawn");
+    public static final Holder<String> SPAWN_TELEPORT_MODULES = Holder.direct("dontmove,nocmds");
+    public static final NumberProvider SPAWN_TELEPORT_TIME = NumberProvider.constant(100);
     public static final NumberProvider DEATH_GUIDE_TICK_EVERY = new UniformNumber(60, 100);
     public static final NumberProvider DEATH_GUIDE_PARTICLE_AMOUNT = new UniformNumber(3, 5);
     public static final NumberProvider DEATH_GUIDE_PARTICLE_SHIFT_START = new UniformNumber(1D, 3D);
@@ -22,6 +25,24 @@ public class DefaultValues implements ValuesProvider {
     public static final NumberProvider ECHO_MAX_HEALTH = NumberProvider.equation(
         "10 + (<exp> / 50)"
     );
+
+    @NotNull
+    @Override
+    public Holder<String> SPAWN_WORLD() {
+        return SPAWN_WORLD;
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider SPAWN_TELEPORT_TIME() {
+        return SPAWN_TELEPORT_TIME;
+    }
+
+    @NotNull
+    @Override
+    public Holder<String> SPAWN_TELEPORT_MODULES() {
+        return SPAWN_TELEPORT_MODULES;
+    }
 
     @NotNull
     @Override

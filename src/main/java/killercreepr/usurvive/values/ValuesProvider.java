@@ -10,6 +10,12 @@ import java.util.Map;
 
 public interface ValuesProvider extends Reloadable {
     @NotNull
+    Holder<String> SPAWN_WORLD();
+    @NotNull
+    NumberProvider SPAWN_TELEPORT_TIME();
+    @NotNull
+    Holder<String> SPAWN_TELEPORT_MODULES();
+    @NotNull
     NumberProvider DEATH_GUIDE_TICK_EVERY();
     @NotNull
     NumberProvider DEATH_GUIDE_PARTICLE_AMOUNT();

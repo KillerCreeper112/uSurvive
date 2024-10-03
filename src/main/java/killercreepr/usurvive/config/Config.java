@@ -5,6 +5,7 @@ import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.crux.valueproviders.number.NumberProvider;
 import killercreepr.cruxconfig.config.bukkit.file.Cfg;
 import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
+import killercreepr.cruxconfig.config.bukkit.value.CfgValue;
 import killercreepr.cruxconfig.config.bukkit.value.CommonValue;
 import killercreepr.cruxconfig.config.bukkit.value.NumCfgValue;
 import killercreepr.usurvive.values.DefaultValues;
@@ -17,15 +18,18 @@ import java.util.List;
 import java.util.Map;
 
 public class Config extends Cfg implements ValuesProvider {
-    public final NumCfgValue DEATH_GUIDE_TICK_EVERY = new NumCfgValue(DefaultValues.DEATH_GUIDE_TICK_EVERY){};
-    public final NumCfgValue DEATH_GUIDE_PARTICLE_AMOUNT = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_AMOUNT){};
-    public final NumCfgValue DEATH_GUIDE_PARTICLE_SHIFT_START = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_SHIFT_START){};
-    public final NumCfgValue DEATH_GUIDE_PARTICLE_SHIFT = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_SHIFT){};
-    public final NumCfgValue DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER){};
-    public final NumCfgValue DEATH_GUIDE_PARTICLE_OFFSET_SIDE = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_OFFSET_SIDE){};
-    public final NumCfgValue DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL){};
+    public final CfgValue<String> SPAWN_WORLD = new CommonValue<>(DefaultValues.SPAWN_WORLD.value());
+    public final NumCfgValue SPAWN_TELEPORT_TIME = new NumCfgValue(DefaultValues.SPAWN_TELEPORT_TIME);
+    public final CfgValue<String> SPAWN_TELEPORT_MODULES = new CommonValue<>(DefaultValues.SPAWN_TELEPORT_MODULES.value());
+    public final NumCfgValue DEATH_GUIDE_TICK_EVERY = new NumCfgValue(DefaultValues.DEATH_GUIDE_TICK_EVERY);
+    public final NumCfgValue DEATH_GUIDE_PARTICLE_AMOUNT = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_AMOUNT);
+    public final NumCfgValue DEATH_GUIDE_PARTICLE_SHIFT_START = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_SHIFT_START);
+    public final NumCfgValue DEATH_GUIDE_PARTICLE_SHIFT = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_SHIFT);
+    public final NumCfgValue DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER);
+    public final NumCfgValue DEATH_GUIDE_PARTICLE_OFFSET_SIDE = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_OFFSET_SIDE);
+    public final NumCfgValue DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL);
     public final CommonValue<Map<String, List<String>>> DIMENSION_DISABLED_COMMANDS = new CommonValue<>(DefaultValues.DIMENSION_DISABLED_COMMANDS.value()){};
-    public final NumCfgValue ECHO_MAX_HEALTH = new NumCfgValue(DefaultValues.ECHO_MAX_HEALTH){};
+    public final NumCfgValue ECHO_MAX_HEALTH = new NumCfgValue(DefaultValues.ECHO_MAX_HEALTH);
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -42,6 +46,24 @@ public class Config extends Cfg implements ValuesProvider {
     @Override
     public void reload(@NotNull CruxPlugin plugin) {
         setup();
+    }
+
+    @NotNull
+    @Override
+    public Holder<String> SPAWN_WORLD() {
+        return SPAWN_WORLD;
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider SPAWN_TELEPORT_TIME() {
+        return SPAWN_TELEPORT_TIME.value();
+    }
+
+    @NotNull
+    @Override
+    public Holder<String> SPAWN_TELEPORT_MODULES() {
+        return SPAWN_TELEPORT_MODULES;
     }
 
     @NotNull

@@ -20,6 +20,7 @@ import killercreepr.cruxitems.config.handler.FilePluginItemHandler;
 import killercreepr.cruxitems.item.plugin.PluginItem;
 import killercreepr.cruxworlds.world.manager.CruxWorldManager;
 import killercreepr.usurvive.block.USurviveBlocks;
+import killercreepr.usurvive.command.USurviveCommands;
 import killercreepr.usurvive.config.Config;
 import killercreepr.usurvive.config.handler.FilePlayerDeath;
 import killercreepr.usurvive.data.entity.DeathHolder;
@@ -78,6 +79,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     public void onLoad() {
         instance = this;
         super.onLoad();
+        new USurviveCommands(this).register();
 
         CfgRegistries.FILE.forEach(this::registerCfgHandlers);
 
