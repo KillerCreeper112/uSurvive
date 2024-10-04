@@ -4,9 +4,13 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
+import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import killercreepr.crux.Crux;
 import killercreepr.crux.data.communication.Communicator;
+import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxteleport.teleport.CruxTeleport;
 import killercreepr.cruxteleport.teleport.module.TeleportModules;
 import killercreepr.cruxteleport.util.CruxTeleporter;
@@ -18,6 +22,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -61,6 +66,33 @@ public class USurviveCommands {
                     return 1;
                 }).build();
             commands.register(cmd, List.of("s"));
+
+            commands.register(
+                Commands.literal("quickaccess")
+                    .requires(source -> source.getSender().hasPermission("usurvive.cmds.quickaccess.use"))
+                    .executes(ctx ->{
+                        if(!(getExecutor(ctx.getSource()) instanceof Player p)) return -1;
+                        CruxCore.inst().cruxMenus().menuRegistry().menuHolders().get(Crux.key("quick_access"))
+                            .open(p);
+                        return 1;
+                    })
+                    .then(
+                        Commands.argument("targets", ArgumentTypes.players())
+                            .requires(source -> source.getSender().hasPermission("usurvive.cmds.quickaccess.admin"))
+                            .executes(ctx ->{
+                                Collection<Player> targets = ctx.getArgument("targets", PlayerSelectorArgumentResolver.class)
+                                    .resolve(ctx.getSource());
+                                for(Player p : targets){
+                                    CruxCore.inst().cruxMenus().menuRegistry().menuHolders().get(Crux.key("quick_access"))
+                                        .open(p);
+                                }
+                                getExecutor(ctx.getSource()).sendMessage("Opened quick access menu for " + targets.size() + " players.");
+                                return 1;
+                            })
+                    )
+                    .build(),
+                List.of("menu", "usurvive", "quickmenu", "fastaccess")
+            );
         });
     }
 
