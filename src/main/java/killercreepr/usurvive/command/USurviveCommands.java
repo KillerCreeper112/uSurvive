@@ -93,6 +93,28 @@ public class USurviveCommands {
                     .build(),
                 List.of("menu", "usurvive", "quickmenu", "fastaccess")
             );
+
+            commands.register(
+                Commands.literal("help")
+                    .executes(ctx ->{
+                        if(!(getExecutor(ctx.getSource()) instanceof Player p)) return -1;
+                        CruxCore.inst().cruxMenus().menuRegistry().menuHolders().get(Crux.key("guide"))
+                            .open(p);
+                        return 1;
+                    })
+                    .build(), List.of("guide", "wiki")
+            );
+
+            commands.register(
+                Commands.literal("rules")
+                    .executes(ctx ->{
+                        if(!(getExecutor(ctx.getSource()) instanceof Player p)) return -1;
+                        CruxCore.inst().cruxMenus().menuRegistry().menuHolders().get(Crux.key("guide_rules"))
+                            .open(p);
+                        return 1;
+                    })
+                    .build()
+            );
         });
     }
 
