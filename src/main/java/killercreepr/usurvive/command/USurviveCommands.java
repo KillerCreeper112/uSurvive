@@ -102,7 +102,7 @@ public class USurviveCommands {
                             .open(p);
                         return 1;
                     })
-                    .build(), List.of("guide", "wiki")
+                    .build(), List.of("guide", "wiki", "faq", "support", "info", "tips", "hints")
             );
 
             commands.register(
@@ -113,7 +113,7 @@ public class USurviveCommands {
                             .open(p);
                         return 1;
                     })
-                    .build()
+                    .build(), List.of("guidelines", "tos", "terms")
             );
         });
     }
