@@ -4,10 +4,10 @@ import killercreepr.crux.data.communication.*;
 import killercreepr.crux.data.entity.EntityMemory;
 import killercreepr.crux.data.entity.PlayerMemory;
 import killercreepr.crux.item.dynamic.DynamicItem;
+import killercreepr.crux.module.StandardModules;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.crux.registries.CruxRegistries;
-import killercreepr.cruxadvancements.crazy.CfgCrazyAdvancementManager;
-import killercreepr.cruxadvancements.registries.AdvancementRegistries;
+import killercreepr.cruxadvancements.config.loader.CfgCrazyAdvancementManagerCfgLoader;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.standard.SimpleLangConfig;
 import killercreepr.cruxconfig.config.common.FileContext;
@@ -70,11 +70,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         return lang;
     }
 
-    protected final CfgCrazyAdvancementManager MAIN_ADVANCEMENTS = AdvancementRegistries.ADVANCEMENT_MANAGERS.register(
-        CfgCrazyAdvancementManager.createNew(
-            key("main"), this
-        )
-    );
+    protected final CfgCrazyAdvancementManagerCfgLoader cfgManagerLoader = new CfgCrazyAdvancementManagerCfgLoader(this);
     @Override
     public void onLoad() {
         instance = this;
@@ -110,7 +106,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     protected LangProvider langProvider;
     @Override
     public void enabled() {
-        if(CruxRegistries.MODULES.containsKey("CruxConfigs")){
+        if(CruxRegistries.MODULES.containsKey(StandardModules.CRUX_CONFIGS)){
             values(new Config(this, "config"));
         }else{
             values(new DefaultValues());
@@ -126,7 +122,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new GrappleListener()
         );
 
-        if(CruxRegistries.MODULES.containsKey("CruxConfigs")){
+        if(CruxRegistries.MODULES.containsKey(StandardModules.CRUX_CONFIGS)){
             langProvider = new SimpleLangConfig(this, "lang", this::lang, Lang.class);
         }else{
             langProvider = this;
@@ -137,33 +133,14 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
         deathManager.load();
 
-        MAIN_ADVANCEMENTS.load(this);
-        //MAIN_ADVANCEMENTS.registerAdvancement(test);
-        MAIN_ADVANCEMENTS.loadAllCrazyAdvancements();
+        //cfgManagerLoader.load();
     }
-
-    /*protected final CrazyAdvancement test = new CrazyAdvancement(
-        key("test"), null, new NumberCriteria(5),
-        null,
-        new CrazyAdvancementDisplay(new BukkitDynamicItem("stone", "1", null),
-            "Test", "Description", AdvancementDisplay.AdvancementFrame.CHALLENGE,
-            AdvancementVisibility.ALWAYS,
-            "textures/gui/advancements/backgrounds/stone.png", 0, 0, null
-        ),
-        AdvancementFlag.TOAST_AND_MESSAGE);*/
-
-    /*@EventHandler(ignoreCancelled = true)
-    public void onBlockPlace(BlockPlaceEvent event) {
-        MAIN_ADVANCEMENTS.setCriteriaProgress(event.getPlayer().getUniqueId(), test,
-            test.getProgress(event.getPlayer()).getCriteriaProgress() + 1);
-    }*/
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         getServer().getScheduler().runTaskLater(this, task ->{
-            MAIN_ADVANCEMENTS.loadProgress(p.getUniqueId());
-            MAIN_ADVANCEMENTS.getCrazyManager().addPlayer(p);
+            cfgManagerLoader.load(p);
         }, 20L);
     }
 
@@ -171,9 +148,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player p = event.getPlayer();
         getServer().getScheduler().runTask(this, task ->{
-            MAIN_ADVANCEMENTS.saveProgress(p.getUniqueId());
-            MAIN_ADVANCEMENTS.getCrazyManager().removePlayer(p);
-            MAIN_ADVANCEMENTS.unloadProgress(p.getUniqueId());
+            cfgManagerLoader.saveAndUnload(p);
         });
     }
 
@@ -193,7 +168,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new CruxFolder(this, "menus").file()
         );
 
-        MAIN_ADVANCEMENTS.refresh(this);
+        cfgManagerLoader.refresh();
     }
 
     public void registerCfgHandlers(@NotNull FileRegistry registry){
