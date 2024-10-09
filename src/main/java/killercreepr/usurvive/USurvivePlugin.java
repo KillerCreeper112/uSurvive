@@ -156,6 +156,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     public void disabled() {
         super.disabled();
         deathManager.save();
+        cfgManagerLoader.saveAndUnload(getServer().getOnlinePlayers());
     }
 
     @Override
