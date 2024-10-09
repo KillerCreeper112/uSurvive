@@ -29,6 +29,13 @@ public class Lang {
             .build()
     );
 
+    public static final Msg DISCORD = create(
+        Communicator.builder()
+            .chat("<yellow>Feel free to join our Discord here! <blue><click:open_url:\"https://discord.gg/twRpaSU4gV\"><hover:show_text:\"Click to join the uSurvive Discord!\">https://discord.gg/twRpaSU4gV")
+            .sound(CreateSound.sound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.5f))
+            .build()
+    );
+
     public static final Msg DEFAULT_TELEPORT_TICK_MSG = create(
         Communicator.builder()
             .actionBar("<yellow>Teleporting in <gold>{{<time_left> / 20}[1]} seconds")

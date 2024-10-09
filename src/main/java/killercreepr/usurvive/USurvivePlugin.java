@@ -28,9 +28,11 @@ import killercreepr.usurvive.death.DeathManager;
 import killercreepr.usurvive.death.PlayerDeath;
 import killercreepr.usurvive.entity.USurviveMobs;
 import killercreepr.usurvive.item.GrappleItem;
+import killercreepr.usurvive.item.QuickAccessItem;
 import killercreepr.usurvive.item.USurviveItems;
 import killercreepr.usurvive.lang.Lang;
 import killercreepr.usurvive.listener.GrappleListener;
+import killercreepr.usurvive.listener.QuickAccessListener;
 import killercreepr.usurvive.mechanics.grapple.standard.StandardGrappleHooks;
 import killercreepr.usurvive.registries.USurviveRegistries;
 import killercreepr.usurvive.values.DefaultValues;
@@ -92,6 +94,19 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             }
         });
 
+        CruxItemsConfigHook.filePluginItem().registerTypeHandler(new FilePluginItemHandler(){
+            @Override
+            public @NotNull Key key() {
+                return USurvivePlugin.this.key("quick_access");
+            }
+
+            @NotNull
+            @Override
+            public PluginItem deserialize(@NotNull FileContext<?> ctx, @NotNull FileElement e, @NotNull Key key, @NotNull DynamicItem item) {
+                return new QuickAccessItem(key, item);
+            }
+        });
+
         EntityMemory.registerFunction(this, mem ->{
             if(!(mem instanceof PlayerMemory m)) return;
             m.getDataHolders().register(new DeathHolder(m, values(), getDeathManager()));
@@ -119,7 +134,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         registerListeners(
             deathManager,
             this,
-            new GrappleListener()
+            new GrappleListener(),
+            new QuickAccessListener()
         );
 
         if(CruxRegistries.MODULES.containsKey(StandardModules.CRUX_CONFIGS)){

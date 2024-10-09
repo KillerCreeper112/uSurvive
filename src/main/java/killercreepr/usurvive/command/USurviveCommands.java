@@ -115,6 +115,15 @@ public class USurviveCommands {
                     })
                     .build(), List.of("guidelines", "tos", "terms")
             );
+
+            commands.register(
+                Commands.literal("discord")
+                    .executes(ctx ->{
+                        Lang.DISCORD.use(getExecutor(ctx.getSource()));
+                        return 1;
+                    })
+                    .build(), List.of("socials", "social")
+            );
         });
     }
 
