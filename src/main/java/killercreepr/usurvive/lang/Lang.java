@@ -36,6 +36,12 @@ public class Lang {
             .build()
     );
 
+    public static final Msg CHECK_ORBITS = create(
+        Communicator.builder()
+            .chat("<yellow>You currently have <gold>{{<orbits>}[0]} orbits<yellow>.")
+            .build()
+    );
+
     public static final Msg DEFAULT_TELEPORT_TICK_MSG = create(
         Communicator.builder()
             .actionBar("<yellow>Teleporting in <gold>{{<time_left> / 20}[1]} seconds")

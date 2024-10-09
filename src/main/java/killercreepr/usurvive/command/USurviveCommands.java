@@ -10,7 +10,11 @@ import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import killercreepr.crux.Crux;
 import killercreepr.crux.data.communication.Communicator;
+import killercreepr.crux.data.entity.EntityMemory;
+import killercreepr.crux.tags.container.TagContainer;
+import killercreepr.crux.tags.resolver.Tag;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxcurrency.data.entity.CurrencyHolder;
 import killercreepr.cruxteleport.teleport.CruxTeleport;
 import killercreepr.cruxteleport.teleport.module.TeleportModules;
 import killercreepr.cruxteleport.util.CruxTeleporter;
@@ -123,6 +127,22 @@ public class USurviveCommands {
                         return 1;
                     })
                     .build(), List.of("socials", "social")
+            );
+
+            commands.register(
+                Commands.literal("orbits")
+                    .executes(ctx ->{
+                        if(!(getExecutor(ctx.getSource()) instanceof Player p)) return -1;
+                        CurrencyHolder holder = EntityMemory.getOrCreateDataHolder(p, CurrencyHolder.class);
+                        if(holder == null){
+                            Communicator.chat("<red>Error. Contact developer.").use(p);
+                            return 0;
+                        }
+                        double amount = holder.getBank().getCurrency(Crux.key("orbit"));
+                        Lang.CHECK_ORBITS.use(p, TagContainer.merged().add(Tag.parsed("orbits", amount + "")));
+                        return 1;
+                    })
+                    .build(), List.of("orbit", "balance", "bal")
             );
         });
     }

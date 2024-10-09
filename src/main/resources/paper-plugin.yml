@@ -12,3 +12,5 @@ dependencies:
       join-classpath: true # Defaults to true
     CruxTeleport:
       load: BEFORE
+    CruxCurrency:
+      required: false
