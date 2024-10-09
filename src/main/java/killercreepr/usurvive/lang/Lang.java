@@ -42,6 +42,12 @@ public class Lang {
             .build()
     );
 
+    public static final Msg ADVANCEMENT_PROGRESS = create(
+        Communicator.builder()
+            .chat("<yellow><latinfont:advancement progress updated> <gold><bold>{{<advancement_objective_progress_percent:<player_uuid>> * 100}[0]}%</bold> <gold><advancement_icon/title>")
+            .build()
+    );
+
     public static final Msg DEFAULT_TELEPORT_TICK_MSG = create(
         Communicator.builder()
             .actionBar("<yellow>Teleporting in <gold>{{<time_left> / 20}[1]} seconds")
