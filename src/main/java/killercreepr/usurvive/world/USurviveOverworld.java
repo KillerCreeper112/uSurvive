@@ -7,8 +7,8 @@ import killercreepr.cruxgeneration.util.CruxNoise;
 import killercreepr.cruxworlds.world.NaturalEntitySpawnManager;
 import killercreepr.cruxworlds.world.SimpleWorld;
 import killercreepr.cruxworlds.world.creator.CruxWorldModuleCreator;
-import killercreepr.cruxworlds.world.entity.entity.NaturalEntitySpawner;
-import killercreepr.cruxworlds.world.entity.entity.impl.SimpleNaturalEntitySpawner;
+import killercreepr.cruxworlds.world.entity.NaturalEntityWorldSpawner;
+import killercreepr.cruxworlds.world.entity.impl.SimpleNaturalEntityWorldSpawner;
 import killercreepr.usurvive.USurvivePlugin;
 import killercreepr.usurvive.block.USurviveBlocks;
 import killercreepr.usurvive.registries.USurviveRegistries;
@@ -46,8 +46,8 @@ public class USurviveOverworld extends SimpleWorld {
         };
     }
 
-    public NaturalEntitySpawner createEntitySpawner(){
-        return new SimpleNaturalEntitySpawner(USurvivePlugin.inst(), random,
+    public NaturalEntityWorldSpawner createEntitySpawner(){
+        return new SimpleNaturalEntityWorldSpawner(USurvivePlugin.inst(), random,
             USurviveRegistries.OVERWORLD_NATURAL_ENTITY_SPAWN_GROUP,
             200, 34, 10);
     }

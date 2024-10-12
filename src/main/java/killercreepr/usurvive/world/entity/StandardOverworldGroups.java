@@ -2,10 +2,10 @@ package killercreepr.usurvive.world.entity;
 
 import killercreepr.crux.registry.Registry;
 import killercreepr.crux.util.CruxMath;
-import killercreepr.cruxworlds.world.entity.entity.NaturalEntitySpawnGroup;
-import killercreepr.cruxworlds.world.entity.entity.SpawnContext;
-import killercreepr.cruxworlds.world.entity.entity.impl.NaturalSpawnPartGroup;
-import killercreepr.cruxworlds.world.entity.entity.impl.SimpleNaturalEntitySpawnGroup;
+import killercreepr.cruxworlds.world.entity.NaturalEntitySpawnGroup;
+import killercreepr.cruxworlds.world.entity.SpawnContext;
+import killercreepr.cruxworlds.world.entity.impl.NaturalSpawnPartGroup;
+import killercreepr.cruxworlds.world.entity.impl.SimpleNaturalEntitySpawnGroup;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;

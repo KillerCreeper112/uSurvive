@@ -3,7 +3,7 @@ package killercreepr.usurvive.mechanics.grapple.impl;
 import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.Crux;
 import killercreepr.crux.data.Holder;
-import killercreepr.crux.util.CruxEntity;
+import killercreepr.crux.util.CruxEntityUtil;
 import killercreepr.crux.util.CruxLoc;
 import killercreepr.cruxentities.combat.CruxEntityDamager;
 import killercreepr.usurvive.mechanics.grapple.ActiveGrappleHook;
@@ -73,7 +73,7 @@ public class ActiveParticleGrappleHook implements ActiveGrappleHook, Holder<Loca
         Vector hitPoint = result.getHitPosition();
         location.set(hitPoint.getX(), hitPoint.getY(), hitPoint.getZ());
         if(result.getHitBlock() != null){
-            Vector vel = location.toVector().subtract(CruxEntity.getEyeOrLocation(owner).toVector())
+            Vector vel = location.toVector().subtract(CruxEntityUtil.getEyeOrLocation(owner).toVector())
                 .multiply(pullForce);
             owner.setVelocity(owner.getVelocity().add(vel));
             return result;

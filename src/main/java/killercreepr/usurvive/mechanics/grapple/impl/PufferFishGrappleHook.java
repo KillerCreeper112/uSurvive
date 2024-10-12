@@ -1,6 +1,6 @@
 package killercreepr.usurvive.mechanics.grapple.impl;
 
-import killercreepr.crux.util.CruxEntity;
+import killercreepr.crux.util.CruxEntityUtil;
 import killercreepr.crux.valueproviders.number.NumberProvider;
 import killercreepr.usurvive.entity.USurviveMobs;
 import killercreepr.usurvive.mechanics.grapple.ActiveGrappleHook;
@@ -38,7 +38,7 @@ public class PufferFishGrappleHook extends EntityGrappleHook{
         return USurviveMobs.GRAPPLE_HOOK.spawnAt(PufferFish.class, ctx.getLocation(), e ->{
             e.setLeashHolder(owner);
             e.setPuffState(3);
-            Vector vel = CruxEntity.getEyeOrLocation(owner).getDirection().multiply(
+            Vector vel = CruxEntityUtil.getEyeOrLocation(owner).getDirection().multiply(
                 throwForce.value().doubleValue() * ctx.getForce()
             );
             e.setVelocity(vel);

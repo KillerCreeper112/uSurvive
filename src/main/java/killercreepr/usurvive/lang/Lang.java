@@ -7,6 +7,8 @@ import killercreepr.crux.data.communication.Msg;
 import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class Lang {
     private static CreateLang lang;
     public static CreateLang lang(){
@@ -44,7 +46,22 @@ public class Lang {
 
     public static final Msg ADVANCEMENT_PROGRESS = create(
         Communicator.builder()
-            .chat("<yellow><latinfont:advancement progress updated> <gold><bold>{{<advancement_objective_progress_percent:<player_uuid>> * 100}[0]}%</bold> <gold><advancement_icon/title>")
+            .chat(List.of(
+                "<yellow><latinfont:advancement progress updated>",
+                "      <gold><advancement_icon/title>",
+                "      <#FF8954>{{<advancement_objective_progress_percent:<player_uuid>> * 100}[1]}% Complete"
+            ))
+            .build()
+    );
+
+    public static final Msg ADVANCEMENT_PROGRESS_CRITERION_DISPLAY = create(
+        Communicator.builder()
+            .chat(List.of(
+                "<yellow><latinfont:advancement progress updated>",
+                "      <gold><advancement_icon/title>",
+                "      <#FF8954>{{<advancement_objective_progress_percent:<player_uuid>> * 100}[1]}% Complete",
+                "      <#9BEBE3><format> <progress>/<max>"
+            ))
             .build()
     );
 

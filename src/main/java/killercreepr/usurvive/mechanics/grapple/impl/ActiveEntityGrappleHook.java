@@ -2,7 +2,7 @@ package killercreepr.usurvive.mechanics.grapple.impl;
 
 import killercreepr.crux.Crux;
 import killercreepr.crux.data.Holder;
-import killercreepr.crux.util.CruxEntity;
+import killercreepr.crux.util.CruxEntityUtil;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxentities.combat.CruxEntityDamager;
 import killercreepr.usurvive.lang.Lang;
@@ -75,7 +75,7 @@ public class ActiveEntityGrappleHook implements ActiveGrappleHook, Holder<Entity
                 Lang.GRAPPLE_HOOK.playAt(entity);
             }
 
-            Vector vel = entity.getLocation().toVector().subtract(CruxEntity.getEyeOrLocation(owner).toVector())
+            Vector vel = entity.getLocation().toVector().subtract(CruxEntityUtil.getEyeOrLocation(owner).toVector())
                 .multiply(pullForce);
             owner.setVelocity(owner.getVelocity().add(vel));
             entity.setAI(false);
