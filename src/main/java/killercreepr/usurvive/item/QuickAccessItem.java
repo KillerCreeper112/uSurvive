@@ -18,6 +18,7 @@ public class QuickAccessItem extends CfgPluginItem implements InteractableItem, 
 
     @Override
     public @NotNull ItemUseResult onUse(@NotNull ItemUseContext ctx) {
+        if(ctx.getAction().isLeftClick()) return ItemUseResult.empty();
         Player p = ctx.getPlayer();
         switch (p.getGameMode()){
             case SPECTATOR ->{
