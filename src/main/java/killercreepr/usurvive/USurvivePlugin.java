@@ -34,6 +34,7 @@ import killercreepr.usurvive.lang.Lang;
 import killercreepr.usurvive.listener.GrappleListener;
 import killercreepr.usurvive.listener.ObjectiveProgressListener;
 import killercreepr.usurvive.listener.QuickAccessListener;
+import killercreepr.usurvive.listener.SpawnListener;
 import killercreepr.usurvive.mechanics.grapple.standard.StandardGrappleHooks;
 import killercreepr.usurvive.registries.USurviveRegistries;
 import killercreepr.usurvive.values.DefaultValues;
@@ -132,20 +133,21 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         USurviveItems.register();
         USurviveMobs.register();
 
-        registerListeners(
-            deathManager,
-            this,
-            new GrappleListener(),
-            new QuickAccessListener(),
-            new ObjectiveProgressListener(this)
-        );
-
         if(CruxRegistries.MODULES.containsKey(StandardModules.CRUX_CONFIGS)){
             langProvider = new SimpleLangConfig(this, "lang", this::lang, Lang.class);
         }else{
             langProvider = this;
             LangPopulator.populate(lang, Msg.class);
         }
+
+        registerListeners(
+            deathManager,
+            this,
+            new GrappleListener(),
+            new QuickAccessListener(),
+            new ObjectiveProgressListener(this),
+            new SpawnListener(values, this)
+        );
 
         super.enabled();
 
