@@ -83,6 +83,12 @@ public class Lang {
             .sound(CreateSound.sound(Sound.ENTITY_VILLAGER_NO))
             .build()
     );
+    public static final Msg FIRST_JOIN_WELCOME = create(
+        Communicator.builder()
+            .chat("<#C4F6EE>Welcome, <#82F5F0><player_name><#C4F6EE>, to uSurvive!")
+            .broadcast(true)
+            .build()
+    );
 
     public static Msg create(@NotNull String id, @NotNull Communicator communicator){
         return new Msg(id, communicator, Lang::lang);
