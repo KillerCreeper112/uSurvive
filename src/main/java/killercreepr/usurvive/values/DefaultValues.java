@@ -10,6 +10,9 @@ import java.util.Map;
 
 public class DefaultValues implements ValuesProvider {
     public static final Holder<String> SPAWN_WORLD = Holder.direct("world_spawn");
+    public static final Holder<List<String>> FIRST_JOIN_COMMANDS = Holder.direct(List.of(
+        "lp user <player_name> group add default_manage"
+    ));
     public static final Holder<String> SPAWN_TELEPORT_MODULES = Holder.direct("dontmove,nocmds");
     public static final NumberProvider SPAWN_TELEPORT_TIME = NumberProvider.constant(100);
     public static final NumberProvider SPAWN_TELEPORT_MSG_INTERVAL = NumberProvider.constant(20);
@@ -103,5 +106,11 @@ public class DefaultValues implements ValuesProvider {
     @Override
     public NumberProvider ECHO_MAX_HEALTH() {
         return ECHO_MAX_HEALTH;
+    }
+
+    @NotNull
+    @Override
+    public Holder<List<String>> FIRST_JOIN_COMMANDS() {
+        return FIRST_JOIN_COMMANDS;
     }
 }

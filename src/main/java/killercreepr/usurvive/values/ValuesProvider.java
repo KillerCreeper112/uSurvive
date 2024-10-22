@@ -35,4 +35,5 @@ public interface ValuesProvider extends Reloadable {
     Holder<Map<String, List<String>>> DIMENSION_DISABLED_COMMANDS();
     @NotNull
     NumberProvider ECHO_MAX_HEALTH();
+    @NotNull Holder<List<String>> FIRST_JOIN_COMMANDS();
 }

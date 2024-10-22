@@ -31,6 +31,7 @@ public class Config extends Cfg implements ValuesProvider {
     public final NumCfgValue DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL);
     public final CommonValue<Map<String, List<String>>> DIMENSION_DISABLED_COMMANDS = new CommonValue<>(DefaultValues.DIMENSION_DISABLED_COMMANDS.value()){};
     public final NumCfgValue ECHO_MAX_HEALTH = new NumCfgValue(DefaultValues.ECHO_MAX_HEALTH);
+    public final CfgValue<List<String>> FIRST_JOIN_COMMANDS = new CommonValue<>(DefaultValues.FIRST_JOIN_COMMANDS.value()){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -125,5 +126,11 @@ public class Config extends Cfg implements ValuesProvider {
     @Override
     public NumberProvider ECHO_MAX_HEALTH() {
         return ECHO_MAX_HEALTH.value();
+    }
+
+    @NotNull
+    @Override
+    public Holder<List<String>> FIRST_JOIN_COMMANDS() {
+        return FIRST_JOIN_COMMANDS;
     }
 }

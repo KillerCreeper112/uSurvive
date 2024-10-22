@@ -10,6 +10,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -17,13 +18,25 @@ import org.jetbrains.annotations.NotNull;
 public class QuickAccessListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerDeath(PlayerDeathEvent event) {
-        event.getDrops().removeIf(e -> PluginItem.isPluginItem(e, USurviveItems.QUICK_ACCESS));
+        event.getDrops().removeIf(e ->{
+            if(PluginItem.isPluginItem(e, USurviveItems.QUICK_ACCESS)){
+                event.getItemsToKeep().add(e);
+                return true;
+            }
+            return false;
+        });
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent event) {
         event.getDrops().removeIf(e -> PluginItem.isPluginItem(e, USurviveItems.QUICK_ACCESS));
     }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
+        if(PluginItem.isPluginItem(event.getMainHandItem())) event.setCancelled(true);
+    }
+
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerDropItem(PlayerDropItemEvent event) {

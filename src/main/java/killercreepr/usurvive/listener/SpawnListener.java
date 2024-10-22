@@ -1,6 +1,8 @@
 package killercreepr.usurvive.listener;
 
+import killercreepr.crux.Crux;
 import killercreepr.crux.data.communication.Communicator;
+import killercreepr.crux.tags.container.MergedTagContainer;
 import killercreepr.crux.tags.container.TagContainer;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.usurvive.lang.Lang;
@@ -18,6 +20,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
+import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +35,7 @@ public class SpawnListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public void onPlayerSpawnLocation(PlayerSpawnLocationEvent event) {
         Player p = event.getPlayer();
         if(p.hasPlayedBefore()) return;
         String worldName = cfg.SPAWN_WORLD().value();
@@ -42,7 +45,20 @@ public class SpawnListener implements Listener {
             Communicator.chat("<red>An error has occurred - " + worldName).use(p);
             return;
         }
-        p.teleport(world.getSpawnLocation());
+        event.setSpawnLocation(world.getSpawnLocation());
+    }
+
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player p = event.getPlayer();
+        if(p.hasPlayedBefore()) return;
+
+        MergedTagContainer tags = TagContainer.merged().hook(p);
+        cfg.FIRST_JOIN_COMMANDS().valueOr(List.of()).forEach(cmd ->{
+            cmd = Crux.FORMAT.deserializeString(cmd, tags);
+            plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), cmd);
+        });
 
         Lang.FIRST_JOIN_WELCOME.use(p, p, TagContainer.merged().hook(p));
         spawnFireworks(p);
