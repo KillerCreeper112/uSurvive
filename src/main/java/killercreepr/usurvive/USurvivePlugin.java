@@ -9,6 +9,7 @@ import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.crux.registries.CruxRegistries;
 import killercreepr.cruxadvancements.config.loader.CfgCrazyAdvancementManagerCfgLoader;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
+import killercreepr.cruxconfig.config.bukkit.handler.BukkitCfgHandlers;
 import killercreepr.cruxconfig.config.bukkit.standard.SimpleLangConfig;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
@@ -22,6 +23,7 @@ import killercreepr.cruxworlds.world.manager.CruxWorldManager;
 import killercreepr.usurvive.block.USurviveBlocks;
 import killercreepr.usurvive.command.USurviveCommands;
 import killercreepr.usurvive.config.Config;
+import killercreepr.usurvive.config.component.CfgUSurviveComponents;
 import killercreepr.usurvive.config.handler.FilePlayerDeath;
 import killercreepr.usurvive.data.entity.DeathHolder;
 import killercreepr.usurvive.death.DeathManager;
@@ -82,6 +84,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         new USurviveCommands(this).register();
 
         CfgRegistries.FILE.forEach(this::registerCfgHandlers);
+        CfgUSurviveComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());
 
         CruxItemsConfigHook.filePluginItem().registerTypeHandler(new FilePluginItemHandler(){
             @Override
