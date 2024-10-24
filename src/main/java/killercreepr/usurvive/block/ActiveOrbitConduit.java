@@ -56,6 +56,7 @@ public class ActiveOrbitConduit extends ActiveCruxBlockImpl implements ActiveCru
     @NotNull
     @Override
     public Event.Result interact(@NotNull PlayerInteractEvent e) {
+        if(!e.getAction().isRightClick()) return Event.Result.DENY;
         Player p = e.getPlayer();
         MergedTagContainer tags = TagContainer.merged().hook(p);
         for(String s : interactCommands){
