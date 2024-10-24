@@ -1,5 +1,6 @@
 package killercreepr.usurvive.config.component;
 
+import com.google.common.reflect.TypeToken;
 import killercreepr.crux.component.TypedDataComponent;
 import killercreepr.crux.registry.MappedRegistry;
 import killercreepr.cruxconfig.config.bukkit.handler.impl.component.FileDataComponentType;
@@ -8,9 +9,10 @@ import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.usurvive.component.USurviveComponents;
 import killercreepr.usurvive.component.impl.OrbitConduitComponent;
-import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class CfgUSurviveComponents {
     public static void register(@NotNull MappedRegistry<String, FileDataComponentType<?>> registry){
@@ -18,11 +20,12 @@ public class CfgUSurviveComponents {
             @Override
             public @Nullable TypedDataComponent<OrbitConduitComponent> deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e) {
                 FileRegistry reg = ctx.getRegistry();
-                Key currency = reg.deserializeFromFile(Key.class, e.get("currency"));
-                if(currency == null) return null;
+                List<String> interactCommands = reg.deserializeFromFile(
+                    new TypeToken<List<String>>(){}.getType(), e.get("interact_commands"));
+                if(interactCommands == null) return null;
                 return TypedDataComponent.create(
                     USurviveComponents.DEPOSIT_CONDUIT, new OrbitConduitComponent(
-                        currency
+                        interactCommands
                     )
                 );
             }

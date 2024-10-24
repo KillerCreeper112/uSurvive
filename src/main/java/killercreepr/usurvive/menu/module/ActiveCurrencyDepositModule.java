@@ -1,14 +1,18 @@
 package killercreepr.usurvive.menu.module;
 
 import killercreepr.crux.Crux;
-import killercreepr.cruxitems.item.plugin.PluginItem;
+import killercreepr.cruxcurrency.api.economy.EconomyHandler;
+import killercreepr.cruxcurrency.currency.CruxCurrency;
+import killercreepr.cruxcurrency.item.CruxCurrencyItem;
+import killercreepr.cruxcurrency.registry.CruxCurrencyRegistries;
 import killercreepr.cruxmenus.api.menu.CfgMenu;
 import killercreepr.cruxmenus.api.menu.Menu;
 import killercreepr.cruxmenus.api.menu.SlottedMenu;
+import killercreepr.cruxmenus.api.menu.contex.SlotContext;
 import killercreepr.cruxmenus.api.menu.slot.Slot;
 import killercreepr.cruxmenus.core.menu.module.SimpleActiveMenuModule;
 import killercreepr.cruxmenus.core.menu.slot.SimpleSlot;
-import net.kyori.adventure.key.Key;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -44,10 +48,25 @@ public class ActiveCurrencyDepositModule extends SimpleActiveMenuModule {
             @Override
             public boolean mayPlace(@NotNull HumanEntity p, @Nullable ItemStack item) {
                 if(item == null) return false;
-                for(Key k : module.acceptedCurrencies){
-                    if(PluginItem.isPluginItem(item, k)) return true;
-                }
-                return false;//todo make proper
+                CruxCurrencyItem currencyItem = CruxCurrencyRegistries.CURRENCY_ITEM.get(Crux.handlers().item().getType(item));
+                if(currencyItem == null) return false;
+                CruxCurrency currency = currencyItem.getCurrency().value();
+                return module.acceptedCurrencies.contains(currency.key());
+            }
+
+            @Override
+            public void onChanged(@NotNull SlotContext ctx) {
+                super.onChanged(ctx);
+                if(!(ctx.getWhoClicked() instanceof OfflinePlayer p)) return;
+                ItemStack newItem = ctx.getNewItem();
+                if(newItem == null) return;
+                CruxCurrencyItem currencyItem = CruxCurrencyRegistries.CURRENCY_ITEM.get(Crux.handlers().item().getType(newItem));
+                if(currencyItem == null) return;
+                CruxCurrency currency = currencyItem.getCurrency().value();
+                int amount = newItem.getAmount();
+                newItem.setAmount(0);
+                EconomyHandler.handler().depositBalance(p, currency, amount);
+                Crux.scheduler().runTask(menu::refresh);
             }
         };
     }
