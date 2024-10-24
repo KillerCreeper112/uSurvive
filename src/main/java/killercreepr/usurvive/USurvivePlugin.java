@@ -1,5 +1,8 @@
 package killercreepr.usurvive;
 
+import com.google.common.reflect.TypeToken;
+import killercreepr.crux.Crux;
+import killercreepr.crux.data.DataExchange;
 import killercreepr.crux.data.communication.*;
 import killercreepr.crux.data.entity.EntityMemory;
 import killercreepr.crux.data.entity.PlayerMemory;
@@ -7,18 +10,26 @@ import killercreepr.crux.item.dynamic.DynamicItem;
 import killercreepr.crux.module.StandardModules;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.crux.registries.CruxRegistries;
+import killercreepr.crux.valueproviders.number.NumberProvider;
 import killercreepr.cruxadvancements.config.loader.CfgCrazyAdvancementManagerCfgLoader;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.handler.BukkitCfgHandlers;
 import killercreepr.cruxconfig.config.bukkit.standard.SimpleLangConfig;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
+import killercreepr.cruxconfig.config.common.base.parsed.FileParsedObjectHandler;
 import killercreepr.cruxconfig.config.common.element.FileElement;
+import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxitems.config.CruxItemsConfigHook;
 import killercreepr.cruxitems.config.handler.FilePluginItemHandler;
 import killercreepr.cruxitems.item.plugin.PluginItem;
+import killercreepr.cruxmenus.api.menu.holder.MenuHolder;
+import killercreepr.cruxmenus.api.menu.module.MenuModule;
+import killercreepr.cruxmenus.api.menu.module.config.MenuModuleBuilder;
+import killercreepr.cruxmenus.core.menu.ConfigMenu;
+import killercreepr.cruxmenus.core.menu.holder.SimpleMenuHolder;
 import killercreepr.cruxworlds.world.manager.CruxWorldManager;
 import killercreepr.usurvive.block.USurviveBlocks;
 import killercreepr.usurvive.command.USurviveCommands;
@@ -38,18 +49,24 @@ import killercreepr.usurvive.listener.ObjectiveProgressListener;
 import killercreepr.usurvive.listener.QuickAccessListener;
 import killercreepr.usurvive.listener.SpawnListener;
 import killercreepr.usurvive.mechanics.grapple.standard.StandardGrappleHooks;
+import killercreepr.usurvive.menu.module.CurrencyDepositModule;
 import killercreepr.usurvive.registries.USurviveRegistries;
 import killercreepr.usurvive.values.DefaultValues;
 import killercreepr.usurvive.values.ValuesProvider;
 import killercreepr.usurvive.world.USurviveOverworld;
 import killercreepr.usurvive.world.entity.StandardOverworldGroups;
 import net.kyori.adventure.key.Key;
+import net.minecraft.world.inventory.MerchantMenu;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.Set;
 
 public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider {
     private static USurvivePlugin instance;
@@ -109,6 +126,27 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             @Override
             public PluginItem deserialize(@NotNull FileContext<?> ctx, @NotNull FileElement e, @NotNull Key key, @NotNull DynamicItem item) {
                 return new QuickAccessItem(key, item);
+            }
+        });
+
+        CruxCore.inst().cruxMenus().menuModuleRegistry().register(new MenuModuleBuilder() {
+            @Override
+            public @Nullable MenuModule build(@NotNull FileContext<?> ctx, @NotNull FileElement e, @Nullable FileObject menuCtx) {
+                if(!(e instanceof FileObject o)) return null;
+                FileRegistry reg = ctx.getRegistry();
+                String id = o.getObject(String.class, "id");
+                Collection<Key> acceptedCurrencies = reg.deserializeFromFile(
+                    new TypeToken<Set<Key>>(){}.getType(), o.get("accepted_currencies")
+                );
+                NumberProvider currencyIndexes = reg.deserializeFromFile(NumberProvider.class, o.get("currency_slots"));
+                return new CurrencyDepositModule(
+                    key(), id, acceptedCurrencies, currencyIndexes
+                );
+            }
+
+            @Override
+            public @NotNull Key key() {
+                return Crux.key("currency_deposit");
             }
         });
 
