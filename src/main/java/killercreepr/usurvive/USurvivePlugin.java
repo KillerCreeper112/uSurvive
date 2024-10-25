@@ -133,8 +133,9 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
                     new TypeToken<Set<Key>>(){}.getType(), o.get("accepted_currencies")
                 );
                 NumberProvider currencyIndexes = reg.deserializeFromFile(NumberProvider.class, o.get("currency_slots"));
+                Communicator depositMsg = reg.deserializeFromFile(MsgContainer.class, o.get("deposit_msg"));
                 return new CurrencyDepositModule(
-                    key(), id, acceptedCurrencies, currencyIndexes
+                    key(), id, acceptedCurrencies, currencyIndexes, depositMsg
                 );
             }
 

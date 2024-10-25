@@ -14,6 +14,7 @@ import killercreepr.cruxmenus.core.menu.module.SimpleActiveMenuModule;
 import killercreepr.cruxmenus.core.menu.slot.SimpleSlot;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -67,6 +68,9 @@ public class ActiveCurrencyDepositModule extends SimpleActiveMenuModule {
                 newItem.setAmount(0);
                 EconomyHandler.handler().depositBalance(p, currency, amount);
                 Crux.scheduler().runTask(menu::refresh);
+                if(module.depositMsg != null && p instanceof Player online){
+                    module.depositMsg.use(online);
+                }
             }
         };
     }
