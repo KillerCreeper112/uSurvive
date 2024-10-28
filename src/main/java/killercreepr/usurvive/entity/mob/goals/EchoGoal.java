@@ -150,7 +150,7 @@ public class EchoGoal extends CruxMobModeledGoal {
         Player p = event.getPlayer();
         if(inventory == null) inventory = buildInventory();
 
-        if(inventory == null) return;
+        if(inventory == null || inventory.getInventory().isEmpty()) return;
         inventory.open(p);
     }
 
@@ -183,6 +183,15 @@ public class EchoGoal extends CruxMobModeledGoal {
         if(exp == null){
             Crux.log(Level.WARNING, "Echo was damaged without first setup! " + mob.getUniqueId() + ", " + mob.getWorld());
             return;
+        }
+
+        switch (event.getCause()){
+            case FIRE, FIRE_TICK, FLY_INTO_WALL, HOT_FLOOR, LAVA, FALL, FALLING_BLOCK, LIGHTNING, DROWNING,
+                 DRYOUT ->{
+                event.setCancelled(true);
+                mob.setFireTicks(0);
+                return;
+            }
         }
 
         if(exp < 1) return;

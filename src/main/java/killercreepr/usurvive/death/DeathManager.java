@@ -170,7 +170,7 @@ public class DeathManager implements Listener {
 
     public void save(@NotNull UUID world, @NotNull WorldChunkStorage<PlayerDeath> chunk){
         try{
-            FileUtils.deleteDirectory(new CruxFolder(plugin, "deaths/" + world).file());
+            FileUtils.deleteDirectory(new CruxFolder(plugin, "data/usurvive/deaths/" + world).file());
         }catch (IOException ignored){}
         chunk.getData().forEach((key, block) ->{
             save(world, key, block);
@@ -178,7 +178,7 @@ public class DeathManager implements Listener {
     }
 
     public void save(@NotNull UUID world, long chunk, @NotNull ChunkBlockStorage<PlayerDeath> block){
-        CruxJson file = new CruxJson(plugin, "deaths/" + world + "/" + chunk);
+        CruxJson file = new CruxJson(plugin, "data/usurvive/deaths/" + world + "/" + chunk);
         file.serialize("values", block.getData().values());
         /*FileArray a = new FileArray(block.getData().size());
         block.getData().forEach((key, death) ->{

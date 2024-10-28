@@ -39,10 +39,7 @@ import killercreepr.usurvive.item.GrappleItem;
 import killercreepr.usurvive.item.QuickAccessItem;
 import killercreepr.usurvive.item.USurviveItems;
 import killercreepr.usurvive.lang.Lang;
-import killercreepr.usurvive.listener.GrappleListener;
-import killercreepr.usurvive.listener.ObjectiveProgressListener;
-import killercreepr.usurvive.listener.QuickAccessListener;
-import killercreepr.usurvive.listener.SpawnListener;
+import killercreepr.usurvive.listener.*;
 import killercreepr.usurvive.mechanics.grapple.standard.StandardGrappleHooks;
 import killercreepr.usurvive.menu.module.CurrencyDepositModule;
 import killercreepr.usurvive.registries.USurviveRegistries;
@@ -182,7 +179,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new GrappleListener(),
             new QuickAccessListener(),
             new ObjectiveProgressListener(this),
-            new SpawnListener(values, this)
+            new SpawnListener(values, this),
+            new CommandListener()
         );
 
         super.enabled();
