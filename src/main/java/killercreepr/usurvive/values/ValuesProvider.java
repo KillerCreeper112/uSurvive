@@ -3,6 +3,7 @@ package killercreepr.usurvive.values;
 import killercreepr.crux.data.Holder;
 import killercreepr.crux.data.Reloadable;
 import killercreepr.crux.valueproviders.number.NumberProvider;
+import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -36,4 +37,5 @@ public interface ValuesProvider extends Reloadable {
     @NotNull
     NumberProvider ECHO_MAX_HEALTH();
     @NotNull Holder<List<String>> FIRST_JOIN_COMMANDS();
+    @NotNull Holder<Location> RESPAWN_LOCATION();
 }

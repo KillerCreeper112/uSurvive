@@ -1,5 +1,6 @@
 package killercreepr.usurvive.config;
 
+import killercreepr.crux.Crux;
 import killercreepr.crux.data.Holder;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.crux.valueproviders.number.NumberProvider;
@@ -10,6 +11,8 @@ import killercreepr.cruxconfig.config.bukkit.value.CommonValue;
 import killercreepr.cruxconfig.config.bukkit.value.NumCfgValue;
 import killercreepr.usurvive.values.DefaultValues;
 import killercreepr.usurvive.values.ValuesProvider;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +22,10 @@ import java.util.Map;
 
 public class Config extends Cfg implements ValuesProvider {
     public final CfgValue<String> SPAWN_WORLD = new CommonValue<>(DefaultValues.SPAWN_WORLD.value()){};
+    public final CfgValue<String> RESPAWN_WORLD = new CommonValue<>(DefaultValues.SPAWN_WORLD.value()){};
+    public final NumCfgValue RESPAWN_X = new NumCfgValue(NumberProvider.constant(0));
+    public final NumCfgValue RESPAWN_Y = new NumCfgValue(NumberProvider.constant(0));
+    public final NumCfgValue RESPAWN_Z = new NumCfgValue(NumberProvider.constant(0));
     public final NumCfgValue SPAWN_TELEPORT_TIME = new NumCfgValue(DefaultValues.SPAWN_TELEPORT_TIME);
     public final NumCfgValue SPAWN_TELEPORT_MSG_INTERVAL = new NumCfgValue(DefaultValues.SPAWN_TELEPORT_MSG_INTERVAL);
     public final CfgValue<String> SPAWN_TELEPORT_MODULES = new CommonValue<>(DefaultValues.SPAWN_TELEPORT_MODULES.value()){};
@@ -132,5 +139,16 @@ public class Config extends Cfg implements ValuesProvider {
     @Override
     public Holder<List<String>> FIRST_JOIN_COMMANDS() {
         return FIRST_JOIN_COMMANDS;
+    }
+
+    @NotNull
+    @Override
+    public Holder<Location> RESPAWN_LOCATION() {
+        return () ->{
+            String name = RESPAWN_WORLD.value();
+            World world = name == null ? null : Crux.getServer().getWorld(name);
+            if(world== null) return null;
+            return new Location(world, RESPAWN_X.getDouble(), RESPAWN_Y.getDouble(), RESPAWN_Z.getDouble());
+        };
     }
 }

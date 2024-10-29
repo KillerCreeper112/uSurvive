@@ -3,6 +3,7 @@ package killercreepr.usurvive.values;
 import killercreepr.crux.data.Holder;
 import killercreepr.crux.valueproviders.number.NumberProvider;
 import killercreepr.crux.valueproviders.number.UniformNumber;
+import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -112,5 +113,11 @@ public class DefaultValues implements ValuesProvider {
     @Override
     public Holder<List<String>> FIRST_JOIN_COMMANDS() {
         return FIRST_JOIN_COMMANDS;
+    }
+
+    @NotNull
+    @Override
+    public Holder<Location> RESPAWN_LOCATION() {
+        return Holder.empty();
     }
 }

@@ -50,6 +50,9 @@ public class EchoGoal extends CruxMobModeledGoal {
     public EchoGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob, ActiveModel model) {
         super(key, mob, model);
         exp = CruxTag.get(mob, "exp", PersistentDataType.INTEGER, null);
+        PlayerDeath death = getPlayerDeathOrNull();
+        if(death==null) return;
+        firstSetup(death);
     }
 
     protected Integer exp;
@@ -64,6 +67,9 @@ public class EchoGoal extends CruxMobModeledGoal {
 
         playAnimation("wings_flap", true);
         playAnimation("hover", true);
+        mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(
+            CruxAttribute.get(mob, CruxAttribute.MOVEMENT_SPEED)
+        );
     }
 
     public void transformToGrave(){
@@ -100,9 +106,6 @@ public class EchoGoal extends CruxMobModeledGoal {
         if(!isInGraveTransformation()) return;
         if(new GetEntityNear<>(Player.class).center(mob).range(8D).find().isEmpty()) return;
         transformToEcho();
-        mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(
-            CruxAttribute.get(mob, CruxAttribute.MOVEMENT_SPEED)
-        );
     }
 
     protected int deathLeaving = 200;
@@ -180,6 +183,11 @@ public class EchoGoal extends CruxMobModeledGoal {
     @EventHandler(ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event) {
         if(!event.getEntity().equals(mob)) return;
+        if(isInGraveTransformation()){
+            event.setCancelled(true);
+            transformToEcho();
+            return;
+        }
         if(exp == null){
             Crux.log(Level.WARNING, "Echo was damaged without first setup! " + mob.getUniqueId() + ", " + mob.getWorld());
             return;
@@ -238,10 +246,14 @@ public class EchoGoal extends CruxMobModeledGoal {
     @Override
     protected void onRemovalOrDeath(boolean died) {
         super.onRemovalOrDeath(died);
+        PlayerDeath leavingDeath = null;
+        if(state == State.LEAVING){
+            leavingDeath = getPlayerDeathOrNull();
+        }
         removed();
         if(!died) return;
-        PlayerDeath death = getPlayerDeath();
-        removeDeath();
+        PlayerDeath death = leavingDeath == null ? getPlayerDeath() : leavingDeath;
+        if(leavingDeath == null) removeDeath();
 
         death.getDrops().forEach(drop ->{
             mob.getWorld().dropItem(mob.getLocation(), drop);

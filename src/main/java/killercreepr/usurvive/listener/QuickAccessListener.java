@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -25,11 +24,6 @@ public class QuickAccessListener implements Listener {
             }
             return false;
         });
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onEntityDeath(EntityDeathEvent event) {
-        event.getDrops().removeIf(e -> PluginItem.isPluginItem(e, USurviveItems.QUICK_ACCESS));
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
