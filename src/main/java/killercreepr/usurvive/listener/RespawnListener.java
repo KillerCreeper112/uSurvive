@@ -2,6 +2,7 @@ package killercreepr.usurvive.listener;
 
 import killercreepr.usurvive.values.ValuesProvider;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -17,8 +18,14 @@ public class RespawnListener implements Listener {
         this.cfg = cfg;
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
+        Player p = event.getPlayer();
+        Location respawn = p.getRespawnLocation();
+        if(respawn != null){
+            event.setRespawnLocation(respawn);
+            return;
+        }
         Location spawn = cfg.RESPAWN_LOCATION().value();
         if(spawn==null) return;
         event.setRespawnLocation(spawn);

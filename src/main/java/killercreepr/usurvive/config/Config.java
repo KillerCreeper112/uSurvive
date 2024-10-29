@@ -1,8 +1,8 @@
 package killercreepr.usurvive.config;
 
-import killercreepr.crux.Crux;
 import killercreepr.crux.data.Holder;
 import killercreepr.crux.plugin.CruxPlugin;
+import killercreepr.crux.util.CruxWorldUtil;
 import killercreepr.crux.valueproviders.number.NumberProvider;
 import killercreepr.cruxconfig.config.bukkit.file.Cfg;
 import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
@@ -146,7 +146,7 @@ public class Config extends Cfg implements ValuesProvider {
     public Holder<Location> RESPAWN_LOCATION() {
         return () ->{
             String name = RESPAWN_WORLD.value();
-            World world = name == null ? null : Crux.getServer().getWorld(name);
+            World world = name == null ? null : CruxWorldUtil.getOrLoadWorld(name);
             if(world== null) return null;
             return new Location(world, RESPAWN_X.getDouble(), RESPAWN_Y.getDouble(), RESPAWN_Z.getDouble());
         };

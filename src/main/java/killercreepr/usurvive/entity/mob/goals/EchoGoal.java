@@ -1,10 +1,13 @@
 package killercreepr.usurvive.entity.mob.goals;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import com.destroystokyo.paper.entity.ai.GoalKey;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import killercreepr.crux.Crux;
 import killercreepr.crux.context.InputContext;
+import killercreepr.crux.data.communication.CreateSound;
+import killercreepr.crux.event.CruxEntityDamageEvent;
 import killercreepr.crux.tags.container.TagContainer;
 import killercreepr.crux.tags.provider.StringTagProvider;
 import killercreepr.crux.tags.resolver.Tag;
@@ -13,6 +16,7 @@ import killercreepr.crux.util.CruxTag;
 import killercreepr.crux.util.GetEntityNear;
 import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
+import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import killercreepr.cruxmenus.api.menu.Menu;
@@ -24,6 +28,7 @@ import killercreepr.usurvive.menu.DeathMenu;
 import killercreepr.usurvive.values.ValuesProvider;
 import org.bukkit.Chunk;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
@@ -31,6 +36,8 @@ import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
@@ -38,11 +45,12 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.logging.Level;
 
-public class EchoGoal extends CruxMobModeledGoal {
+public class EchoGoal extends CruxMobModeledGoal implements Listener {
     public EchoGoal(@NotNull Mob mob, ActiveModel model) {
         this(CruxMobGoal.defaultKey(), mob, model);
     }
@@ -50,6 +58,24 @@ public class EchoGoal extends CruxMobModeledGoal {
     public EchoGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob, ActiveModel model) {
         super(key, mob, model);
         exp = CruxTag.get(mob, "exp", PersistentDataType.INTEGER, null);
+
+        sounds(new CruxGoalSounds(mob) {
+            @Override
+            public @Nullable CreateSound attack() {
+                return CreateSound.sound(Sound.ENTITY_VEX_CHARGE, 2f);
+            }
+
+            @Override
+            public @Nullable CreateSound hurt() {
+                return CreateSound.sound(Sound.ENTITY_VEX_HURT, 2f);
+            }
+
+            @Override
+            public @Nullable CreateSound ambient() {
+                return CreateSound.sound(Sound.ENTITY_VEX_AMBIENT, 2f);
+            }
+        });
+
         PlayerDeath death = getPlayerDeathOrNull();
         if(death==null) return;
         firstSetup(death);
@@ -67,9 +93,19 @@ public class EchoGoal extends CruxMobModeledGoal {
 
         playAnimation("wings_flap", true);
         playAnimation("hover", true);
+        playAnimation("spawn", true);
         mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(
             CruxAttribute.get(mob, CruxAttribute.MOVEMENT_SPEED)
         );
+        CreateSound.sound(Sound.BLOCK_SOUL_SOIL_BREAK, .7f).playAt(mob);
+        CreateSound.sound(Sound.ENTITY_ZOMBIE_CONVERTED_TO_DROWNED, 1.5f).playAt(mob);
+        new ParticleBuilder(Particle.SOUL_FIRE_FLAME)
+            .extra(.3)
+            .offset(1, 1, 1)
+            .count(CruxMath.random(10, 20))
+            .location(mob.getLocation().add(0, mob.getHeight()/2, 0))
+            .spawn()
+        ;
     }
 
     public void transformToGrave(){
@@ -156,6 +192,23 @@ public class EchoGoal extends CruxMobModeledGoal {
         if(inventory == null || inventory.getInventory().isEmpty()) return;
         inventory.open(p);
     }
+
+    @EventHandler(ignoreCancelled = true)
+    public void entityDamage(CruxEntityDamageEvent event){
+        if(mob.equals(event.getDamager())){
+            playAnimation("attack", true);
+            return;
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if(mob.equals(event.getDamager())){
+            playAnimation("attack", true);
+            return;
+        }
+    }
+
 
     @EventHandler(ignoreCancelled = true)
     public void onEntityTarget(EntityTargetEvent event) {
@@ -268,6 +321,22 @@ public class EchoGoal extends CruxMobModeledGoal {
         if (!event.getEntity().equals(this.mob)) return;
         event.getDrops().clear();
         event.setDroppedExp(0);
+
+        CreateSound.sound(Sound.ENTITY_VEX_DEATH, 1.5f).playAt(mob);
+        CreateSound.sound(Sound.ENTITY_ZOMBIE_CONVERTED_TO_DROWNED, 2f).playAt(mob);
+        new ParticleBuilder(Particle.SOUL_FIRE_FLAME)
+            .extra(.5)
+            .offset(.5, .5, .5)
+            .count(CruxMath.random(8, 15))
+            .location(mob.getLocation().add(0, mob.getHeight()/2, 0))
+            .spawn()
+
+            .particle(Particle.SOUL)
+            .count(0)
+            .extra(0)
+            .offset(0, 0, 0)
+            .spawn()
+        ;
     }
 
     public void spawnExp(int value){
