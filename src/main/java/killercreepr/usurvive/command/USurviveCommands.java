@@ -9,18 +9,25 @@ import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSele
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import killercreepr.crux.Crux;
+import killercreepr.crux.data.Holder;
 import killercreepr.crux.data.communication.Communicator;
 import killercreepr.crux.data.entity.EntityMemory;
 import killercreepr.crux.tags.container.TagContainer;
 import killercreepr.crux.tags.resolver.Tag;
+import killercreepr.crux.valueproviders.number.NumberProvider;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxcurrency.data.entity.CurrencyHolder;
 import killercreepr.cruxteleport.teleport.CruxTeleport;
 import killercreepr.cruxteleport.teleport.module.TeleportModules;
+import killercreepr.cruxteleport.teleport.world.RandomWorldTP;
 import killercreepr.cruxteleport.util.CruxTeleporter;
 import killercreepr.usurvive.USurvivePlugin;
+import killercreepr.usurvive.command.argument.TargetPlayerDeathResolver;
+import killercreepr.usurvive.command.argument.USurviveArgs;
+import killercreepr.usurvive.death.PlayerDeath;
 import killercreepr.usurvive.lang.Lang;
 import killercreepr.usurvive.values.ValuesProvider;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -29,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class USurviveCommands {
     protected final @NotNull USurvivePlugin plugin;
@@ -144,6 +152,50 @@ public class USurviveCommands {
                     })
                     .build(), List.of("orbit", "balance", "bal")
             );
+
+            commands.register(
+                Commands.literal("usurvive")
+                    .requires(sender -> sender.getSender().hasPermission("usurvive.cmds.usurvive.use"))
+                    .then(
+                        Commands.literal("death")
+                            .then(
+                                Commands.argument("target", ArgumentTypes.player())
+                                    .then(
+                                        Commands.argument("death", USurviveArgs.TARGET_PLAYER_DEATH)
+                                            .then(
+                                                Commands.literal("tp")
+                                                    .executes(ctx ->{
+                                                        Player target = ctx.getArgument("target", PlayerSelectorArgumentResolver.class)
+                                                            .resolve(ctx.getSource()).getFirst();
+                                                        return tpToDeath(
+                                                            ctx.getSource(),
+                                                            target,
+                                                            ctx.getArgument("death", TargetPlayerDeathResolver.class)
+                                                                .resolve(ctx.getSource(), target),
+                                                            Set.of(target)
+                                                        );
+                                                    })
+                                                    .then(
+                                                        Commands.argument("to_teleport", ArgumentTypes.players())
+                                                            .executes(ctx ->{
+                                                                Player target = ctx.getArgument("target", PlayerSelectorArgumentResolver.class)
+                                                                    .resolve(ctx.getSource()).getFirst();
+                                                                return tpToDeath(
+                                                                    ctx.getSource(),
+                                                                    target,
+                                                                    ctx.getArgument("death", TargetPlayerDeathResolver.class)
+                                                                        .resolve(ctx.getSource(), target),
+                                                                    ctx.getArgument("to_teleport", PlayerSelectorArgumentResolver.class)
+                                                                        .resolve(ctx.getSource())
+                                                                );
+                                                            })
+                                                    )
+                                            )
+                                    )
+                            )
+                    )
+                    .build(), List.of("usu")
+            );
         });
     }
 
@@ -154,5 +206,24 @@ public class USurviveCommands {
 
     public @NotNull CommandSender getExecutor(@NotNull CommandSourceStack source){
         return Objects.requireNonNullElse(source.getExecutor(), source.getSender());
+    }
+
+    public int tpToDeath(CommandSourceStack source, Player target, PlayerDeath death, Collection<Player> toTp){
+        CommandSender sender = getExecutor(source);
+        World world = death.getWorld();
+        if(world == null){
+            sender.sendMessage("World not found for " + target.getName() + "'s death at " + death.getTime() + ".");
+            return 0;
+        }
+        Location spawn = death.getPosition().toLocation(world);
+        for(Player p : toTp){
+            //RandomWorldTP.tpNear(spawn, 16).findLocationToTeleportAsync(p)
+            CruxTeleport tp = CruxTeleport.teleport(RandomWorldTP.tpNear(spawn, NumberProvider.uniform(16, 40)).findLocationToTeleportAsync(p),
+                1, TeleportModules.parseFromString("nocmds", p.getUniqueId()));
+            CruxTeleporter.teleporter().scheduleTeleport(p, tp);
+            sender.sendMessage("Scheduled teleport for " + p.getName() + " at " + target.getName() + "'s death in world, " + world.getName() + ": " +
+                spawn.getBlockX() + ", " + spawn.getBlockY() + ", " + spawn.getBlockZ() + ".");
+        }
+        return 1;
     }
 }

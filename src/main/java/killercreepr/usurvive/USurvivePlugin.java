@@ -2,6 +2,7 @@ package killercreepr.usurvive;
 
 import com.google.common.reflect.TypeToken;
 import killercreepr.crux.Crux;
+import killercreepr.crux.data.Holder;
 import killercreepr.crux.data.communication.*;
 import killercreepr.crux.data.entity.EntityMemory;
 import killercreepr.crux.data.entity.PlayerMemory;
@@ -9,6 +10,7 @@ import killercreepr.crux.item.dynamic.DynamicItem;
 import killercreepr.crux.module.StandardModules;
 import killercreepr.crux.plugin.CruxPlugin;
 import killercreepr.crux.registries.CruxRegistries;
+import killercreepr.crux.registry.KeyedRegistry;
 import killercreepr.crux.valueproviders.number.NumberProvider;
 import killercreepr.cruxadvancements.config.loader.CfgCrazyAdvancementManagerCfgLoader;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
@@ -23,8 +25,14 @@ import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxitems.config.CruxItemsConfigHook;
 import killercreepr.cruxitems.config.handler.FilePluginItemHandler;
 import killercreepr.cruxitems.item.plugin.PluginItem;
+import killercreepr.cruxmenus.CruxMenusModule;
+import killercreepr.cruxmenus.api.menu.CfgMenu;
+import killercreepr.cruxmenus.api.menu.config.handler.FileMenuHolder;
+import killercreepr.cruxmenus.api.menu.holder.MenuItems;
 import killercreepr.cruxmenus.api.menu.module.MenuModule;
 import killercreepr.cruxmenus.api.menu.module.config.MenuModuleBuilder;
+import killercreepr.cruxmenus.core.menu.module.standard.SimpleFilePagedCfg;
+import killercreepr.cruxmenus.core.menu.module.standard.SimplePagedMenuModule;
 import killercreepr.cruxworlds.world.manager.CruxWorldManager;
 import killercreepr.usurvive.block.USurviveBlocks;
 import killercreepr.usurvive.command.USurviveCommands;
@@ -43,6 +51,7 @@ import killercreepr.usurvive.listener.*;
 import killercreepr.usurvive.mechanics.grapple.standard.StandardGrappleHooks;
 import killercreepr.usurvive.menu.module.CurrencyDepositModule;
 import killercreepr.usurvive.registries.USurviveRegistries;
+import killercreepr.usurvive.tags.object.PlayerDeathTags;
 import killercreepr.usurvive.values.DefaultValues;
 import killercreepr.usurvive.values.ValuesProvider;
 import killercreepr.usurvive.world.USurviveOverworld;
@@ -56,8 +65,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 
 public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider {
     private static USurvivePlugin instance;
@@ -141,6 +149,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
                 return Crux.key("currency_deposit");
             }
         });
+        CruxMenusModule menusModule = CruxCore.inst().cruxMenus();
+        registerMenuModules(menusModule.menuRegistry().menuModule(), menusModule.menuModuleRegistry());
 
         EntityMemory.registerFunction(this, mem ->{
             if(!(mem instanceof PlayerMemory m)) return;
@@ -151,6 +161,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
         CruxWorldManager worldManager = CruxCore.inst().worldManager();
         worldManager.getCreatorRegistry().register("world", USurviveOverworld::new);
+        Crux.TAGS.register(new PlayerDeathTags());
     }
 
     protected LangProvider langProvider;
@@ -189,6 +200,30 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         deathManager.load();
 
         //cfgManagerLoader.load();
+    }
+
+    public void registerMenuModules(@NotNull FileMenuHolder<?> fileMenuHolder, @NotNull KeyedRegistry<MenuModuleBuilder> registry) {
+        registry.register(new SimpleFilePagedCfg(fileMenuHolder, Crux.key("paged_player_deaths")) {
+            @NotNull
+            @Override
+            public MenuModule parsePaged(@NotNull String id,
+                                         @NotNull NumberProvider indexes,
+                                         @Nullable String valuesFilter,
+                                         @Nullable MenuItems valueItems,
+                                         @Nullable MenuItems emptyItems) {
+                return new SimplePagedMenuModule<PlayerDeath>(id, indexes, valuesFilter, valueItems, emptyItems, this) {
+                    @Override
+                    public @NotNull Holder<List<PlayerDeath>> getValues(@NotNull CfgMenu cfgMenu) {
+                        Player player = cfgMenu.info().getOrThrow(Player.class);
+                        return () -> {
+                            List<PlayerDeath> list = new ArrayList<>(deathManager.getAllDeaths(player));
+                            list.sort(Comparator.comparing(PlayerDeath::getTime));
+                            return list;
+                        };
+                    }
+                };
+            }
+        });
     }
 
     @EventHandler(ignoreCancelled = true)
