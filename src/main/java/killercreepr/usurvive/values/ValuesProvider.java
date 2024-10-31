@@ -38,4 +38,6 @@ public interface ValuesProvider extends Reloadable {
     NumberProvider ECHO_MAX_HEALTH();
     @NotNull Holder<List<String>> FIRST_JOIN_COMMANDS();
     @NotNull Holder<Location> RESPAWN_LOCATION();
+    @NotNull
+    NumberProvider DEATH_EXPIRY_TIME();
 }

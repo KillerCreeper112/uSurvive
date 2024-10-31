@@ -20,8 +20,9 @@ public class PlayerDeath implements PositionPosed {
     protected @NotNull Collection<ItemStack> drops;
     protected final int experience;
     protected final long time;
+    protected final int expiryTime;
 
-    public PlayerDeath(@NotNull UUID playerUUID, @NotNull UUID worldUUID, @NotNull CruxPosition position, @NotNull UUID guardianUUID, @NotNull Collection<ItemStack> drops, int experience, long time) {
+    public PlayerDeath(@NotNull UUID playerUUID, @NotNull UUID worldUUID, @NotNull CruxPosition position, @NotNull UUID guardianUUID, @NotNull Collection<ItemStack> drops, int experience, long time, int expiryTime) {
         this.playerUUID = playerUUID;
         this.worldUUID = worldUUID;
         this.position = position;
@@ -29,6 +30,19 @@ public class PlayerDeath implements PositionPosed {
         this.drops = drops;
         this.experience = experience;
         this.time = time;
+        this.expiryTime = expiryTime;
+    }
+
+    public int getExpiryTime() {
+        return expiryTime;
+    }
+
+    public int getTimeUntilExpire(){
+        return Math.max(expiryTime - (int) ((System.currentTimeMillis() - time) / 50L), 0);
+    }
+
+    public boolean hasExpired(){
+        return getTimeUntilExpire() < 1;
     }
 
     public void setWorldUUID(@NotNull UUID worldUUID) {

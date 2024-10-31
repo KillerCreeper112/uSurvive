@@ -9,7 +9,6 @@ import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSele
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import killercreepr.crux.Crux;
-import killercreepr.crux.data.Holder;
 import killercreepr.crux.data.communication.Communicator;
 import killercreepr.crux.data.entity.EntityMemory;
 import killercreepr.crux.tags.container.TagContainer;

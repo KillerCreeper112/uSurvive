@@ -30,6 +30,7 @@ public class DefaultValues implements ValuesProvider {
     public static final NumberProvider ECHO_MAX_HEALTH = NumberProvider.equation(
         "10 + (<exp> / 50)"
     );
+    public static final NumberProvider DEATH_EXPIRY_TIME = NumberProvider.constant(72000);
 
     @NotNull
     @Override
@@ -119,5 +120,11 @@ public class DefaultValues implements ValuesProvider {
     @Override
     public Holder<Location> RESPAWN_LOCATION() {
         return Holder.empty();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider DEATH_EXPIRY_TIME() {
+        return DEATH_EXPIRY_TIME;
     }
 }

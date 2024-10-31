@@ -3,6 +3,7 @@ package killercreepr.usurvive.data.entity;
 import killercreepr.crux.Crux;
 import killercreepr.crux.data.entity.PlayerMemory;
 import killercreepr.crux.data.entity.PlayerTickedDataHolder;
+import killercreepr.usurvive.USurvivePlugin;
 import killercreepr.usurvive.data.DeathGuide;
 import killercreepr.usurvive.death.DeathManager;
 import killercreepr.usurvive.death.PlayerDeath;
@@ -26,6 +27,10 @@ public class DeathHolder extends PlayerTickedDataHolder {
 
     public DeathHolder(@NotNull PlayerMemory parent, @NotNull ValuesProvider cfg, @NotNull DeathManager deathManager) {
         this(KEY, parent, cfg, deathManager);
+    }
+
+    public int getDeathExpiryTime(){
+        return USurvivePlugin.inst().values().DEATH_EXPIRY_TIME().value().intValue();
     }
 
     protected int tick = 0;

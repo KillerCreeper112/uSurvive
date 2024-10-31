@@ -39,6 +39,7 @@ public class Config extends Cfg implements ValuesProvider {
     public final CommonValue<Map<String, List<String>>> DIMENSION_DISABLED_COMMANDS = new CommonValue<>(DefaultValues.DIMENSION_DISABLED_COMMANDS.value()){};
     public final NumCfgValue ECHO_MAX_HEALTH = new NumCfgValue(DefaultValues.ECHO_MAX_HEALTH);
     public final CfgValue<List<String>> FIRST_JOIN_COMMANDS = new CommonValue<>(DefaultValues.FIRST_JOIN_COMMANDS.value()){};
+    public final NumCfgValue DEATH_EXPIRY_TIME = new NumCfgValue(DefaultValues.DEATH_EXPIRY_TIME);
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -150,5 +151,11 @@ public class Config extends Cfg implements ValuesProvider {
             if(world== null) return null;
             return new Location(world, RESPAWN_X.getDouble(), RESPAWN_Y.getDouble(), RESPAWN_Z.getDouble());
         };
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider DEATH_EXPIRY_TIME() {
+        return DEATH_EXPIRY_TIME.value();
     }
 }

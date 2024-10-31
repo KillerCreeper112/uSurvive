@@ -2,6 +2,7 @@ package killercreepr.usurvive.death;
 
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
+import killercreepr.crux.data.entity.EntityMemory;
 import killercreepr.crux.data.world.ChunkBlockStorage;
 import killercreepr.crux.data.world.CruxPosition;
 import killercreepr.crux.data.world.WorldChunkStorage;
@@ -9,9 +10,11 @@ import killercreepr.crux.util.CruxGoalUtil;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
 import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.usurvive.data.entity.DeathHolder;
 import killercreepr.usurvive.death.storage.MultiVerseDeathStorage;
 import killercreepr.usurvive.entity.USurviveMobs;
 import killercreepr.usurvive.entity.mob.goals.EchoGoal;
+import killercreepr.usurvive.event.PlayerDeathExpireEvent;
 import killercreepr.usurvive.event.PlayerEchoDeathEvent;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
@@ -47,9 +50,14 @@ public class DeathManager implements Listener {
         Collection<PlayerDeath> list = new HashSet<>();
         deaths.forEach(world ->{
             world.forEach(chunk ->{
-                chunk.forEach(l ->{
-                    if(filter != null && !filter.test(l)) return;
+                chunk.removeIf(l ->{
+                    if(l.hasExpired()){
+                        PlayerDeathExpireEvent expire = new PlayerDeathExpireEvent(this, l);
+                        if(expire.callEvent()) return true;
+                    }
+                    if(filter != null && !filter.test(l)) return false;
                     list.add(l);
+                    return false;
                 });
             });
         });
@@ -65,8 +73,13 @@ public class DeathManager implements Listener {
         if(storage==null) return Set.of();
         Collection<PlayerDeath> list = new HashSet<>();
         storage.forEach(s ->{
-            s.forEach(death ->{
+            s.removeIf(death ->{
+                if(death.hasExpired()){
+                    PlayerDeathExpireEvent expire = new PlayerDeathExpireEvent(this, death);
+                    if(expire.callEvent()) return true;
+                }
                 if(death.getPlayerUUID().equals(player)) list.add(death);
+                return false;
             });
         });
         return list;
@@ -122,13 +135,15 @@ public class DeathManager implements Listener {
             return;
         }
 
+        DeathHolder deathHolder = EntityMemory.getOrCreateDataHolder(p, DeathHolder.class);
+
         Entity echo = USurviveMobs.ECHO.spawn(p.getLocation());
 
         PlayerDeath death = new PlayerDeath(
             p.getUniqueId(), p.getWorld().getUID(),
             CruxPosition.location(p.getLocation()), echo.getUniqueId(),
             new ArrayList<>(event.getDrops()), totalExperience,
-            System.currentTimeMillis()
+            System.currentTimeMillis(), deathHolder.getDeathExpiryTime()
         );
         if(echo instanceof Mob m){
             EchoGoal goal = CruxGoalUtil.getGoal(m, EchoGoal.class, EchoGoal.defaultKey());
