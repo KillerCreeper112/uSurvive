@@ -272,7 +272,9 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         AutoFileOptions cacheDisabled = AutoFileOptions.builder()
             .disabledFields(f -> f.getName().equalsIgnoreCase("cache"))
             .build();
-        registry.registerFileHandler(ResourcePackData.class, new AutoFileHandler<>(ResourcePackData.class, cacheDisabled));
-        registry.registerFileHandler(ResourcePackRequestData.class, new AutoFileHandler<>(ResourcePackRequestData.class, cacheDisabled));
+        registry.registerFileHandler(
+            new AutoFileHandler<>(ResourcePackData.class, cacheDisabled),
+            new AutoFileHandler<>(ResourcePackRequestData.class, cacheDisabled)
+        );
     }
 }

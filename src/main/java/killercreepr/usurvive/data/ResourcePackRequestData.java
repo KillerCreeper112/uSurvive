@@ -9,12 +9,12 @@ import java.util.Collection;
 
 public class ResourcePackRequestData {
     protected final Component prompt;
-    protected final boolean force;
+    protected final Boolean force;
     protected final Collection<ResourcePackData> resourcePacks;
 
     protected ResourcePackRequest cache;
 
-    public ResourcePackRequestData(Component prompt, boolean force, Collection<ResourcePackData> resourcePacks) {
+    public ResourcePackRequestData(Component prompt, Boolean force, Collection<ResourcePackData> resourcePacks) {
         this.prompt = prompt;
         this.force = force;
         this.resourcePacks = resourcePacks;

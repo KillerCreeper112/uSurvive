@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 public class SetupListener implements Listener {
     protected final ValuesProvider cfg;
@@ -25,7 +25,7 @@ public class SetupListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    public void onPlayerLogin(PlayerLoginEvent event) {
+    public void onPlayerLogin(PlayerJoinEvent event) {
         ResourcePackRequestData data = cfg.RESOURCE_PACKS().value();
         if(data == null) return;
         Player p = event.getPlayer();
