@@ -3,6 +3,7 @@ package killercreepr.usurvive.values;
 import killercreepr.crux.data.Holder;
 import killercreepr.crux.valueproviders.number.NumberProvider;
 import killercreepr.crux.valueproviders.number.UniformNumber;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
@@ -126,5 +127,11 @@ public class DefaultValues implements ValuesProvider {
     @Override
     public NumberProvider DEATH_EXPIRY_TIME() {
         return DEATH_EXPIRY_TIME;
+    }
+
+    @NotNull
+    @Override
+    public Holder<Component> SERVER_MOTD() {
+        return Holder.empty();
     }
 }

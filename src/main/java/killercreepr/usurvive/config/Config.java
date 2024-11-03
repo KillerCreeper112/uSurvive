@@ -11,6 +11,7 @@ import killercreepr.cruxconfig.config.bukkit.value.CommonValue;
 import killercreepr.cruxconfig.config.bukkit.value.NumCfgValue;
 import killercreepr.usurvive.values.DefaultValues;
 import killercreepr.usurvive.values.ValuesProvider;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
@@ -40,6 +41,7 @@ public class Config extends Cfg implements ValuesProvider {
     public final NumCfgValue ECHO_MAX_HEALTH = new NumCfgValue(DefaultValues.ECHO_MAX_HEALTH);
     public final CfgValue<List<String>> FIRST_JOIN_COMMANDS = new CommonValue<>(DefaultValues.FIRST_JOIN_COMMANDS.value()){};
     public final NumCfgValue DEATH_EXPIRY_TIME = new NumCfgValue(DefaultValues.DEATH_EXPIRY_TIME);
+    public final CfgValue<Component> SERVER_MOTD = new CommonValue<>(){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -157,5 +159,11 @@ public class Config extends Cfg implements ValuesProvider {
     @Override
     public NumberProvider DEATH_EXPIRY_TIME() {
         return DEATH_EXPIRY_TIME.value();
+    }
+
+    @NotNull
+    @Override
+    public Holder<Component> SERVER_MOTD() {
+        return SERVER_MOTD;
     }
 }

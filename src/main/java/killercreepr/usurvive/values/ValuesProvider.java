@@ -3,6 +3,7 @@ package killercreepr.usurvive.values;
 import killercreepr.crux.data.Holder;
 import killercreepr.crux.data.Reloadable;
 import killercreepr.crux.valueproviders.number.NumberProvider;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,4 +41,6 @@ public interface ValuesProvider extends Reloadable {
     @NotNull Holder<Location> RESPAWN_LOCATION();
     @NotNull
     NumberProvider DEATH_EXPIRY_TIME();
+    @NotNull
+    Holder<Component> SERVER_MOTD();
 }

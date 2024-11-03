@@ -192,7 +192,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new ObjectiveProgressListener(this),
             new SpawnListener(values, this),
             new CommandListener(),
-            new RespawnListener(this, values)
+            new RespawnListener(this, values),
+            new ServerPingListener(values)
         );
 
         super.enabled();
