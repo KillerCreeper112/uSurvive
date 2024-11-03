@@ -20,6 +20,8 @@ import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
+import killercreepr.cruxconfig.config.common.handler.AutoFileHandler;
+import killercreepr.cruxconfig.config.common.handler.AutoFileOptions;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxitems.config.CruxItemsConfigHook;
@@ -39,6 +41,8 @@ import killercreepr.usurvive.command.USurviveCommands;
 import killercreepr.usurvive.config.Config;
 import killercreepr.usurvive.config.component.CfgUSurviveComponents;
 import killercreepr.usurvive.config.handler.FilePlayerDeath;
+import killercreepr.usurvive.data.ResourcePackData;
+import killercreepr.usurvive.data.ResourcePackRequestData;
 import killercreepr.usurvive.data.entity.DeathHolder;
 import killercreepr.usurvive.death.DeathManager;
 import killercreepr.usurvive.death.PlayerDeath;
@@ -193,7 +197,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new SpawnListener(values, this),
             new CommandListener(),
             new RespawnListener(this, values),
-            new ServerPingListener(values)
+            new SetupListener(values)
         );
 
         super.enabled();
@@ -265,5 +269,10 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
     public void registerCfgHandlers(@NotNull FileRegistry registry){
         registry.registerFileHandler(PlayerDeath.class, new FilePlayerDeath());
+        AutoFileOptions cacheDisabled = AutoFileOptions.builder()
+            .disabledFields(f -> f.getName().equalsIgnoreCase("cache"))
+            .build();
+        registry.registerFileHandler(ResourcePackData.class, new AutoFileHandler<>(ResourcePackData.class, cacheDisabled));
+        registry.registerFileHandler(ResourcePackRequestData.class, new AutoFileHandler<>(ResourcePackRequestData.class, cacheDisabled));
     }
 }

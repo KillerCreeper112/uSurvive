@@ -9,6 +9,7 @@ import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
 import killercreepr.cruxconfig.config.bukkit.value.CfgValue;
 import killercreepr.cruxconfig.config.bukkit.value.CommonValue;
 import killercreepr.cruxconfig.config.bukkit.value.NumCfgValue;
+import killercreepr.usurvive.data.ResourcePackRequestData;
 import killercreepr.usurvive.values.DefaultValues;
 import killercreepr.usurvive.values.ValuesProvider;
 import net.kyori.adventure.text.Component;
@@ -42,6 +43,7 @@ public class Config extends Cfg implements ValuesProvider {
     public final CfgValue<List<String>> FIRST_JOIN_COMMANDS = new CommonValue<>(DefaultValues.FIRST_JOIN_COMMANDS.value()){};
     public final NumCfgValue DEATH_EXPIRY_TIME = new NumCfgValue(DefaultValues.DEATH_EXPIRY_TIME);
     public final CfgValue<Component> SERVER_MOTD = new CommonValue<>(){};
+    public final CfgValue<ResourcePackRequestData> RESOURCE_PACKS = new CommonValue<>(){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -165,5 +167,11 @@ public class Config extends Cfg implements ValuesProvider {
     @Override
     public Holder<Component> SERVER_MOTD() {
         return SERVER_MOTD;
+    }
+
+    @NotNull
+    @Override
+    public Holder<ResourcePackRequestData> RESOURCE_PACKS() {
+        return RESOURCE_PACKS;
     }
 }

@@ -3,6 +3,7 @@ package killercreepr.usurvive.values;
 import killercreepr.crux.data.Holder;
 import killercreepr.crux.valueproviders.number.NumberProvider;
 import killercreepr.crux.valueproviders.number.UniformNumber;
+import killercreepr.usurvive.data.ResourcePackRequestData;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
@@ -132,6 +133,12 @@ public class DefaultValues implements ValuesProvider {
     @NotNull
     @Override
     public Holder<Component> SERVER_MOTD() {
+        return Holder.empty();
+    }
+
+    @NotNull
+    @Override
+    public Holder<ResourcePackRequestData> RESOURCE_PACKS() {
         return Holder.empty();
     }
 }
