@@ -22,6 +22,8 @@ import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.common.handler.AutoFileHandler;
 import killercreepr.cruxconfig.config.common.handler.AutoFileOptions;
+import killercreepr.cruxconfig.config.common.handler.FileConvertHandler;
+import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxitems.config.CruxItemsConfigHook;
@@ -61,6 +63,7 @@ import killercreepr.usurvive.values.ValuesProvider;
 import killercreepr.usurvive.world.USurviveOverworld;
 import killercreepr.usurvive.world.entity.StandardOverworldGroups;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.resource.ResourcePackInfo;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -70,6 +73,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.logging.Level;
 
 public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider {
     private static USurvivePlugin instance;
@@ -274,7 +278,35 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             .build();
         registry.registerFileHandler(
             new AutoFileHandler<>(ResourcePackData.class, cacheDisabled),
-            new AutoFileHandler<>(ResourcePackRequestData.class, cacheDisabled)
+            new AutoFileHandler<>(ResourcePackRequestData.class, AutoFileOptions.builder()
+                .disabledFields(f -> f.getName().equalsIgnoreCase("cache"))
+                .manualHandlers(Map.of(
+                    "resourcePacks", new FileConvertHandler<Collection<ResourcePackData>, Object>() {
+                        @Override
+                        public @NotNull FileElement serializeToFile(@NotNull FileContext<?> fileContext, @NotNull Collection<ResourcePackData> resourcePackData) {
+                            return null;
+                        }
+
+                        @Override
+                        public @Nullable Collection<ResourcePackData> deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement e) {
+                            return ctx.getRegistry().deserializeFromFile(
+                                new TypeToken<Collection<ResourcePackData>>(){}.getType(),
+                                e
+                            );
+                        }
+
+                        @Override
+                        public Collection<ResourcePackData> convertTo(Object object) {
+                            return List.of();
+                        }
+
+                        @Override
+                        public Object convertFrom(Collection<ResourcePackData> resourcePackData) {
+                            return null;
+                        }
+                    }
+                ))
+                .build())
         );
     }
 }
