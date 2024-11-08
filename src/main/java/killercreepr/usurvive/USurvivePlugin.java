@@ -173,6 +173,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     }
 
     protected LangProvider langProvider;
+    protected SpawnListener spawnListener;
     @Override
     public void enabled() {
         if(CruxRegistries.MODULES.containsKey(StandardModules.CRUX_CONFIGS)){
@@ -198,7 +199,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new GrappleListener(),
             new QuickAccessListener(),
             new ObjectiveProgressListener(this),
-            new SpawnListener(values, this),
+            spawnListener = new SpawnListener(values, this),
             new CommandListener(),
             new RespawnListener(this, values),
             new SetupListener(values)
@@ -256,6 +257,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         super.disabled();
         deathManager.save();
         cfgManagerLoader.saveAndUnload(getServer().getOnlinePlayers());
+        if(spawnListener != null) spawnListener.onDisable();
     }
 
     @Override

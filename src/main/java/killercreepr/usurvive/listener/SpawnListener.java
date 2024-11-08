@@ -44,6 +44,12 @@ public class SpawnListener implements Listener {
         this.plugin = plugin;
     }
 
+    public void onDisable(){
+        for(Player p : plugin.getServer().getOnlinePlayers()){
+            saveLastKnownLocation(p);
+        }
+    }
+
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerSpawnLocation(PlayerSpawnLocationEvent event) {
         Player p = event.getPlayer();
@@ -112,6 +118,10 @@ public class SpawnListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player p = event.getPlayer();
+        saveLastKnownLocation(p);
+    }
+
+    public void saveLastKnownLocation(Player p){
         Location loc = p.getLocation();
         DataFile cfg = getOrCreateDataFile(p);
         String worldName = loc.getWorld().getName();
