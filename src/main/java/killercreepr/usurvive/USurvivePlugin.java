@@ -23,7 +23,6 @@ import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.common.handler.AutoFileHandler;
 import killercreepr.cruxconfig.config.common.handler.AutoFileOptions;
 import killercreepr.cruxconfig.config.common.handler.FileConvertHandler;
-import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxitems.config.CruxItemsConfigHook;
@@ -63,7 +62,6 @@ import killercreepr.usurvive.values.ValuesProvider;
 import killercreepr.usurvive.world.USurviveOverworld;
 import killercreepr.usurvive.world.entity.StandardOverworldGroups;
 import net.kyori.adventure.key.Key;
-import net.kyori.adventure.resource.ResourcePackInfo;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -73,7 +71,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.logging.Level;
 
 public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider {
     private static USurvivePlugin instance;

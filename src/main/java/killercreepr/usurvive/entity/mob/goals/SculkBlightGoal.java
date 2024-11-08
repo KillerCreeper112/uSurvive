@@ -2,7 +2,6 @@ package killercreepr.usurvive.entity.mob.goals;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import com.destroystokyo.paper.entity.ai.GoalKey;
-import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.Crux;
 import killercreepr.crux.data.communication.CreateSound;
 import killercreepr.crux.event.CruxEntityDamageEvent;
@@ -32,12 +31,12 @@ import java.util.List;
 public class SculkBlightGoal extends CruxMobModeledGoal {
     public static final GoalKey<Mob> KEY = GoalKey.of(Mob.class, Crux.key("sculk_blight"));
 
-    public SculkBlightGoal(@NotNull Mob mob, ActiveModel model) {
-        super(KEY, mob, model);
+    public SculkBlightGoal(@NotNull Mob mob) {
+        super(KEY, mob);
     }
 
-    public SculkBlightGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob, ActiveModel model) {
-        super(key, mob, model);
+    public SculkBlightGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob) {
+        super(key, mob);
     }
 
 

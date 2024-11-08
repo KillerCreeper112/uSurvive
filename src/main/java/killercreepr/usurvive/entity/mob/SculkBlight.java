@@ -1,5 +1,7 @@
 package killercreepr.usurvive.entity.mob;
 
+import com.ticxo.modelengine.api.model.ActiveModel;
+import killercreepr.crux.util.CruxGoalUtil;
 import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
@@ -8,7 +10,6 @@ import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import killercreepr.usurvive.entity.mob.goals.SculkBlightGoal;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
@@ -17,6 +18,7 @@ import org.bukkit.entity.Pig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class SculkBlight extends SimpleCruxMob {
@@ -52,8 +54,7 @@ public class SculkBlight extends SimpleCruxMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob m)) return;
-        new DesignEntity(m).getModel(key.value()).ifPresent(model ->{
-            Bukkit.getMobGoals().addGoal(m, 0, new SculkBlightGoal(m, model));
-        });
+        CompletableFuture<ActiveModel> model = new DesignEntity(m).getOrAddModelAsync(key.value());
+        CruxGoalUtil.addIfNotPresent(m, SculkBlightGoal.class, 0, () -> new SculkBlightGoal(m).model(model));
     }
 }

@@ -1,12 +1,12 @@
 package killercreepr.usurvive.entity.mob;
 
+import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.Crux;
 import killercreepr.crux.util.CruxGoalUtil;
 import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
-import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import killercreepr.usurvive.entity.mob.goals.EchoGoal;
@@ -19,7 +19,9 @@ import org.bukkit.entity.Skeleton;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 public class Echo extends SimpleCruxMob {
     public static final Key KEY = Crux.key("echo");
@@ -43,7 +45,6 @@ public class Echo extends SimpleCruxMob {
             ));
             e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0D);
 
-            new ModelEntity(e, "grave").setLockPitch(true).setLockYaw(true);
             load(e);
             if(consumer != null) consumer.accept(e);
         });
@@ -53,9 +54,11 @@ public class Echo extends SimpleCruxMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
-        new DesignEntity(mob).getModel("grave").ifPresent(model ->{
-            CruxGoalUtil.addIfNotPresent(mob, CruxMobGoal.defaultKey(), 0, () -> new EchoGoal(mob, model));
+        CompletableFuture<ActiveModel> model = new DesignEntity(mob).getOrAddModelAsync("grave").whenComplete((m, throwable) ->{
+            if(throwable != null) Crux.log(Level.WARNING, throwable.getMessage());
+            new ModelEntity(e, m).setLockPitch(true).setLockYaw(true);
         });
+        CruxGoalUtil.addIfNotPresent(mob, EchoGoal.class, 0, () -> new EchoGoal(mob).model(model));
     }
 
     @Override

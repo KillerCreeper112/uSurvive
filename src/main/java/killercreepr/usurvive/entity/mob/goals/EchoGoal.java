@@ -51,12 +51,12 @@ import java.util.Collection;
 import java.util.logging.Level;
 
 public class EchoGoal extends CruxMobModeledGoal implements Listener {
-    public EchoGoal(@NotNull Mob mob, ActiveModel model) {
-        this(CruxMobGoal.defaultKey(), mob, model);
+    public EchoGoal(@NotNull Mob mob) {
+        this(CruxMobGoal.defaultKey(), mob);
     }
 
-    public EchoGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob, ActiveModel model) {
-        super(key, mob, model);
+    public EchoGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob) {
+        super(key, mob);
         exp = CruxTag.get(mob, "exp", PersistentDataType.INTEGER, null);
 
         sounds(new CruxGoalSounds(mob) {
@@ -88,7 +88,7 @@ public class EchoGoal extends CruxMobModeledGoal implements Listener {
     public void transformToEcho(){
         ModeledEntity modeled = getModeledEntity();
         modeled.removeModel("grave");
-        model.destroy();
+        applyModel(ActiveModel::destroy);
         setModel(new ModelEntity(mob, Echo.KEY.value()).getModel());
 
         playAnimation("wings_flap", true);

@@ -1,14 +1,14 @@
 package killercreepr.usurvive.entity.mob;
 
+import com.ticxo.modelengine.api.model.ActiveModel;
+import killercreepr.crux.util.CruxGoalUtil;
 import killercreepr.cruxattributes.attribute.CruxAttribute;
 import killercreepr.cruxattributes.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
-import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import killercreepr.usurvive.entity.mob.goals.DownmanGoal;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
@@ -17,6 +17,7 @@ import org.bukkit.entity.Mob;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class Downman extends SimpleCruxMob {
@@ -27,7 +28,6 @@ public class Downman extends SimpleCruxMob {
     @Override
     protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
         return location.getWorld().spawn(location, Husk.class, e ->{
-            new ModelEntity(e, key.value());
             load(e);
             e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(
                 e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue() * 1.2
@@ -63,10 +63,9 @@ public class Downman extends SimpleCruxMob {
     @Override
     public void load(@NotNull Entity e) {
         super.load(e);
-        if(!(e instanceof Mob m)) return;
-        new DesignEntity(m).getModel(key.value()).ifPresent(model ->{
-            Bukkit.getMobGoals().addGoal(m, 0, new DownmanGoal(m, model));
-        });
+        if(!(e instanceof Mob mob)) return;
+        CompletableFuture<ActiveModel> model = new DesignEntity(mob).getOrAddModelAsync(key.value());
+        CruxGoalUtil.addIfNotPresent(mob, DownmanGoal.class, 0, () -> new DownmanGoal(mob).model(model));
     }
 
     @Override

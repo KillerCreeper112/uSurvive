@@ -2,7 +2,6 @@ package killercreepr.usurvive.entity.mob.goals;
 
 import com.destroystokyo.paper.entity.Pathfinder;
 import com.destroystokyo.paper.entity.ai.GoalKey;
-import com.ticxo.modelengine.api.model.ActiveModel;
 import io.papermc.paper.event.entity.EntityMoveEvent;
 import killercreepr.crux.Crux;
 import killercreepr.cruxattributes.attribute.CruxAttribute;
@@ -22,12 +21,12 @@ import java.util.Objects;
 public class DownmanGoal extends CruxMobModeledGoal {
     public static final GoalKey<Mob> KEY = GoalKey.of(Mob.class, Crux.key("downman"));
 
-    public DownmanGoal(@NotNull Mob mob, ActiveModel model) {
-        super(mob, model);
+    public DownmanGoal(@NotNull Mob mob) {
+        this(KEY, mob);
     }
 
-    public DownmanGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob, ActiveModel model) {
-        super(key, mob, model);
+    public DownmanGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob) {
+        super(key, mob);
     }
 
     @EventHandler(ignoreCancelled = true)
