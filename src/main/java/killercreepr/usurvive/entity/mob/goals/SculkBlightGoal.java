@@ -6,6 +6,7 @@ import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.Crux;
 import killercreepr.crux.data.communication.CreateSound;
 import killercreepr.crux.event.CruxEntityDamageEvent;
+import killercreepr.crux.util.CruxCollection;
 import killercreepr.crux.util.CruxLoc;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.cruxentities.entity.CruxMob;
@@ -311,7 +312,7 @@ public class SculkBlightGoal extends CruxMobModeledGoal {
             Block b = findSolidLocation(l.getBlock(), 3);
             if(b != null) return b.getLocation().toCenterLocation();
         }
-        return CruxMath.getRandom(list);
+        return CruxCollection.getRandom(list);
     }
 
     public @Nullable Block findSolidBlockAboveWithAir(@NotNull Block b, int range){
