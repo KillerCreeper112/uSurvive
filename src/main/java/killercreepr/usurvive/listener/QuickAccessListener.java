@@ -28,7 +28,8 @@ public class QuickAccessListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
-        if(PluginItem.isPluginItem(event.getMainHandItem())) event.setCancelled(true);
+        if(PluginItem.isPluginItem(event.getMainHandItem(), USurviveItems.QUICK_ACCESS)) event.setCancelled(true);
+        else if(PluginItem.isPluginItem(event.getOffHandItem(), USurviveItems.QUICK_ACCESS)) event.setCancelled(true);
     }
 
 
