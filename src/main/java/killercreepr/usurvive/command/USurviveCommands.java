@@ -9,8 +9,10 @@ import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSele
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import killercreepr.crux.Crux;
+import killercreepr.crux.data.DataExchange;
 import killercreepr.crux.data.communication.Communicator;
 import killercreepr.crux.data.entity.EntityMemory;
+import killercreepr.crux.tags.TagsPrefixBuilder;
 import killercreepr.crux.tags.container.TagContainer;
 import killercreepr.crux.tags.resolver.Tag;
 import killercreepr.crux.valueproviders.number.NumberProvider;
@@ -150,6 +152,29 @@ public class USurviveCommands {
                         return 1;
                     })
                     .build(), List.of("orbit", "balance", "bal")
+            );
+
+            commands.register(
+                Commands.literal("profile")
+                    .requires(source -> source.getSender().hasPermission("usurvive.cmds.profile.use"))
+                    .executes(ctx ->{
+                        if(!(getExecutor(ctx.getSource()) instanceof Player p)) return -1;
+                        CruxCore.inst().cruxMenus().menuRegistry().menuHolders().get(Crux.key("profile"))
+                            .open(p, DataExchange.empty(), TagContainer.merged().hook(p, TagsPrefixBuilder.overwriteBase("target_")));
+                        return 1;
+                    })
+                    .then(
+                        Commands.argument("target", ArgumentTypes.player()) //todo make this offline players
+                            .executes(ctx ->{
+                                if(!(getExecutor(ctx.getSource()) instanceof Player p)) return -1;
+                                Player target = ctx.getArgument("target", PlayerSelectorArgumentResolver.class)
+                                        .resolve(ctx.getSource()).getFirst();
+                                CruxCore.inst().cruxMenus().menuRegistry().menuHolders().get(Crux.key("profile"))
+                                    .open(p, DataExchange.empty(), TagContainer.merged().hook(target, TagsPrefixBuilder.overwriteBase("target_")));
+                                return 1;
+                            })
+                    )
+                    .build(), List.of("player", "account")
             );
 
             commands.register(
