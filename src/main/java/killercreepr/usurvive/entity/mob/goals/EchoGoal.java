@@ -14,7 +14,7 @@ import killercreepr.crux.tags.resolver.Tag;
 import killercreepr.crux.util.CruxMath;
 import killercreepr.crux.util.CruxTag;
 import killercreepr.crux.util.GetEntityNear;
-import killercreepr.cruxattributes.attribute.CruxAttribute;
+import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;

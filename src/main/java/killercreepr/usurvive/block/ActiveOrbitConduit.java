@@ -60,7 +60,7 @@ public class ActiveOrbitConduit extends ActiveCruxBlockImpl implements ActiveCru
         Player p = e.getPlayer();
         MergedTagContainer tags = TagContainer.merged().hook(p);
         for(String s : interactCommands){
-            s = Crux.FORMAT.deserializeString(s, tags);
+            s = Crux.format().deserializeString(s, tags);
             Crux.getServer().dispatchCommand(Crux.getServer().getConsoleSender(), s);
         }
         return Event.Result.DENY;

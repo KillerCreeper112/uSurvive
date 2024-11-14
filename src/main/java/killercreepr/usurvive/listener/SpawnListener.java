@@ -107,7 +107,7 @@ public class SpawnListener implements Listener {
 
         MergedTagContainer tags = TagContainer.merged().hook(p);
         cfg.FIRST_JOIN_COMMANDS().valueOr(List.of()).forEach(cmd ->{
-            cmd = Crux.FORMAT.deserializeString(cmd, tags);
+            cmd = Crux.format().deserializeString(cmd, tags);
             plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), cmd);
         });
 

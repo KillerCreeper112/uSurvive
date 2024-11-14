@@ -166,7 +166,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
         CruxWorldManager worldManager = CruxCore.inst().worldManager();
         worldManager.getCreatorRegistry().register("world", USurviveOverworld::new);
-        Crux.TAGS.register(new PlayerDeathTags());
+        Crux.tags().register(new PlayerDeathTags());
     }
 
     protected LangProvider langProvider;
