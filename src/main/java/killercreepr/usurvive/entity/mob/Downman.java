@@ -9,6 +9,7 @@ import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.usurvive.entity.mob.goals.DownmanGoal;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
@@ -28,6 +29,8 @@ public class Downman extends SimpleCruxMob {
     @Override
     protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
         return location.getWorld().spawn(location, Husk.class, e ->{
+            e.customName(Component.text("Downman"));
+            e.setCustomNameVisible(false);
             load(e);
             e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(
                 e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue() * 1.2

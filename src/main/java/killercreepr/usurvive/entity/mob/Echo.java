@@ -11,6 +11,7 @@ import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import killercreepr.usurvive.entity.mob.goals.EchoGoal;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
@@ -35,6 +36,8 @@ public class Echo extends SimpleCruxMob {
     @Override
     protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
         return location.getWorld().spawn(location, Skeleton.class, e ->{
+            e.customName(Component.text("Echo"));
+            e.setCustomNameVisible(false);
             e.setShouldBurnInDay(false);
             e.getEquipment().clear();
             e.setPersistent(true);

@@ -19,6 +19,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.util.Vector;
@@ -49,11 +50,13 @@ public class SculkBlightGoal extends CruxMobModeledGoal {
         }
     }
 
+    //todo make good entity
     protected Entity drag;
     protected final double dragDownSpeed = .2;
     @Override
     protected void attacked(@NotNull CruxEntityDamageEvent event) {
         super.attacked(event);
+        if(event.getEntity() instanceof Player) return;
         if(event.getEntity().getVehicle() != null) return;
         drag = event.getEntity();
         mob.addPassenger(drag);
