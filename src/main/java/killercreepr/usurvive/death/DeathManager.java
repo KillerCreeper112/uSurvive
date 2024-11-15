@@ -2,6 +2,7 @@ package killercreepr.usurvive.death;
 
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
+import killercreepr.crux.Crux;
 import killercreepr.crux.data.entity.EntityMemory;
 import killercreepr.crux.data.world.ChunkBlockStorage;
 import killercreepr.crux.data.world.CruxPosition;
@@ -52,7 +53,7 @@ public class DeathManager implements Listener {
             world.forEach(chunk ->{
                 chunk.removeIf(l ->{
                     if(l.hasExpired()){
-                        PlayerDeathExpireEvent expire = new PlayerDeathExpireEvent(this, l);
+                        PlayerDeathExpireEvent expire = new PlayerDeathExpireEvent(!Crux.getServer().isPrimaryThread(),this, l);
                         if(expire.callEvent()) return true;
                     }
                     if(filter != null && !filter.test(l)) return false;
@@ -75,7 +76,7 @@ public class DeathManager implements Listener {
         storage.forEach(s ->{
             s.removeIf(death ->{
                 if(death.hasExpired()){
-                    PlayerDeathExpireEvent expire = new PlayerDeathExpireEvent(this, death);
+                    PlayerDeathExpireEvent expire = new PlayerDeathExpireEvent(!Crux.getServer().isPrimaryThread(),this, death);
                     if(expire.callEvent()) return true;
                 }
                 if(death.getPlayerUUID().equals(player)) list.add(death);

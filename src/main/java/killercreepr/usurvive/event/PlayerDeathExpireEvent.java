@@ -17,6 +17,12 @@ public class PlayerDeathExpireEvent extends Event implements Cancellable {
         this.death = death;
     }
 
+    public PlayerDeathExpireEvent(boolean isAsync, @NotNull DeathManager deathManager, @NotNull PlayerDeath death) {
+        super(isAsync);
+        this.deathManager = deathManager;
+        this.death = death;
+    }
+
     public boolean wouldSpawnNormally(){
         return !death.getDrops().isEmpty() || death.getExperience() > 0;
     }
