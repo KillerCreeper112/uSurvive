@@ -3,8 +3,10 @@ package killercreepr.usurvive.listener;
 import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.text.resolver.Tag;
+import killercreepr.cruxadvancements.api.advancement.CruxAdvancement;
 import killercreepr.cruxadvancements.api.advancement.ObjectiveAdvancement;
 import killercreepr.cruxadvancements.api.advancement.icon.CriterionDisplay;
+import killercreepr.cruxadvancements.api.event.CruxAdvancementGrantEvent;
 import killercreepr.cruxadvancements.api.event.objective.PostNumberObjectiveProgressChangeEvent;
 import killercreepr.cruxadvancements.core.advancement.objective.NumberObjective;
 import killercreepr.usurvive.lang.Lang;
@@ -19,6 +21,21 @@ public class ObjectiveProgressListener implements Listener {
     public ObjectiveProgressListener(Plugin plugin) {
         this.plugin = plugin;
     }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onCruxAdvancementGrant(CruxAdvancementGrantEvent event) {
+        Player p = plugin.getServer().getPlayer(event.getWho());
+        if(p == null) return;
+        CruxAdvancement advancement = event.getAdvancement();
+        if(!(advancement instanceof ObjectiveAdvancement)) return;
+
+        MergedTagContainer tags = TagContainer.merged()
+            .hook(advancement)
+            .hook(p)
+            ;
+        Lang.ADVANCEMENT_COMPLETED.use(p, tags);
+    }
+
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onPostNumberObjectiveProgressChange(PostNumberObjectiveProgressChangeEvent event) {

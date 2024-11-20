@@ -65,6 +65,11 @@ public class Lang {
             .build()
     );
 
+    public static final Msg ADVANCEMENT_COMPLETED = create(
+        Communicator.builder()
+            .build()
+    );
+
     public static final Msg DEFAULT_TELEPORT_TICK_MSG = create(
         Communicator.builder()
             .actionBar("<yellow>Teleporting in <gold>{{<time_left> / 20}[1]} seconds")
