@@ -1,7 +1,7 @@
 package killercreepr.usurvive.menu.module;
 
-import killercreepr.crux.data.communication.Communicator;
-import killercreepr.crux.valueproviders.number.NumberProvider;
+import killercreepr.crux.api.communication.Communicator;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.cruxmenus.api.menu.Menu;
 import killercreepr.cruxmenus.api.menu.module.ActiveMenuModule;
 import killercreepr.cruxmenus.core.menu.module.SimpleMenuModule;

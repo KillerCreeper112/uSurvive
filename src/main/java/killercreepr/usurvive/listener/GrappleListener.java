@@ -1,6 +1,6 @@
 package killercreepr.usurvive.listener;
 
-import killercreepr.crux.data.entity.EntityMemory;
+import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.usurvive.data.entity.GrapplerHolder;
 import killercreepr.usurvive.entity.USurviveMobs;

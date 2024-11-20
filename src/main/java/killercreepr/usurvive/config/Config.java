@@ -1,9 +1,9 @@
 package killercreepr.usurvive.config;
 
-import killercreepr.crux.data.Holder;
-import killercreepr.crux.plugin.CruxPlugin;
-import killercreepr.crux.util.CruxWorldUtil;
-import killercreepr.crux.valueproviders.number.NumberProvider;
+import killercreepr.crux.api.data.Holder;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import killercreepr.crux.core.plugin.CruxPlugin;
+import killercreepr.crux.core.util.CruxWorldUtil;
 import killercreepr.cruxconfig.config.bukkit.file.Cfg;
 import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
 import killercreepr.cruxconfig.config.bukkit.value.CfgValue;

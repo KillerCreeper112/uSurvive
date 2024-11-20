@@ -3,7 +3,7 @@ package killercreepr.usurvive.entity.mob.goals;
 import com.destroystokyo.paper.entity.Pathfinder;
 import com.destroystokyo.paper.entity.ai.GoalKey;
 import io.papermc.paper.event.entity.EntityMoveEvent;
-import killercreepr.crux.Crux;
+import killercreepr.crux.core.Crux;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import org.bukkit.Location;

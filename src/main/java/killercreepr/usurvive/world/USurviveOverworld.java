@@ -1,8 +1,8 @@
 package killercreepr.usurvive.world;
 
 import com.destroystokyo.paper.MaterialSetTag;
-import killercreepr.crux.util.CruxMath;
-import killercreepr.crux.valueproviders.number.NumberProvider;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxgeneration.util.CruxNoise;
 import killercreepr.cruxworlds.world.NaturalEntitySpawnManager;
 import killercreepr.cruxworlds.world.SimpleWorld;

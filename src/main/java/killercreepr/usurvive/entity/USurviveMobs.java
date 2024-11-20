@@ -1,6 +1,6 @@
 package killercreepr.usurvive.entity;
 
-import killercreepr.crux.Crux;
+import killercreepr.crux.core.Crux;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.registries.CruxEntityRegistries;
 import killercreepr.usurvive.entity.mob.Downman;

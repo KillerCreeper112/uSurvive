@@ -2,12 +2,12 @@ package killercreepr.usurvive.entity.mob.goals;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import com.destroystokyo.paper.entity.ai.GoalKey;
-import killercreepr.crux.Crux;
-import killercreepr.crux.data.communication.CreateSound;
-import killercreepr.crux.event.CruxEntityDamageEvent;
-import killercreepr.crux.util.CruxCollection;
-import killercreepr.crux.util.CruxLoc;
-import killercreepr.crux.util.CruxMath;
+import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.event.CruxEntityDamageEvent;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxCollection;
+import killercreepr.crux.core.util.CruxLoc;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;

@@ -1,7 +1,7 @@
 package killercreepr.usurvive.death.storage;
 
-import killercreepr.crux.data.world.ChunkBlockStorage;
-import killercreepr.crux.data.world.CruxPosition;
+import killercreepr.crux.api.data.world.ChunkBlockStorage;
+import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.usurvive.death.DeathManager;
 import killercreepr.usurvive.death.PlayerDeath;
 import org.jetbrains.annotations.NotNull;

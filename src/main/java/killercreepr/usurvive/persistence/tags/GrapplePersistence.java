@@ -1,7 +1,7 @@
 package killercreepr.usurvive.persistence.tags;
 
-import killercreepr.crux.persistence.CruxPersistence;
-import killercreepr.crux.util.CruxTag;
+import killercreepr.crux.core.persistence.CruxPersistence;
+import killercreepr.crux.core.util.CruxTag;
 import killercreepr.usurvive.mechanics.grapple.Grapple;
 import net.kyori.adventure.key.Key;
 import org.bukkit.persistence.PersistentDataAdapterContext;

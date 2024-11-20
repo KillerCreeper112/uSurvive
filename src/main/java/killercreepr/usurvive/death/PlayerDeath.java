@@ -1,7 +1,7 @@
 package killercreepr.usurvive.death;
 
-import killercreepr.crux.data.world.CruxPosition;
-import killercreepr.crux.data.world.PositionPosed;
+import killercreepr.crux.api.math.CruxPosition;
+import killercreepr.crux.api.math.PositionPosed;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;

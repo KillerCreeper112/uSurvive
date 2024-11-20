@@ -1,8 +1,8 @@
 package killercreepr.usurvive.block;
 
-import killercreepr.crux.Crux;
-import killercreepr.cruxblocks.block.group.CruxBlockGroup;
-import killercreepr.cruxblocks.registries.CruxBlocksRegistries;
+import killercreepr.crux.core.Crux;
+import killercreepr.cruxblocks.api.block.group.CruxBlockGroup;
+import killercreepr.cruxblocks.core.registries.CruxBlocksRegistries;
 
 public class USurviveBlocks {
     public static void register(){}

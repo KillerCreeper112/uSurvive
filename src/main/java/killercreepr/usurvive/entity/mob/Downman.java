@@ -1,7 +1,7 @@
 package killercreepr.usurvive.entity.mob;
 
 import com.ticxo.modelengine.api.model.ActiveModel;
-import killercreepr.crux.util.CruxGoalUtil;
+import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;

@@ -2,12 +2,12 @@ package killercreepr.usurvive.death;
 
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
-import killercreepr.crux.Crux;
-import killercreepr.crux.data.entity.EntityMemory;
-import killercreepr.crux.data.world.ChunkBlockStorage;
-import killercreepr.crux.data.world.CruxPosition;
-import killercreepr.crux.data.world.WorldChunkStorage;
-import killercreepr.crux.util.CruxGoalUtil;
+import killercreepr.crux.api.data.world.ChunkBlockStorage;
+import killercreepr.crux.api.data.world.WorldChunkStorage;
+import killercreepr.crux.api.entity.memory.EntityMemory;
+import killercreepr.crux.api.math.CruxPosition;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
 import killercreepr.cruxentities.entity.CruxMob;

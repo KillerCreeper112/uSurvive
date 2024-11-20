@@ -1,10 +1,10 @@
 package killercreepr.usurvive.mechanics.grapple.impl;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import killercreepr.crux.Crux;
-import killercreepr.crux.data.Holder;
-import killercreepr.crux.util.CruxEntityUtil;
-import killercreepr.crux.util.CruxLoc;
+import killercreepr.crux.api.data.Holder;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxEntityUtil;
+import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.cruxentities.combat.CruxEntityDamager;
 import killercreepr.usurvive.mechanics.grapple.ActiveGrappleHook;
 import org.bukkit.FluidCollisionMode;

@@ -1,9 +1,9 @@
 package killercreepr.usurvive.mechanics.grapple.impl;
 
-import killercreepr.crux.Crux;
-import killercreepr.crux.data.Holder;
-import killercreepr.crux.util.CruxEntityUtil;
-import killercreepr.crux.util.CruxMath;
+import killercreepr.crux.api.data.Holder;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxEntityUtil;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxentities.combat.CruxEntityDamager;
 import killercreepr.usurvive.lang.Lang;
 import killercreepr.usurvive.mechanics.grapple.ActiveGrappleHook;

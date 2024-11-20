@@ -1,12 +1,12 @@
 package killercreepr.usurvive.listener;
 
-import killercreepr.crux.tags.container.MergedTagContainer;
-import killercreepr.crux.tags.container.TagContainer;
-import killercreepr.crux.tags.resolver.Tag;
-import killercreepr.cruxadvancements.advancement.ObjectiveAdvancement;
-import killercreepr.cruxadvancements.advancement.icon.CriterionDisplay;
-import killercreepr.cruxadvancements.advancement.objective.NumberObjective;
-import killercreepr.cruxadvancements.event.objective.PostNumberObjectiveProgressChangeEvent;
+import killercreepr.crux.api.text.tags.container.MergedTagContainer;
+import killercreepr.crux.api.text.tags.container.TagContainer;
+import killercreepr.crux.core.text.resolver.Tag;
+import killercreepr.cruxadvancements.api.advancement.ObjectiveAdvancement;
+import killercreepr.cruxadvancements.api.advancement.icon.CriterionDisplay;
+import killercreepr.cruxadvancements.api.event.objective.PostNumberObjectiveProgressChangeEvent;
+import killercreepr.cruxadvancements.core.advancement.objective.NumberObjective;
 import killercreepr.usurvive.lang.Lang;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

@@ -1,9 +1,9 @@
 package killercreepr.usurvive.mechanics.grapple.standard;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import killercreepr.crux.Crux;
-import killercreepr.crux.registry.KeyedRegistry;
-import killercreepr.crux.valueproviders.number.NumberProvider;
+import killercreepr.crux.api.registry.KeyedRegistry;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import killercreepr.crux.core.Crux;
 import killercreepr.usurvive.mechanics.grapple.ActiveGrappleHook;
 import killercreepr.usurvive.mechanics.grapple.GrappleContext;
 import killercreepr.usurvive.mechanics.grapple.GrappleHook;

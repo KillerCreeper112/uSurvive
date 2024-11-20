@@ -1,10 +1,10 @@
 package killercreepr.usurvive.menu.module;
 
-import killercreepr.crux.Crux;
+import killercreepr.crux.core.Crux;
+import killercreepr.cruxcurrency.api.currency.CruxCurrency;
 import killercreepr.cruxcurrency.api.economy.EconomyHandler;
-import killercreepr.cruxcurrency.currency.CruxCurrency;
-import killercreepr.cruxcurrency.item.CruxCurrencyItem;
-import killercreepr.cruxcurrency.registry.CruxCurrencyRegistries;
+import killercreepr.cruxcurrency.api.item.CruxCurrencyItem;
+import killercreepr.cruxcurrency.core.registry.CruxCurrencyRegistries;
 import killercreepr.cruxmenus.api.menu.CfgMenu;
 import killercreepr.cruxmenus.api.menu.Menu;
 import killercreepr.cruxmenus.api.menu.SlottedMenu;

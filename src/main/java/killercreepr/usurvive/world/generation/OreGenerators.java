@@ -1,7 +1,7 @@
 package killercreepr.usurvive.world.generation;
 
 import com.destroystokyo.paper.MaterialSetTag;
-import killercreepr.crux.valueproviders.number.NumberProvider;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.cruxgeneration.util.CruxNoise;
 import killercreepr.usurvive.block.USurviveBlocks;
 import org.bukkit.Material;

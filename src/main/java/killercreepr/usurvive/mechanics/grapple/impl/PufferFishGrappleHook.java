@@ -1,7 +1,7 @@
 package killercreepr.usurvive.mechanics.grapple.impl;
 
-import killercreepr.crux.util.CruxEntityUtil;
-import killercreepr.crux.valueproviders.number.NumberProvider;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.usurvive.entity.USurviveMobs;
 import killercreepr.usurvive.mechanics.grapple.ActiveGrappleHook;
 import killercreepr.usurvive.mechanics.grapple.GrappleContext;

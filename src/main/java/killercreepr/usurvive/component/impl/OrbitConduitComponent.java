@@ -1,8 +1,8 @@
 package killercreepr.usurvive.component.impl;
 
-import killercreepr.cruxblocks.block.CruxBlock;
-import killercreepr.cruxblocks.block.active.ActiveCruxBlock;
-import killercreepr.cruxblocks.block.component.CruxBlockComponent;
+import killercreepr.cruxblocks.api.block.CruxBlock;
+import killercreepr.cruxblocks.api.block.active.ActiveCruxBlock;
+import killercreepr.cruxblocks.api.block.component.CruxBlockComponent;
 import killercreepr.usurvive.block.ActiveOrbitConduit;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;

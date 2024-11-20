@@ -1,7 +1,7 @@
 package killercreepr.usurvive.world.entity;
 
-import killercreepr.crux.registry.Registry;
-import killercreepr.crux.util.CruxMath;
+import killercreepr.crux.api.registry.Registry;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxworlds.world.entity.NaturalEntitySpawnGroup;
 import killercreepr.cruxworlds.world.entity.SpawnContext;
 import killercreepr.cruxworlds.world.entity.impl.NaturalSpawnPartGroup;

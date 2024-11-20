@@ -1,7 +1,7 @@
 package killercreepr.usurvive.world.entity;
 
-import killercreepr.crux.data.util.CollectionBuilder;
-import killercreepr.crux.util.CruxLoc;
+import killercreepr.crux.core.data.util.CollectionBuilder;
+import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.cruxentities.world.entity.NaturalCruxMobSpawn;
 import killercreepr.cruxworlds.world.entity.NaturalEntitySpawn;
 import killercreepr.cruxworlds.world.entity.SpawnContext;

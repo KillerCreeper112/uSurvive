@@ -1,8 +1,8 @@
 package killercreepr.usurvive.data.entity;
 
-import killercreepr.crux.Crux;
-import killercreepr.crux.data.entity.PlayerMemory;
-import killercreepr.crux.data.entity.PlayerTickedDataHolder;
+import killercreepr.crux.api.entity.memory.PlayerMemory;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.entity.memory.PlayerTickedDataHolder;
 import killercreepr.usurvive.mechanics.grapple.ActiveGrappleHook;
 import killercreepr.usurvive.mechanics.grapple.GrappleContext;
 import killercreepr.usurvive.mechanics.grapple.GrappleHook;

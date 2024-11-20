@@ -1,8 +1,8 @@
 package killercreepr.usurvive.item;
 
-import killercreepr.crux.data.entity.PlayerMemory;
-import killercreepr.crux.item.dynamic.DynamicItem;
-import killercreepr.crux.util.CruxItem;
+import killercreepr.crux.api.entity.memory.PlayerMemory;
+import killercreepr.crux.api.item.dynamic.DynamicItem;
+import killercreepr.crux.core.util.CruxItem;
 import killercreepr.cruxitems.item.interaction.InteractableItem;
 import killercreepr.cruxitems.item.interaction.ItemUseContext;
 import killercreepr.cruxitems.item.interaction.ItemUseResult;

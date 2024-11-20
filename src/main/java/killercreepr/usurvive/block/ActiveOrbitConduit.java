@@ -1,12 +1,12 @@
 package killercreepr.usurvive.block;
 
-import killercreepr.crux.Crux;
-import killercreepr.crux.tags.container.MergedTagContainer;
-import killercreepr.crux.tags.container.TagContainer;
-import killercreepr.cruxblocks.block.CruxBlock;
-import killercreepr.cruxblocks.block.active.ActiveCruxBlockImpl;
-import killercreepr.cruxblocks.block.active.ActiveCruxInteractable;
-import killercreepr.cruxblocks.block.context.BlockContext;
+import killercreepr.crux.api.text.tags.container.MergedTagContainer;
+import killercreepr.crux.api.text.tags.container.TagContainer;
+import killercreepr.crux.core.Crux;
+import killercreepr.cruxblocks.api.block.CruxBlock;
+import killercreepr.cruxblocks.api.block.active.ActiveCruxInteractable;
+import killercreepr.cruxblocks.api.block.context.BlockContext;
+import killercreepr.cruxblocks.core.block.active.SimpleActiveCruxBlock;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.usurvive.entity.USurviveMobs;
 import org.bukkit.Location;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class ActiveOrbitConduit extends ActiveCruxBlockImpl implements ActiveCruxInteractable {
+public class ActiveOrbitConduit extends SimpleActiveCruxBlock implements ActiveCruxInteractable {
     protected final @NotNull List<String> interactCommands;
     public ActiveOrbitConduit(@NotNull Block block, @NotNull CruxBlock cruxBlock, @NotNull List<String> interactCommands) {
         super(block, cruxBlock);

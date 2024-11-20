@@ -1,9 +1,9 @@
 package killercreepr.usurvive.registries;
 
-import killercreepr.crux.registry.KeyedRegistry;
-import killercreepr.crux.registry.Registry;
-import killercreepr.crux.registry.SimpleKeyedRegistry;
-import killercreepr.crux.registry.SimpleRegistry;
+import killercreepr.crux.api.registry.KeyedRegistry;
+import killercreepr.crux.api.registry.Registry;
+import killercreepr.crux.core.registry.SimpleKeyedRegistry;
+import killercreepr.crux.core.registry.SimpleRegistry;
 import killercreepr.cruxworlds.world.entity.NaturalEntitySpawnGroup;
 import killercreepr.usurvive.mechanics.grapple.GrappleHook;
 

@@ -1,14 +1,14 @@
 package killercreepr.usurvive.block;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import killercreepr.cruxblocks.block.CruxBlock;
-import killercreepr.cruxblocks.block.active.ActiveCruxBlockImpl;
-import killercreepr.cruxblocks.block.context.BlockContext;
+import killercreepr.cruxblocks.api.block.CruxBlock;
+import killercreepr.cruxblocks.api.block.context.BlockContext;
+import killercreepr.cruxblocks.core.block.active.SimpleActiveCruxBlock;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 
-public class ActiveCharredLogBlock extends ActiveCruxBlockImpl {
+public class ActiveCharredLogBlock extends SimpleActiveCruxBlock {
     public ActiveCharredLogBlock(@NotNull Block block, @NotNull CruxBlock cruxBlock) {
         super(block, cruxBlock);
     }

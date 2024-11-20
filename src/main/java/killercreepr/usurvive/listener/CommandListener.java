@@ -1,8 +1,8 @@
 package killercreepr.usurvive.listener;
 
-import killercreepr.crux.data.communication.Communicator;
-import killercreepr.crux.plugin.CruxPlugin;
-import killercreepr.crux.registries.CruxRegistries;
+import killercreepr.crux.api.communication.Communicator;
+import killercreepr.crux.core.plugin.CruxPlugin;
+import killercreepr.crux.core.registries.CruxRegistries;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

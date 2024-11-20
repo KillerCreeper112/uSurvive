@@ -1,13 +1,13 @@
 package killercreepr.usurvive.listener;
 
-import killercreepr.crux.Crux;
-import killercreepr.crux.data.LocationPos;
-import killercreepr.crux.data.communication.Communicator;
-import killercreepr.crux.data.world.CruxPosition;
-import killercreepr.crux.tags.container.MergedTagContainer;
-import killercreepr.crux.tags.container.TagContainer;
-import killercreepr.crux.util.CruxMath;
-import killercreepr.crux.util.CruxWorldUtil;
+import killercreepr.crux.api.communication.Communicator;
+import killercreepr.crux.api.math.CruxPosition;
+import killercreepr.crux.api.text.tags.container.MergedTagContainer;
+import killercreepr.crux.api.text.tags.container.TagContainer;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.math.LocationPos;
+import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.CruxWorldUtil;
 import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
@@ -111,7 +111,7 @@ public class SpawnListener implements Listener {
             plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), cmd);
         });
 
-        Lang.FIRST_JOIN_WELCOME.use(p, p, TagContainer.merged().hook(p));
+        Lang.FIRST_JOIN_WELCOME.use(p, TagContainer.merged().hook(p));
         spawnFireworks(p);
     }
 

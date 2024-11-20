@@ -1,6 +1,6 @@
 package killercreepr.usurvive.item;
 
-import killercreepr.crux.Crux;
+import killercreepr.crux.core.Crux;
 import killercreepr.cruxitems.item.plugin.PluginItem;
 import killercreepr.cruxitems.registries.CruxItemRegistries;
 

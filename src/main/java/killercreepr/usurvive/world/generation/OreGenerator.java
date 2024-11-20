@@ -1,8 +1,8 @@
 package killercreepr.usurvive.world.generation;
 
-import killercreepr.crux.data.Holder;
-import killercreepr.crux.util.CruxMath;
-import killercreepr.crux.valueproviders.number.NumberProvider;
+import killercreepr.crux.api.data.Holder;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxgeneration.util.CruxNoise;
 import org.bukkit.block.Block;
 import org.bukkit.generator.BlockPopulator;

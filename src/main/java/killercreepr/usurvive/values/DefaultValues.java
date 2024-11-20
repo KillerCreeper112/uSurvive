@@ -1,8 +1,8 @@
 package killercreepr.usurvive.values;
 
-import killercreepr.crux.data.Holder;
-import killercreepr.crux.valueproviders.number.NumberProvider;
-import killercreepr.crux.valueproviders.number.UniformNumber;
+import killercreepr.crux.api.data.Holder;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import killercreepr.crux.core.valueproviders.number.UniformNumber;
 import killercreepr.usurvive.data.ResourcePackRequestData;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;

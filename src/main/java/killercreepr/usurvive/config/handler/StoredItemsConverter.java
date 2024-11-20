@@ -1,7 +1,7 @@
 package killercreepr.usurvive.config.handler;
 
 import com.google.common.reflect.TypeToken;
-import killercreepr.crux.item.StoredItem;
+import killercreepr.crux.core.item.StoredItem;
 import killercreepr.cruxconfig.config.common.handler.SimpleFileConverter;
 import org.bukkit.inventory.ItemStack;
 
