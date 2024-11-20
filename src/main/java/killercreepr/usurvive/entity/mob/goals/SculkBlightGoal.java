@@ -52,7 +52,7 @@ public class SculkBlightGoal extends CruxMobModeledGoal {
 
     //todo make good entity
     protected Entity drag;
-    protected final double dragDownSpeed = .2;
+    //protected final double dragDownSpeed = .2;
     @Override
     protected void attacked(@NotNull CruxEntityDamageEvent event) {
         super.attacked(event);

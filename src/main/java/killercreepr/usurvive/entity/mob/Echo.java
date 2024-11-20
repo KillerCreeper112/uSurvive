@@ -4,7 +4,7 @@ import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.Crux;
 import killercreepr.crux.util.CruxGoalUtil;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
-import killercreepr.cruxattributes.core.attribute.CruxAttributeModifier;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
@@ -43,7 +43,7 @@ public class Echo extends SimpleCruxMob {
             e.setPersistent(true);
             e.setRemoveWhenFarAway(false);
 
-            CruxAttribute.addModifier(e, CruxAttribute.MOVEMENT_SPEED, new CruxAttributeModifier(
+            CruxAttribute.addModifier(e, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.baseModifier(
                 e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue()
             ));
             e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0D);

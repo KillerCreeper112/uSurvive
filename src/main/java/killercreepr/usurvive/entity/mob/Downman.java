@@ -3,7 +3,7 @@ package killercreepr.usurvive.entity.mob;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.util.CruxGoalUtil;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
-import killercreepr.cruxattributes.core.attribute.CruxAttributeModifier;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
@@ -36,27 +36,27 @@ public class Downman extends SimpleCruxMob {
                 e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue() * 1.2
             );
             double width = e.getWidth();
-            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_RANGE, new CruxAttributeModifier(
+            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
                 2D + width
             ));
 
-            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_AOE, new CruxAttributeModifier(
+            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(
                 .3D
             ));
 
-            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_SPEED, new CruxAttributeModifier(
+            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(
                 -10
             ));
 
-            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_KNOCKBACK, new CruxAttributeModifier(
+            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(
                 16D
             ));
 
-            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, new CruxAttributeModifier(
+            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(
                 8D
             ));
 
-            CruxAttribute.addModifier(e, CruxAttribute.MOVEMENT_SPEED, new CruxAttributeModifier(
+            CruxAttribute.addModifier(e, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.baseModifier(
                 e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue()
             ));
             if(consumer != null) consumer.accept(e);

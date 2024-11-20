@@ -3,7 +3,7 @@ package killercreepr.usurvive.entity.mob;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.util.CruxGoalUtil;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
-import killercreepr.cruxattributes.core.attribute.CruxAttributeModifier;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
@@ -35,10 +35,10 @@ public class SculkBlight extends SimpleCruxMob {
             e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(
                 e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue() * 1.5
             );
-            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_RANGE, new CruxAttributeModifier(2.5D));
-            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, new CruxAttributeModifier(4D));
-            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_AOE, new CruxAttributeModifier(.25D));
-            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_SPEED, new CruxAttributeModifier(-6D));
+            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2.5D));
+            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(4D));
+            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.25D));
+            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-6D));
             new ModelEntity(e, key.value());
             e.setSilent(true);
             load(e);
