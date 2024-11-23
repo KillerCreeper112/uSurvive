@@ -1,8 +1,8 @@
 package killercreepr.usurvive.item;
 
 import killercreepr.crux.core.Crux;
-import killercreepr.cruxitems.item.plugin.PluginItem;
-import killercreepr.cruxitems.registries.CruxItemRegistries;
+import killercreepr.cruxitems.api.item.plugin.PluginItem;
+import killercreepr.cruxitems.core.registries.CruxItemRegistries;
 
 public class USurviveItems {
     public static void register(){};

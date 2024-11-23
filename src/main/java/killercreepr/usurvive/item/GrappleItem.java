@@ -1,12 +1,12 @@
 package killercreepr.usurvive.item;
 
 import killercreepr.crux.api.entity.memory.PlayerMemory;
+import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.item.dynamic.DynamicItem;
-import killercreepr.crux.core.util.CruxItem;
-import killercreepr.cruxitems.item.interaction.InteractableItem;
-import killercreepr.cruxitems.item.interaction.ItemUseContext;
-import killercreepr.cruxitems.item.interaction.ItemUseResult;
-import killercreepr.cruxitems.item.plugin.CfgPluginItem;
+import killercreepr.cruxitems.api.item.interaction.InteractableItem;
+import killercreepr.cruxitems.api.item.interaction.ItemUseContext;
+import killercreepr.cruxitems.api.item.interaction.ItemUseResult;
+import killercreepr.cruxitems.core.item.plugin.CfgPluginItem;
 import killercreepr.usurvive.data.entity.GrapplerHolder;
 import killercreepr.usurvive.lang.Lang;
 import killercreepr.usurvive.mechanics.grapple.ActiveGrappleHook;

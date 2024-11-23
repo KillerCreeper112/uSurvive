@@ -1,12 +1,12 @@
 package killercreepr.usurvive.item;
 
 import killercreepr.crux.api.item.dynamic.DynamicItem;
-import killercreepr.cruxitems.item.interaction.InteractableItem;
-import killercreepr.cruxitems.item.interaction.ItemUseContext;
-import killercreepr.cruxitems.item.interaction.ItemUseResult;
-import killercreepr.cruxitems.item.inventory.InventoryItem;
-import killercreepr.cruxitems.item.inventory.ItemClickContext;
-import killercreepr.cruxitems.item.plugin.CfgPluginItem;
+import killercreepr.cruxitems.api.item.interaction.InteractableItem;
+import killercreepr.cruxitems.api.item.interaction.ItemUseContext;
+import killercreepr.cruxitems.api.item.interaction.ItemUseResult;
+import killercreepr.cruxitems.api.item.inventory.InventoryItem;
+import killercreepr.cruxitems.api.item.inventory.ItemClickContext;
+import killercreepr.cruxitems.core.item.plugin.CfgPluginItem;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

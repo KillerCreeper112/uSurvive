@@ -1,6 +1,6 @@
 package killercreepr.usurvive.listener;
 
-import killercreepr.cruxitems.item.plugin.PluginItem;
+import killercreepr.cruxitems.api.item.plugin.PluginItem;
 import killercreepr.usurvive.item.USurviveItems;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
