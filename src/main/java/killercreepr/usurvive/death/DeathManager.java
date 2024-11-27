@@ -19,7 +19,11 @@ import killercreepr.usurvive.event.PlayerDeathExpireEvent;
 import killercreepr.usurvive.event.PlayerEchoDeathEvent;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -35,6 +39,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.logging.Level;
 
 public class DeathManager implements Listener {
     protected final @NotNull Plugin plugin;
@@ -121,7 +126,7 @@ public class DeathManager implements Listener {
         for(Entity e : event.getEntities()){
             if(!CruxMob.is(e, USurviveMobs.ECHO)) continue;
             PlayerDeath death = getPlayerDeathByGrave(e.getUniqueId());
-            if(death==null)  e.remove();
+            if(death==null) e.remove();
         }
     }
 
@@ -173,10 +178,28 @@ public class DeathManager implements Listener {
         Collection<PlayerDeath> list = getAllDeaths(p);
         if(list.size() > 3){
             PlayerDeath oldest = getOldestDeath(list);
-            deaths.remove(oldest.getWorldUUID(), oldest.getPosition().toChunkKey(), oldest.getPosition());
 
-            Entity e = Bukkit.getEntity(oldest.getGuardianUUID());
-            if(e!=null) e.remove();
+            World world = oldest.getWorld();
+            if(world != null){
+                int chunkX = oldest.getPosition().toChunkX();
+                int chunkZ = oldest.getPosition().toChunkZ();
+                world.getChunkAtAsync(chunkX, chunkZ).whenComplete(((chunk, throwable) -> {
+                    Entity e = plugin.getServer().getEntity(oldest.getGuardianUUID());
+                    if(e!=null){
+                        if(e instanceof LivingEntity d) d.damage(99999999D, DamageSource.builder(DamageType.GENERIC_KILL).build());
+                        else e.remove();
+                    }
+                    deaths.remove(oldest.getWorldUUID(), oldest.getPosition().toChunkKey(), oldest.getPosition());
+                }));
+            }else{
+                Crux.log(Level.WARNING, "PlayerDeath world, " + oldest.getWorldUUID() + " was not loaded. From player: " + oldest.getPlayerUUID());
+                Entity e = plugin.getServer().getEntity(oldest.getGuardianUUID());
+                if(e!=null){
+                    if(e instanceof LivingEntity d) d.damage(99999999D, DamageSource.builder(DamageType.GENERIC_KILL).build());
+                    else e.remove();
+                }
+                deaths.remove(oldest.getWorldUUID(), oldest.getPosition().toChunkKey(), oldest.getPosition());
+            }
         }
     }
 

@@ -247,8 +247,14 @@ public class EchoGoal extends CruxMobModeledGoal implements Listener {
         }
 
         switch (event.getCause()){
-            case FIRE, FIRE_TICK, FLY_INTO_WALL, HOT_FLOOR, LAVA, FALL, FALLING_BLOCK, LIGHTNING, DROWNING,
-                 DRYOUT ->{
+            /*case FIRE, FIRE_TICK, FLY_INTO_WALL, HOT_FLOOR, LAVA, FALL, FALLING_BLOCK, LIGHTNING, DROWNING,
+                 DRYOUT, SUFFOCATION ->{
+                event.setCancelled(true);
+                mob.setFireTicks(0);
+                return;
+            }*/
+            case ENTITY_ATTACK, ENTITY_SWEEP_ATTACK, ENTITY_EXPLOSION, SUICIDE, KILL -> {}
+            default ->{
                 event.setCancelled(true);
                 mob.setFireTicks(0);
                 return;
