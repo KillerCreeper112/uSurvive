@@ -66,6 +66,7 @@ import killercreepr.usurvive.registries.USurviveRegistries;
 import killercreepr.usurvive.tags.object.PlayerDeathTags;
 import killercreepr.usurvive.values.DefaultValues;
 import killercreepr.usurvive.values.ValuesProvider;
+import killercreepr.usurvive.world.USurviveNether;
 import killercreepr.usurvive.world.USurviveOverworld;
 import killercreepr.usurvive.world.entity.StandardOverworldGroups;
 import net.kyori.adventure.key.Key;
@@ -175,6 +176,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
         CruxWorldManager worldManager = CruxCore.inst().worldManager();
         worldManager.getCreatorRegistry().register("world", USurviveOverworld::new);
+        worldManager.getCreatorRegistry().register("world_nether", USurviveNether::new);
         Crux.tags().register(new PlayerDeathTags());
     }
 

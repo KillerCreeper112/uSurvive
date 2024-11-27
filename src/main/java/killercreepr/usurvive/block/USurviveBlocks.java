@@ -8,4 +8,5 @@ public class USurviveBlocks {
     public static void register(){}
     public static final CruxBlockGroup ORBIT_ORE = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("orbit_ore"));
     public static final CruxBlockGroup CHARRED_LOG = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("charred_log"));
+    public static final CruxBlockGroup SPECTRAL_SOIL = CruxBlocksRegistries.BLOCK.getGroup(Crux.key("spectral_soil"));
 }

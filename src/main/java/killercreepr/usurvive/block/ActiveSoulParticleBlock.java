@@ -16,7 +16,7 @@ public class ActiveSoulParticleBlock extends SimpleActiveCruxBlock {
     @Override
     public void broken(@NotNull BlockContext ctx) {
         super.broken(ctx);
-        new ParticleBuilder(Particle.SCULK_SOUL)
+        new ParticleBuilder(Particle.SOUL)
             .count(1)
             .offset(0, 0, 0)
             .extra(.1)
