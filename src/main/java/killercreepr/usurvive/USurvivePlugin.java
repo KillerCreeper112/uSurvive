@@ -44,6 +44,7 @@ import killercreepr.cruxmenus.core.menu.module.standard.SimpleFilePagedCfg;
 import killercreepr.cruxmenus.core.menu.module.standard.SimplePagedMenuModule;
 import killercreepr.cruxworlds.world.manager.CruxWorldManager;
 import killercreepr.usurvive.block.USurviveBlocks;
+import killercreepr.usurvive.block.component.USurviveBlockComponents;
 import killercreepr.usurvive.command.USurviveCommands;
 import killercreepr.usurvive.config.Config;
 import killercreepr.usurvive.config.component.CfgUSurviveComponents;
@@ -112,6 +113,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
         CfgRegistries.FILE.forEach(this::registerCfgHandlers);
         CfgUSurviveComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());
+
+        USurviveBlockComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());
 
         CruxItemsConfigHook.filePluginItem().registerTypeHandler(new FilePluginItemHandler(){
             @Override
