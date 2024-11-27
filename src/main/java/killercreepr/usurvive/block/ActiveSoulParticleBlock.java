@@ -19,7 +19,7 @@ public class ActiveSoulParticleBlock extends SimpleActiveCruxBlock {
         new ParticleBuilder(Particle.SOUL)
             .count(1)
             .offset(0, 0, 0)
-            .extra(.1)
+            .extra(.05)
             .location(block.getLocation().toCenterLocation())
             .spawn()
         ;
