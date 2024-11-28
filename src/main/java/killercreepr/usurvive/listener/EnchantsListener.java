@@ -67,6 +67,7 @@ public class EnchantsListener implements Listener {
             EntityTrampleEnchantEvent trampleEvent = new EntityTrampleEnchantEvent(p, ray.getHitEntity(), damage);
             if(!trampleEvent.callEvent()) return;
 
+            //take durablity damage based on fall distance
             holder.setTrampleAmount(holder.getTrampleAmount()+1);
 
             damage = trampleEvent.getDamage();

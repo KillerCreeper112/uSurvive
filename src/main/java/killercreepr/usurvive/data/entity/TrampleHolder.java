@@ -24,7 +24,7 @@ public class TrampleHolder extends PlayerTickedDataHolder {
     protected int trampleAmount;
     @Override
     public boolean shouldRemoveFromMemory(@Nullable Player e) {
-        return super.shouldRemoveFromMemory(e) || e == null || e.getFallDistance() < 1f;
+        return super.shouldRemoveFromMemory(e) || e == null || e.isOnGround();
     }
 
     public boolean canTrample(){
