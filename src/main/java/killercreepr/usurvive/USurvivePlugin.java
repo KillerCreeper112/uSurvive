@@ -211,7 +211,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new CommandListener(),
             new RespawnListener(this, values),
             new SetupListener(values),
-            new DisableEndListener()
+            new DisableEndListener(),
+            new EnchantsListener(this)
         );
 
         super.enabled();

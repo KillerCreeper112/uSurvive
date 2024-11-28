@@ -2,9 +2,14 @@ name: uSurvive
 version: '1.0'
 author: killercreepr
 main: killercreepr.usurvive.USurvivePlugin
+bootstrapper: killercreepr.usurvive.USurviveBootstrapper
 api-version: '1.19'
 load: STARTUP
 dependencies:
+  bootstrap:
+    CruxCore:
+      load: BEFORE
+
   server:
     CruxCore:
       load: BEFORE

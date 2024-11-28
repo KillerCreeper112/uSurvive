@@ -1,4 +1,4 @@
-package killercreepr.usurvive.event;
+package killercreepr.usurvive.api.event;
 
 import killercreepr.usurvive.death.DeathManager;
 import killercreepr.usurvive.death.PlayerDeath;
