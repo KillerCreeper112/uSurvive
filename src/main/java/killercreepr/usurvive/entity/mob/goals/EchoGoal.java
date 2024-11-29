@@ -209,7 +209,6 @@ public class EchoGoal extends CruxMobModeledGoal implements Listener {
         }
     }
 
-
     @EventHandler(ignoreCancelled = true)
     public void onEntityTarget(EntityTargetEvent event) {
         if(!event.getEntity().equals(mob)) return;

@@ -74,6 +74,9 @@ public class EnchantsListener implements Listener {
             e.damage(damage, p);
             p.setFallDistance(0f);
             p.setVelocity(new Vector(0, .6, 0));
+
+            p.damageItemStack(boots, 1);
+
             p.getWorld().playSound(event.getFrom(), Sound.ENTITY_PLAYER_BIG_FALL, 1f, .8f);
             Location loc = ray.getHitPosition().toLocation(p.getWorld());
             for(int i = 0; i < 13; i++){

@@ -5,11 +5,14 @@ import com.destroystokyo.paper.entity.ai.GoalKey;
 import io.papermc.paper.event.entity.EntityMoveEvent;
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
+import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -173,5 +176,10 @@ public class DownmanGoal extends CruxMobModeledGoal {
             return;
         }
         setRunning(true);
+    }
+
+    @Override
+    public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
+        return super.isValidNaturalTarget(target) && !CruxMob.isInCategory(target, MobCategory.ENEMY);
     }
 }

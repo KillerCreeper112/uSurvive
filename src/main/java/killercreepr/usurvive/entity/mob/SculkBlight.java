@@ -49,7 +49,7 @@ public class SculkBlight extends SimpleCruxMob {
     @Override
     public MobCategory[] getCategories() {
         return new MobCategory[]{
-            MobCategory.MONSTER, MobCategory.SCULK
+            MobCategory.MONSTER, MobCategory.SCULK, MobCategory.ENEMY
         };
     }
 

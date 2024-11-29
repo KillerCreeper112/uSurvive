@@ -147,7 +147,7 @@ public class SculkBlightGoal extends CruxMobModeledGoal {
 
     @Override
     public boolean isValidNaturalTarget(@NotNull LivingEntity target){
-        if(CruxMob.isInCategory(target, MobCategory.MONSTER, MobCategory.SCULK)) return false;
+        if(CruxMob.isInCategory(target, MobCategory.ENEMY, MobCategory.SCULK)) return false;
         if(goUnderGround) return isValidTarget(target);
         return isValidTarget(target) && hasLineOfSight(target);
     }

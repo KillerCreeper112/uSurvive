@@ -74,7 +74,7 @@ public class Downman extends SimpleCruxMob {
     @Override
     public MobCategory[] getCategories() {
         return new MobCategory[]{
-            MobCategory.MONSTER
+            MobCategory.MONSTER, MobCategory.ENEMY
         };
     }
 }
