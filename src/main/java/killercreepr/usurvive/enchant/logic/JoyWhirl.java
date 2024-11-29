@@ -1,16 +1,20 @@
 package killercreepr.usurvive.enchant.logic;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import io.papermc.paper.entity.TeleportFlag;
+import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
+import net.minecraft.world.entity.RelativeMovement;
 import org.bukkit.Color;
-import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class JoyWhirl {
     protected final Plugin plugin;
@@ -58,20 +62,20 @@ public class JoyWhirl {
     }
 
     private void setRotation(Player p, float yaw, float pitch){
-        Location loc = new Location(
+        /*Location loc = new Location(
             p.getWorld(), 0D, 0D, 0D, yaw, pitch
         );
         p.teleport(
             loc, TeleportFlag.Relative.values()
-        );
-    /*    Set<ClientboundPlayerPositionPacket.RelativeArgument> flags = new HashSet<>();
-        flags.add(ClientboundPlayerPositionPacket.RelativeArgument.X);
-        flags.add(ClientboundPlayerPositionPacket.RelativeArgument.Y);
-        flags.add(ClientboundPlayerPositionPacket.RelativeArgument.Z);
-        flags.add(ClientboundPlayerPositionPacket.RelativeArgument.Y_ROT);
-        flags.add(ClientboundPlayerPositionPacket.RelativeArgument.X_ROT);
-        ClientboundPlayerPositionPacket packet = new ClientboundPlayerPositionPacket(0, 0, 0, yaw, pitch, flags, 0, false);
+        );*/
+        Set<RelativeMovement> flags = new HashSet<>();
+        flags.add(RelativeMovement.X);
+        flags.add(RelativeMovement.Y);
+        flags.add(RelativeMovement.Z);
+        flags.add(RelativeMovement.Y_ROT);
+        flags.add(RelativeMovement.X_ROT);
+        ClientboundPlayerPositionPacket packet = new ClientboundPlayerPositionPacket(0, 0, 0, yaw, pitch, flags, 0);
 
-        ((CraftPlayer) p).getHandle().connection.send(packet);*/
+        ((CraftPlayer) p).getHandle().connection.send(packet);
     }
 }
