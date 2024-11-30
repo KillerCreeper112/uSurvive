@@ -32,7 +32,7 @@ public class ProjectileReflectListener implements Listener {
         if(instance == null) return;
         int reflected = CruxPersist.RICOCHET_BLOCK.get(proj, 0);
         int max = (int) instance.getValue();
-        if(reflected > max) return;
+        if(reflected >= max) return;
 
         Vector normal = proj.getLocation().toVector().normalize();
 
@@ -48,7 +48,7 @@ public class ProjectileReflectListener implements Listener {
         if(instance == null) return;
         int reflected = CruxPersist.RICOCHET_BLOCK.get(proj, 0);
         int max = (int) instance.getValue();
-        if(reflected > max) return;
+        if(reflected >= max) return;
 
         Vector normal;
         if(event.getHitBlockFace() != null){
