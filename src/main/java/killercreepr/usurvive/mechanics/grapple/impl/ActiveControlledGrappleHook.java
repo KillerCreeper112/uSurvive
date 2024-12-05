@@ -6,8 +6,9 @@ import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.usurvive.lang.Lang;
-import killercreepr.usurvive.mechanics.grapple.ActiveGrappleHook;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class ActiveControlledGrappleHook implements ActiveGrappleHook, Holder<Entity> {
+public class ActiveControlledGrappleHook extends BasicGrappleHook implements Holder<Entity> {
     protected final @NotNull UUID uuid;
     protected final @NotNull Holder<Entity> entity;
     protected final int id;
@@ -35,6 +36,8 @@ public class ActiveControlledGrappleHook implements ActiveGrappleHook, Holder<En
         this.pullForce = pullForce;
     }
 
+    protected Double lastGravity;
+
     @Override
     public int getId() {
         return id;
@@ -42,12 +45,14 @@ public class ActiveControlledGrappleHook implements ActiveGrappleHook, Holder<En
     @Override
     public boolean isValid(@NotNull Entity owner){
         Entity entity = value();
-        return entity != null && entity.isValid() && owner.getWorld().equals(entity.getWorld());
+        return super.isValid(owner) && entity != null && entity.isValid() && owner.getWorld().equals(entity.getWorld());
     }
 
     @Override
-    public void remove(){
+    public void remove(Entity owner){
+        super.remove(owner);
         Entity entity = value();
+        if(owner != null) resetOwnerGravity(owner);
         if(entity==null) return;
         Crux.getServer().getScheduler().runTask(Crux.getMainPlugin(), task -> entity.remove());
     }
@@ -64,27 +69,45 @@ public class ActiveControlledGrappleHook implements ActiveGrappleHook, Holder<En
     }
 
     public void onTick(@NotNull Entity owner, @NotNull LivingEntity mob){
+        if(isScheduledForRemoval()) return;
         wasCollidingLastTick = checkCollisionTick(owner, mob);
         if(wasCollidingLastTick) return;
 
         mob.setAI(true);
     }
 
-    protected Vector vel = new Vector();
+    public void resetOwnerGravity(@NotNull Entity owner){
+        if(lastGravity == null) return;
+        if(!(owner instanceof LivingEntity l)) return;
+        AttributeInstance instance = l.getAttribute(Attribute.GENERIC_GRAVITY);
+        if(instance == null) return;
+        instance.setBaseValue(lastGravity);
+        lastGravity = null;
+    }
+
+    public void setOwnerGravity(@NotNull Entity owner, double gravity){
+        if(lastGravity != null) return;
+        if(!(owner instanceof LivingEntity l)) return;
+        AttributeInstance instance = l.getAttribute(Attribute.GENERIC_GRAVITY);
+        if(instance == null) return;
+        lastGravity = instance.getBaseValue();
+        instance.setBaseValue(gravity);
+    }
+
     public boolean checkCollisionTick(@NotNull Entity owner, @NotNull LivingEntity entity){
         if(entity.wouldCollideUsing(entity.getBoundingBox().expand(.005))){
             if(!wasCollidingLastTick){
                 Lang.GRAPPLE_HOOK.playAt(entity);
             }
 
-            Vector vel = this.vel.clone();
             if(owner instanceof HumanEntity e && e.isSneaking()){
-                vel.add(entity.getLocation().toVector().subtract(CruxEntityUtil.getEyeOrLocation(owner).toVector())
-                    .multiply(pullForce));
+                Vector vel = entity.getLocation().toVector().subtract(CruxEntityUtil.getEyeOrLocation(owner).toVector())
+                    .multiply(pullForce);
+                owner.setVelocity(vel);
             }
 
-            owner.setVelocity(vel);
             entity.setAI(false);
+            setOwnerGravity(owner, 0D);
             return true;
         }
         for(Entity e : entity.getWorld().getNearbyEntities(entity.getBoundingBox().expand(.001),
@@ -99,6 +122,7 @@ public class ActiveControlledGrappleHook implements ActiveGrappleHook, Holder<En
             entity.setVelocity(entity.getVelocity().add(vel));
             return true;
         }
+        resetOwnerGravity(owner);
         return false;
     }
 

@@ -55,7 +55,7 @@ public class SimpleGrapple implements Grapple {
 
         ActiveGrappleHook previous = grappler.getGrapple(id);
         if(previous != null){
-            previous.remove();
+            previous.remove(p);
             return ItemUseResult.cancelled();
         }
         if(p.hasCooldown(item.item().getType())){

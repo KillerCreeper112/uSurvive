@@ -7,6 +7,7 @@ import killercreepr.usurvive.mechanics.grapple.ActiveGrappleHook;
 import killercreepr.usurvive.mechanics.grapple.GrappleContext;
 import killercreepr.usurvive.mechanics.grapple.GrappleHook;
 import net.kyori.adventure.key.Key;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,20 +46,20 @@ public class GrapplerHolder extends PlayerTickedDataHolder {
 
     public void putGrapple(@NotNull ActiveGrappleHook grapple){
         ActiveGrappleHook previous = grapples.put(grapple.getId(), grapple);
-        if(previous != null) previous.remove();
+        if(previous != null) previous.remove(getParent().value());
     }
 
     public ActiveGrappleHook getGrapple(int id){
         return grapples.get(id);
     }
 
-    public void reset(){
-        remove();
+    public void reset(Entity owner){
+        remove(owner);
     }
 
-    public void remove(){
+    public void remove(Entity owner){
         for(ActiveGrappleHook h : grapples.values()){
-            h.remove();
+            h.remove(owner);
         }
         grapples.clear();
     }
@@ -66,11 +67,14 @@ public class GrapplerHolder extends PlayerTickedDataHolder {
     @Override
     protected void onTick(@NotNull Player e) {
         if(!e.isValid()){
-            reset();
+            reset(e);
             return;
         }
         grapples.values().removeIf(d ->{
-            if(!d.isValid(e)) return true;
+            if(!d.isValid(e)){
+                d.remove(e);
+                return true;
+            }
             d.tick(e);
             return false;
         });
@@ -84,6 +88,6 @@ public class GrapplerHolder extends PlayerTickedDataHolder {
     @Override
     protected void removingFromMemory(@Nullable Player e) {
         super.removingFromMemory(e);
-        remove();
+        remove(e);
     }
 }

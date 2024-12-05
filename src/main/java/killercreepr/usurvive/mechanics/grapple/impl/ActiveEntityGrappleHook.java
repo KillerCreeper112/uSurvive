@@ -5,9 +5,7 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxentities.api.combat.EntityDamager;
-import killercreepr.cruxentities.combat.CruxEntityDamager;
 import killercreepr.usurvive.lang.Lang;
-import killercreepr.usurvive.mechanics.grapple.ActiveGrappleHook;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -16,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class ActiveEntityGrappleHook implements ActiveGrappleHook, Holder<Entity> {
+public class ActiveEntityGrappleHook extends BasicGrappleHook implements Holder<Entity> {
     protected final @NotNull UUID uuid;
     protected final @NotNull Holder<Entity> entity;
     protected final int id;
@@ -42,11 +40,12 @@ public class ActiveEntityGrappleHook implements ActiveGrappleHook, Holder<Entity
     @Override
     public boolean isValid(@NotNull Entity owner){
         Entity entity = value();
-        return entity != null && entity.isValid() && owner.getWorld().equals(entity.getWorld());
+        return super.isValid(owner) && entity != null && entity.isValid() && owner.getWorld().equals(entity.getWorld());
     }
 
     @Override
-    public void remove(){
+    public void remove(Entity owner){
+        super.remove(owner);
         Entity entity = value();
         if(entity==null) return;
         Crux.getServer().getScheduler().runTask(Crux.getMainPlugin(), task -> entity.remove());
@@ -64,6 +63,7 @@ public class ActiveEntityGrappleHook implements ActiveGrappleHook, Holder<Entity
     }
 
     public void onTick(@NotNull Entity owner, @NotNull LivingEntity mob){
+        if(isScheduledForRemoval()) return;
         wasCollidingLastTick = checkCollisionTick(owner, mob);
         if(wasCollidingLastTick) return;
 

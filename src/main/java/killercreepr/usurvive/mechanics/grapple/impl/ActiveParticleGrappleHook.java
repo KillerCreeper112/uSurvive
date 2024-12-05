@@ -6,8 +6,6 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.cruxentities.api.combat.EntityDamager;
-import killercreepr.cruxentities.combat.CruxEntityDamager;
-import killercreepr.usurvive.mechanics.grapple.ActiveGrappleHook;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -15,7 +13,7 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-public class ActiveParticleGrappleHook implements ActiveGrappleHook, Holder<Location> {
+public class ActiveParticleGrappleHook extends BasicGrappleHook implements Holder<Location> {
     protected @NotNull Location location;
     protected final int id;
     protected final double pullForce; //.04
@@ -44,15 +42,9 @@ public class ActiveParticleGrappleHook implements ActiveGrappleHook, Holder<Loca
     public int getId() {
         return id;
     }
-    protected boolean scheduledRemoval = false;
     @Override
     public boolean isValid(@NotNull Entity owner){
-        return !scheduledRemoval && owner.getWorld().equals(location.getWorld());
-    }
-
-    @Override
-    public void remove(){
-        scheduledRemoval = true;
+        return super.isValid(owner) && owner.getWorld().equals(location.getWorld());
     }
 
     protected boolean wasCollidingLastTick = false;
@@ -106,7 +98,7 @@ public class ActiveParticleGrappleHook implements ActiveGrappleHook, Holder<Loca
 
         displayParticles(ownerLoc);
         if(location.distance(ownerLoc) <= (retractSpeed*1.5D)){
-            remove();
+            remove(owner);
         }
     }
 
@@ -121,6 +113,7 @@ public class ActiveParticleGrappleHook implements ActiveGrappleHook, Holder<Loca
         displayParticles(ownerLoc);
 
         Crux.getServer().getScheduler().runTask(Crux.getMainPlugin(), task ->{
+            if(isScheduledForRemoval()) return;
             RayTraceResult result = rayLogic(owner, location);
             if(result == null){
                 wasCollidingLastTick = false;
@@ -149,14 +142,6 @@ public class ActiveParticleGrappleHook implements ActiveGrappleHook, Holder<Loca
 
     public void setWasCollidingLastTick(boolean wasCollidingLastTick) {
         this.wasCollidingLastTick = wasCollidingLastTick;
-    }
-
-    public boolean isScheduledRemoval() {
-        return scheduledRemoval;
-    }
-
-    public void setScheduledRemoval(boolean scheduledRemoval) {
-        this.scheduledRemoval = scheduledRemoval;
     }
 
     public double getRetractSpeed() {

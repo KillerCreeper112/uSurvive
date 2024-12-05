@@ -23,7 +23,7 @@ public class GrappleListener implements Listener {
         Player p = event.getPlayer();
         GrapplerHolder grappler = EntityMemory.getDataHolder(p, GrapplerHolder.class);
         if(grappler==null) return;
-        grappler.reset();
+        grappler.reset(p);
     }
 
 
@@ -32,7 +32,7 @@ public class GrappleListener implements Listener {
         Player p = event.getPlayer();
         GrapplerHolder grappler = EntityMemory.getDataHolder(p, GrapplerHolder.class);
         if(grappler==null) return;
-        grappler.reset();
+        grappler.reset(p);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -52,7 +52,7 @@ public class GrappleListener implements Listener {
         if(p.getInventory().getHeldItemSlot() == event.getHotbarButton() || event.getRawSlot() == p.getInventory().getHeldItemSlot()){
             GrapplerHolder grappler = EntityMemory.getDataHolder(p, GrapplerHolder.class);
             if(grappler==null) return;
-            grappler.reset();
+            grappler.reset(p);
         }
     }
 
@@ -61,7 +61,7 @@ public class GrappleListener implements Listener {
         Player p = event.getPlayer();
         GrapplerHolder grappler = EntityMemory.getDataHolder(p, GrapplerHolder.class);
         if(grappler==null) return;
-        grappler.reset();
+        grappler.reset(p);
     }
 
 
