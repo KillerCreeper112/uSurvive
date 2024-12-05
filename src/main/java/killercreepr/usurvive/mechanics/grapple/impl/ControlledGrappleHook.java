@@ -2,6 +2,8 @@ package killercreepr.usurvive.mechanics.grapple.impl;
 
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.util.CruxEntityUtil;
+import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
+import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import killercreepr.usurvive.entity.USurviveMobs;
 import killercreepr.usurvive.mechanics.grapple.ActiveGrappleHook;
 import killercreepr.usurvive.mechanics.grapple.GrappleContext;
@@ -9,6 +11,7 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.PufferFish;
+import org.bukkit.entity.Slime;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,9 +38,11 @@ public class ControlledGrappleHook extends EntityGrappleHook{
     @Override
     public LivingEntity spawnEntity(@NotNull GrappleContext ctx) {
         Entity owner = ctx.getOwner();
-        return USurviveMobs.GRAPPLE_HOOK.spawnAt(PufferFish.class, ctx.getLocation(), e ->{
+        return USurviveMobs.GRAPPLE_HOOK.spawnAt(Slime.class, ctx.getLocation(), e ->{
+            ModelEntity modelEntity = new ModelEntity(e, "grapple_hook");
+            modelEntity.getModel().getLeashManager().get().connectLeash(owner, "leash");
             e.setLeashHolder(owner);
-            e.setPuffState(3);
+            e.setSize(0);
             Vector vel = CruxEntityUtil.getEyeOrLocation(owner).getDirection().multiply(
                 throwForce.value().doubleValue() * ctx.getForce()
             );
