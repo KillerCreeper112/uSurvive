@@ -66,7 +66,9 @@ public class SimpleGrapple implements Grapple {
             p.getEyeLocation(), p, id, 1D
         ));
         Lang.GRAPPLE_USE.playAt(p.getLocation());
-        if(p.getGameMode() != GameMode.CREATIVE) Crux.handlers().item().damageItem(item.item(), 1, p);
+        if(p.getGameMode() != GameMode.CREATIVE){
+            Crux.handlers().item().damageItem(item.item(), 1, p);
+        }
         return ItemUseResult.cancelled();
     }
 

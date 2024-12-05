@@ -90,4 +90,11 @@ public class GrapplerHolder extends PlayerTickedDataHolder {
         super.removingFromMemory(e);
         remove(e);
     }
+
+    @Override
+    public void scheduledRemoval(Entity e) {
+        super.scheduledRemoval(e);
+        if(e == null) return;
+        remove(e);
+    }
 }
