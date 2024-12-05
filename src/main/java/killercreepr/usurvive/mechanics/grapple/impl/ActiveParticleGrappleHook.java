@@ -5,6 +5,7 @@ import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxLoc;
+import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxentities.combat.CruxEntityDamager;
 import killercreepr.usurvive.mechanics.grapple.ActiveGrappleHook;
 import org.bukkit.FluidCollisionMode;
@@ -79,7 +80,7 @@ public class ActiveParticleGrappleHook implements ActiveGrappleHook, Holder<Loca
             return result;
         }
         if(result.getHitEntity() != null){
-            new CruxEntityDamager(result.getHitEntity(), owner).setHitPosition(location).attack(4D, 8D);
+            EntityDamager.entityDamager(result.getHitEntity(), owner).setHitPosition(location).attack(4D, 8D);
         }
         return result;
     }

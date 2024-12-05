@@ -20,11 +20,6 @@ public abstract class ParticleGrappleHook implements GrappleHook {
     }*/
 
     @Override
-    public int defaultMaxHooks() {
-        return 1;
-    }
-
-    @Override
     public @NotNull Key key() {
         return key;
     }

@@ -49,13 +49,13 @@ import killercreepr.usurvive.command.USurviveCommands;
 import killercreepr.usurvive.config.Config;
 import killercreepr.usurvive.config.component.CfgUSurviveComponents;
 import killercreepr.usurvive.config.handler.FilePlayerDeath;
+import killercreepr.usurvive.core.component.USurviveComponent;
 import killercreepr.usurvive.data.ResourcePackData;
 import killercreepr.usurvive.data.ResourcePackRequestData;
 import killercreepr.usurvive.data.entity.DeathHolder;
 import killercreepr.usurvive.death.DeathManager;
 import killercreepr.usurvive.death.PlayerDeath;
 import killercreepr.usurvive.entity.USurviveMobs;
-import killercreepr.usurvive.item.GrappleItem;
 import killercreepr.usurvive.item.QuickAccessItem;
 import killercreepr.usurvive.item.USurviveItems;
 import killercreepr.usurvive.lang.Lang;
@@ -110,25 +110,13 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     public void onLoad() {
         instance = this;
         super.onLoad();
+        USurviveComponent.register();
         new USurviveCommands(this).register();
 
         CfgRegistries.FILE.forEach(this::registerCfgHandlers);
         CfgUSurviveComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());
 
         USurviveBlockComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());
-
-        CruxItemsConfigHook.filePluginItem().registerTypeHandler(new FilePluginItemHandler(){
-            @Override
-            public @NotNull Key key() {
-                return USurvivePlugin.this.key("grapple");
-            }
-
-            @NotNull
-            @Override
-            public PluginItem deserialize(@NotNull FileContext<?> ctx, @NotNull FileElement e, @NotNull Key key, @NotNull DynamicItem item) {
-                return new GrappleItem(key, item);
-            }
-        });
 
         CruxItemsConfigHook.filePluginItem().registerTypeHandler(new FilePluginItemHandler(){
             @Override

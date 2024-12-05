@@ -7,19 +7,27 @@ import killercreepr.crux.core.Crux;
 import killercreepr.usurvive.mechanics.grapple.ActiveGrappleHook;
 import killercreepr.usurvive.mechanics.grapple.GrappleContext;
 import killercreepr.usurvive.mechanics.grapple.GrappleHook;
-import killercreepr.usurvive.mechanics.grapple.impl.ActiveParticleGrappleHook;
-import killercreepr.usurvive.mechanics.grapple.impl.ParticleGrappleHook;
-import killercreepr.usurvive.mechanics.grapple.impl.PufferFishGrappleHook;
+import killercreepr.usurvive.mechanics.grapple.impl.*;
 import org.bukkit.Particle;
 import org.jetbrains.annotations.NotNull;
 
 public class StandardGrappleHooks {
-    public static PufferFishGrappleHook PUFFERFISH = new PufferFishGrappleHook(
+    public static GrappleHook DEFAULT = new DefaultGrappleHook(
+        Crux.key("default"),
+        NumberProvider.constant(2.25D),
+        NumberProvider.constant(.02D)
+    );
+    public static GrappleHook CONTROLLED = new ControlledGrappleHook(
+        Crux.key("controlled"),
+        NumberProvider.constant(2.25D),
+        NumberProvider.constant(.02D)
+    );
+    public static GrappleHook PUFFERFISH = new PufferFishGrappleHook(
         Crux.key("pufferfish"),
         NumberProvider.constant(2.25D),
         NumberProvider.constant(.02D)
     );
-    public static ParticleGrappleHook CRIT = new ParticleGrappleHook(
+    public static GrappleHook CRIT = new ParticleGrappleHook(
         Crux.key("crit")
     ) {
         @NotNull
@@ -35,5 +43,7 @@ public class StandardGrappleHooks {
     public static void register(@NotNull KeyedRegistry<GrappleHook> registry){
         registry.register(PUFFERFISH);
         registry.register(CRIT);
+        registry.register(DEFAULT);
+        registry.register(CONTROLLED);
     }
 }

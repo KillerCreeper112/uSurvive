@@ -4,6 +4,7 @@ import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxentities.combat.CruxEntityDamager;
 import killercreepr.usurvive.lang.Lang;
 import killercreepr.usurvive.mechanics.grapple.ActiveGrappleHook;
@@ -83,7 +84,7 @@ public class ActiveEntityGrappleHook implements ActiveGrappleHook, Holder<Entity
         }
         for(Entity e : entity.getWorld().getNearbyEntities(entity.getBoundingBox().expand(.001),
             e -> !e.equals(entity) && !e.equals(owner))){
-            new CruxEntityDamager(e, entity).attack(4D, 8D);
+            EntityDamager.entityDamager(e, entity).attack(4D, 8D);
             Vector dir = entity.getEyeLocation().getDirection();
             Location hitLoc = e.getLocation();
             hitLoc.setY(entity.getY());
