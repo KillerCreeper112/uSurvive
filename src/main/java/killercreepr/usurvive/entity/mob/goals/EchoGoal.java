@@ -94,7 +94,7 @@ public class EchoGoal extends CruxMobModeledGoal implements Listener {
         playAnimation("wings_flap", true);
         playAnimation("hover", true);
         playAnimation("spawn", true);
-        mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(
+        mob.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(
             CruxAttribute.get(mob, CruxAttribute.MOVEMENT_SPEED)
         );
         CreateSound.sound(Sound.BLOCK_SOUL_SOIL_BREAK, .7f).playAt(mob);
@@ -221,7 +221,7 @@ public class EchoGoal extends CruxMobModeledGoal implements Listener {
         exp = death.getExperience();
 
         ValuesProvider cfg = USurvivePlugin.inst().values();
-        mob.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(
+        mob.getAttribute(Attribute.MAX_HEALTH).setBaseValue(
             cfg.ECHO_MAX_HEALTH().sample(InputContext.simple(StringTagProvider.build(
                 TagContainer.string(
                     Tag.parsed("exp", exp + ""),
@@ -229,7 +229,7 @@ public class EchoGoal extends CruxMobModeledGoal implements Listener {
                 )
             ))).doubleValue()
         );
-        mob.setHealth(mob.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+        mob.setHealth(mob.getAttribute(Attribute.MAX_HEALTH).getValue());
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -262,7 +262,7 @@ public class EchoGoal extends CruxMobModeledGoal implements Listener {
 
         if(exp < 1) return;
 
-        expToDropEachHit = calculateExpToDropEachHit(event.getFinalDamage(), mob.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(), exp);
+        expToDropEachHit = calculateExpToDropEachHit(event.getFinalDamage(), mob.getAttribute(Attribute.MAX_HEALTH).getValue(), exp);
 
         exp = Math.max(exp - expToDropEachHit, 0);
         spawnExp(expToDropEachHit);

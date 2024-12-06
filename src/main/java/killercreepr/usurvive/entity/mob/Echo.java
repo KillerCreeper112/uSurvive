@@ -44,9 +44,9 @@ public class Echo extends SimpleCruxMob {
             e.setRemoveWhenFarAway(false);
 
             CruxAttribute.addModifier(e, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.baseModifier(
-                e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue()
+                e.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue()
             ));
-            e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0D);
+            e.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(0D);
 
             load(e);
             if(consumer != null) consumer.accept(e);

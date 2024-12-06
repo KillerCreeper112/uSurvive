@@ -32,8 +32,8 @@ public class Downman extends SimpleCruxMob {
             e.customName(Component.text("Downman"));
             e.setCustomNameVisible(false);
             load(e);
-            e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(
-                e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue() * 1.2
+            e.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(
+                e.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 1.2
             );
             double width = e.getWidth();
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
@@ -57,7 +57,7 @@ public class Downman extends SimpleCruxMob {
             ));
 
             CruxAttribute.addModifier(e, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.baseModifier(
-                e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue()
+                e.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue()
             ));
             if(consumer != null) consumer.accept(e);
         });

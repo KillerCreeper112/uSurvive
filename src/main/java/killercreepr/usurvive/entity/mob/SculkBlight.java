@@ -32,8 +32,8 @@ public class SculkBlight extends SimpleCruxMob {
         return location.getWorld().spawn(location, Pig.class, e ->{
             e.customName(Component.text("Sculk Blight"));
             e.setCustomNameVisible(false);
-            e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(
-                e.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue() * 1.5
+            e.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(
+                e.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 1.5
             );
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2.5D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(4D));

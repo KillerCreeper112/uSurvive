@@ -65,7 +65,7 @@ public class DownmanGoal extends CruxMobModeledGoal {
         crawlCheckTick();
 
         double moveSpeed = CruxAttribute.get(mob, CruxAttribute.MOVEMENT_SPEED);
-        mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(moveSpeed);
+        mob.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(moveSpeed);
     }
 
     public void crawlCheckTick(){

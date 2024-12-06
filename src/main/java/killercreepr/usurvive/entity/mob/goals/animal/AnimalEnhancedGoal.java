@@ -59,7 +59,7 @@ public class AnimalEnhancedGoal extends CruxMobGoal {
         ));
 
         CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.baseModifier(
-            mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue()
+            mob.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue()
         ));
     }
 
@@ -90,7 +90,7 @@ public class AnimalEnhancedGoal extends CruxMobGoal {
         }
 
         double moveSpeed = CruxAttribute.get(mob, CruxAttribute.MOVEMENT_SPEED);
-        mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(moveSpeed);
+        mob.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(moveSpeed);
     }
 
     public void panic(@NotNull LocationHolder from){

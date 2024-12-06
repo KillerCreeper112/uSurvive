@@ -2,7 +2,9 @@ package killercreepr.usurvive.enchant.logic;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
-import net.minecraft.world.entity.RelativeMovement;
+import net.minecraft.world.entity.PositionMoveRotation;
+import net.minecraft.world.entity.Relative;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.Color;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -68,13 +70,13 @@ public class JoyWhirl {
         p.teleport(
             loc, TeleportFlag.Relative.values()
         );*/
-        Set<RelativeMovement> flags = new HashSet<>();
-        flags.add(RelativeMovement.X);
-        flags.add(RelativeMovement.Y);
-        flags.add(RelativeMovement.Z);
-        flags.add(RelativeMovement.Y_ROT);
-        flags.add(RelativeMovement.X_ROT);
-        ClientboundPlayerPositionPacket packet = new ClientboundPlayerPositionPacket(0, 0, 0, yaw, pitch, flags, 0);
+        Set<Relative> flags = new HashSet<>();
+        flags.add(Relative.X);
+        flags.add(Relative.Y);
+        flags.add(Relative.Z);
+        flags.add(Relative.Y_ROT);
+        flags.add(Relative.X_ROT);
+        ClientboundPlayerPositionPacket packet = new ClientboundPlayerPositionPacket(0, new PositionMoveRotation(Vec3.ZERO, Vec3.ZERO, yaw, pitch), flags);
 
         ((CraftPlayer) p).getHandle().connection.send(packet);
     }

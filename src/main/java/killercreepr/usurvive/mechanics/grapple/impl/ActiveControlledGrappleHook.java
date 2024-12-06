@@ -79,7 +79,7 @@ public class ActiveControlledGrappleHook extends BasicGrappleHook implements Hol
     public void resetOwnerGravity(@NotNull Entity owner){
         if(lastGravity == null) return;
         if(!(owner instanceof LivingEntity l)) return;
-        AttributeInstance instance = l.getAttribute(Attribute.GENERIC_GRAVITY);
+        AttributeInstance instance = l.getAttribute(Attribute.GRAVITY);
         if(instance == null) return;
         instance.setBaseValue(lastGravity);
         lastGravity = null;
@@ -88,7 +88,7 @@ public class ActiveControlledGrappleHook extends BasicGrappleHook implements Hol
     public void setOwnerGravity(@NotNull Entity owner, double gravity){
         if(lastGravity != null) return;
         if(!(owner instanceof LivingEntity l)) return;
-        AttributeInstance instance = l.getAttribute(Attribute.GENERIC_GRAVITY);
+        AttributeInstance instance = l.getAttribute(Attribute.GRAVITY);
         if(instance == null) return;
         lastGravity = instance.getBaseValue();
         instance.setBaseValue(gravity);
