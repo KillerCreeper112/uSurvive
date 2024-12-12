@@ -11,7 +11,7 @@ import killercreepr.cruxworlds.world.entity.NaturalEntityWorldSpawner;
 import killercreepr.cruxworlds.world.entity.impl.SimpleNaturalEntityWorldSpawner;
 import killercreepr.usurvive.USurvivePlugin;
 import killercreepr.usurvive.block.USurviveBlocks;
-import killercreepr.usurvive.registries.USurviveRegistries;
+import killercreepr.usurvive.core.registries.USurviveRegistries;
 import killercreepr.usurvive.world.generation.OreGenerator;
 import org.bukkit.Material;
 import org.bukkit.World;

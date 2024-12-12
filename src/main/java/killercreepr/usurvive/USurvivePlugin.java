@@ -50,6 +50,8 @@ import killercreepr.usurvive.config.Config;
 import killercreepr.usurvive.config.component.CfgUSurviveComponents;
 import killercreepr.usurvive.config.handler.FilePlayerDeath;
 import killercreepr.usurvive.core.component.USurviveComponent;
+import killercreepr.usurvive.core.entity.player.settings.StandardPlayerSettings;
+import killercreepr.usurvive.core.registries.USurviveRegistries;
 import killercreepr.usurvive.data.ResourcePackData;
 import killercreepr.usurvive.data.ResourcePackRequestData;
 import killercreepr.usurvive.data.entity.DeathHolder;
@@ -62,7 +64,6 @@ import killercreepr.usurvive.lang.Lang;
 import killercreepr.usurvive.listener.*;
 import killercreepr.usurvive.mechanics.grapple.standard.StandardGrappleHooks;
 import killercreepr.usurvive.menu.module.CurrencyDepositModule;
-import killercreepr.usurvive.registries.USurviveRegistries;
 import killercreepr.usurvive.tags.object.PlayerDeathTags;
 import killercreepr.usurvive.values.DefaultValues;
 import killercreepr.usurvive.values.ValuesProvider;
@@ -111,6 +112,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         instance = this;
         super.onLoad();
         USurviveComponent.register();
+        StandardPlayerSettings.register();
         new USurviveCommands(this).register();
 
         CfgRegistries.FILE.forEach(this::registerCfgHandlers);
