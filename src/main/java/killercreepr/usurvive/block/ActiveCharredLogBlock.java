@@ -1,6 +1,7 @@
 package killercreepr.usurvive.block;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxblocks.api.block.CruxBlock;
 import killercreepr.cruxblocks.api.block.context.BlockContext;
 import killercreepr.cruxblocks.core.block.active.SimpleActiveCruxBlock;
@@ -17,9 +18,9 @@ public class ActiveCharredLogBlock extends SimpleActiveCruxBlock {
     public void broken(@NotNull BlockContext ctx) {
         super.broken(ctx);
         new ParticleBuilder(Particle.SMOKE)
-            .count(4)
+            .count(CruxMath.random(3, 5))
             .offset(.5, .5, .5)
-            .extra(.1)
+            .extra(.05)
             .location(block.getLocation().toCenterLocation())
             .spawn()
         ;

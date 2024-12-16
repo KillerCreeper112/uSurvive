@@ -6,6 +6,7 @@ import killercreepr.cruxconfig.config.bukkit.handler.impl.component.FileDataComp
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.usurvive.component.USurviveComponents;
+import killercreepr.usurvive.component.impl.SmokeParticleBlockComponent;
 import killercreepr.usurvive.component.impl.SoulParticleBlockComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,6 +17,12 @@ public class USurviveBlockComponents {
             @Override
             public @Nullable TypedDataComponent<SoulParticleBlockComponent> deserializeFromFile(@NotNull FileContext<?> fileContext, @NotNull FileObject fileObject) {
                 return TypedDataComponent.create(USurviveComponents.SOUL_PARTICLE_BLOCK, new SoulParticleBlockComponent());
+            }
+        });
+        registry.register("smoke_particle_block", new FileDataComponentType<SmokeParticleBlockComponent>() {
+            @Override
+            public @Nullable TypedDataComponent<SmokeParticleBlockComponent> deserializeFromFile(@NotNull FileContext<?> fileContext, @NotNull FileObject fileObject) {
+                return TypedDataComponent.create(USurviveComponents.SMOKE_PARTICLE_BLOCK, new SmokeParticleBlockComponent());
             }
         });
     }
