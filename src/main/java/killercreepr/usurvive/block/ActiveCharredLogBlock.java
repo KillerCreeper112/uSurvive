@@ -17,7 +17,7 @@ public class ActiveCharredLogBlock extends SimpleActiveCruxBlock {
     @Override
     public void broken(@NotNull BlockContext ctx) {
         super.broken(ctx);
-        new ParticleBuilder(Particle.SMOKE)
+        new ParticleBuilder(Particle.LARGE_SMOKE)
             .count(CruxMath.random(3, 5))
             .offset(.5, .5, .5)
             .extra(.05)
