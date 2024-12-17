@@ -141,4 +141,10 @@ public class DefaultValues implements ValuesProvider {
     public Holder<ResourcePackRequestData> RESOURCE_PACKS() {
         return Holder.empty();
     }
+
+    @NotNull
+    @Override
+    public NumberProvider RESOURCE_OVERWORLD_BORDER() {
+        return null;
+    }
 }

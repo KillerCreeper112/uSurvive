@@ -44,6 +44,7 @@ public class Config extends Cfg implements ValuesProvider {
     public final NumCfgValue DEATH_EXPIRY_TIME = new NumCfgValue(DefaultValues.DEATH_EXPIRY_TIME);
     public final CfgValue<Component> SERVER_MOTD = new CommonValue<>(){};
     public final CfgValue<ResourcePackRequestData> RESOURCE_PACKS = new CommonValue<>(){};
+    public final NumCfgValue RESOURCE_OVERWORLD_BORDER = new NumCfgValue(20000);
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -173,5 +174,11 @@ public class Config extends Cfg implements ValuesProvider {
     @Override
     public Holder<ResourcePackRequestData> RESOURCE_PACKS() {
         return RESOURCE_PACKS;
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider RESOURCE_OVERWORLD_BORDER() {
+        return RESOURCE_OVERWORLD_BORDER.value();
     }
 }

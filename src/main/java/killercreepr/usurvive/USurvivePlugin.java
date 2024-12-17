@@ -46,6 +46,7 @@ import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.creator.CruxWorldModuleCreator;
 import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
 import killercreepr.cruxworlds.api.world.module.WorldModule;
+import killercreepr.cruxworlds.core.registries.WorldsRegistries;
 import killercreepr.usurvive.block.USurviveBlocks;
 import killercreepr.usurvive.block.component.USurviveBlockComponents;
 import killercreepr.usurvive.command.USurviveCommands;
@@ -72,6 +73,7 @@ import killercreepr.usurvive.values.DefaultValues;
 import killercreepr.usurvive.values.ValuesProvider;
 import killercreepr.usurvive.world.USurviveNether;
 import killercreepr.usurvive.world.USurviveOverworld;
+import killercreepr.usurvive.world.USurviveWorldTypes;
 import killercreepr.usurvive.world.entity.StandardOverworldGroups;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
@@ -169,6 +171,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
         CruxWorldManager worldManager = CruxCore.inst().worldManager();
         registerWorldData(worldManager);
+        WorldsRegistries.WORLD_TYPE.register(USurviveWorldTypes.RESOURCE_OVERWORLD);
 
         /*CruxWorldManager worldManager = CruxCore.inst().worldManager();
         worldManager.getCreatorRegistry().register("world", USurviveOverworld::new);

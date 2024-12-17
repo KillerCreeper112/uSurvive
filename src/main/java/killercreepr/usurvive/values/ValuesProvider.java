@@ -46,4 +46,6 @@ public interface ValuesProvider extends Reloadable {
     Holder<Component> SERVER_MOTD();
     @NotNull
     Holder<ResourcePackRequestData> RESOURCE_PACKS();
+
+    @NotNull NumberProvider RESOURCE_OVERWORLD_BORDER();
 }
