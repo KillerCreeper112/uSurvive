@@ -4,7 +4,7 @@ import killercreepr.crux.api.registry.KeyedRegistry;
 import killercreepr.crux.api.registry.Registry;
 import killercreepr.crux.core.registry.SimpleKeyedRegistry;
 import killercreepr.crux.core.registry.SimpleRegistry;
-import killercreepr.cruxworlds.world.entity.NaturalEntitySpawnGroup;
+import killercreepr.cruxworlds.api.world.entity.NaturalEntitySpawnGroup;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
 import killercreepr.usurvive.mechanics.grapple.GrappleHook;

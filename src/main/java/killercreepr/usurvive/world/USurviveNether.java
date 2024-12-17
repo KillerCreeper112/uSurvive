@@ -2,10 +2,10 @@ package killercreepr.usurvive.world;
 
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.cruxgeneration.util.CruxNoise;
-import killercreepr.cruxworlds.world.SimpleWorld;
-import killercreepr.cruxworlds.world.creator.CruxWorldModuleCreator;
-import killercreepr.cruxworlds.world.entity.NaturalEntityWorldSpawner;
-import killercreepr.cruxworlds.world.entity.impl.SimpleNaturalEntityWorldSpawner;
+import killercreepr.cruxworlds.api.world.CruxWorld;
+import killercreepr.cruxworlds.api.world.entity.NaturalEntityWorldSpawner;
+import killercreepr.cruxworlds.core.world.entity.SimpleNaturalEntityWorldSpawner;
+import killercreepr.cruxworlds.core.world.module.SimpleWorldModule;
 import killercreepr.usurvive.USurvivePlugin;
 import killercreepr.usurvive.block.USurviveBlocks;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
@@ -14,21 +14,13 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.generator.LimitedRegion;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Random;
-
-public class USurviveNether extends SimpleWorld {
+public class USurviveNether extends SimpleWorldModule {
     //protected final NaturalEntitySpawnManager entitySpawnManager;
 
-    public USurviveNether(@NotNull World world, @NotNull Collection<CruxWorldModuleCreator> modules) {
-        this(world, new Random(world.getSeed()), modules);
-    }
-
-    public USurviveNether(@NotNull World world, @NotNull Random random, @NotNull Collection<CruxWorldModuleCreator> modules) {
-        super(world, random, modules);
+    public USurviveNether(@NotNull CruxWorld world) {
+        super(world);
         /*entitySpawnManager = new NaturalEntitySpawnManager(this, createEntitySpawner()){
             @Override
             public boolean onSpawnNavigation() {
@@ -44,30 +36,13 @@ public class USurviveNether extends SimpleWorld {
     }
 
     public NaturalEntityWorldSpawner createEntitySpawner(){
-        return new SimpleNaturalEntityWorldSpawner(USurvivePlugin.inst(), random,
+        return new SimpleNaturalEntityWorldSpawner(USurvivePlugin.inst(), parent.getRandom(),
             USurviveRegistries.OVERWORLD_NATURAL_ENTITY_SPAWN_GROUP,
             200, 34, 10);
     }
 
 
-    protected boolean active = false;
-
-    public BukkitRunnable buildRunnable(){
-        return new BukkitRunnable() {
-            @Override
-            public void run() {
-                if(!isActive()){
-                    cancel();
-                    return;
-                }
-                tick();
-            }
-        };
-    }
-
-    public boolean isActive(){
-        return active;
-    }
+    //protected boolean active = false;
 
     public void tick(){
         //entitySpawnManager.tick();
@@ -114,21 +89,11 @@ public class USurviveNether extends SimpleWorld {
     @Override
     public void onInitiate() {
         super.onInitiate();
+        World world = parent.toBukkitWorld();
         world.getPopulators().add(SPECTRAL_SOIL);
-    }
-
-    @Override
-    public void onLoad() {
-        active = true;
-        //buildRunnable().runTaskTimerAsynchronously(USurvivePlugin.inst(), tickInterval(), tickInterval());
     }
 
     public int tickInterval(){
         return 100;
-    }
-
-    @Override
-    public void onUnload() {
-        active = false;
     }
 }

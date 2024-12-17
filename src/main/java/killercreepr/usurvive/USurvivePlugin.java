@@ -42,7 +42,10 @@ import killercreepr.cruxmenus.api.menu.module.MenuModule;
 import killercreepr.cruxmenus.api.menu.module.config.MenuModuleBuilder;
 import killercreepr.cruxmenus.core.menu.module.standard.SimpleFilePagedCfg;
 import killercreepr.cruxmenus.core.menu.module.standard.SimplePagedMenuModule;
-import killercreepr.cruxworlds.world.manager.CruxWorldManager;
+import killercreepr.cruxworlds.api.world.CruxWorld;
+import killercreepr.cruxworlds.api.world.creator.CruxWorldModuleCreator;
+import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
+import killercreepr.cruxworlds.api.world.module.WorldModule;
 import killercreepr.usurvive.block.USurviveBlocks;
 import killercreepr.usurvive.block.component.USurviveBlockComponents;
 import killercreepr.usurvive.command.USurviveCommands;
@@ -165,9 +168,27 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         StandardOverworldGroups.register(USurviveRegistries.OVERWORLD_NATURAL_ENTITY_SPAWN_GROUP);
 
         CruxWorldManager worldManager = CruxCore.inst().worldManager();
+        registerWorldData(worldManager);
+
+        /*CruxWorldManager worldManager = CruxCore.inst().worldManager();
         worldManager.getCreatorRegistry().register("world", USurviveOverworld::new);
-        worldManager.getCreatorRegistry().register("world_nether", USurviveNether::new);
+        worldManager.getCreatorRegistry().register("world_nether", USurviveNether::new);*/
         Crux.tags().register(new PlayerDeathTags());
+    }
+
+    public void registerWorldData(CruxWorldManager worldManager){
+        worldManager.getModuleCreatorRegistry().register("world", new CruxWorldModuleCreator() {
+            @Override
+            public @NotNull WorldModule create(@NotNull CruxWorld world) {
+                return new USurviveOverworld(world);
+            }
+        });
+        worldManager.getModuleCreatorRegistry().register("world_nether", new CruxWorldModuleCreator() {
+            @Override
+            public @NotNull WorldModule create(@NotNull CruxWorld world) {
+                return new USurviveNether(world);
+            }
+        });
     }
 
     protected LangProvider langProvider;

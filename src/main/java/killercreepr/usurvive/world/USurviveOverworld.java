@@ -1,14 +1,15 @@
 package killercreepr.usurvive.world;
 
 import com.destroystokyo.paper.MaterialSetTag;
+import killercreepr.crux.api.data.tick.Ticked;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxgeneration.util.CruxNoise;
-import killercreepr.cruxworlds.world.NaturalEntitySpawnManager;
-import killercreepr.cruxworlds.world.SimpleWorld;
-import killercreepr.cruxworlds.world.creator.CruxWorldModuleCreator;
-import killercreepr.cruxworlds.world.entity.NaturalEntityWorldSpawner;
-import killercreepr.cruxworlds.world.entity.impl.SimpleNaturalEntityWorldSpawner;
+import killercreepr.cruxworlds.api.world.CruxWorld;
+import killercreepr.cruxworlds.api.world.entity.NaturalEntityWorldSpawner;
+import killercreepr.cruxworlds.core.world.NaturalEntitySpawnManager;
+import killercreepr.cruxworlds.core.world.entity.SimpleNaturalEntityWorldSpawner;
+import killercreepr.cruxworlds.core.world.module.SimpleWorldModule;
 import killercreepr.usurvive.USurvivePlugin;
 import killercreepr.usurvive.block.USurviveBlocks;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
@@ -17,22 +18,14 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.generator.LimitedRegion;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Random;
-
-public class USurviveOverworld extends SimpleWorld {
+public class USurviveOverworld extends SimpleWorldModule implements Ticked {
     protected final NaturalEntitySpawnManager entitySpawnManager;
 
-    public USurviveOverworld(@NotNull World world, @NotNull Collection<CruxWorldModuleCreator> modules) {
-        this(world, new Random(world.getSeed()), modules);
-    }
-
-    public USurviveOverworld(@NotNull World world, @NotNull Random random, @NotNull Collection<CruxWorldModuleCreator> modules) {
-        super(world, random, modules);
-        entitySpawnManager = new NaturalEntitySpawnManager(this, createEntitySpawner()){
+    public USurviveOverworld(@NotNull CruxWorld world) {
+        super(world);
+        entitySpawnManager = new NaturalEntitySpawnManager(world, createEntitySpawner()){
             @Override
             public boolean onSpawnNavigation() {
                 USurvivePlugin.inst().log("Navigating overworld spawns");
@@ -47,15 +40,15 @@ public class USurviveOverworld extends SimpleWorld {
     }
 
     public NaturalEntityWorldSpawner createEntitySpawner(){
-        return new SimpleNaturalEntityWorldSpawner(USurvivePlugin.inst(), random,
+        return new SimpleNaturalEntityWorldSpawner(USurvivePlugin.inst(), parent.getRandom(),
             USurviveRegistries.OVERWORLD_NATURAL_ENTITY_SPAWN_GROUP,
             200, 34, 10);
     }
 
 
-    protected boolean active = false;
+    //protected boolean active = false;
 
-    public BukkitRunnable buildRunnable(){
+    /*public BukkitRunnable buildRunnable(){
         return new BukkitRunnable() {
             @Override
             public void run() {
@@ -66,12 +59,13 @@ public class USurviveOverworld extends SimpleWorld {
                 tick();
             }
         };
-    }
+    }*/
 
-    public boolean isActive(){
+    /*public boolean isActive(){
         return active;
-    }
+    }*/
 
+    @Override
     public void tick(){
         entitySpawnManager.tick();
     }
@@ -120,21 +114,11 @@ public class USurviveOverworld extends SimpleWorld {
     @Override
     public void onInitiate() {
         super.onInitiate();
+        World world = parent.toBukkitWorld();
         world.getPopulators().add(ORBIT_ORE);
-    }
-
-    @Override
-    public void onLoad() {
-        active = true;
-        buildRunnable().runTaskTimerAsynchronously(USurvivePlugin.inst(), tickInterval(), tickInterval());
     }
 
     public int tickInterval(){
         return 100;
-    }
-
-    @Override
-    public void onUnload() {
-        active = false;
     }
 }
