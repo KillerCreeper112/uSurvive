@@ -25,7 +25,7 @@ public class StandardOverworldGroups {
             if(CruxMath.random(1, 100) <= 12) return false;
             Block b = ctx.getBlock();
             if(b.getBiome() != Biome.DEEP_DARK) return false;
-            return getEntityAmountNearChunk(b.getChunk(), 6) < 3;
+            return getEntityAmountNearChunk(b.getChunk(), 4) < 3;
         }
     };
 
