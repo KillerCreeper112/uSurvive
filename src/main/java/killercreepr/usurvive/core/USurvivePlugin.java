@@ -222,7 +222,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new GrappleListener(),
             new QuickAccessListener(),
             new ObjectiveProgressListener(this),
-            spawnListener = new SpawnListener(values, this),
+            spawnListener = new SpawnListener(values, CruxCore.core()),
             new CommandListener(),
             new RespawnListener(this, values),
             new SetupListener(values),
