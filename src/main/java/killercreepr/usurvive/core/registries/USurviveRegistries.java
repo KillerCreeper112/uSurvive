@@ -7,7 +7,7 @@ import killercreepr.crux.core.registry.SimpleRegistry;
 import killercreepr.cruxworlds.api.world.entity.NaturalEntitySpawnGroup;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
-import killercreepr.usurvive.mechanics.grapple.GrappleHook;
+import killercreepr.usurvive.api.mechanics.grapple.GrappleHook;
 
 public class USurviveRegistries {
     public static final KeyedRegistry<GrappleHook> GRAPPLE_HOOK = new SimpleKeyedRegistry<>();

@@ -1,7 +1,7 @@
 package killercreepr.usurvive.api.event;
 
-import killercreepr.usurvive.death.DeathManager;
-import killercreepr.usurvive.death.PlayerDeath;
+import killercreepr.usurvive.api.death.DeathManager;
+import killercreepr.usurvive.core.death.PlayerDeath;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

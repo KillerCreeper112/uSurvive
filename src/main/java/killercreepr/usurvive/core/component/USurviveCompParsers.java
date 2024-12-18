@@ -3,7 +3,7 @@ package killercreepr.usurvive.core.component;
 import killercreepr.crux.api.component.parser.hybrid.PersistTextParser;
 import killercreepr.crux.api.component.parser.hybrid.TextInputField;
 import killercreepr.usurvive.api.mechanics.Grapple;
-import killercreepr.usurvive.mechanics.grapple.SimpleGrapple;
+import killercreepr.usurvive.core.mechanics.grapple.SimpleGrapple;
 import net.kyori.adventure.key.Key;
 
 public class USurviveCompParsers {
