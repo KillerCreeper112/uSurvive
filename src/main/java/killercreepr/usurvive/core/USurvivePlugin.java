@@ -91,7 +91,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     private static USurvivePlugin instance;
     public static USurvivePlugin inst(){ return instance; }
 
-    protected final DeathManager deathManager = new SimpleDeathManager(this, CruxCore.core().worldManager());
+    protected DeathManager deathManager;
     public DeathManager getDeathManager() {
         return deathManager;
     }
@@ -117,6 +117,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     public void onLoad() {
         instance = this;
         super.onLoad();
+        deathManager = new SimpleDeathManager(this, CruxCore.core().worldManager());
         USurviveComponent.register();
         StandardPlayerSettings.register();
         new USurviveCommands(this).register();

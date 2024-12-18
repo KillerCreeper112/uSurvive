@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class ChunkDeathStorage extends ChunkBlockStorage<PlayerDeath> {
     protected final @NotNull DeathManager deathManager;
@@ -36,6 +37,17 @@ public class ChunkDeathStorage extends ChunkBlockStorage<PlayerDeath> {
         removed(removed);
         added(block);
         return removed;
+    }
+
+    @Override
+    public boolean removeIf(Predicate<PlayerDeath> predicate) {
+        return this.data.values().removeIf(death ->{
+            if(predicate.test(death)){
+                removed(death);
+                return true;
+            }
+            return false;
+        });
     }
 
     @Override

@@ -324,7 +324,7 @@ public class SimpleDeathManager implements DeathManager, Listener {
     @Override
     public Collection<PlayerDeath> getAllDeaths(@Nullable Predicate<PlayerDeath> filter) {
         Collection<PlayerDeath> list = new HashSet<>(echoToPlayerDeath.values());
-        if(filter != null) list.removeIf(filter);
+        if(filter != null) list.removeIf(e -> !filter.test(e));
         return list;
     }
 
