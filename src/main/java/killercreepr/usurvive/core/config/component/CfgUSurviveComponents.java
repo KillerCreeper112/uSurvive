@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import killercreepr.crux.api.component.TypedDataComponent;
 import killercreepr.crux.api.registry.MappedRegistry;
 import killercreepr.cruxconfig.config.bukkit.handler.impl.component.FileDataComponentType;
+import killercreepr.cruxconfig.config.bukkit.registry.FileDataComponentRegistry;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileObject;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class CfgUSurviveComponents {
-    public static void register(@NotNull MappedRegistry<String, FileDataComponentType<?>> registry){
+    public static void register(@NotNull FileDataComponentRegistry registry){
         registry.register("orbit_conduit", new FileDataComponentType<OrbitConduitComponent>() {
             @Override
             public @Nullable TypedDataComponent<OrbitConduitComponent> deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e) {

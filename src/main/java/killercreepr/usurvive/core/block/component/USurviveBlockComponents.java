@@ -3,6 +3,7 @@ package killercreepr.usurvive.core.block.component;
 import killercreepr.crux.api.component.TypedDataComponent;
 import killercreepr.crux.api.registry.MappedRegistry;
 import killercreepr.cruxconfig.config.bukkit.handler.impl.component.FileDataComponentType;
+import killercreepr.cruxconfig.config.bukkit.registry.FileDataComponentRegistry;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.usurvive.core.component.USurviveComponents;
@@ -12,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class USurviveBlockComponents {
-    public static void register(@NotNull MappedRegistry<String, FileDataComponentType<?>> registry){
+    public static void register(@NotNull FileDataComponentRegistry registry){
         registry.register("soul_particle_block", new FileDataComponentType<SoulParticleBlockComponent>() {
             @Override
             public @Nullable TypedDataComponent<SoulParticleBlockComponent> deserializeFromFile(@NotNull FileContext<?> fileContext, @NotNull FileObject fileObject) {
