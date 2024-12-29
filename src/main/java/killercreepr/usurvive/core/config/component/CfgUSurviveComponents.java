@@ -2,7 +2,6 @@ package killercreepr.usurvive.core.config.component;
 
 import com.google.common.reflect.TypeToken;
 import killercreepr.crux.api.component.TypedDataComponent;
-import killercreepr.crux.api.registry.MappedRegistry;
 import killercreepr.cruxconfig.config.bukkit.handler.impl.component.FileDataComponentType;
 import killercreepr.cruxconfig.config.bukkit.registry.FileDataComponentRegistry;
 import killercreepr.cruxconfig.config.common.FileContext;

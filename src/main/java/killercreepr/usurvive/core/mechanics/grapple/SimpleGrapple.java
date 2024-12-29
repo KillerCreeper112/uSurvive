@@ -21,10 +21,12 @@ public class SimpleGrapple implements Grapple {
     protected final @NotNull Key hook;
     protected final int maxHooks;
     protected final int cooldown;
-    public SimpleGrapple(@NotNull Key hook, int maxHooks, int cooldown) {
+    protected final float throwForce;
+    public SimpleGrapple(@NotNull Key hook, int maxHooks, int cooldown, float throwForce) {
         this.hook = hook;
         this.maxHooks = maxHooks;
         this.cooldown = cooldown;
+        this.throwForce = throwForce;
     }
 
     public int getMaxHooks() {
@@ -65,7 +67,7 @@ public class SimpleGrapple implements Grapple {
         }
         if(cooldown > 0) p.setCooldown(item.item().getType(), cooldown);
         grappler.throwNewHook(hook, new GrappleContext(
-            p.getEyeLocation(), p, id, 1D
+            p.getEyeLocation(), p, id, throwForce
         ));
         Lang.GRAPPLE_USE.playAt(p.getLocation());
         if(p.getGameMode() != GameMode.CREATIVE){

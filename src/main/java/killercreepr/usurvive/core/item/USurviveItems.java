@@ -6,6 +6,6 @@ import killercreepr.cruxitems.core.registries.CruxItemRegistries;
 
 public class USurviveItems {
     public static void register(){};
-    public static PluginItem GRAPPLE = CruxItemRegistries.ITEMS.get(Crux.key("grapple"));
+    //public static PluginItem GRAPPLE = CruxItemRegistries.ITEMS.get(Crux.key("grapple"));
     public static PluginItem QUICK_ACCESS = CruxItemRegistries.ITEMS.get(Crux.key("quick_access"));
 }

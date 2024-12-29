@@ -14,17 +14,10 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 public class DefaultGrappleHook extends EntityGrappleHook{
-    protected final @NotNull NumberProvider throwForce;
     protected final @NotNull NumberProvider pullForce;
-    public DefaultGrappleHook(@NotNull Key key, @NotNull NumberProvider throwForce, @NotNull NumberProvider pullForce) {
+    public DefaultGrappleHook(@NotNull Key key, @NotNull NumberProvider pullForce) {
         super(key);
-        this.throwForce = throwForce;
         this.pullForce = pullForce;
-    }
-
-    @NotNull
-    public NumberProvider getThrowForce() {
-        return throwForce;
     }
 
     @NotNull
@@ -41,9 +34,7 @@ public class DefaultGrappleHook extends EntityGrappleHook{
             modelEntity.getModel().getLeashManager().get().connectLeash(owner, "leash");
             e.setLeashHolder(owner);
             e.setSize(0);
-            Vector vel = CruxEntityUtil.getEyeOrLocation(owner).getDirection().multiply(
-                throwForce.value().doubleValue() * ctx.getForce()
-            );
+            Vector vel = CruxEntityUtil.getEyeOrLocation(owner).getDirection().multiply(ctx.getForce());
             e.setVelocity(vel);
         });
     }

@@ -14,6 +14,7 @@ public class USurviveCompParsers {
             Key grappleType = ctx.get("grapple_type");
             int maxHooks = ctx.getOptional("max_hooks", 1);
             int cooldown = ctx.getOptional("cooldown", 0);
-            return new SimpleGrapple(grappleType, maxHooks, cooldown);
+            float throwForce = ctx.getOptional("throw_force", 1f);
+            return new SimpleGrapple(grappleType, maxHooks, cooldown, throwForce);
         });
 }

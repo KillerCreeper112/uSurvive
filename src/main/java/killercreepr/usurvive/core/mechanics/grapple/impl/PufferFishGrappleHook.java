@@ -13,17 +13,10 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 public class PufferFishGrappleHook extends EntityGrappleHook{
-    protected final @NotNull NumberProvider throwForce;
     protected final @NotNull NumberProvider pullForce;
-    public PufferFishGrappleHook(@NotNull Key key, @NotNull NumberProvider throwForce, @NotNull NumberProvider pullForce) {
+    public PufferFishGrappleHook(@NotNull Key key, @NotNull NumberProvider pullForce) {
         super(key);
-        this.throwForce = throwForce;
         this.pullForce = pullForce;
-    }
-
-    @NotNull
-    public NumberProvider getThrowForce() {
-        return throwForce;
     }
 
     @NotNull
@@ -38,9 +31,7 @@ public class PufferFishGrappleHook extends EntityGrappleHook{
         return USurviveMobs.GRAPPLE_HOOK.spawnAt(PufferFish.class, ctx.getLocation(), e ->{
             e.setLeashHolder(owner);
             e.setPuffState(3);
-            Vector vel = CruxEntityUtil.getEyeOrLocation(owner).getDirection().multiply(
-                throwForce.value().doubleValue() * ctx.getForce()
-            );
+            Vector vel = CruxEntityUtil.getEyeOrLocation(owner).getDirection().multiply(ctx.getForce());
             e.setVelocity(vel);
         });
     }
