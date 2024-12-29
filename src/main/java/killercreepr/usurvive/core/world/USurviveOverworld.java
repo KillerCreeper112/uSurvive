@@ -34,7 +34,7 @@ public class USurviveOverworld extends SimpleWorldModule implements Ticked {
 
             @Override
             public int maxNaturalSpawnTick() {
-                return CruxMath.random(1, 4);
+                return CruxMath.random(100, 400);
             }
         };
     }
@@ -45,26 +45,6 @@ public class USurviveOverworld extends SimpleWorldModule implements Ticked {
             200, 34, 10);
     }
 
-
-    //protected boolean active = false;
-
-    /*public BukkitRunnable buildRunnable(){
-        return new BukkitRunnable() {
-            @Override
-            public void run() {
-                if(!isActive()){
-                    cancel();
-                    return;
-                }
-                tick();
-            }
-        };
-    }*/
-
-    /*public boolean isActive(){
-        return active;
-    }*/
-
     @Override
     public void tick(){
         entitySpawnManager.tick();
@@ -72,7 +52,7 @@ public class USurviveOverworld extends SimpleWorldModule implements Ticked {
 
     public final OreGenerator ORBIT_ORE = new OreGenerator(
         NumberProvider.uniform(1, 3), NumberProvider.uniform(1, 6),
-        NumberProvider.constant(15), NumberProvider.constant(50),
+        NumberProvider.constant(25), NumberProvider.constant(75), //was 50%
 
         CruxNoise.fast().frequency(.09f)
             .noiseType(CruxNoise.NoiseType.OpenSimplex2)
@@ -116,9 +96,5 @@ public class USurviveOverworld extends SimpleWorldModule implements Ticked {
         super.onInitiate();
         World world = parent.toBukkitWorld();
         world.getPopulators().add(ORBIT_ORE);
-    }
-
-    public int tickInterval(){
-        return 100;
     }
 }
