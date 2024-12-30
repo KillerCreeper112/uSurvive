@@ -6,15 +6,24 @@ import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 
 public class SimplePlayerSetting implements PlayerSetting {
     protected final @NotNull Key key;
     protected final @NotNull PlayerSettingSelection defaultSelection;
     protected final @NotNull List<PlayerSettingSelection> validSelections;
-    public SimplePlayerSetting(@NotNull Key key, @NotNull PlayerSettingSelection defaultSelection, @NotNull List<PlayerSettingSelection> validSelections) {
+    protected final @NotNull Map<PlayerSettingSelection, String> descriptions;
+    public SimplePlayerSetting(@NotNull Key key, @NotNull PlayerSettingSelection defaultSelection, @NotNull List<PlayerSettingSelection> validSelections, @NotNull Map<PlayerSettingSelection, String> descriptions) {
         this.key = key;
         this.defaultSelection = defaultSelection;
         this.validSelections = validSelections;
+        this.descriptions = descriptions;
+    }
+
+    @NotNull
+    @Override
+    public String getDescription(@NotNull PlayerSettingSelection selection) {
+        return descriptions.get(selection);
     }
 
     @NotNull

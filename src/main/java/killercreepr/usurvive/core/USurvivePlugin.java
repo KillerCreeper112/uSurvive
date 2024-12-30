@@ -69,11 +69,10 @@ import killercreepr.usurvive.core.item.USurviveItems;
 import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.listener.*;
 import killercreepr.usurvive.core.mechanics.grapple.standard.StandardGrappleHooks;
+import killercreepr.usurvive.core.menu.action.PlayerSettingCacheAction;
 import killercreepr.usurvive.core.menu.module.CurrencyDepositModule;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
-import killercreepr.usurvive.core.tags.object.PlayerDeathTags;
-import killercreepr.usurvive.core.tags.object.PlayerSettingsHolderTags;
-import killercreepr.usurvive.core.tags.object.PlayerTags;
+import killercreepr.usurvive.core.tags.object.*;
 import killercreepr.usurvive.core.values.DefaultValues;
 import killercreepr.usurvive.core.world.USurviveNether;
 import killercreepr.usurvive.core.world.USurviveOverworld;
@@ -166,6 +165,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         });
         CruxMenusModule menusModule = CruxCore.inst().cruxMenus();
         registerMenuModules(menusModule.menuRegistry().menuModule(), menusModule.menuModuleRegistry());
+        menusModule.menuRegistry().menuActions().register(new PlayerSettingCacheAction(Crux.key("player_settings_cache")));
 
         EntityMemory.registerFunction(this, mem ->{
             if(!(mem instanceof PlayerMemory m)) return;
@@ -185,7 +185,9 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         Crux.tags().register(List.of(
             new PlayerDeathTags(),
             new PlayerSettingsHolderTags(),
-            new PlayerTags()
+            new PlayerTags(),
+            new PlayerSettingSelectionTags(),
+            new PlayerSettingTags()
         ));
     }
 

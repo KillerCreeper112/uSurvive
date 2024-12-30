@@ -5,12 +5,18 @@ import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
 
 import java.util.List;
+import java.util.Map;
 
 public class StandardPlayerSettings {
     public static void register(){}
     public static final PlayerSetting QUICK_ACCESS_ITEM = register(new QuickAccessSetting(
         Crux.key("quick_access_item"), StandardPlayerSettingSelections.LOCKED, List.of(
             StandardPlayerSettingSelections.LOCKED, StandardPlayerSettingSelections.UNLOCKED, StandardPlayerSettingSelections.DISABLED
+        ),
+        Map.of(
+            StandardPlayerSettingSelections.LOCKED, "Locks the quick access item in your inventory.",
+            StandardPlayerSettingSelections.UNLOCKED, "Unlocks the quick access item in your inventory. This allows you to move it around in anywhere in your inventory.",
+            StandardPlayerSettingSelections.DISABLED, "Disables the quick access item entirely. You can still use <gray>/menu</gray> to open up the quick access menu."
         )
     ));
 

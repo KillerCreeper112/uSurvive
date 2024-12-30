@@ -5,11 +5,14 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.PlayerDataHolder;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
+import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsCache;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
+import killercreepr.usurvive.core.registries.USurviveRegistries;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +24,15 @@ public class SimplePlayerSettingsHolder extends PlayerDataHolder implements Play
 
     public SimplePlayerSettingsHolder(@NotNull PlayerMemory parent) {
         this(KEY, parent);
+    }
+    protected PlayerSettingsCache cache;
+
+    public PlayerSettingsCache getCache() {
+        return cache;
+    }
+
+    public void setCache(PlayerSettingsCache cache) {
+        this.cache = cache;
     }
 
     protected final @NotNull Map<PlayerSetting, PlayerSettingSelection> settings = new HashMap<>();
@@ -44,5 +56,11 @@ public class SimplePlayerSettingsHolder extends PlayerDataHolder implements Play
         if(found != null){
             setting.onSettingChanged(found, getSetting(setting));
         }
+    }
+
+    @NotNull
+    @Override
+    public Collection<PlayerSetting> getAllAvailableSettings() {
+        return USurviveRegistries.PLAYER_SETTING.values();
     }
 }

@@ -12,10 +12,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class QuickAccessSetting extends SimplePlayerSetting {
-    public QuickAccessSetting(@NotNull Key key, @NotNull PlayerSettingSelection defaultSelection, @NotNull List<PlayerSettingSelection> validSelections) {
-        super(key, defaultSelection, validSelections);
+    public QuickAccessSetting(@NotNull Key key, @NotNull PlayerSettingSelection defaultSelection, @NotNull List<PlayerSettingSelection> validSelections, @NotNull Map<PlayerSettingSelection, String> descriptions) {
+
+        super(key, defaultSelection, validSelections, descriptions);
     }
 
     @Override

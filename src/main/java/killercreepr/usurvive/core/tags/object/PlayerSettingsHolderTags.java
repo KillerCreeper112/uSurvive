@@ -2,6 +2,7 @@ package killercreepr.usurvive.core.tags.object;
 
 import killercreepr.crux.api.text.format.FormatPrefix;
 import killercreepr.crux.api.text.hook.ObjectTag;
+import killercreepr.crux.api.text.resolver.StringListResolver;
 import killercreepr.crux.api.text.resolver.StringResolver;
 import killercreepr.crux.api.text.tags.TagParser;
 import killercreepr.crux.api.text.tags.container.TagContainer;
@@ -28,6 +29,13 @@ public class PlayerSettingsHolderTags implements ObjectTag<PlayerSettingsHolder>
         return FormatPrefix.simple("player_settings_holder_");
     }
 
+    @Nullable
+    @Override
+    public TagContainer<StringListResolver> requestStringLists(@NotNull PlayerSettingsHolder object, @NotNull TagParser tags) {
+        return TagContainer.stringList(tags)
+            ;
+    }
+
     @Override
     public @Nullable TagContainer<StringResolver> requestStrings(@NotNull PlayerSettingsHolder object, @NotNull TagParser tags) {
         return TagContainer.string(tags)
@@ -52,17 +60,35 @@ public class PlayerSettingsHolderTags implements ObjectTag<PlayerSettingsHolder>
                 Objects.requireNonNull(setting, "No PlayerSetting found! " + key);
                 return object.getSetting(setting).key().asString();
             }))
+            .add(Tag.string("setting_description", (args, ctx) ->{
+                Key key = Crux.key(args.get(0));
+                PlayerSetting setting = USurviveRegistries.PLAYER_SETTING.get(key);
+                Objects.requireNonNull(setting, "No PlayerSetting found! " + key);
+                return setting.getDescription(object.getSetting(setting)) + "";
+            }))
             .add(Tag.string("next_selection", (args, ctx) ->{
                 Key key = Crux.key(args.get(0));
                 PlayerSetting setting = USurviveRegistries.PLAYER_SETTING.get(key);
                 Objects.requireNonNull(setting, "No PlayerSetting found! " + key);
                 return setting.nextSelection(object.getSetting(setting)).key().asString();
             }))
+            .add(Tag.string("next_selection_name", (args, ctx) ->{
+                Key key = Crux.key(args.get(0));
+                PlayerSetting setting = USurviveRegistries.PLAYER_SETTING.get(key);
+                Objects.requireNonNull(setting, "No PlayerSetting found! " + key);
+                return setting.nextSelection(object.getSetting(setting)).displayName();
+            }))
             .add(Tag.string("previous_selection", (args, ctx) ->{
                 Key key = Crux.key(args.get(0));
                 PlayerSetting setting = USurviveRegistries.PLAYER_SETTING.get(key);
                 Objects.requireNonNull(setting, "No PlayerSetting found! " + key);
                 return setting.previousSelection(object.getSetting(setting)).key().asString();
+            }))
+            .add(Tag.string("previous_selection_name", (args, ctx) ->{
+                Key key = Crux.key(args.get(0));
+                PlayerSetting setting = USurviveRegistries.PLAYER_SETTING.get(key);
+                Objects.requireNonNull(setting, "No PlayerSetting found! " + key);
+                return setting.previousSelection(object.getSetting(setting)).displayName();
             }))
             ;
     }
