@@ -59,6 +59,7 @@ import killercreepr.usurvive.core.config.handler.FilePlayerDeath;
 import killercreepr.usurvive.core.data.ResourcePackData;
 import killercreepr.usurvive.core.data.ResourcePackRequestData;
 import killercreepr.usurvive.core.data.entity.DeathHolder;
+import killercreepr.usurvive.core.data.entity.SimplePlayerSettingsHolder;
 import killercreepr.usurvive.core.death.PlayerDeath;
 import killercreepr.usurvive.core.death.SimpleDeathManager;
 import killercreepr.usurvive.core.entity.USurviveMobs;
@@ -71,6 +72,8 @@ import killercreepr.usurvive.core.mechanics.grapple.standard.StandardGrappleHook
 import killercreepr.usurvive.core.menu.module.CurrencyDepositModule;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
 import killercreepr.usurvive.core.tags.object.PlayerDeathTags;
+import killercreepr.usurvive.core.tags.object.PlayerSettingsHolderTags;
+import killercreepr.usurvive.core.tags.object.PlayerTags;
 import killercreepr.usurvive.core.values.DefaultValues;
 import killercreepr.usurvive.core.world.USurviveNether;
 import killercreepr.usurvive.core.world.USurviveOverworld;
@@ -167,6 +170,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         EntityMemory.registerFunction(this, mem ->{
             if(!(mem instanceof PlayerMemory m)) return;
             m.getDataHolders().register(new DeathHolder(m, values(), getDeathManager()));
+            m.getDataHolders().register(new SimplePlayerSettingsHolder(m));
         });
         StandardGrappleHooks.register(USurviveRegistries.GRAPPLE_HOOK);
         StandardOverworldGroups.register(USurviveRegistries.OVERWORLD_NATURAL_ENTITY_SPAWN_GROUP);
@@ -178,7 +182,11 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         /*CruxWorldManager worldManager = CruxCore.inst().worldManager();
         worldManager.getCreatorRegistry().register("world", USurviveOverworld::new);
         worldManager.getCreatorRegistry().register("world_nether", USurviveNether::new);*/
-        Crux.tags().register(new PlayerDeathTags());
+        Crux.tags().register(List.of(
+            new PlayerDeathTags(),
+            new PlayerSettingsHolderTags(),
+            new PlayerTags()
+        ));
     }
 
     public void registerWorldData(CruxWorldManager worldManager){

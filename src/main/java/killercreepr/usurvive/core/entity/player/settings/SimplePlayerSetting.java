@@ -5,13 +5,13 @@ import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
+import java.util.List;
 
 public class SimplePlayerSetting implements PlayerSetting {
     protected final @NotNull Key key;
     protected final @NotNull PlayerSettingSelection defaultSelection;
-    protected final @NotNull Collection<PlayerSettingSelection> validSelections;
-    public SimplePlayerSetting(@NotNull Key key, @NotNull PlayerSettingSelection defaultSelection, @NotNull Collection<PlayerSettingSelection> validSelections) {
+    protected final @NotNull List<PlayerSettingSelection> validSelections;
+    public SimplePlayerSetting(@NotNull Key key, @NotNull PlayerSettingSelection defaultSelection, @NotNull List<PlayerSettingSelection> validSelections) {
         this.key = key;
         this.defaultSelection = defaultSelection;
         this.validSelections = validSelections;
@@ -19,7 +19,7 @@ public class SimplePlayerSetting implements PlayerSetting {
 
     @NotNull
     @Override
-    public Collection<PlayerSettingSelection> validSelections() {
+    public List<PlayerSettingSelection> validSelections() {
         return validSelections;
     }
 

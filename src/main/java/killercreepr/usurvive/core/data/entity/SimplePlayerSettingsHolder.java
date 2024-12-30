@@ -5,19 +5,20 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.PlayerDataHolder;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
+import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlayerSettingsHolder extends PlayerDataHolder {
+public class SimplePlayerSettingsHolder extends PlayerDataHolder implements PlayerSettingsHolder {
     public static final Key KEY = Crux.key("player_settings");
-    public PlayerSettingsHolder(@NotNull Key key, @NotNull PlayerMemory parent) {
+    public SimplePlayerSettingsHolder(@NotNull Key key, @NotNull PlayerMemory parent) {
         super(key, parent);
     }
 
-    public PlayerSettingsHolder(@NotNull PlayerMemory parent) {
+    public SimplePlayerSettingsHolder(@NotNull PlayerMemory parent) {
         this(KEY, parent);
     }
 
@@ -29,5 +30,14 @@ public class PlayerSettingsHolder extends PlayerDataHolder {
 
     public boolean hasSetting(@NotNull PlayerSetting setting, @NotNull PlayerSettingSelection selection){
         return selection.compare(getSetting(setting));
+    }
+
+    @Override
+    public void setSetting(@NotNull PlayerSetting setting, @NotNull PlayerSettingSelection selection) {
+        if(setting.defaultSelection().equals(selection)){
+            settings.remove(setting);
+            return;
+        }
+        settings.put(setting, selection);
     }
 }

@@ -11,6 +11,7 @@ import killercreepr.cruxmenus.api.menu.SlottedMenu;
 import killercreepr.cruxmenus.api.menu.contex.SlotContext;
 import killercreepr.cruxmenus.api.menu.slot.Slot;
 import killercreepr.cruxmenus.core.menu.module.SimpleActiveMenuModule;
+import killercreepr.cruxmenus.core.menu.module.SimpleActiveMenuModuled;
 import killercreepr.cruxmenus.core.menu.slot.SimpleSlot;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.HumanEntity;
@@ -21,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class ActiveCurrencyDepositModule extends SimpleActiveMenuModule {
+public class ActiveCurrencyDepositModule extends SimpleActiveMenuModuled {
     protected final @NotNull CurrencyDepositModule module;
     public ActiveCurrencyDepositModule(@NotNull String id, @NotNull CurrencyDepositModule module) {
         super(id, module);
