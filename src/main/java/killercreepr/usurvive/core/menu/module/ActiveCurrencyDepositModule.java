@@ -10,7 +10,6 @@ import killercreepr.cruxmenus.api.menu.Menu;
 import killercreepr.cruxmenus.api.menu.SlottedMenu;
 import killercreepr.cruxmenus.api.menu.contex.SlotContext;
 import killercreepr.cruxmenus.api.menu.slot.Slot;
-import killercreepr.cruxmenus.core.menu.module.SimpleActiveMenuModule;
 import killercreepr.cruxmenus.core.menu.module.SimpleActiveMenuModuled;
 import killercreepr.cruxmenus.core.menu.slot.SimpleSlot;
 import org.bukkit.OfflinePlayer;

@@ -1,4 +1,4 @@
-package killercreepr.usurvive.core.entity.player.settings;
+package killercreepr.usurvive.core.entity.player.settings.standard;
 
 import killercreepr.crux.core.Crux;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;

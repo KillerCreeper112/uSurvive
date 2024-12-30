@@ -3,17 +3,20 @@ package killercreepr.usurvive.api.entity.player.settings;
 import killercreepr.crux.api.data.CruxKeyed;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.usurvive.core.entity.player.settings.SimplePlayerSetting;
-import killercreepr.usurvive.core.entity.player.settings.StandardPlayerSettingSelections;
+import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettingSelections;
 import net.kyori.adventure.key.Key;
+import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public interface PlayerSetting extends CruxKeyed {
     @NotNull List<PlayerSettingSelection> validSelections();
     @NotNull PlayerSettingSelection defaultSelection();
+
+    default void onSettingChanged(@NotNull HumanEntity e, @NotNull PlayerSettingSelection selection){
+
+    }
 
     default @NotNull PlayerSettingSelection nextSelection(@NotNull PlayerSettingSelection current){
         List<PlayerSettingSelection> list = validSelections();

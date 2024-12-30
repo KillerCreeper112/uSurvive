@@ -63,7 +63,7 @@ import killercreepr.usurvive.core.data.entity.SimplePlayerSettingsHolder;
 import killercreepr.usurvive.core.death.PlayerDeath;
 import killercreepr.usurvive.core.death.SimpleDeathManager;
 import killercreepr.usurvive.core.entity.USurviveMobs;
-import killercreepr.usurvive.core.entity.player.settings.StandardPlayerSettings;
+import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettings;
 import killercreepr.usurvive.core.item.QuickAccessItem;
 import killercreepr.usurvive.core.item.USurviveItems;
 import killercreepr.usurvive.core.lang.Lang;

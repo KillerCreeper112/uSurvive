@@ -1,6 +1,11 @@
 package killercreepr.usurvive.core.listener;
 
+import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.cruxitems.api.item.plugin.PluginItem;
+import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
+import killercreepr.usurvive.core.data.entity.SimplePlayerSettingsHolder;
+import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettingSelections;
+import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettings;
 import killercreepr.usurvive.core.item.USurviveItems;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -43,6 +48,10 @@ public class QuickAccessListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
+        PlayerSettingsHolder settings = EntityMemory.getOrCreateDataHolder(p, SimplePlayerSettingsHolder.class);
+        if(settings != null){
+            if(!settings.hasSetting(StandardPlayerSettings.QUICK_ACCESS_ITEM, StandardPlayerSettingSelections.LOCKED)) return;
+        }
         Inventory inv = p.getInventory();
         int index = findQuickAccessItem(inv);
         ItemStack quickAccess = USurviveItems.QUICK_ACCESS.buildItem();

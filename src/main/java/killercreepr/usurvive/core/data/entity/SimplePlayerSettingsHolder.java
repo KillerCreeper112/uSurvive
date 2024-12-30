@@ -7,6 +7,7 @@ import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
 import net.kyori.adventure.key.Key;
+import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -34,10 +35,14 @@ public class SimplePlayerSettingsHolder extends PlayerDataHolder implements Play
 
     @Override
     public void setSetting(@NotNull PlayerSetting setting, @NotNull PlayerSettingSelection selection) {
+        if(selection.equals(getSetting(setting))) return;
         if(setting.defaultSelection().equals(selection)){
             settings.remove(setting);
-            return;
+        }else settings.put(setting, selection);
+
+        HumanEntity found = getPlayer();
+        if(found != null){
+            setting.onSettingChanged(found, getSetting(setting));
         }
-        settings.put(setting, selection);
     }
 }
