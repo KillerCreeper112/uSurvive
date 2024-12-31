@@ -26,13 +26,11 @@ import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.death.PlayerDeath;
 import killercreepr.usurvive.core.entity.mob.Echo;
 import killercreepr.usurvive.core.menu.DeathMenu;
+import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.ExperienceOrb;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -121,7 +119,11 @@ public class EchoGoal extends CruxMobModeledGoal implements Listener {
 
     @Override
     public void tick() {
+        //this.checkTargetLogic();
         //this.checkTargetLogic(); is not aggressive without
+        if(target != null && !isValidTarget(target)){
+            setTarget(null);
+        }
         this.targetLogic();
         this.sound();
         deathTick();
@@ -208,13 +210,13 @@ public class EchoGoal extends CruxMobModeledGoal implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    /*@EventHandler(ignoreCancelled = true)
     public void onEntityTarget(EntityTargetEvent event) {
         if(!event.getEntity().equals(mob)) return;
         Entity target = event.getTarget();
         if(target==null) return;
         if(!target.equals(this.target)) event.setCancelled(true);
-    }
+    }*/
 
     public void firstSetup(PlayerDeath death){
         exp = death.getExperience();

@@ -2,10 +2,12 @@ package killercreepr.usurvive.core.world.entity;
 
 import killercreepr.crux.api.registry.Registry;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxworlds.api.world.entity.NaturalEntitySpawnGroup;
 import killercreepr.cruxworlds.api.world.entity.SpawnContext;
 import killercreepr.cruxworlds.core.world.entity.NaturalSpawnPartGroup;
 import killercreepr.cruxworlds.core.world.entity.SimpleNaturalEntitySpawnGroup;
+import killercreepr.usurvive.core.entity.USurviveMobs;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +27,8 @@ public class StandardOverworldGroups {
             if(CruxMath.random(1, 100) <= 12) return false;
             Block b = ctx.getBlock();
             if(b.getBiome() != Biome.DEEP_DARK) return false;
-            return getEntityAmountNearChunk(b.getChunk(), 4) < 3;
+            return getEntityAmountNearChunk(b.getChunk(), 4) < 3 &&
+                getEntityAmountNearChunk(b.getChunk(), 2, e -> CruxMob.is(e, USurviveMobs.SCULK_BLIGHT)) < 1;
         }
     };
 
