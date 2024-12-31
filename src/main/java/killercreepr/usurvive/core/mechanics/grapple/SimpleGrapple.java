@@ -38,6 +38,11 @@ public class SimpleGrapple implements Grapple {
         return cooldown;
     }
 
+    @Override
+    public float getThrowForce() {
+        return throwForce;
+    }
+
     @NotNull
     public Key getHookType() {
         return hook;

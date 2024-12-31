@@ -48,6 +48,8 @@ import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
 import killercreepr.cruxworlds.api.world.module.WorldModule;
 import killercreepr.cruxworlds.core.registries.WorldsRegistries;
 import killercreepr.usurvive.api.death.DeathManager;
+import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
+import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.block.USurviveBlocks;
 import killercreepr.usurvive.core.block.component.USurviveBlockComponents;
@@ -56,6 +58,8 @@ import killercreepr.usurvive.core.component.USurviveComponent;
 import killercreepr.usurvive.core.config.Config;
 import killercreepr.usurvive.core.config.component.CfgUSurviveComponents;
 import killercreepr.usurvive.core.config.handler.FilePlayerDeath;
+import killercreepr.usurvive.core.config.handler.FilePlayerSetting;
+import killercreepr.usurvive.core.config.handler.FilePlayerSettingSelection;
 import killercreepr.usurvive.core.data.ResourcePackData;
 import killercreepr.usurvive.core.data.ResourcePackRequestData;
 import killercreepr.usurvive.core.data.entity.DeathHolder;
@@ -125,6 +129,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         new USurviveCommands(this).register();
 
         CfgRegistries.FILE.forEach(this::registerCfgHandlers);
+        CfgRegistries.SIMPLE_REGISTRY.forEach(this::registerSimpleCfgHandlers);
         CfgUSurviveComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());
 
         USurviveBlockComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());
@@ -310,6 +315,11 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         );
 
         cfgManagerLoader.refresh();
+    }
+
+    public void registerSimpleCfgHandlers(@NotNull FileRegistry registry){
+        registry.registerFileHandler(PlayerSetting.class, new FilePlayerSetting());
+        registry.registerFileHandler(PlayerSettingSelection.class, new FilePlayerSettingSelection());
     }
 
     public void registerCfgHandlers(@NotNull FileRegistry registry){

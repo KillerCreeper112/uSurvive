@@ -1,8 +1,14 @@
 package killercreepr.usurvive.core.data.entity;
 
+import com.google.common.reflect.TypeToken;
+import killercreepr.crux.api.data.Loadable;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.PlayerDataHolder;
+import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
+import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
+import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
+import killercreepr.cruxconfig.config.common.file.DataFile;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
@@ -10,16 +16,20 @@ import killercreepr.usurvive.core.data.SimplePlayerSettingsCache;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
-public class SimplePlayerSettingsHolder extends PlayerDataHolder implements PlayerSettingsHolder {
+public class SimplePlayerSettingsHolder extends PlayerDataHolder implements PlayerSettingsHolder, Loadable {
     public static final Key KEY = Crux.key("player_settings");
     public SimplePlayerSettingsHolder(@NotNull Key key, @NotNull PlayerMemory parent) {
         super(key, parent);
+        load();
     }
 
     public SimplePlayerSettingsHolder(@NotNull PlayerMemory parent) {
@@ -74,5 +84,43 @@ public class SimplePlayerSettingsHolder extends PlayerDataHolder implements Play
     @Override
     public Map<PlayerSetting, PlayerSettingSelection> getSettings() {
         return settings;
+    }
+
+    public DataFile getDataFile(UUID p){
+        File f = CruxFolder.file(Crux.getMainPlugin(), "data/usurvive/player/settings/" + p + ".json");
+        if(BukkitDataFile.isSupported(f)) return BukkitDataFile.parse(f);
+        return null;
+    }
+
+    public DataFile getOrCreateDataFile(UUID p){
+        File f = CruxFolder.file(Crux.getMainPlugin(), "data/usurvive/player/settings/" + p + ".json");
+        if(!f.exists()){
+            CruxJson cfg = new CruxJson(f);
+            cfg.reloadIfNeeded();
+            cfg.close();
+        }
+        if(BukkitDataFile.isSupported(f)) return BukkitDataFile.parse(f);
+        return null;
+    }
+
+    @Override
+    public void save() {
+        DataFile file = getOrCreateDataFile(parent.getUUID());
+        if(file == null) return;
+        file.serialize("settings", settings);
+        file.save();
+    }
+
+    @Override
+    public void load() {
+        DataFile file = getDataFile(parent.getUUID());
+        if(file == null) return;
+        Map<PlayerSetting, PlayerSettingSelection> map = file.deserialize(
+            "settings", new TypeToken<Map<PlayerSetting, PlayerSettingSelection>>(){}.getType()
+        );
+        file.close();
+        if(map != null){
+            settings.putAll(map);
+        }
     }
 }
