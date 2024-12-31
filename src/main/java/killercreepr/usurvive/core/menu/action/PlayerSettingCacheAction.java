@@ -6,8 +6,7 @@ import killercreepr.cruxmenus.api.menu.contex.ActionContext;
 import killercreepr.cruxmenus.core.menu.action.SimpleMenuAction;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
-import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsCache;
-import killercreepr.usurvive.core.data.SimplePlayerSettingsCache;
+import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
 import killercreepr.usurvive.core.data.entity.SimplePlayerSettingsHolder;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
 import net.kyori.adventure.key.Key;
@@ -29,12 +28,18 @@ public class PlayerSettingCacheAction extends SimpleMenuAction {
             case "set" -> {
                 PlayerSetting setting = USurviveRegistries.PLAYER_SETTING.get(Crux.key(args[1]));
                 PlayerSettingSelection selection = USurviveRegistries.PLAYER_SETTING_SELECTION.get(Crux.key(args[2]));
-                PlayerSettingsCache cache = holder.getCache();
+                PlayerSettingsHolder cache = holder.getCache();
                 if(cache == null){
-                    cache = new SimplePlayerSettingsCache();
+                    cache = holder.createCache();
                     holder.setCache(cache);
                 }
                 cache.setSetting(setting, selection);
+            }
+            case "apply" ->{
+                PlayerSettingsHolder cache = holder.getCache();
+                if(cache == null) return true;
+                cache.getSettings().forEach(holder::setSetting);
+                holder.setCache(null);
             }
         }
         return true;

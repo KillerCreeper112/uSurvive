@@ -240,7 +240,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new DisableEndListener(),
             new EnchantsListener(this),
             new AnimalsListener(),
-            new ProjectileReflectListener()
+            new ProjectileReflectListener(),
+            new SettingsListener()
         );
 
         super.enabled();

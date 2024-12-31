@@ -2,7 +2,7 @@ package killercreepr.usurvive.core.data;
 
 import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
-import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsCache;
+import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SimplePlayerSettingsCache implements PlayerSettingsCache {
+public class SimplePlayerSettingsCache implements PlayerSettingsHolder {
     protected final Map<PlayerSetting, PlayerSettingSelection> map = new HashMap<>();
     @Override
     public PlayerSettingSelection getSetting(@NotNull PlayerSetting setting) {
@@ -33,5 +33,11 @@ public class SimplePlayerSettingsCache implements PlayerSettingsCache {
     @Override
     public Collection<PlayerSetting> getAllAvailableSettings() {
         return USurviveRegistries.PLAYER_SETTING.values();
+    }
+
+    @NotNull
+    @Override
+    public Map<PlayerSetting, PlayerSettingSelection> getSettings() {
+        return map;
     }
 }
