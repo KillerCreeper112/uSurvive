@@ -10,6 +10,12 @@ public class StandardPlayerSettingSelections {
 
     public static final PlayerSettingSelection LOCKED = register(PlayerSettingSelection.playerSettingSelection(Crux.key("locked")));
     public static final PlayerSettingSelection UNLOCKED = register(PlayerSettingSelection.playerSettingSelection(Crux.key("unlocked")));
+    public static final PlayerSettingSelection WHOLE = register(PlayerSettingSelection.playerSettingSelection(Crux.key("whole")));
+    public static final PlayerSettingSelection HALF = register(PlayerSettingSelection.playerSettingSelection(Crux.key("half")));
+    public static final PlayerSettingSelection TINY = register(PlayerSettingSelection.playerSettingSelection(Crux.key("tiny")));
+    public static final PlayerSettingSelection SHORT = register(PlayerSettingSelection.playerSettingSelection(Crux.key("short")));
+    public static final PlayerSettingSelection NORMAL = register(PlayerSettingSelection.playerSettingSelection(Crux.key("normal")));
+    public static final PlayerSettingSelection FAR = register(PlayerSettingSelection.playerSettingSelection(Crux.key("far")));
 
     public static PlayerSettingSelection register(PlayerSettingSelection s){
         return USurviveRegistries.PLAYER_SETTING_SELECTION.register(s);

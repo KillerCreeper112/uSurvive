@@ -119,6 +119,18 @@ public class USurviveCommands {
             );
 
             commands.register(
+                Commands.literal("settings")
+                    .requires(source -> source.getSender().hasPermission("usurvive.cmds.settings.use"))
+                    .executes(ctx ->{
+                        if(!(getExecutor(ctx.getSource()) instanceof Player p)) return -1;
+                        CruxCore.inst().cruxMenus().menuRegistry().menuHolders().get(Crux.key("player_settings"))
+                            .open(p);
+                        return 1;
+                    })
+                    .build(), List.of("psettings", "options")
+            );
+
+            commands.register(
                 Commands.literal("rules")
                     .executes(ctx ->{
                         if(!(getExecutor(ctx.getSource()) instanceof Player p)) return -1;

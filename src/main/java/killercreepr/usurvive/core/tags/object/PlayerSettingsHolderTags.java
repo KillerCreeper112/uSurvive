@@ -18,6 +18,7 @@ import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
 import java.util.Objects;
 
 public class PlayerSettingsHolderTags implements ObjectTag<PlayerSettingsHolder> {
@@ -47,6 +48,14 @@ public class PlayerSettingsHolderTags implements ObjectTag<PlayerSettingsHolder>
         }else cache = object;
 
         return TagContainer.string(tags)
+            .add(Tag.string("cache_changes", (args, ctx) ->{
+                if(cache == object) return "0";
+                int changes = 0;
+                for (Map.Entry<PlayerSetting, PlayerSettingSelection> entry : cache.getSettings().entrySet()) {
+                    if(!object.hasSetting(entry.getKey(), entry.getValue())) changes++;
+                }
+                return changes + "";
+            }))
             .add(Tag.string("has_setting", (args, ctx) ->{
                 boolean includeCache = args.has(2) && CruxString.parseBoolean(args.get(1));
                 PlayerSettingsHolder check = includeCache ? cache : object;
