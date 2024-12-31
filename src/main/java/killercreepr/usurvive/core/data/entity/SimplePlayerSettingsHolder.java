@@ -15,9 +15,11 @@ import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
 import killercreepr.usurvive.core.data.SimplePlayerSettingsCache;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
 import net.kyori.adventure.key.Key;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Collection;
@@ -84,6 +86,12 @@ public class SimplePlayerSettingsHolder extends PlayerDataHolder implements Play
     @Override
     public Map<PlayerSetting, PlayerSettingSelection> getSettings() {
         return settings;
+    }
+
+    @Override
+    protected void removingFromMemory(@Nullable Entity e) {
+        super.removingFromMemory(e);
+        save();
     }
 
     public DataFile getDataFile(UUID p){
