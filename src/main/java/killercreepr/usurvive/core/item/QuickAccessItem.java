@@ -45,7 +45,9 @@ public class QuickAccessItem extends CfgPluginItem implements InteractableItem, 
             }
             PlayerSettingsHolder settings = EntityMemory.getOrCreateDataHolder(p, SimplePlayerSettingsHolder.class);
             if(settings != null){
-                if(!settings.hasSetting(StandardPlayerSettings.QUICK_ACCESS_ITEM, StandardPlayerSettingSelections.LOCKED)) return ItemUseResult.empty();
+                if(!settings.hasSetting(StandardPlayerSettings.QUICK_ACCESS_ITEM, StandardPlayerSettingSelections.LOCKED)){
+                    if(!ctx.getClick().isRightClick()) return ItemUseResult.empty();
+                }
             }
             p.performCommand("menu");
         }
