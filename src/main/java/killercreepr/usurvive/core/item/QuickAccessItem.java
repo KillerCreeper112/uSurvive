@@ -2,6 +2,7 @@ package killercreepr.usurvive.core.item;
 
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.item.dynamic.DynamicItem;
+import killercreepr.crux.core.Crux;
 import killercreepr.cruxitems.api.item.interaction.InteractableItem;
 import killercreepr.cruxitems.api.item.interaction.ItemUseContext;
 import killercreepr.cruxitems.api.item.interaction.ItemUseResult;
@@ -49,7 +50,7 @@ public class QuickAccessItem extends CfgPluginItem implements InteractableItem, 
                     if(!ctx.getClick().isRightClick()) return ItemUseResult.empty();
                 }
             }
-            p.performCommand("menu");
+            Crux.scheduler().runTask(() -> p.performCommand("menu"));
         }
         return ItemUseResult.cancelled();
     }
