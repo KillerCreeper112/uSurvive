@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.command;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -16,6 +17,8 @@ import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.text.resolver.Tag;
+import killercreepr.cruxclaims.api.claiming.Claimer;
+import killercreepr.cruxclaims.core.CruxClaims;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxcurrency.core.entity.memory.CurrencyHolder;
 import killercreepr.cruxteleport.api.teleport.CruxTeleport;
@@ -29,6 +32,7 @@ import killercreepr.usurvive.core.command.argument.USurviveArgs;
 import killercreepr.usurvive.core.death.PlayerDeath;
 import killercreepr.usurvive.core.lang.Lang;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -176,11 +180,31 @@ public class USurviveCommands {
                         return 1;
                     })
                     .then(
-                        Commands.argument("target", ArgumentTypes.player()) //todo make this offline players
+                        Commands.argument("target", StringArgumentType.string())
+                            .suggests((ctx, builder) ->{
+                                plugin.getServer().getOnlinePlayers().forEach(p ->{
+                                    builder.suggest(p.getName());
+                                });
+                                return builder.buildFuture();
+                            })
                             .executes(ctx ->{
                                 if(!(getExecutor(ctx.getSource()) instanceof Player p)) return -1;
-                                Player target = ctx.getArgument("target", PlayerSelectorArgumentResolver.class)
-                                        .resolve(ctx.getSource()).getFirst();
+
+                                String input = ctx.getArgument("target", String.class);
+                                Claimer claimer = CruxClaims.inst().claimManager().getClaimers()
+                                    .stream()
+                                    .filter(c -> c.lastKnownName().equalsIgnoreCase(input))
+                                    .findFirst()
+                                    .orElse(null);
+
+                                if(claimer == null){
+                                    Communicator.chat("<red>Player " + input + " not found.");
+                                    return -1;
+                                }
+
+                                OfflinePlayer target = plugin.getServer().getOfflinePlayer(claimer.uuid());
+                                /*Player target = ctx.getArgument("target", PlayerSelectorArgumentResolver.class)
+                                        .resolve(ctx.getSource()).getFirst();*/
                                 CruxCore.inst().cruxMenus().menuRegistry().menuHolders().get(Crux.key("profile"))
                                     .open(p, DataExchange.empty(), TagContainer.merged().hook(target, TagsPrefixBuilder.overwriteBase("target_")));
                                 return 1;

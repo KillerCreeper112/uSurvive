@@ -12,7 +12,7 @@ import killercreepr.crux.core.util.CruxString;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
-import killercreepr.usurvive.core.data.entity.SimplePlayerSettingsHolder;
+import killercreepr.usurvive.core.data.entity.MemoryPlayerSettingsHolder;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +42,7 @@ public class PlayerSettingsHolderTags implements ObjectTag<PlayerSettingsHolder>
     @Override
     public @Nullable TagContainer<StringResolver> requestStrings(@NotNull PlayerSettingsHolder object, @NotNull TagParser tags) {
         PlayerSettingsHolder cache;
-        if(object instanceof SimplePlayerSettingsHolder h){
+        if(object instanceof MemoryPlayerSettingsHolder h){
             if(h.getCache() != null) cache = h.getCache();
             else cache = object;
         }else cache = object;

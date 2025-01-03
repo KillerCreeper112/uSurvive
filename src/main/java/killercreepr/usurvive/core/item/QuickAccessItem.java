@@ -10,7 +10,7 @@ import killercreepr.cruxitems.api.item.inventory.InventoryItem;
 import killercreepr.cruxitems.api.item.inventory.ItemClickContext;
 import killercreepr.cruxitems.core.item.plugin.CfgPluginItem;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
-import killercreepr.usurvive.core.data.entity.SimplePlayerSettingsHolder;
+import killercreepr.usurvive.core.data.entity.MemoryPlayerSettingsHolder;
 import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettingSelections;
 import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettings;
 import net.kyori.adventure.key.Key;
@@ -44,7 +44,7 @@ public class QuickAccessItem extends CfgPluginItem implements InteractableItem, 
                     return ItemUseResult.empty();
                 }
             }
-            PlayerSettingsHolder settings = EntityMemory.getOrCreateDataHolder(p, SimplePlayerSettingsHolder.class);
+            PlayerSettingsHolder settings = EntityMemory.getOrCreateDataHolder(p, MemoryPlayerSettingsHolder.class);
             if(settings != null){
                 if(!settings.hasSetting(StandardPlayerSettings.QUICK_ACCESS_ITEM, StandardPlayerSettingSelections.LOCKED)){
                     if(!ctx.getClick().isRightClick()) return ItemUseResult.empty();

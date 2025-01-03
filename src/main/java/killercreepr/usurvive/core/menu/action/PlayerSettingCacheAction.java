@@ -7,7 +7,7 @@ import killercreepr.cruxmenus.core.menu.action.SimpleMenuAction;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
-import killercreepr.usurvive.core.data.entity.SimplePlayerSettingsHolder;
+import killercreepr.usurvive.core.data.entity.MemoryPlayerSettingsHolder;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.HumanEntity;
@@ -21,7 +21,7 @@ public class PlayerSettingCacheAction extends SimpleMenuAction {
     @Override
     public boolean execute(@NotNull ActionContext ctx, @NotNull String[] args) {
         HumanEntity p = ctx.getPlayer();
-        SimplePlayerSettingsHolder holder = EntityMemory.getOrCreateDataHolder(p, SimplePlayerSettingsHolder.class);
+        MemoryPlayerSettingsHolder holder = EntityMemory.getOrCreateDataHolder(p, MemoryPlayerSettingsHolder.class);
         if(holder == null) return false;
         String action = args[0];
         switch (action.toLowerCase()){

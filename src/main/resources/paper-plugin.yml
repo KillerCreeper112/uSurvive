@@ -19,3 +19,5 @@ dependencies:
       load: BEFORE
     CruxCurrency:
       required: false
+    CruxClaims:
+      load: AFTER

@@ -9,7 +9,7 @@ import killercreepr.crux.api.text.tags.TagParser;
 import killercreepr.crux.core.text.hook.StringHookedObjectTag;
 import killercreepr.crux.core.text.hook.StringListHookedObjectTag;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
-import killercreepr.usurvive.core.data.entity.SimplePlayerSettingsHolder;
+import killercreepr.usurvive.core.data.entity.MemoryPlayerSettingsHolder;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +29,7 @@ public class PlayerTags implements ObjectTag<Player> {
     @Override
     public @Nullable HookedObjectContainer<StringHookedObjectTag<?>> hookStrings(@NotNull Player object, @NotNull TagParser tags) {
         var c = HookedObjectContainer.string();
-        PlayerSettingsHolder holder = EntityMemory.getOrCreateDataHolder(object, SimplePlayerSettingsHolder.class);
+        PlayerSettingsHolder holder = EntityMemory.getOrCreateDataHolder(object, MemoryPlayerSettingsHolder.class);
         if(holder != null){
             c.addAll(tags.hookStrings(holder, HookedPrefixBuilder.overwrite(FormatPrefix.simple(
                 "player_settings/"
@@ -42,7 +42,7 @@ public class PlayerTags implements ObjectTag<Player> {
     @Override
     public HookedObjectContainer<StringListHookedObjectTag<?>> hookStringLists(@NotNull Player object, @NotNull TagParser tags) {
         var c = HookedObjectContainer.stringList();
-        PlayerSettingsHolder holder = EntityMemory.getOrCreateDataHolder(object, SimplePlayerSettingsHolder.class);
+        PlayerSettingsHolder holder = EntityMemory.getOrCreateDataHolder(object, MemoryPlayerSettingsHolder.class);
         if(holder != null){
             c.addAll(tags.hookStringLists(holder, HookedPrefixBuilder.overwrite(FormatPrefix.simple(
                 "player_settings/"

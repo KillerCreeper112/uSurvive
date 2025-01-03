@@ -50,6 +50,7 @@ import killercreepr.cruxworlds.core.registries.WorldsRegistries;
 import killercreepr.usurvive.api.death.DeathManager;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
+import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsManager;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.block.USurviveBlocks;
 import killercreepr.usurvive.core.block.component.USurviveBlockComponents;
@@ -63,10 +64,11 @@ import killercreepr.usurvive.core.config.handler.FilePlayerSettingSelection;
 import killercreepr.usurvive.core.data.ResourcePackData;
 import killercreepr.usurvive.core.data.ResourcePackRequestData;
 import killercreepr.usurvive.core.data.entity.DeathHolder;
-import killercreepr.usurvive.core.data.entity.SimplePlayerSettingsHolder;
+import killercreepr.usurvive.core.data.entity.MemoryPlayerSettingsHolder;
 import killercreepr.usurvive.core.death.PlayerDeath;
 import killercreepr.usurvive.core.death.SimpleDeathManager;
 import killercreepr.usurvive.core.entity.USurviveMobs;
+import killercreepr.usurvive.core.entity.player.settings.SimplePlayerSettingsManager;
 import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettings;
 import killercreepr.usurvive.core.item.QuickAccessItem;
 import killercreepr.usurvive.core.item.USurviveItems;
@@ -116,6 +118,16 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     @NotNull
     public CreateLang lang() {
         return lang;
+    }
+
+    protected PlayerSettingsManager playerSettingsManager = new SimplePlayerSettingsManager();
+
+    public PlayerSettingsManager getPlayerSettingsManager() {
+        return playerSettingsManager;
+    }
+
+    public void setPlayerSettingsManager(PlayerSettingsManager playerSettingsManager) {
+        this.playerSettingsManager = playerSettingsManager;
     }
 
     protected final CfgCrazyAdvancementManagerCfgLoader cfgManagerLoader = new CfgCrazyAdvancementManagerCfgLoader(this);
@@ -175,7 +187,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         EntityMemory.registerFunction(this, mem ->{
             if(!(mem instanceof PlayerMemory m)) return;
             m.getDataHolders().register(new DeathHolder(m, values(), getDeathManager()));
-            m.getDataHolders().register(new SimplePlayerSettingsHolder(m));
+            m.getDataHolders().register(new MemoryPlayerSettingsHolder(m));
         });
         StandardGrappleHooks.register(USurviveRegistries.GRAPPLE_HOOK);
         StandardOverworldGroups.register(USurviveRegistries.OVERWORLD_NATURAL_ENTITY_SPAWN_GROUP);
