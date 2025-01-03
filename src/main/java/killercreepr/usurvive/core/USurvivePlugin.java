@@ -51,9 +51,11 @@ import killercreepr.usurvive.api.death.DeathManager;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsManager;
+import killercreepr.usurvive.api.tpa.TPAManager;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.block.USurviveBlocks;
 import killercreepr.usurvive.core.block.component.USurviveBlockComponents;
+import killercreepr.usurvive.core.command.TPACommands;
 import killercreepr.usurvive.core.command.USurviveCommands;
 import killercreepr.usurvive.core.component.USurviveComponent;
 import killercreepr.usurvive.core.config.Config;
@@ -79,6 +81,7 @@ import killercreepr.usurvive.core.menu.action.PlayerSettingCacheAction;
 import killercreepr.usurvive.core.menu.module.CurrencyDepositModule;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
 import killercreepr.usurvive.core.tags.object.*;
+import killercreepr.usurvive.core.tpa.SimpleTPAManager;
 import killercreepr.usurvive.core.values.DefaultValues;
 import killercreepr.usurvive.core.world.USurviveNether;
 import killercreepr.usurvive.core.world.USurviveOverworld;
@@ -130,6 +133,16 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         this.playerSettingsManager = playerSettingsManager;
     }
 
+    protected TPAManager tpaManager = new SimpleTPAManager();
+
+    public TPAManager getTPAManager() {
+        return tpaManager;
+    }
+
+    public void setTPAManager(TPAManager tpaManager) {
+        this.tpaManager = tpaManager;
+    }
+
     protected final CfgCrazyAdvancementManagerCfgLoader cfgManagerLoader = new CfgCrazyAdvancementManagerCfgLoader(this);
     @Override
     public void onLoad() {
@@ -139,6 +152,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         USurviveComponent.register();
         StandardPlayerSettings.register();
         new USurviveCommands(this).register();
+        new TPACommands(this).register();
 
         CfgRegistries.FILE.forEach(this::registerCfgHandlers);
         CfgRegistries.SIMPLE_REGISTRY.forEach(this::registerSimpleCfgHandlers);
