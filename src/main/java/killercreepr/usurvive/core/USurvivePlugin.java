@@ -50,6 +50,7 @@ import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
 import killercreepr.cruxworlds.api.world.module.WorldModule;
 import killercreepr.cruxworlds.core.registries.WorldsRegistries;
 import killercreepr.usurvive.api.death.DeathManager;
+import killercreepr.usurvive.api.entity.player.UPlayerManager;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsManager;
@@ -72,6 +73,7 @@ import killercreepr.usurvive.core.data.entity.MemoryPlayerSettingsHolder;
 import killercreepr.usurvive.core.death.PlayerDeath;
 import killercreepr.usurvive.core.death.SimpleDeathManager;
 import killercreepr.usurvive.core.entity.USurviveMobs;
+import killercreepr.usurvive.core.entity.player.SimpleUPlayerManager;
 import killercreepr.usurvive.core.entity.player.settings.SimplePlayerSettingsManager;
 import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettings;
 import killercreepr.usurvive.core.item.QuickAccessItem;
@@ -145,6 +147,16 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
     public void setTPAManager(TPAManager tpaManager) {
         this.tpaManager = tpaManager;
+    }
+
+    protected UPlayerManager playerManager = new SimpleUPlayerManager();
+
+    public UPlayerManager getPlayerManager() {
+        return playerManager;
+    }
+
+    public void setPlayerManager(UPlayerManager playerManager) {
+        this.playerManager = playerManager;
     }
 
     protected final CfgCrazyAdvancementManagerCfgLoader cfgManagerLoader = new CfgCrazyAdvancementManagerCfgLoader(this);
@@ -271,7 +283,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new GrappleListener(),
             new QuickAccessListener(),
             new ObjectiveProgressListener(this),
-            spawnListener = new SpawnListener(values, CruxCore.core()),
+            spawnListener = new SpawnListener(values, CruxCore.core(), playerManager),
             new CommandListener(),
             new RespawnListener(this, values),
             new SetupListener(values),

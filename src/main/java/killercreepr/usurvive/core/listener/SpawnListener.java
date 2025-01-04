@@ -1,17 +1,14 @@
 package killercreepr.usurvive.core.listener;
 
 import killercreepr.crux.api.communication.Communicator;
-import killercreepr.crux.api.math.CruxPosition;
+import killercreepr.crux.api.math.CruxLocation;
 import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.math.LocationPos;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxWorldUtil;
-import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
-import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
-import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
-import killercreepr.cruxconfig.config.common.file.DataFile;
+import killercreepr.usurvive.api.entity.player.UPlayer;
+import killercreepr.usurvive.api.entity.player.UPlayerManager;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.lang.Lang;
 import org.bukkit.Color;
@@ -30,7 +27,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -38,15 +34,17 @@ import java.util.logging.Level;
 public class SpawnListener implements Listener {
     protected final ValuesProvider cfg;
     protected final Plugin plugin;
+    protected final UPlayerManager playerManager;
 
-    public SpawnListener(ValuesProvider cfg, Plugin plugin) {
+    public SpawnListener(ValuesProvider cfg, Plugin plugin, UPlayerManager playerManager) {
         this.cfg = cfg;
         this.plugin = plugin;
+        this.playerManager = playerManager;
     }
 
     public void onDisable(){
         for(Player p : plugin.getServer().getOnlinePlayers()){
-            saveLastKnownLocation(p);
+            savePlayer(p);
         }
     }
 
@@ -64,7 +62,21 @@ public class SpawnListener implements Listener {
             event.setSpawnLocation(world.getSpawnLocation());
             return;
         }
-        DataFile cfg = getDataFile(p);
+        UPlayer uPlay = playerManager.getPlayer(p);
+        if(uPlay == null) return;
+        uPlay.load();
+
+        String worldName = uPlay.getLastKnownWorld();
+        if(worldName == null) return;
+        CruxLocation pos = uPlay.getLastKnownPosition();
+        if(pos == null) return;
+        World world = CruxWorldUtil.getOrLoadWorld(worldName);
+        if(world == null){
+            Crux.log(Level.WARNING, "World " + worldName + " does not exist! " + p.getName() + " cannot spawn there.");
+            return;
+        }
+
+        /*DataFile cfg = getDataFile(p);
         if(cfg == null) return;
         String worldName = cfg.deserialize("last_known_location.world", String.class);
         if(worldName == null) return;
@@ -74,30 +86,13 @@ public class SpawnListener implements Listener {
         if(world == null){
             Crux.log(Level.WARNING, "World " + worldName + " does not exist! " + p.getName() + " cannot spawn there.");
             return;
-        }
-        Number pitch = cfg.deserialize("last_known_location.pitch", Number.class);
-        Number yaw = cfg.deserialize("last_known_location.yaw", Number.class);
+        }*/
+        /*Number pitch = cfg.deserialize("last_known_location.pitch", Number.class);
+        Number yaw = cfg.deserialize("last_known_location.yaw", Number.class);*/
         Location spawn = pos.toLocation(world);
-        if(pitch != null) spawn.setPitch(pitch.floatValue());
-        if(yaw != null) spawn.setYaw(yaw.floatValue());
+        /*if(pitch != null) spawn.setPitch(pitch.floatValue());
+        if(yaw != null) spawn.setYaw(yaw.floatValue());*/
         event.setSpawnLocation(spawn);
-    }
-
-    public DataFile getDataFile(Player p){
-        File f = CruxFolder.file(plugin, "data/usurvive/player/last_logout/" + p.getUniqueId() + ".json");
-        if(BukkitDataFile.isSupported(f)) return BukkitDataFile.parse(f);
-        return null;
-    }
-
-    public DataFile getOrCreateDataFile(Player p){
-        File f = CruxFolder.file(plugin, "data/usurvive/player/last_logout/" + p.getUniqueId() + ".json");
-        if(!f.exists()){
-            CruxJson cfg = new CruxJson(f);
-            cfg.reloadIfNeeded();
-            cfg.close();
-        }
-        if(BukkitDataFile.isSupported(f)) return BukkitDataFile.parse(f);
-        return null;
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -115,22 +110,21 @@ public class SpawnListener implements Listener {
         spawnFireworks(p);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player p = event.getPlayer();
-        saveLastKnownLocation(p);
+        savePlayer(p);
     }
 
-    public void saveLastKnownLocation(Player p){
-        Location loc = p.getLocation();
-        DataFile cfg = getOrCreateDataFile(p);
-        String worldName = loc.getWorld().getName();
-        CruxPosition pos = CruxPosition.location(loc);
-        cfg.serialize("last_known_location", pos);
-        cfg.serialize("last_known_location.world", worldName);
-        cfg.serialize("last_known_location.pitch", loc.getPitch());
-        cfg.serialize("last_known_location.yaw", loc.getYaw());
-        cfg.save();
+    public void savePlayer(Player p){
+        UPlayer uPlay = playerManager.getPlayer(p);
+        if(uPlay == null) return;
+        //uPlay.load();
+        uPlay.setLastLogout(System.currentTimeMillis());
+        uPlay.setLastKnownWorld(p.getWorld().getName());
+        uPlay.setLastKnownPosition(CruxLocation.location(p.getLocation()));
+        uPlay.setLastKnownName(p.getName());
+        uPlay.save();
     }
 
 

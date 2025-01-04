@@ -9,7 +9,6 @@ import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxteleport.api.teleport.CruxTeleport;
 import killercreepr.cruxteleport.api.teleport.CruxTeleporter;
 import killercreepr.usurvive.api.tpa.TPARequest;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
