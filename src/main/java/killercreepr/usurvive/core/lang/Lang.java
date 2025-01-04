@@ -101,7 +101,7 @@ public class Lang {
     );
     public static final Msg TPA_ACCEPTED_RECEIVED = create(
         Communicator.builder()
-            .chat("<accepter_name> has accepted your teleport request! The teleport will commence in 3 seconds. Do not move!")
+            .chat("<accepter_name> has accepted your teleport request!")
             .build()
     );
     public static final Msg TPA_DENIED = create(
@@ -166,17 +166,22 @@ public class Lang {
     );
     public static final Msg TPA_REQUEST_SENT = create(
         Communicator.builder()
-            .chat("<yellow><user_name> has requested to teleport to you! Use <click:suggest_command:\"/tpaccept <user_name>\"><hover:show_text:\"Click to accept\n<user_name>'s teleport request\"><white>/tpaccept <user_name></white></hover></click> to accept.")
+            .chat("<yellow>Teleport request sent to <target_name>. They have 60 seconds to accept.")
             .build()
     );
     public static final Msg TPA_REQUEST_SENT_RECEIVED = create(
         Communicator.builder()
-            .chat("<yellow>Teleport request sent to <target_name>. They have 60 seconds to accept.")
+            .chat("<yellow><user_name> has requested to teleport to you! Use <click:suggest_command:\"/tpaccept <user_name>\"><hover:show_text:\"Click to accept\n<user_name>'s teleport request\"><white>/tpaccept <user_name></white></hover></click> to accept.")
             .build()
     );
     public static final Msg TPA_REQUEST_ALREADY_SENT = create(
         Communicator.builder()
             .chat("<red>You have already sent a teleport request to <target_name>.")
+            .build()
+    );
+    public static final Msg TPA_REQUESTS_DISABLED = create(
+        Communicator.builder()
+            .chat("<red>You may not send a teleport request to <target_name>.")
             .build()
     );
 

@@ -13,8 +13,11 @@ import killercreepr.crux.api.text.tags.TagsPrefixBuilder;
 import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.location.DynamicLocation;
+import killercreepr.cruxfriends.api.friend.FriendsHolder;
+import killercreepr.cruxfriends.core.CruxFriendsPlugin;
 import killercreepr.cruxteleport.api.teleport.CruxTeleport;
 import killercreepr.cruxteleport.api.teleport.CruxTeleporter;
+import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
 import killercreepr.usurvive.api.tpa.TPAHolder;
 import killercreepr.usurvive.api.tpa.TPAManager;
 import killercreepr.usurvive.api.tpa.TPARequest;
@@ -22,6 +25,8 @@ import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.command.argument.TPARequestResolver;
 import killercreepr.usurvive.core.command.argument.USurviveArgs;
+import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettingSelections;
+import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettings;
 import killercreepr.usurvive.core.lang.Lang;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -101,30 +106,48 @@ public class TPACommands {
 
     public int requestTPA(HumanEntity sender, HumanEntity to){
         TPAManager tpManager = plugin.getTPAManager();
-        TPAHolder toHolder = tpManager.getOrCreateTPAHolder(to);
+        TPAHolder toHolder = tpManager.getTPAHolder(to);
 
         MergedTagContainer tags = TagContainer.merged()
             .hook(sender, TagsPrefixBuilder.overwriteBase("user_"))
             .hook(to, TagsPrefixBuilder.overwriteBase("target_"))
             ;
 
-        if(toHolder.getRequest(sender.getUniqueId()) != null){
+        if(toHolder != null && toHolder.getRequest(sender.getUniqueId()) != null){
             Lang.TPA_REQUEST_ALREADY_SENT.use(sender, tags);
             return 0;
         }
+
+        PlayerSettingsHolder toSettings = plugin.getPlayerSettingsManager().getPlayerSettingsHolder(to);
+        if(toSettings != null){
+            if(toSettings.hasSetting(StandardPlayerSettings.TPA_REQUESTS, StandardPlayerSettingSelections.DISABLED)){
+                Lang.TPA_REQUESTS_DISABLED.use(sender, tags);
+                return 0;
+            }
+            if(toSettings.hasSetting(StandardPlayerSettings.TPA_REQUESTS, StandardPlayerSettingSelections.FRIENDS_ONLY)){
+                FriendsHolder friends = CruxFriendsPlugin.inst().getFriendsManager().getFriendsHolder(to);
+                if(friends == null || !friends.hasFriend(sender.getUniqueId())){
+                    Lang.TPA_REQUESTS_DISABLED.use(sender, tags);
+                    return 0;
+                }
+            }
+        }
+
         ValuesProvider cfg = plugin.values();
 
         CruxTeleport.Builder builder= CruxTeleport.builder()
             .teleportTo(DynamicLocation.createEntity(to));
         String components = cfg.TPA_TELEPORT_COMPONENTS().value();
         if(components != null){
-            DataComponentDecoder.componentDecoder().parseComponents(components);
+            DataComponentDecoder.componentDecoder().parseComponents(components).forEach(builder::set);
         }
-        CruxTeleport tp = builder.build();
 
-        //todo sw
-        TPARequest request = TPARequest.request(sender, tp);
+        TPARequest request = TPARequest.request(sender, builder);
+        toHolder = tpManager.getOrCreateTPAHolder(to);
         toHolder.addRequest(request);
+
+        Lang.TPA_REQUEST_SENT.use(sender, tags);
+        Lang.TPA_REQUEST_SENT_RECEIVED.use(to, tags);
         return 1;
     }
 

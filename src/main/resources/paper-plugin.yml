@@ -21,3 +21,5 @@ dependencies:
       required: false
     CruxClaims:
       load: AFTER
+    CruxFriends:
+      load: AFTER

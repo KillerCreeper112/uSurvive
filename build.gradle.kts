@@ -20,7 +20,8 @@ dependencies {
         "D:\\MythicMobs-5.6.2.jar",
         "D:\\ModelEngine-4.0.7.jar",
         "E:\\Plugins\\YO\\CruxCurrency\\build\\libs\\CruxCurrency-1.0.jar",
-        "E:\\Plugins\\YO\\CruxClaims\\build\\libs\\CruxClaims-1.0-all.jar"
+        "E:\\Plugins\\YO\\CruxClaims\\build\\libs\\CruxClaims-1.0-all.jar",
+        "E:\\Plugins\\YO\\CruxFriends\\build\\libs\\CruxFriends-1.0-all.jar"
     ))
 
     compileOnly(fileTree("libs"){

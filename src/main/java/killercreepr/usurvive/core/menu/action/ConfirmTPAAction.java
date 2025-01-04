@@ -41,12 +41,12 @@ public class ConfirmTPAAction extends SimpleMenuAction {
         Entity accepter = info.get("accepter", Entity.class);
         TPARequest request = info.get(TPARequest.class);
         if(!CruxMath.hasOccurredWithin(request.timeAccepted(), cfg.TPA_CONFIRM_EXPIRE_TICKS().value().intValue())){
-            Lang.TPA_CONFIRM_EXPIRED.use(accepter, tags);
+            Lang.TPA_CONFIRM_EXPIRED.use(p, tags);
             return true;
         }
 
         Lang.TPA_CONFIRM_RECEIVED.use(accepter, tags);
-        CruxTeleporter.teleporter().scheduleTeleport(p, request.teleport());
+        CruxTeleporter.teleporter().scheduleTeleport(p, request.teleport().buildFor(p));
         return true;
     }
 }

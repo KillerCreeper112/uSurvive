@@ -9,6 +9,7 @@ import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxteleport.api.teleport.CruxTeleport;
 import killercreepr.cruxteleport.api.teleport.CruxTeleporter;
 import killercreepr.usurvive.api.tpa.TPARequest;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
@@ -19,11 +20,11 @@ import java.lang.ref.Reference;
 public class SimpleTPARequest implements TPARequest {
     protected final User from;
     protected final Reference<Entity> sender;
-    protected final CruxTeleport teleport;
+    protected final CruxTeleport.Builder teleport;
     protected final long timeSent;
     protected long timeAccepted = -1;
 
-    public SimpleTPARequest(User from, Reference<Entity> sender, CruxTeleport teleport, long timeSent) {
+    public SimpleTPARequest(User from, Reference<Entity> sender, CruxTeleport.Builder teleport, long timeSent) {
         this.from = from;
         this.sender = sender;
         this.teleport = teleport;
@@ -39,10 +40,9 @@ public class SimpleTPARequest implements TPARequest {
             CruxCore.core().cruxMenus().menuRegistry().menuHolders().get(Crux.key("tpaccept_confirm"))
                 .open(h, DataExchange.builder()
                     .put("accepter", sender)
-                    .put(this)
-                        .build(),
+                    .put(this).build(),
                     TagContainer.merged().hook(sender, TagsPrefixBuilder.overwriteBase("accepter_")));
-        }else CruxTeleporter.teleporter().scheduleTeleport(e, teleport);
+        }else CruxTeleporter.teleporter().scheduleTeleport(e, teleport.buildFor(e));
     }
 
     @Override
@@ -69,7 +69,7 @@ public class SimpleTPARequest implements TPARequest {
 
     @NotNull
     @Override
-    public CruxTeleport teleport() {
+    public CruxTeleport.Builder teleport() {
         return teleport;
     }
 

@@ -5,6 +5,7 @@ import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.util.UserMap;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.EntityTickedDataHolder;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.usurvive.api.tpa.TPAHolder;
 import killercreepr.usurvive.api.tpa.TPARequest;
 import net.kyori.adventure.key.Key;
@@ -18,8 +19,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SimpleTPAHolder extends EntityTickedDataHolder implements TPAHolder {
     public static final Key KEY = Crux.key("tpa");
+    protected final long timeCreated;
     public SimpleTPAHolder(@NotNull Key key, @NotNull EntityMemory parent) {
         super(key, parent);
+        timeCreated = System.currentTimeMillis();
     }
 
     public SimpleTPAHolder(@NotNull EntityMemory parent) {
@@ -30,11 +33,13 @@ public class SimpleTPAHolder extends EntityTickedDataHolder implements TPAHolder
 
     @Override
     public boolean shouldRemoveFromMemory(@Nullable Entity e) {
-        return super.shouldRemoveFromMemory(e) || requests().isEmpty();
+        if(super.shouldRemoveFromMemory(e)) return true;
+        if(CruxMath.hasOccurredWithin(timeCreated, 5)) return false;
+        return requests().isEmpty();
     }
 
     public UserMap<User, TPARequest> requests(){
-        requests.removeIf(TPARequest::isValid);
+        requests.removeIf(r -> !r.isValid());
         return requests;
     }
 

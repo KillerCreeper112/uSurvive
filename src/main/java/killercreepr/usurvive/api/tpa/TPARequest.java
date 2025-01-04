@@ -18,23 +18,24 @@ public interface TPARequest {
     }
 
     static TPARequest request(HumanEntity from, HumanEntity to, long timeSent){
-        CruxTeleport teleport = CruxTeleport.teleport(
-            DynamicLocation.createEntity(to), 100
-        );
-        return request(from, teleport, timeSent);
+        CruxTeleport.Builder builder = CruxTeleport.builder()
+            .teleportTo(DynamicLocation.createEntity(to))
+            .waitingTime(100)
+            ;
+        return request(from, builder, timeSent);
     }
 
-    static TPARequest request(HumanEntity from, CruxTeleport teleport){
+    static TPARequest request(HumanEntity from, CruxTeleport.Builder teleport){
         return request(from, teleport, System.currentTimeMillis());
     }
 
-    static TPARequest request(HumanEntity from, CruxTeleport teleport, long timeSent){
+    static TPARequest request(HumanEntity from, CruxTeleport.Builder teleport, long timeSent){
         return request(
             User.user(from), new WeakReference<>(from), teleport, timeSent
         );
     }
 
-    static TPARequest request(User user, Reference<Entity> sender, CruxTeleport teleport, long timeSent){
+    static TPARequest request(User user, Reference<Entity> sender, CruxTeleport.Builder teleport, long timeSent){
         return new SimpleTPARequest(user, sender, teleport, timeSent);
     }
 
@@ -44,7 +45,7 @@ public interface TPARequest {
     void setAccepted(long time);
     @NotNull User sender();
     @Nullable Entity getSender();
-    @NotNull CruxTeleport teleport();
+    @NotNull CruxTeleport.Builder teleport();
     long timeSent();
     boolean isValid();
 }

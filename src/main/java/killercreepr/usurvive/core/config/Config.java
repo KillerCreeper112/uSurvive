@@ -47,7 +47,7 @@ public class Config extends Cfg implements ValuesProvider {
     public final NumCfgValue DEATH_GRAVE_SPAWN_SEARCH_RANGE = new NumCfgValue(80);
     public final NumCfgValue TPA_EXPIRE_TICKS = new NumCfgValue(1200);
     public final NumCfgValue TPA_CONFIRM_EXPIRE_TICKS = new NumCfgValue(300);
-    public final CfgValue<String> TPA_TELEPORT_COMPONENTS = new CommonValue<>(""){};
+    public final CfgValue<String> TPA_TELEPORT_COMPONENTS = new CommonValue<>("[teleport/waiting_time=100,teleport/dont_move={},teleport/disable_commands={},teleport/msg={interval:20}]"){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -63,6 +63,7 @@ public class Config extends Cfg implements ValuesProvider {
 
     @Override
     public void reload(@NotNull CruxPlugin plugin) {
+        reload();
         setup();
     }
 
