@@ -184,6 +184,11 @@ public class Lang {
             .chat("<red>You may not send a teleport request to <target_name>.")
             .build()
     );
+    public static final Msg MENTIONED = create(
+        Communicator.builder()
+            .sound(CreateSound.sound(Sound.ENTITY_ITEM_PICKUP, 2f))
+            .build()
+    );
 
     public static Msg create(@NotNull String id, @NotNull Communicator communicator){
         return new Msg(id, communicator, Lang::lang);
