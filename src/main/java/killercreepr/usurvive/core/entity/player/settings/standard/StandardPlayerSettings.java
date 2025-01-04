@@ -30,7 +30,7 @@ public class StandardPlayerSettings {
         ),
         Map.of(
             StandardPlayerSettingSelections.ENABLED, "You will receive teleport requests from all players.",
-            StandardPlayerSettingSelections.FRIENDS_ONLY, "Teleport requests may only be received by your friends.",
+            StandardPlayerSettingSelections.FRIENDS_ONLY, "You will only receive teleport requests from your friends.",
             StandardPlayerSettingSelections.DISABLED, "You will not receive any teleport requests."
         )
     ));
