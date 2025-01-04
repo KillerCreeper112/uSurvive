@@ -1,5 +1,6 @@
 package killercreepr.usurvive.api.tpa;
 
+import killercreepr.crux.api.data.User;
 import killercreepr.crux.core.location.DynamicLocation;
 import killercreepr.cruxteleport.api.teleport.CruxTeleport;
 import killercreepr.usurvive.core.tpa.SimpleTPARequest;
@@ -10,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
-import java.util.UUID;
 
 public interface TPARequest {
     static TPARequest request(HumanEntity from, HumanEntity to){
@@ -30,18 +30,20 @@ public interface TPARequest {
 
     static TPARequest request(HumanEntity from, CruxTeleport teleport, long timeSent){
         return request(
-            from.getUniqueId(), from.getName(), new WeakReference<>(from), teleport, timeSent
+            User.user(from), new WeakReference<>(from), teleport, timeSent
         );
     }
 
-    static TPARequest request(UUID from, String name, Reference<Entity> sender, CruxTeleport teleport, long timeSent){
-        return new SimpleTPARequest(from, name, sender, teleport, timeSent);
+    static TPARequest request(User user, Reference<Entity> sender, CruxTeleport teleport, long timeSent){
+        return new SimpleTPARequest(user, sender, teleport, timeSent);
     }
 
     void onAccept(Entity sender);
 
-    @NotNull UUID from();
-    @Nullable String name();
+    long timeAccepted();
+    void setAccepted(long time);
+    @NotNull User sender();
+    @Nullable Entity getSender();
     @NotNull CruxTeleport teleport();
     long timeSent();
     boolean isValid();

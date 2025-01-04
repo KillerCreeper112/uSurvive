@@ -10,6 +10,7 @@ import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSele
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import killercreepr.crux.api.communication.Communicator;
+import killercreepr.crux.api.component.parser.DataComponentDecoder;
 import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.text.tags.TagsPrefixBuilder;
@@ -24,7 +25,7 @@ import killercreepr.cruxcurrency.core.entity.memory.CurrencyHolder;
 import killercreepr.cruxteleport.api.teleport.CruxTeleport;
 import killercreepr.cruxteleport.api.teleport.CruxTeleporter;
 import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;
-import killercreepr.cruxteleport.core.teleport.module.TeleportModules;
+import killercreepr.cruxteleport.core.teleport.module.standard.TeleportDisableCommandsModule;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.command.argument.TargetPlayerDeathResolver;
@@ -65,19 +66,19 @@ public class USurviveCommands {
                         return 0;
                     }
                     CruxTeleport.Builder tp = CruxTeleport.builder()
-                        .teleportTo(world::getSpawnLocation)
-                        .waitingTime(cfg.SPAWN_TELEPORT_TIME().value().intValue());
+                        .teleportTo(world::getSpawnLocation);
 
-                    String modules = cfg.SPAWN_TELEPORT_MODULES().value();
+                    String modules = cfg.SPAWN_TELEPORT_COMPONENTS().value();
                     if(modules != null){
-                        tp.addModules(TeleportModules.parseFromString(modules, p.getUniqueId()));
+                        DataComponentDecoder.componentDecoder().parseComponents(modules).forEach(tp::set);
+                        //tp.addModules(TeleportModules.parseFromString(modules, p.getUniqueId()));
                     }
-                    tp.addModule(TeleportModules.msgBuilder()
+                    /*tp.addModule(TeleportModules.msgBuilder()
                             .successMsg(Lang.DEFAULT_TELEPORT_SUCCESS_MSG)
                             .failedMsg(Lang.DEFAULT_TELEPORT_FAIL_MSG)
                             .tickMsg(Lang.DEFAULT_TELEPORT_TICK_MSG)
                             .msgInterval(cfg.SPAWN_TELEPORT_MSG_INTERVAL().value().intValue())
-                        .build());
+                        .build());*/
 
                     CruxTeleporter.teleporter().scheduleTeleport(p, tp.build());
                     return 1;
@@ -264,7 +265,7 @@ public class USurviveCommands {
         return dispatcher.build();
     }
 
-    public @NotNull CommandSender getExecutor(@NotNull CommandSourceStack source){
+    public static @NotNull CommandSender getExecutor(@NotNull CommandSourceStack source){
         return Objects.requireNonNullElse(source.getExecutor(), source.getSender());
     }
 
@@ -279,7 +280,7 @@ public class USurviveCommands {
         for(Player p : toTp){
             //RandomWorldTP.tpNear(spawn, 16).findLocationToTeleportAsync(p)
             CruxTeleport tp = CruxTeleport.teleport(RandomWorldTP.tpNear(spawn, NumberProvider.uniform(16, 40)).findLocationToTeleportAsync(p),
-                1, TeleportModules.parseFromString("nocmds", p.getUniqueId()));
+                1, List.of(new TeleportDisableCommandsModule(p.getUniqueId())));
             CruxTeleporter.teleporter().scheduleTeleport(p, tp);
             sender.sendMessage("Scheduled teleport for " + p.getName() + " at " + target.getName() + "'s death in world, " + world.getName() + ": " +
                 spawn.getBlockX() + ", " + spawn.getBlockY() + ", " + spawn.getBlockZ() + ".");

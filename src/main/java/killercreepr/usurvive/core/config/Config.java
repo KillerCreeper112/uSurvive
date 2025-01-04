@@ -29,9 +29,7 @@ public class Config extends Cfg implements ValuesProvider {
     public final NumCfgValue RESPAWN_X = new NumCfgValue(NumberProvider.constant(0));
     public final NumCfgValue RESPAWN_Y = new NumCfgValue(NumberProvider.constant(0));
     public final NumCfgValue RESPAWN_Z = new NumCfgValue(NumberProvider.constant(0));
-    public final NumCfgValue SPAWN_TELEPORT_TIME = new NumCfgValue(DefaultValues.SPAWN_TELEPORT_TIME);
-    public final NumCfgValue SPAWN_TELEPORT_MSG_INTERVAL = new NumCfgValue(DefaultValues.SPAWN_TELEPORT_MSG_INTERVAL);
-    public final CfgValue<String> SPAWN_TELEPORT_MODULES = new CommonValue<>(DefaultValues.SPAWN_TELEPORT_MODULES.value()){};
+    public final CfgValue<String> SPAWN_TELEPORT_COMPONENTS = new CommonValue<>(DefaultValues.SPAWN_TELEPORT_COMPONENTS.value()){};
     public final NumCfgValue DEATH_GUIDE_TICK_EVERY = new NumCfgValue(DefaultValues.DEATH_GUIDE_TICK_EVERY);
     public final NumCfgValue DEATH_GUIDE_PARTICLE_AMOUNT = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_AMOUNT);
     public final NumCfgValue DEATH_GUIDE_PARTICLE_SHIFT_START = new NumCfgValue(DefaultValues.DEATH_GUIDE_PARTICLE_SHIFT_START);
@@ -47,6 +45,9 @@ public class Config extends Cfg implements ValuesProvider {
     public final CfgValue<ResourcePackRequestData> RESOURCE_PACKS = new CommonValue<>(){};
     public final NumCfgValue RESOURCE_OVERWORLD_BORDER = new NumCfgValue(20000);
     public final NumCfgValue DEATH_GRAVE_SPAWN_SEARCH_RANGE = new NumCfgValue(80);
+    public final NumCfgValue TPA_EXPIRE_TICKS = new NumCfgValue(1200);
+    public final NumCfgValue TPA_CONFIRM_EXPIRE_TICKS = new NumCfgValue(300);
+    public final CfgValue<String> TPA_TELEPORT_COMPONENTS = new CommonValue<>(""){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -73,20 +74,8 @@ public class Config extends Cfg implements ValuesProvider {
 
     @NotNull
     @Override
-    public NumberProvider SPAWN_TELEPORT_TIME() {
-        return SPAWN_TELEPORT_TIME.value();
-    }
-
-    @NotNull
-    @Override
-    public NumberProvider SPAWN_TELEPORT_MSG_INTERVAL() {
-        return SPAWN_TELEPORT_MSG_INTERVAL.value();
-    }
-
-    @NotNull
-    @Override
-    public Holder<String> SPAWN_TELEPORT_MODULES() {
-        return SPAWN_TELEPORT_MODULES;
+    public Holder<String> SPAWN_TELEPORT_COMPONENTS() {
+        return SPAWN_TELEPORT_COMPONENTS;
     }
 
     @NotNull
@@ -188,5 +177,23 @@ public class Config extends Cfg implements ValuesProvider {
     @Override
     public NumberProvider RESOURCE_OVERWORLD_BORDER() {
         return RESOURCE_OVERWORLD_BORDER.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider TPA_EXPIRE_TICKS() {
+        return TPA_EXPIRE_TICKS.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider TPA_CONFIRM_EXPIRE_TICKS() {
+        return TPA_CONFIRM_EXPIRE_TICKS.value();
+    }
+
+    @NotNull
+    @Override
+    public Holder<String> TPA_TELEPORT_COMPONENTS() {
+        return TPA_TELEPORT_COMPONENTS;
     }
 }

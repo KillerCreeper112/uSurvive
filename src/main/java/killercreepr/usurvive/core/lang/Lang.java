@@ -94,6 +94,91 @@ public class Lang {
             .broadcast(true)
             .build()
     );
+    public static final Msg TPA_ACCEPTED = create(
+        Communicator.builder()
+            .chat("You have accepted <user_name>'s teleport request.")
+            .build()
+    );
+    public static final Msg TPA_ACCEPTED_RECEIVED = create(
+        Communicator.builder()
+            .chat("<accepter_name> has accepted your teleport request! The teleport will commence in 3 seconds. Do not move!")
+            .build()
+    );
+    public static final Msg TPA_DENIED = create(
+        Communicator.builder()
+            .chat("You have denied <user_name>'s teleport request.")
+            .build()
+    );
+    public static final Msg TPA_DENIED_RECEIVED = create(
+        Communicator.builder()
+            .chat("<red><accepter_name> has denied your teleport request.")
+            .build()
+    );
+    public static final Msg TPA_QUICK_ACCEPT_TOO_MANY_REQUESTS = create(
+        Communicator.builder()
+            .chat("<red>You have more than one teleport request. Use <white>/tpaccept <name></white>.")
+            .build()
+    );
+    public static final Msg TPA_QUICK_DENY_TOO_MANY_REQUESTS = create(
+        Communicator.builder()
+            .chat("<red>You have more than one teleport request. Use <white>/tpdeny <name></white>.")
+            .build()
+    );
+    public static final Msg TPA_CANNOT_ACCEPT_USER_TELEPORTING = create(
+        Communicator.builder()
+            .chat("<red><user_name> is currently teleporting. Their request cannot be accepted at this time.")
+            .build()
+    );
+    public static final Msg TPA_NO_REQUESTS = create(
+        Communicator.builder()
+            .chat("<red>You have not received have any teleport requests.")
+            .build()
+    );
+    public static final Msg TPA_NO_REQUEST_FROM_USER = create(
+        Communicator.builder()
+            .chat("<red>You have not received have any teleport requests from <user_name>, or it has expired.")
+            .build()
+    );
+    public static final Msg TPA_CONFIRM_ALREADY_TELEPORTING = create(
+        Communicator.builder()
+            .chat("<red>You cannot confirm the teleportation while you are already set to teleport.")
+            .build()
+    );
+    public static final Msg TPA_CONFIRM_RECEIVED = create(
+        Communicator.builder()
+            .chat("<yellow><user_name> has confirmed the teleportation and is now set to teleport to you!")
+            .build()
+    );
+    public static final Msg TPA_CONFIRM_EXPIRED = create(
+        Communicator.builder()
+            .chat("<red>The teleport request has expired.")
+            .build()
+    );
+    public static final Msg TPA_CONFIRM_CANCEL = create(
+        Communicator.builder()
+            .chat("<red>You have canceled the teleport.")
+            .build()
+    );
+    public static final Msg TPA_CONFIRM_CANCEL_RECEIVED = create(
+        Communicator.builder()
+            .chat("<red><user_name> has decided to cancel the teleport.")
+            .build()
+    );
+    public static final Msg TPA_REQUEST_SENT = create(
+        Communicator.builder()
+            .chat("<yellow><user_name> has requested to teleport to you! Use <click:suggest_command:\"/tpaccept <user_name>\"><hover:show_text:\"Click to accept\n<user_name>'s teleport request\"><white>/tpaccept <user_name></white></hover></click> to accept.")
+            .build()
+    );
+    public static final Msg TPA_REQUEST_SENT_RECEIVED = create(
+        Communicator.builder()
+            .chat("<yellow>Teleport request sent to <target_name>. They have 60 seconds to accept.")
+            .build()
+    );
+    public static final Msg TPA_REQUEST_ALREADY_SENT = create(
+        Communicator.builder()
+            .chat("<red>You have already sent a teleport request to <target_name>.")
+            .build()
+    );
 
     public static Msg create(@NotNull String id, @NotNull Communicator communicator){
         return new Msg(id, communicator, Lang::lang);

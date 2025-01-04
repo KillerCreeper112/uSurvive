@@ -1,8 +1,6 @@
 package killercreepr.usurvive.core.config.handler;
 
-import killercreepr.cruxconfig.config.common.handler.SimpleFileConverter;
 import killercreepr.cruxconfig.config.common.handler.SimpleFileObjectConverter;
-import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
 import net.kyori.adventure.key.Key;

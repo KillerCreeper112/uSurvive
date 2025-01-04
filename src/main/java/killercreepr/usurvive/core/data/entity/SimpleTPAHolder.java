@@ -1,7 +1,8 @@
 package killercreepr.usurvive.core.data.entity;
 
+import killercreepr.crux.api.data.User;
 import killercreepr.crux.api.entity.memory.EntityMemory;
-import killercreepr.crux.api.entity.memory.PlayerMemory;
+import killercreepr.crux.api.util.UserMap;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.EntityTickedDataHolder;
 import killercreepr.usurvive.api.tpa.TPAHolder;
@@ -11,7 +12,7 @@ import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
+import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -25,33 +26,51 @@ public class SimpleTPAHolder extends EntityTickedDataHolder implements TPAHolder
         this(KEY, parent);
     }
 
-    protected final Map<UUID, TPARequest> requests = new ConcurrentHashMap<>();
+    protected final UserMap<User, TPARequest> requests = UserMap.userMap(ConcurrentHashMap::new);
 
     @Override
     public boolean shouldRemoveFromMemory(@Nullable Entity e) {
         return super.shouldRemoveFromMemory(e) || requests().isEmpty();
     }
 
-    public Map<UUID, TPARequest> requests(){
-        requests.values().removeIf(TPARequest::isValid);
+    public UserMap<User, TPARequest> requests(){
+        requests.removeIf(TPARequest::isValid);
         return requests;
     }
 
     @Override
     public void addRequest(@NotNull TPARequest request) {
-        requests().put(request.from(), request);
+        requests().put(request.sender(), request);
     }
 
     @Nullable
     @Override
     public TPARequest getRequest(@NotNull UUID from) {
-        return requests().get(from);
+        return requests().getFromUser(from);
+    }
+
+    @Nullable
+    @Override
+    public TPARequest getRequest(@NotNull String from) {
+        return requests().getFromUser(from);
     }
 
     @Nullable
     @Override
     public TPARequest removeRequest(@NotNull UUID from) {
-        return requests().remove(from);
+        return requests().removeUser(from);
+    }
+
+    @Nullable
+    @Override
+    public TPARequest removeRequest(@NotNull String from) {
+        return requests().removeUser(from);
+    }
+
+    @NotNull
+    @Override
+    public Collection<TPARequest> getRequests() {
+        return requests().values();
     }
 
     @Override

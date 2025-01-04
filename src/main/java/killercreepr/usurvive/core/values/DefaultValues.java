@@ -17,9 +17,7 @@ public class DefaultValues implements ValuesProvider {
     public static final Holder<List<String>> FIRST_JOIN_COMMANDS = Holder.direct(List.of(
         "lp user <player_name> group add default_manage"
     ));
-    public static final Holder<String> SPAWN_TELEPORT_MODULES = Holder.direct("dontmove,nocmds");
-    public static final NumberProvider SPAWN_TELEPORT_TIME = NumberProvider.constant(100);
-    public static final NumberProvider SPAWN_TELEPORT_MSG_INTERVAL = NumberProvider.constant(20);
+    public static final Holder<String> SPAWN_TELEPORT_COMPONENTS = Holder.direct("[teleport/waiting_time=100,teleport/dont_move={},teleport/disable_commands={},teleport/msg={interval:20}]");
     public static final NumberProvider DEATH_GUIDE_TICK_EVERY = new UniformNumber(60, 100);
     public static final NumberProvider DEATH_GUIDE_PARTICLE_AMOUNT = new UniformNumber(3, 5);
     public static final NumberProvider DEATH_GUIDE_PARTICLE_SHIFT_START = new UniformNumber(1D, 3D);
@@ -40,23 +38,10 @@ public class DefaultValues implements ValuesProvider {
     public Holder<String> SPAWN_WORLD() {
         return SPAWN_WORLD;
     }
-
     @NotNull
     @Override
-    public NumberProvider SPAWN_TELEPORT_TIME() {
-        return SPAWN_TELEPORT_TIME;
-    }
-
-    @NotNull
-    @Override
-    public NumberProvider SPAWN_TELEPORT_MSG_INTERVAL() {
-        return SPAWN_TELEPORT_MSG_INTERVAL;
-    }
-
-    @NotNull
-    @Override
-    public Holder<String> SPAWN_TELEPORT_MODULES() {
-        return SPAWN_TELEPORT_MODULES;
+    public Holder<String> SPAWN_TELEPORT_COMPONENTS() {
+        return SPAWN_TELEPORT_COMPONENTS;
     }
 
     @NotNull
@@ -152,6 +137,24 @@ public class DefaultValues implements ValuesProvider {
     @NotNull
     @Override
     public NumberProvider RESOURCE_OVERWORLD_BORDER() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider TPA_EXPIRE_TICKS() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider TPA_CONFIRM_EXPIRE_TICKS() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Holder<String> TPA_TELEPORT_COMPONENTS() {
         return null;
     }
 }

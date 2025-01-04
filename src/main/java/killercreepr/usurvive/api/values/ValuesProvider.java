@@ -15,11 +15,7 @@ public interface ValuesProvider extends Reloadable {
     @NotNull
     Holder<String> SPAWN_WORLD();
     @NotNull
-    NumberProvider SPAWN_TELEPORT_TIME();
-    @NotNull
-    NumberProvider SPAWN_TELEPORT_MSG_INTERVAL();
-    @NotNull
-    Holder<String> SPAWN_TELEPORT_MODULES();
+    Holder<String> SPAWN_TELEPORT_COMPONENTS();
     @NotNull
     NumberProvider DEATH_GUIDE_TICK_EVERY();
     @NotNull
@@ -50,4 +46,8 @@ public interface ValuesProvider extends Reloadable {
     Holder<ResourcePackRequestData> RESOURCE_PACKS();
 
     @NotNull NumberProvider RESOURCE_OVERWORLD_BORDER();
+
+    @NotNull NumberProvider TPA_EXPIRE_TICKS();
+    @NotNull NumberProvider TPA_CONFIRM_EXPIRE_TICKS();
+    @NotNull Holder<String> TPA_TELEPORT_COMPONENTS();
 }

@@ -16,6 +16,9 @@ public class StandardPlayerSettingSelections {
     public static final PlayerSettingSelection SHORT = register(PlayerSettingSelection.playerSettingSelection(Crux.key("short")));
     public static final PlayerSettingSelection NORMAL = register(PlayerSettingSelection.playerSettingSelection(Crux.key("normal")));
     public static final PlayerSettingSelection FAR = register(PlayerSettingSelection.playerSettingSelection(Crux.key("far")));
+    public static final PlayerSettingSelection FRIENDS_ONLY = register(PlayerSettingSelection.playerSettingSelection(Crux.key("friends_only")));
+    public static final PlayerSettingSelection ALL = register(PlayerSettingSelection.playerSettingSelection(Crux.key("all")));
+    public static final PlayerSettingSelection NONE = register(PlayerSettingSelection.playerSettingSelection(Crux.key("none")));
 
     public static PlayerSettingSelection register(PlayerSettingSelection s){
         return USurviveRegistries.PLAYER_SETTING_SELECTION.register(s);

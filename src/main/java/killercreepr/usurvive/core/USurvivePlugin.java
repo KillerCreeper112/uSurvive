@@ -9,6 +9,7 @@ import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.item.dynamic.DynamicItem;
 import killercreepr.crux.api.registry.KeyedRegistry;
+import killercreepr.crux.api.registry.Registry;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.communication.MsgContainer;
@@ -36,6 +37,7 @@ import killercreepr.cruxitems.core.config.CruxItemsConfigHook;
 import killercreepr.cruxitems.core.config.handler.FilePluginItemHandler;
 import killercreepr.cruxmenus.CruxMenusModule;
 import killercreepr.cruxmenus.api.menu.CfgMenu;
+import killercreepr.cruxmenus.api.menu.action.MenuAction;
 import killercreepr.cruxmenus.api.menu.config.handler.FileMenuHolder;
 import killercreepr.cruxmenus.api.menu.holder.MenuItems;
 import killercreepr.cruxmenus.api.menu.module.MenuModule;
@@ -77,6 +79,8 @@ import killercreepr.usurvive.core.item.USurviveItems;
 import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.listener.*;
 import killercreepr.usurvive.core.mechanics.grapple.standard.StandardGrappleHooks;
+import killercreepr.usurvive.core.menu.action.CancelTPAAction;
+import killercreepr.usurvive.core.menu.action.ConfirmTPAAction;
 import killercreepr.usurvive.core.menu.action.PlayerSettingCacheAction;
 import killercreepr.usurvive.core.menu.module.CurrencyDepositModule;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
@@ -196,7 +200,10 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         });
         CruxMenusModule menusModule = CruxCore.inst().cruxMenus();
         registerMenuModules(menusModule.menuRegistry().menuModule(), menusModule.menuModuleRegistry());
-        menusModule.menuRegistry().menuActions().register(new PlayerSettingCacheAction(Crux.key("player_settings_cache")));
+        Registry<MenuAction> menuActions = menusModule.menuRegistry().menuActions();
+        menuActions.register(new PlayerSettingCacheAction(Crux.key("player_settings_cache")));
+        menuActions.register(new ConfirmTPAAction(Crux.key("confirm_tpa")));
+        menuActions.register(new CancelTPAAction(Crux.key("cancel_tpa")));
 
         EntityMemory.registerFunction(this, mem ->{
             if(!(mem instanceof PlayerMemory m)) return;

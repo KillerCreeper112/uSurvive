@@ -19,7 +19,7 @@ public class SimpleTPAManager implements TPAManager {
     @NotNull
     @Override
     public TPAHolder getOrCreateTPAHolder(Entity e) {
-        return  EntityMemory.getOrCreateDataHolder(
+        return EntityMemory.getOrCreateDataHolder(
             e, SimpleTPAHolder.class, SimpleTPAHolder::new
         );
     }
