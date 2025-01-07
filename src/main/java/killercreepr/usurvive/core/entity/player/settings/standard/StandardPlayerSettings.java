@@ -35,6 +35,20 @@ public class StandardPlayerSettings {
         )
     ));
 
+    public static final PlayerSetting TPA_HERE_REQUESTS = register(new SimplePlayerSetting(
+        Crux.key("tpa_here_requests"), StandardPlayerSettingSelections.ENABLED,
+        List.of(
+            StandardPlayerSettingSelections.ENABLED,
+            StandardPlayerSettingSelections.FRIENDS_ONLY,
+            StandardPlayerSettingSelections.DISABLED
+        ),
+        Map.of(
+            StandardPlayerSettingSelections.ENABLED, "You will receive teleport here requests from all players.",
+            StandardPlayerSettingSelections.FRIENDS_ONLY, "You will only receive teleport here requests from your friends.",
+            StandardPlayerSettingSelections.DISABLED, "You will not receive any teleport here requests."
+        )
+    ));
+
     public static PlayerSetting register(PlayerSetting s){
         return USurviveRegistries.PLAYER_SETTING.register(s);
     }

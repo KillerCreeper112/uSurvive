@@ -66,6 +66,24 @@ public class TPACommands {
             );
 
             commands.register(
+                Commands.literal("tpahere")
+                    .requires(source -> getExecutor(source).hasPermission("usurvive.cmds.tpahere.use"))
+                    .then(
+                        Commands.argument("target", ArgumentTypes.player())
+                            .executes(ctx -> {
+                                if(!(getExecutor(ctx.getSource()) instanceof HumanEntity sender)) return -1;
+                                HumanEntity target = ctx.getArgument("target", PlayerSelectorArgumentResolver.class)
+                                    .resolve(ctx.getSource()).getFirst();
+                                if(target.equals(sender)){
+                                    return -1;
+                                }
+                                return requestTPAHere(sender, target);
+                            })
+                    )
+                    .build()
+            );
+
+            commands.register(
                 Commands.literal("tpaccept")
                     .requires(source -> getExecutor(source).hasPermission("usurvive.cmds.tpaccept.use"))
                     .executes(ctx ->{
@@ -102,6 +120,53 @@ public class TPACommands {
                     .build(), List.of("tpadeny")
             );
         });
+    }
+
+    public int requestTPAHere(HumanEntity sender, HumanEntity to){
+        TPAManager tpManager = plugin.getTPAManager();
+        TPAHolder toHolder = tpManager.getTPAHolder(to);
+
+        MergedTagContainer tags = TagContainer.merged()
+            .hook(sender, TagsPrefixBuilder.overwriteBase("user_"))
+            .hook(to, TagsPrefixBuilder.overwriteBase("target_"))
+            ;
+
+        if(toHolder != null && toHolder.getRequest(sender.getUniqueId()) != null){
+            Lang.TPA_REQUEST_ALREADY_SENT.use(sender, tags);
+            return 0;
+        }
+
+        PlayerSettingsHolder toSettings = plugin.getPlayerSettingsManager().getPlayerSettingsHolder(to);
+        if(toSettings != null){
+            if(toSettings.hasSetting(StandardPlayerSettings.TPA_HERE_REQUESTS, StandardPlayerSettingSelections.DISABLED)){
+                Lang.TPA_HERE_REQUESTS_DISABLED.use(sender, tags);
+                return 0;
+            }
+            if(toSettings.hasSetting(StandardPlayerSettings.TPA_HERE_REQUESTS, StandardPlayerSettingSelections.FRIENDS_ONLY)){
+                FriendsHolder friends = CruxFriendsPlugin.inst().getFriendsManager().getFriendsHolder(to);
+                if(friends == null || !friends.hasFriend(sender.getUniqueId())){
+                    Lang.TPA_HERE_REQUESTS_DISABLED.use(sender, tags);
+                    return 0;
+                }
+            }
+        }
+
+        ValuesProvider cfg = plugin.values();
+
+        CruxTeleport.Builder builder= CruxTeleport.builder()
+            .teleportTo(DynamicLocation.createEntity(sender));
+        String components = cfg.TPA_TELEPORT_COMPONENTS().value();
+        if(components != null){
+            DataComponentDecoder.componentDecoder().parseComponents(components).forEach(builder::set);
+        }
+
+        TPARequest request = TPARequest.request(sender, builder);
+        toHolder = tpManager.getOrCreateTPAHolder(to);
+        toHolder.addRequest(request);
+
+        Lang.TPA_HERE_REQUEST_SENT.use(sender, tags);
+        Lang.TPA_HERE_REQUEST_SENT_RECEIVED.use(to, tags);
+        return 1;
     }
 
     public int requestTPA(HumanEntity sender, HumanEntity to){

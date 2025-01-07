@@ -174,6 +174,16 @@ public class Lang {
             .chat("<yellow><user_name> has requested to teleport to you! Use <click:suggest_command:\"/tpaccept <user_name>\"><hover:show_text:\"Click to accept\n<user_name>'s teleport request\"><white>/tpaccept <user_name></white></hover></click> to accept.")
             .build()
     );
+    public static final Msg TPA_HERE_REQUEST_SENT = create(
+        Communicator.builder()
+            .chat("<yellow>Teleport HERE request sent to <target_name>. They have 60 seconds to accept.")
+            .build()
+    );
+    public static final Msg TPA_HERE_REQUEST_SENT_RECEIVED = create(
+        Communicator.builder()
+            .chat("<yellow><user_name> has requested that you teleport to them! Use <click:suggest_command:\"/tpaccept <user_name>\"><hover:show_text:\"Click to accept\n<user_name>'s teleport here request\"><white>/tpaccept <user_name></white></hover></click> to accept.")
+            .build()
+    );
     public static final Msg TPA_REQUEST_ALREADY_SENT = create(
         Communicator.builder()
             .chat("<red>You have already sent a teleport request to <target_name>.")
@@ -184,9 +194,9 @@ public class Lang {
             .chat("<red>You may not send a teleport request to <target_name>.")
             .build()
     );
-    public static final Msg MENTIONED = create(
+    public static final Msg TPA_HERE_REQUESTS_DISABLED = create(
         Communicator.builder()
-            .sound(CreateSound.sound(Sound.ENTITY_ITEM_PICKUP, 2f))
+            .chat("<red>You may not send a teleport here request to <target_name>.")
             .build()
     );
 
