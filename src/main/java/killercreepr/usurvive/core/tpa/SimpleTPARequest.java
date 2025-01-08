@@ -41,7 +41,7 @@ public class SimpleTPARequest implements TPARequest {
                     .put("accepter", sender)
                     .put(this).build(),
                     TagContainer.merged().hook(sender, TagsPrefixBuilder.overwriteBase("accepter_")));
-        }else CruxTeleporter.teleporter().scheduleTeleport(e, teleport.buildFor(e));
+        }else CruxTeleporter.teleporter().scheduleTeleport(e, teleport.build());
     }
 
     @Override

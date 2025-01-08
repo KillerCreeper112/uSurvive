@@ -25,7 +25,6 @@ import killercreepr.cruxcurrency.core.entity.memory.CurrencyHolder;
 import killercreepr.cruxteleport.api.teleport.CruxTeleport;
 import killercreepr.cruxteleport.api.teleport.CruxTeleporter;
 import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;
-import killercreepr.cruxteleport.core.teleport.module.standard.TeleportDisableCommandsModule;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.command.argument.TargetPlayerDeathResolver;
@@ -279,8 +278,10 @@ public class USurviveCommands {
         Location spawn = death.getPosition().toLocation(world);
         for(Player p : toTp){
             //RandomWorldTP.tpNear(spawn, 16).findLocationToTeleportAsync(p)
-            CruxTeleport tp = CruxTeleport.teleport(RandomWorldTP.tpNear(spawn, NumberProvider.uniform(16, 40)).findLocationToTeleportAsync(p),
-                1, List.of(new TeleportDisableCommandsModule(p.getUniqueId())));
+            CruxTeleport tp = CruxTeleport.teleport(
+                DataComponentDecoder.componentDecoder().parseComponents("[teleport/disable_commands={}]"),
+                RandomWorldTP.tpNear(spawn, NumberProvider.uniform(16, 40)).findLocationToTeleportAsync(p)
+            );
             CruxTeleporter.teleporter().scheduleTeleport(p, tp);
             sender.sendMessage("Scheduled teleport for " + p.getName() + " at " + target.getName() + "'s death in world, " + world.getName() + ": " +
                 spawn.getBlockX() + ", " + spawn.getBlockY() + ", " + spawn.getBlockZ() + ".");

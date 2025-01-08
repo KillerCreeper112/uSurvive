@@ -46,7 +46,7 @@ public class ConfirmTPAAction extends SimpleMenuAction {
         }
 
         Lang.TPA_CONFIRM_RECEIVED.use(accepter, tags);
-        CruxTeleporter.teleporter().scheduleTeleport(p, request.teleport().buildFor(p));
+        CruxTeleporter.teleporter().scheduleTeleport(p, request.teleport().build());
         return true;
     }
 }
