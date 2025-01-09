@@ -280,7 +280,7 @@ public class USurviveCommands {
             //RandomWorldTP.tpNear(spawn, 16).findLocationToTeleportAsync(p)
             CruxTeleport tp = CruxTeleport.teleport(
                 DataComponentDecoder.componentDecoder().parseComponents("[teleport/disable_commands={}]"),
-                RandomWorldTP.tpNear(spawn, NumberProvider.uniform(16, 40)).findLocationToTeleportAsync(p)
+                RandomWorldTP.centerNear(spawn, NumberProvider.uniform(16, 40))
             );
             CruxTeleporter.teleporter().scheduleTeleport(p, tp);
             sender.sendMessage("Scheduled teleport for " + p.getName() + " at " + target.getName() + "'s death in world, " + world.getName() + ": " +
