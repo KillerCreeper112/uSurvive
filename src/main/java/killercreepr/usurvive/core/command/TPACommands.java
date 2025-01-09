@@ -160,7 +160,7 @@ public class TPACommands {
             DataComponentDecoder.componentDecoder().parseComponents(components).forEach(builder::set);
         }
 
-        TPARequest request = TPARequest.request(sender, builder);
+        TPARequest request = TPARequest.hereRequest(sender, builder);
         toHolder = tpManager.getOrCreateTPAHolder(to);
         toHolder.addRequest(request);
 

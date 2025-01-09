@@ -22,12 +22,14 @@ public class SimpleTPARequest implements TPARequest {
     protected final CruxTeleport.Builder teleport;
     protected final long timeSent;
     protected long timeAccepted = -1;
+    protected final boolean tpHere;
 
-    public SimpleTPARequest(User from, Reference<Entity> sender, CruxTeleport.Builder teleport, long timeSent) {
+    public SimpleTPARequest(User from, Reference<Entity> sender, CruxTeleport.Builder teleport, long timeSent, boolean tpHere) {
         this.from = from;
         this.sender = sender;
         this.teleport = teleport;
         this.timeSent = timeSent;
+        this.tpHere = tpHere;
     }
 
     @Override
@@ -35,6 +37,18 @@ public class SimpleTPARequest implements TPARequest {
         Entity e = this.sender.get();
         if(e == null) throw new IllegalStateException("Sender from TPA Request is no longer present!");
         setAccepted(System.currentTimeMillis());
+
+        if(tpHere){
+            if(sender instanceof HumanEntity h){
+                CruxCore.core().cruxMenus().menuRegistry().menuHolders().get(Crux.key("tpaccept_confirm"))
+                    .open(h, DataExchange.builder()
+                            .put("accepter", e)
+                            .put(this).build(),
+                        TagContainer.merged().hook(e, TagsPrefixBuilder.overwriteBase("accepter_")));
+            }else CruxTeleporter.teleporter().scheduleTeleport(sender, teleport.build());
+            return;
+        }
+
         if(e instanceof HumanEntity h){
             CruxCore.core().cruxMenus().menuRegistry().menuHolders().get(Crux.key("tpaccept_confirm"))
                 .open(h, DataExchange.builder()
@@ -80,5 +94,10 @@ public class SimpleTPARequest implements TPARequest {
     @Override
     public boolean isValid() {
         return sender.get() != null;//todo check time
+    }
+
+    @Override
+    public boolean isHere() {
+        return tpHere;
     }
 }

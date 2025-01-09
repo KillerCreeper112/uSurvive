@@ -25,7 +25,7 @@ public class TPARequestArgument implements CustomArgumentType.Converted<TPAReque
                 .dispatcherParseException().create("Source not a player.");
             TPAHolder holder = USurvivePlugin.inst().getTPAManager().getTPAHolder(e);
             if(holder == null) throw CommandSyntaxException.BUILT_IN_EXCEPTIONS
-                .dispatcherParseException().create("Source not a TPA holder.");
+                .dispatcherParseException().create("No teleport request found.");
 
             try{
                 return holder.getRequest(UUID.fromString(nativeType));

@@ -181,7 +181,7 @@ public class Lang {
     );
     public static final Msg TPA_HERE_REQUEST_SENT_RECEIVED = create(
         Communicator.builder()
-            .chat("<yellow><user_name> has requested that you teleport to them! Use <click:suggest_command:\"/tpaccept <user_name>\"><hover:show_text:\"Click to accept\n<user_name>'s teleport here request\"><white>/tpaccept <user_name></white></hover></click> to accept.")
+            .chat("<yellow><user_name> has requested that <latinfont:you> teleport to <latinfont:them>! Use <click:suggest_command:\"/tpaccept <user_name>\"><hover:show_text:\"Click to accept\n<user_name>'s teleport here request\"><white>/tpaccept <user_name></white></hover></click> to accept their teleport HERE request.")
             .build()
     );
     public static final Msg TPA_REQUEST_ALREADY_SENT = create(
