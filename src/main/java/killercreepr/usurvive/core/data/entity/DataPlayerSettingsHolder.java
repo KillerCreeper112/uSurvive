@@ -5,7 +5,6 @@ import killercreepr.crux.api.data.Loadable;
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
-import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
 import killercreepr.cruxconfig.config.common.file.DataFile;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
@@ -13,7 +12,6 @@ import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,20 +26,11 @@ public class DataPlayerSettingsHolder implements PlayerSettingsHolder, Loadable 
     }
 
     public DataFile getDataFile(UUID p){
-        File f = CruxFolder.file(Crux.getMainPlugin(), "data/usurvive/player/settings/" + p + ".json");
-        if(BukkitDataFile.isSupported(f)) return BukkitDataFile.parse(f);
-        return null;
+        return BukkitDataFile.parseFromGeneralPath(CruxFolder.file(Crux.getMainPlugin(), "data/usurvive/player/settings/" + p + ".json"));
     }
 
     public DataFile getOrCreateDataFile(UUID p){
-        File f = CruxFolder.file(Crux.getMainPlugin(), "data/usurvive/player/settings/" + p + ".json");
-        if(!f.exists()){
-            CruxJson cfg = new CruxJson(f);
-            cfg.reloadIfNeeded();
-            cfg.close();
-        }
-        if(BukkitDataFile.isSupported(f)) return BukkitDataFile.parse(f);
-        return null;
+        return BukkitDataFile.parseFromGeneralPath(CruxFolder.file(Crux.getMainPlugin(), "data/usurvive/player/settings/" + p + ".json"), true);
     }
 
     @Override
