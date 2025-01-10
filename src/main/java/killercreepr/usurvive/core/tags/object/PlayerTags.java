@@ -3,7 +3,6 @@ package killercreepr.usurvive.core.tags.object;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.text.format.FormatPrefix;
 import killercreepr.crux.api.text.hook.HookedObjectContainer;
-import killercreepr.crux.api.text.hook.HookedPrefixBuilder;
 import killercreepr.crux.api.text.hook.ObjectTag;
 import killercreepr.crux.api.text.tags.TagParser;
 import killercreepr.crux.core.text.hook.StringHookedObjectTag;
@@ -26,27 +25,24 @@ public class PlayerTags implements ObjectTag<Player> {
         return FormatPrefix.simple("player_");
     }
 
+    @Nullable
     @Override
-    public @Nullable HookedObjectContainer<StringHookedObjectTag<?>> hookStrings(@NotNull Player object, @NotNull TagParser tags) {
+    public HookedObjectContainer<StringHookedObjectTag<?>> hookStrings(@NotNull Player object, Object base, Object parent, @NotNull TagParser tags) {
         var c = HookedObjectContainer.string();
         PlayerSettingsHolder holder = EntityMemory.getOrCreateDataHolder(object, MemoryPlayerSettingsHolder.class);
         if(holder != null){
-            c.addAll(tags.hookStrings(holder, HookedPrefixBuilder.overwrite(FormatPrefix.simple(
-                "player_settings/"
-            ))));
+            c.addAll(tags.hookStrings(holder, base, object, FormatPrefix.simple("settings/")));
         }
         return c;
     }
 
     @Nullable
     @Override
-    public HookedObjectContainer<StringListHookedObjectTag<?>> hookStringLists(@NotNull Player object, @NotNull TagParser tags) {
+    public HookedObjectContainer<StringListHookedObjectTag<?>> hookStringLists(@NotNull Player object, Object base, Object parent, @NotNull TagParser tags) {
         var c = HookedObjectContainer.stringList();
         PlayerSettingsHolder holder = EntityMemory.getOrCreateDataHolder(object, MemoryPlayerSettingsHolder.class);
         if(holder != null){
-            c.addAll(tags.hookStringLists(holder, HookedPrefixBuilder.overwrite(FormatPrefix.simple(
-                "player_settings/"
-            ))));
+            c.addAll(tags.hookStringLists(holder, base, object, FormatPrefix.simple("settings/")));
         }
         return c;
     }

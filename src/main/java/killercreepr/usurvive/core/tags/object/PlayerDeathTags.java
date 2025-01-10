@@ -2,7 +2,6 @@ package killercreepr.usurvive.core.tags.object;
 
 import killercreepr.crux.api.text.format.FormatPrefix;
 import killercreepr.crux.api.text.hook.HookedObjectContainer;
-import killercreepr.crux.api.text.hook.HookedPrefixBuilder;
 import killercreepr.crux.api.text.hook.ObjectTag;
 import killercreepr.crux.api.text.resolver.StringResolver;
 import killercreepr.crux.api.text.tags.TagParser;
@@ -40,23 +39,25 @@ public class PlayerDeathTags implements ObjectTag<PlayerDeath> {
             ;
     }
 
+    @Nullable
     @Override
-    public @Nullable HookedObjectContainer<StringHookedObjectTag<?>> hookStrings(@NotNull PlayerDeath object, @NotNull TagParser tags) {
+    public HookedObjectContainer<StringHookedObjectTag<?>> hookStrings(@NotNull PlayerDeath object, Object base, Object parent, @NotNull TagParser tags) {
         HookedObjectContainer<StringHookedObjectTag<?>> hooks = HookedObjectContainer.string()
-            .addAll(tags.hookStrings(object.getPosition(), HookedPrefixBuilder.overwrite(FormatPrefix.simple("player_death_pos/"))))
+            .addAll(tags.hookStrings(object.getPosition(), base, object, FormatPrefix.simple("pos/")))
             ;
         World world = object.getWorld();
-        if(world != null) hooks.addAll(tags.hookStrings(world, HookedPrefixBuilder.overwrite(FormatPrefix.simple("player_death_world/"))));
+        if(world != null) hooks.addAll(tags.hookStrings(world, base, object, FormatPrefix.simple("world/")));
         return hooks;
     }
 
+    @Nullable
     @Override
-    public @Nullable HookedObjectContainer<StringListHookedObjectTag<?>> hookStringLists(@NotNull PlayerDeath object, @NotNull TagParser tags) {
-        HookedObjectContainer<StringListHookedObjectTag<?>> hooks = HookedObjectContainer.stringList()
-            .addAll(tags.hookStringLists(object.getPosition(), HookedPrefixBuilder.overwrite(FormatPrefix.simple("player_death_pos/"))))
+    public HookedObjectContainer<StringListHookedObjectTag<?>> hookStringLists(@NotNull PlayerDeath object, Object base, Object parent, @NotNull TagParser tags) {
+        var hooks = HookedObjectContainer.stringList()
+            .addAll(tags.hookStringLists(object.getPosition(), base, object, FormatPrefix.simple("pos/")))
             ;
         World world = object.getWorld();
-        if(world != null) hooks.addAll(tags.hookStringLists(world, HookedPrefixBuilder.overwrite(FormatPrefix.simple("player_death_world/"))));
+        if(world != null) hooks.addAll(tags.hookStringLists(world, base, object, FormatPrefix.simple("world/")));
         return hooks;
     }
 }
