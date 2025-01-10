@@ -200,7 +200,7 @@ public class TPACommands {
 
         ValuesProvider cfg = plugin.values();
 
-        CruxTeleport.Builder builder= CruxTeleport.builder()
+        CruxTeleport.Builder builder = CruxTeleport.builder()
             .teleportTo(DynamicLocation.createEntity(to));
         String components = cfg.TPA_TELEPORT_COMPONENTS().value();
         if(components != null){
