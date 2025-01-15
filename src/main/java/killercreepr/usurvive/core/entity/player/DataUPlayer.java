@@ -6,6 +6,11 @@ import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
 import killercreepr.cruxconfig.config.common.file.DataFile;
+import killercreepr.cruxfriends.api.friend.FriendsHolder;
+import killercreepr.cruxfriends.core.CruxFriendsPlugin;
+import killercreepr.cruxparty.api.party.Party;
+import killercreepr.cruxparty.api.party.PartyHolder;
+import killercreepr.cruxparty.core.CruxPartyPlugin;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +37,22 @@ public class DataUPlayer implements UPlayer {
     @Override
     public void setLastKnownName(String lastKnownName) {
         this.lastKnownName = lastKnownName;
+    }
+
+    @Override
+    public boolean hasFriend(@NotNull UUID uuid) {
+        FriendsHolder friendsHolder = CruxFriendsPlugin.inst().getFriendsManager().getFriendsHolder(this.uuid);
+        if(friendsHolder == null) return false;
+        return friendsHolder.hasFriend(uuid);
+    }
+
+    @Override
+    public boolean isApartOfParty(@NotNull UUID uuid) {
+        PartyHolder partyHolder = CruxPartyPlugin.inst().getPartyManager().getPartyHolder(this.uuid);
+        if(partyHolder == null) return false;
+        Party party = partyHolder.getParty();
+        if(party == null) return false;
+        return party.owner().equals(uuid) || party.hasMember(uuid);
     }
 
     @NotNull

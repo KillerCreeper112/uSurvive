@@ -23,3 +23,5 @@ dependencies:
       load: AFTER
     CruxFriends:
       load: AFTER
+    CruxParty:
+      load: AFTER

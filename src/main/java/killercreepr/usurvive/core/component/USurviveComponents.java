@@ -1,7 +1,6 @@
 package killercreepr.usurvive.core.component;
 
 import killercreepr.crux.api.component.DataComponentType;
-import killercreepr.crux.api.component.parser.ComponentTextInputParser;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.cruxteleport.api.component.TeleporterComponent;

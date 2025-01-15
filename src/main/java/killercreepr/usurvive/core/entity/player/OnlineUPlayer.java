@@ -78,6 +78,16 @@ public class OnlineUPlayer implements UPlayer {
     }
 
     @Override
+    public boolean hasFriend(@NotNull UUID uuid) {
+        return data.hasFriend(uuid);
+    }
+
+    @Override
+    public boolean isApartOfParty(@NotNull UUID uuid) {
+        return data.isApartOfParty(uuid);
+    }
+
+    @Override
     public void save() {
         data.save();
     }

@@ -1,7 +1,6 @@
 package killercreepr.usurvive.core.menu.action;
 
 import killercreepr.crux.api.data.DataExchange;
-import killercreepr.crux.api.entity.CruxEntity;
 import killercreepr.crux.api.text.tags.TagsPrefixBuilder;
 import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import killercreepr.crux.api.text.tags.container.TagContainer;

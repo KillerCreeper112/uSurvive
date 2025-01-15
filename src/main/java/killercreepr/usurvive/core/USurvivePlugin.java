@@ -32,6 +32,8 @@ import killercreepr.cruxconfig.config.common.handler.AutoFileOptions;
 import killercreepr.cruxconfig.config.common.handler.FileConvertHandler;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxfriends.api.friend.FriendsHolder;
+import killercreepr.cruxfriends.core.CruxFriendsPlugin;
 import killercreepr.cruxitems.api.item.plugin.PluginItem;
 import killercreepr.cruxitems.core.config.CruxItemsConfigHook;
 import killercreepr.cruxitems.core.config.handler.FilePluginItemHandler;
@@ -44,6 +46,9 @@ import killercreepr.cruxmenus.api.menu.module.MenuModule;
 import killercreepr.cruxmenus.api.menu.module.config.MenuModuleBuilder;
 import killercreepr.cruxmenus.core.menu.module.standard.SimpleFilePagedCfg;
 import killercreepr.cruxmenus.core.menu.module.standard.SimplePagedMenuModule;
+import killercreepr.cruxparty.api.party.Party;
+import killercreepr.cruxparty.api.party.PartyHolder;
+import killercreepr.cruxparty.core.CruxPartyPlugin;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.creator.CruxWorldModuleCreator;
 import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
@@ -94,6 +99,7 @@ import killercreepr.usurvive.core.world.USurviveOverworld;
 import killercreepr.usurvive.core.world.USurviveWorldTypes;
 import killercreepr.usurvive.core.world.entity.StandardOverworldGroups;
 import net.kyori.adventure.key.Key;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -317,6 +323,46 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
                         return () -> {
                             List<PlayerDeath> list = new ArrayList<>(deathManager.getAllDeaths(player));
                             list.sort(Comparator.comparing(PlayerDeath::getTime));
+                            return list;
+                        };
+                    }
+                };
+            }
+        });
+        registry.register(new SimpleFilePagedCfg(fileMenuHolder, Crux.key("paged/friends_and_party")) {
+            @NotNull
+            @Override
+            public MenuModule parsePaged(@NotNull String id,
+                                         @NotNull NumberProvider indexes,
+                                         @Nullable String valuesFilter,
+                                         @Nullable MenuItems valueItems,
+                                         @Nullable MenuItems emptyItems) {
+                return new SimplePagedMenuModule<OfflinePlayer>(id, indexes, valuesFilter, valueItems, emptyItems, this) {
+                    @Override
+                    public @NotNull Holder<List<OfflinePlayer>> getValues(@NotNull CfgMenu cfgMenu) {
+                        Player player = cfgMenu.info().getOrDefault("target", Player.class, cfgMenu.info().get(Player.class));
+                        UUID uuid = player.getUniqueId();
+                        return () -> {
+                            Collection<UUID> set = new HashSet<>();
+                            List<OfflinePlayer> list = new ArrayList<>();
+                            FriendsHolder friends = CruxFriendsPlugin.inst().getFriendsManager().getFriendsHolder(player);
+                            friends.getFriends().forEach(friend ->{
+                                list.add(getServer().getOfflinePlayer(friend.user().uuid()));
+                                set.add(friend.user().uuid());
+                            });
+                            PartyHolder partyHolder = CruxPartyPlugin.inst().getPartyManager().getPartyHolder(player);
+                            Party party = partyHolder.getParty();
+                            if(party != null){
+                                if(!party.owner().equals(uuid) && !set.contains(party.owner())){
+                                    list.add(getServer().getOfflinePlayer(party.owner()));
+                                    set.add(party.owner());
+                                }
+                                party.members().forEach(memberUUID ->{
+                                    if(memberUUID.equals(uuid) || set.contains(memberUUID)) return;
+                                    list.add(getServer().getOfflinePlayer(memberUUID));
+                                    set.add(memberUUID);
+                                });
+                            }
                             return list;
                         };
                     }

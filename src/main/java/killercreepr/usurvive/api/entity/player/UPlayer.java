@@ -19,4 +19,7 @@ public interface UPlayer extends Loadable, PluginLoadable {
     void setLastKnownPosition(@Nullable CruxLocation pos);
     void setLastKnownWorld(@Nullable String name);
     void setLastKnownName(@Nullable String name);
+
+    boolean hasFriend(@NotNull UUID uuid);
+    boolean isApartOfParty(@NotNull UUID uuid);
 }
