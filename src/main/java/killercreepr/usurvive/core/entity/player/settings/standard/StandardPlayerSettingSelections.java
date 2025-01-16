@@ -19,6 +19,10 @@ public class StandardPlayerSettingSelections {
     public static final PlayerSettingSelection FRIENDS_ONLY = register(PlayerSettingSelection.playerSettingSelection(Crux.key("friends_only")));
     public static final PlayerSettingSelection ALL = register(PlayerSettingSelection.playerSettingSelection(Crux.key("all")));
     public static final PlayerSettingSelection NONE = register(PlayerSettingSelection.playerSettingSelection(Crux.key("none")));
+    public static final PlayerSettingSelection TITLE = register(PlayerSettingSelection.playerSettingSelection(Crux.key("title")));
+    public static final PlayerSettingSelection ACTION_BAR = register(PlayerSettingSelection.playerSettingSelection(Crux.key("action_bar")));
+    public static final PlayerSettingSelection SOUND = register(PlayerSettingSelection.playerSettingSelection(Crux.key("sound")));
+    public static final PlayerSettingSelection CHAT = register(PlayerSettingSelection.playerSettingSelection(Crux.key("chat")));
 
     public static PlayerSettingSelection register(PlayerSettingSelection s){
         return USurviveRegistries.PLAYER_SETTING_SELECTION.register(s);
