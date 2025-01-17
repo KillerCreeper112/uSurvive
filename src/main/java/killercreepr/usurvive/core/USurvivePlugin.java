@@ -91,6 +91,7 @@ import killercreepr.usurvive.core.menu.action.ConfirmTPAAction;
 import killercreepr.usurvive.core.menu.action.PlayerSettingCacheAction;
 import killercreepr.usurvive.core.menu.module.CurrencyDepositModule;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
+import killercreepr.usurvive.core.stat.USurviveStats;
 import killercreepr.usurvive.core.tags.object.*;
 import killercreepr.usurvive.core.tpa.SimpleTPAManager;
 import killercreepr.usurvive.core.values.DefaultValues;
@@ -173,6 +174,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         deathManager = new SimpleDeathManager(this, CruxCore.core().worldManager());
         USurviveComponent.register();
         StandardPlayerSettings.register();
+        USurviveStats.register();
         new USurviveCommands(this).register();
         new TPACommands(this).register();
 

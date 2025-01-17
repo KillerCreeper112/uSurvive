@@ -6,6 +6,7 @@ import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.cruxstats.api.bukkit.BukkitStatHolder;
 import killercreepr.cruxworlds.api.event.CruxWorldPreCreateEvent;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.creator.CruxWorldModuleCreator;
@@ -19,6 +20,7 @@ import killercreepr.usurvive.core.data.entity.DeathHolder;
 import killercreepr.usurvive.core.death.storage.WorldDeathStorage;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.mob.goals.EchoGoal;
+import killercreepr.usurvive.core.stat.USurviveStats;
 import killercreepr.usurvive.core.world.module.SimpleDeathWorldModule;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -215,6 +217,9 @@ public class SimpleDeathManager implements DeathManager, Listener {
         Player p = event.getPlayer();
         World deathWorld = p.getWorld();
 
+        int maxGravestones = (int) BukkitStatHolder.holder(p).getStatValue(USurviveStats.MAX_GRAVESTONES);
+        if(maxGravestones < 1) return;
+
         CruxWorld crux = worldManager.getWorld(deathWorld.getUID());
         if(crux == null) return;
         DeathWorldModule module = crux.getModule(DeathWorldModule.class);
@@ -282,7 +287,7 @@ public class SimpleDeathManager implements DeathManager, Listener {
                 event.setDroppedExp(0);*/
 
                 Collection<PlayerDeath> list = getAllDeaths(p);
-                if(list.size() > 3){
+                if(list.size() > maxGravestones){
                     PlayerDeath oldest = getOldestDeath(list);
 
                     World world = oldest.getWorld();
