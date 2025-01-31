@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.UUID;
+import java.util.*;
 
 public class DataUPlayer implements UPlayer {
     protected final @NotNull UUID uuid;
@@ -34,6 +34,27 @@ public class DataUPlayer implements UPlayer {
     public String getLastKnownName() {
         return lastKnownName;
     }
+
+    @NotNull
+    @Override
+    public Collection<UUID> getFriends() {
+        FriendsHolder friendsHolder = CruxFriendsPlugin.inst().getFriendsManager().getFriendsHolder(this.uuid);
+        if(friendsHolder == null) return Set.of();
+        Collection<UUID> friends = new HashSet<>();
+        friendsHolder.getFriends().forEach(f -> friends.add(f.user().uuid()));
+        return friends;
+    }
+
+    @NotNull
+    @Override
+    public Collection<UUID> getPartyMembers() {
+        PartyHolder partyHolder = CruxPartyPlugin.inst().getPartyManager().getPartyHolder(this.uuid);
+        if(partyHolder == null) return Set.of();
+        Party party = partyHolder.getParty();
+        if(party == null) return Set.of();
+        return party.members();
+    }
+
     @Override
     public void setLastKnownName(String lastKnownName) {
         this.lastKnownName = lastKnownName;

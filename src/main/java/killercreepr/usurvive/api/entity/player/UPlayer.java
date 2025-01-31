@@ -6,6 +6,7 @@ import killercreepr.crux.api.math.CruxLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.UUID;
 
 public interface UPlayer extends Loadable, PluginLoadable {
@@ -14,6 +15,8 @@ public interface UPlayer extends Loadable, PluginLoadable {
     @Nullable CruxLocation getLastKnownPosition();
     @Nullable String getLastKnownWorld();
     @Nullable String getLastKnownName();
+    @NotNull Collection<UUID> getFriends();
+    @NotNull Collection<UUID> getPartyMembers();
 
     void setLastLogout(long time);
     void setLastKnownPosition(@Nullable CruxLocation pos);

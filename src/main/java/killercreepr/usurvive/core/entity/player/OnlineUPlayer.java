@@ -9,6 +9,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Deprecated(forRemoval = true, since = "todo, not sure what to do with this")
@@ -55,6 +57,18 @@ public class OnlineUPlayer implements UPlayer {
     @Override
     public String getLastKnownName() {
         return data.getLastKnownName();
+    }
+
+    @NotNull
+    @Override
+    public Collection<UUID> getFriends() {
+        return List.of();
+    }
+
+    @NotNull
+    @Override
+    public Collection<UUID> getPartyMembers() {
+        return List.of();
     }
 
     @Override
