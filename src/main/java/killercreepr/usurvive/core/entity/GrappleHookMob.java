@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.entity;
 
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.persistence.CruxEntitiesPersist;
 import net.kyori.adventure.key.Key;
@@ -39,5 +40,10 @@ public class GrappleHookMob extends SimpleCruxMob {
             if(consumer != null) consumer.accept(e);
             CruxEntitiesPersist.ENTITY.set(e, this.key);
         });
+    }
+
+    @Override
+    public MobCategory[] getCategories() {
+        return new MobCategory[]{MobCategory.OBJECT};
     }
 }
