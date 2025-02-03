@@ -9,7 +9,7 @@ public class USurviveStats {
     public static void register(){}
 
     public static final CruxStat MAX_GRAVESTONES = reg(CruxStat.stat(
-        Crux.key("max_gravestones"), NumberProvider.constant(3)
+        Crux.key("max_gravestones"), NumberProvider.constant(2)
     ));
 
     private static CruxStat reg(CruxStat stat){

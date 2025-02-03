@@ -157,4 +157,22 @@ public class DefaultValues implements ValuesProvider {
     public Holder<String> TPA_TELEPORT_COMPONENTS() {
         return null;
     }
+
+    @NotNull
+    @Override
+    public NumberProvider UPDATE_TAB_TIME() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Holder<String> TAB_HEADER() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Holder<String> TAB_FOOTER() {
+        return null;
+    }
 }

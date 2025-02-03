@@ -47,7 +47,17 @@ public class Config extends Cfg implements ValuesProvider {
     public final NumCfgValue DEATH_GRAVE_SPAWN_SEARCH_RANGE = new NumCfgValue(80);
     public final NumCfgValue TPA_EXPIRE_TICKS = new NumCfgValue(1200);
     public final NumCfgValue TPA_CONFIRM_EXPIRE_TICKS = new NumCfgValue(300);
+    public final NumCfgValue UPDATE_TAB_TIME = new NumCfgValue(100);
     public final CfgValue<String> TPA_TELEPORT_COMPONENTS = new CommonValue<>("[teleport/waiting_time=100,teleport/dont_move={},teleport/disable_commands={},teleport/msg={interval:20}]"){};
+    public final CfgValue<String> TAB_HEADER = new CommonValue<>("\n<#FFCC09><bold>usurvive.net\n"){};
+    public final CfgValue<String> TAB_FOOTER = new CommonValue<>(
+        """
+            
+            <#F6D496>Orbits: <#F5E8D0>{{<player_crux_balance:orbit>}[0]} <gray>| <dark_aqua>Players: <aqua><server_players>
+            <gold>Playtime: <yellow><duration:"{{<target_stat:play_time> * 50}}":none:false:", ":"%dd ":"%hh ":"%mm">
+            
+            """
+    ){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -196,5 +206,23 @@ public class Config extends Cfg implements ValuesProvider {
     @Override
     public Holder<String> TPA_TELEPORT_COMPONENTS() {
         return TPA_TELEPORT_COMPONENTS;
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider UPDATE_TAB_TIME() {
+        return UPDATE_TAB_TIME.value();
+    }
+
+    @NotNull
+    @Override
+    public Holder<String> TAB_HEADER() {
+        return TAB_HEADER;
+    }
+
+    @NotNull
+    @Override
+    public Holder<String> TAB_FOOTER() {
+        return TAB_FOOTER;
     }
 }

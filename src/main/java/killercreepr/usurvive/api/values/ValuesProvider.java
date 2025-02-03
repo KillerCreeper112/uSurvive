@@ -50,4 +50,7 @@ public interface ValuesProvider extends Reloadable {
     @NotNull NumberProvider TPA_EXPIRE_TICKS();
     @NotNull NumberProvider TPA_CONFIRM_EXPIRE_TICKS();
     @NotNull Holder<String> TPA_TELEPORT_COMPONENTS();
+    @NotNull NumberProvider UPDATE_TAB_TIME();
+    @NotNull Holder<String> TAB_HEADER();
+    @NotNull Holder<String> TAB_FOOTER();
 }

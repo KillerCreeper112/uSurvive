@@ -1,6 +1,8 @@
 package killercreepr.usurvive.core.data.entity;
 
 import killercreepr.crux.api.entity.memory.PlayerMemory;
+import killercreepr.crux.api.text.tags.container.MergedTagContainer;
+import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.PlayerTickedDataHolder;
 import killercreepr.usurvive.api.death.DeathManager;
@@ -33,10 +35,23 @@ public class DeathHolder extends PlayerTickedDataHolder {
         return USurvivePlugin.inst().values().DEATH_EXPIRY_TIME().value().intValue();
     }
 
+    public void tabTick(Player p){
+        int every = cfg.UPDATE_TAB_TIME().value().intValue();
+        if(every == 0 || (tick % every != 0)) return;
+        MergedTagContainer tags = TagContainer.merged().hook(p)
+            .hook(Crux.getServer());
+        p.sendPlayerListHeaderAndFooter(
+            Crux.format().deserialize(cfg.TAB_HEADER().valueOr(""), tags),
+            Crux.format().deserialize(cfg.TAB_FOOTER().valueOr(""), tags)
+        );
+    }
+
+    //merged tab updater here for optimization.
     protected int tick = 0;
     @Override
     public void onTick(@NotNull Player p) {
         tick++;
+        tabTick(p);
         int every = cfg.DEATH_GUIDE_TICK_EVERY().value().intValue();
         if(every==0) return;
         if(tick % every != 0) return;

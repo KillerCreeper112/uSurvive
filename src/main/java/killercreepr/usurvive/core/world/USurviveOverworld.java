@@ -28,7 +28,6 @@ public class USurviveOverworld extends SimpleWorldModule implements Ticked {
         entitySpawnManager = new NaturalEntitySpawnManager(world, createEntitySpawner()){
             @Override
             public boolean onSpawnNavigation() {
-                USurvivePlugin.inst().log("Navigating overworld spawns");
                 return super.onSpawnNavigation();
             }
 
