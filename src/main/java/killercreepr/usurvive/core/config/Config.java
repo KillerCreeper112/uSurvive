@@ -52,10 +52,8 @@ public class Config extends Cfg implements ValuesProvider {
     public final CfgValue<String> TAB_HEADER = new CommonValue<>("\n<#FFCC09><bold>usurvive.net\n"){};
     public final CfgValue<String> TAB_FOOTER = new CommonValue<>(
         """
-            
             <#F6D496>Orbits: <#F5E8D0>{{<player_crux_balance:orbit>}[0]} <gray>| <dark_aqua>Players: <aqua><server_players>
-            <gold>Playtime: <yellow><duration:"{{<target_stat:play_time> * 50}}":none:false:", ":"%dd ":"%hh ":"%mm">
-            
+            <gold>Playtime: <yellow><duration:"{{<player_stat:play_time> * 50}}":sec:false:, :"%dd ":"%hh ":"%mm">
             """
     ){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
