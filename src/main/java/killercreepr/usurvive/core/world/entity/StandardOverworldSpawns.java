@@ -14,12 +14,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 
 public class StandardOverworldSpawns {
     public static final NaturalEntitySpawn EMPTY = new SimpleNaturalEntitySpawn(30, 0f) {
         @Nullable
         @Override
-        public Entity spawn(@NotNull SpawnContext ctx) {
+        public Entity spawn(@NotNull SpawnContext ctx, @Nullable Consumer<Entity> consumer) {
             return null;
         }
 
@@ -42,8 +43,8 @@ public class StandardOverworldSpawns {
 
         @NotNull
         @Override
-        public Entity spawn(@NotNull SpawnContext ctx) {
-            return mob.spawn(ctx.getBlock().getLocation().toCenterLocation());
+        public Entity spawn(@NotNull SpawnContext ctx, @Nullable Consumer<Entity> consumer) {
+            return mob.spawn(ctx.getBlock().getLocation().toCenterLocation(), consumer);
         }
 
         @Override
