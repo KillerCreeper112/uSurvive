@@ -65,7 +65,7 @@ import killercreepr.usurvive.core.block.USurviveBlocks;
 import killercreepr.usurvive.core.block.component.USurviveBlockComponents;
 import killercreepr.usurvive.core.command.TPACommands;
 import killercreepr.usurvive.core.command.USurviveCommands;
-import killercreepr.usurvive.core.component.USurviveComponent;
+import killercreepr.usurvive.core.component.USurviveComponents;
 import killercreepr.usurvive.core.config.Config;
 import killercreepr.usurvive.core.config.component.CfgUSurviveComponents;
 import killercreepr.usurvive.core.config.handler.FilePlayerDeath;
@@ -172,7 +172,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         instance = this;
         super.onLoad();
         deathManager = new SimpleDeathManager(this, CruxCore.core().worldManager());
-        USurviveComponent.register();
+        USurviveComponents.register();
         StandardPlayerSettings.register();
         USurviveStats.register();
         new USurviveCommands(this).register();

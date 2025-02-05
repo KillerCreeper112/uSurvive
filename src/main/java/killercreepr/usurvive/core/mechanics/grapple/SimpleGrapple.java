@@ -48,6 +48,11 @@ public class SimpleGrapple implements Grapple {
         return hook;
     }
 
+    public GrappleContext buildGrappleContext(ItemUseContext ctx, int id){
+        Player p = ctx.getPlayer();
+        return new GrappleContext(p.getEyeLocation(), p, id, throwForce);
+    }
+
     @Override
     public @NotNull ItemUseResult onUse(@NotNull ItemUseContext ctx) {
         GrappleHook hook = USurviveRegistries.GRAPPLE_HOOK.get(getHookType());
@@ -67,13 +72,11 @@ public class SimpleGrapple implements Grapple {
             previous.remove(p);
             return ItemUseResult.cancelled();
         }
-        if(p.hasCooldown(item.item().getType())){
+        if(p.hasCooldown(item.item())){
             return ItemUseResult.cancelled();
         }
-        if(cooldown > 0) p.setCooldown(item.item().getType(), cooldown);
-        grappler.throwNewHook(hook, new GrappleContext(
-            p.getEyeLocation(), p, id, throwForce
-        ));
+        if(cooldown > 0) p.setCooldown(item.item(), cooldown);
+        grappler.throwNewHook(hook, buildGrappleContext(ctx, id));
         Lang.GRAPPLE_USE.playAt(p.getLocation());
         if(p.getGameMode() != GameMode.CREATIVE){
             Crux.handlers().item().damageItem(item.item(), 1, p);

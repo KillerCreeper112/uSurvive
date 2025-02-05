@@ -4,6 +4,7 @@ import killercreepr.crux.api.component.DataComponentType;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.cruxteleport.api.component.TeleporterComponent;
+import killercreepr.usurvive.api.mechanics.Grapple;
 import killercreepr.usurvive.core.component.impl.OrbitConduitComponent;
 import killercreepr.usurvive.core.component.impl.SmokeParticleBlockComponent;
 import killercreepr.usurvive.core.component.impl.SoulParticleBlockComponent;
@@ -11,6 +12,11 @@ import killercreepr.usurvive.core.component.impl.SoulParticleBlockComponent;
 import java.util.function.UnaryOperator;
 
 public class USurviveComponents {
+    public static void register(){};
+    public static final DataComponentType<Grapple> GRAPPLE = register("grapple", builder -> builder
+        .persistTextParser(USurviveCompParsers.GRAPPLE.createInput(Crux.key("grapple"))));
+    public static final DataComponentType<Grapple> GRAPPLE_DISPLAY = register("grapple_display", builder -> builder
+        .persistTextParser(USurviveCompParsers.GRAPPLE_DISPLAY.createInput(Crux.key("grapple_display"))));
     public static final DataComponentType<OrbitConduitComponent> DEPOSIT_CONDUIT = register("deposit_conduit", builder ->
         builder);
     public static final DataComponentType<SoulParticleBlockComponent> SOUL_PARTICLE_BLOCK = register("soul_particle_block", builder ->
