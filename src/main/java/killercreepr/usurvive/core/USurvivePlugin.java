@@ -61,6 +61,7 @@ import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsManager;
 import killercreepr.usurvive.api.tpa.TPAManager;
 import killercreepr.usurvive.api.values.ValuesProvider;
+import killercreepr.usurvive.core.attribute.USurviveAttribute;
 import killercreepr.usurvive.core.block.USurviveBlocks;
 import killercreepr.usurvive.core.block.component.USurviveBlockComponents;
 import killercreepr.usurvive.core.command.TPACommands;
@@ -175,6 +176,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         USurviveComponents.register();
         StandardPlayerSettings.register();
         USurviveStats.register();
+        USurviveAttribute.register();
         new USurviveCommands(this).register();
         new TPACommands(this).register();
 

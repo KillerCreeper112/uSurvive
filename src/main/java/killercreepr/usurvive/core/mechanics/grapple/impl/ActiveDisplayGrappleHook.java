@@ -5,9 +5,11 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
+import killercreepr.usurvive.core.attribute.USurviveAttribute;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.entity.BlockDisplay;
@@ -93,7 +95,13 @@ public class ActiveDisplayGrappleHook extends BasicGrappleHook implements Holder
             return result;
         }
         if(result.getHitEntity() != null){
-            EntityDamager.entityDamager(result.getHitEntity(), owner).setHitPosition(location).attack(4D, 8D);
+            Location hitLoc = CruxLoc.shiftToward(hitPoint.toLocation(owner.getWorld()), lastLocation, .5D);
+            EntityDamager.entityDamager(result.getHitEntity(), owner).setHitPosition(hitLoc)
+                .attack(
+                    CruxAttribute.get(owner, USurviveAttribute.GRAPPLE_DAMAGE),
+                    CruxAttribute.get(owner, USurviveAttribute.GRAPPLE_KNOCKBACK),
+                    CruxAttribute.get(owner, USurviveAttribute.GRAPPLE_KNOCKBACK_UP)
+                );
         }
         return result;
     }
