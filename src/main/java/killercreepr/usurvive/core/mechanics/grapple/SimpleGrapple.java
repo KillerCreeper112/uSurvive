@@ -55,6 +55,7 @@ public class SimpleGrapple implements Grapple {
 
     @Override
     public @NotNull ItemUseResult onUse(@NotNull ItemUseContext ctx) {
+        if(ctx.getEntityClicked() != null && ctx.getAction().isLeftClick()) return ItemUseResult.empty();
         GrappleHook hook = USurviveRegistries.GRAPPLE_HOOK.get(getHookType());
         if(hook==null || maxHooks < 1) return ItemUseResult.empty();
         Player p = ctx.getPlayer();
