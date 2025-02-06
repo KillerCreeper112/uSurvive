@@ -3,10 +3,7 @@ package killercreepr.usurvive.core.mechanics.grapple.impl;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxEntityUtil;
-import killercreepr.crux.core.util.CruxMath;
-import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.usurvive.core.lang.Lang;
-import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Entity;
@@ -21,19 +18,19 @@ public class ActiveControlledGrappleHook extends BasicGrappleHook implements Hol
     protected final @NotNull UUID uuid;
     protected final @NotNull Holder<Entity> entity;
     protected final int id;
-    protected final double pullForce; //.04
-    public ActiveControlledGrappleHook(@NotNull UUID uuid, @NotNull Holder<Entity> entity, int id, double pullForce) {
+    public ActiveControlledGrappleHook(@NotNull UUID uuid, @NotNull Holder<Entity> entity, int id, double pullForce,
+                                       double pullForceDecayRate, double minPullForceMultiplier, int decayDuration) {
+        super(pullForce, pullForceDecayRate, minPullForceMultiplier, decayDuration);
         this.uuid = uuid;
         this.entity = entity;
         this.id = id;
-        this.pullForce = pullForce;
     }
 
-    public ActiveControlledGrappleHook(@NotNull Entity entity, int id, double pullForce) {
+    public ActiveControlledGrappleHook(@NotNull Entity entity, int id, double pullForce, double pullForceDecayRate, double minPullForceMultiplier, int decayDuration) {
+        super(pullForce, pullForceDecayRate, minPullForceMultiplier, decayDuration);
         this.uuid = entity.getUniqueId();
         this.entity = Holder.weakReference(entity);
         this.id = id;
-        this.pullForce = pullForce;
     }
 
     protected Double lastGravity;
@@ -98,9 +95,11 @@ public class ActiveControlledGrappleHook extends BasicGrappleHook implements Hol
         if(entity.wouldCollideUsing(entity.getBoundingBox().expand(.005))){
             if(!wasCollidingLastTick){
                 Lang.GRAPPLE_HOOK.playAt(entity);
+                onGrappleAttach();
             }
 
             if(owner instanceof HumanEntity e && e.isSneaking()){
+                //todo possibly pullTowardsTarget();
                 Vector vel = entity.getLocation().toVector().subtract(CruxEntityUtil.getEyeOrLocation(owner).toVector())
                     .multiply(pullForce);
                 owner.setVelocity(vel);
@@ -112,14 +111,15 @@ public class ActiveControlledGrappleHook extends BasicGrappleHook implements Hol
         }
         for(Entity e : entity.getWorld().getNearbyEntities(entity.getBoundingBox().expand(.001),
             e -> !e.equals(entity) && !e.equals(owner))){
-            EntityDamager.entityDamager(e, entity).attack(4D, 8D);
+            onEntityHit(owner, e);
+            /*EntityDamager.entityDamager(e, entity).attack(4D, 8D);
             Vector dir = entity.getEyeLocation().getDirection();
             Location hitLoc = e.getLocation();
             hitLoc.setY(entity.getY());
             Vector hit = hitLoc.toVector().normalize();
             Vector vel = CruxMath.reflect(dir, hit);
             vel.multiply(.75D);
-            entity.setVelocity(entity.getVelocity().add(vel));
+            entity.setVelocity(entity.getVelocity().add(vel));*/
             return true;
         }
         resetOwnerGravity(owner);

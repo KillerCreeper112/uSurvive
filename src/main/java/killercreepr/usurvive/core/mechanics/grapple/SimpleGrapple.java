@@ -22,12 +22,22 @@ public class SimpleGrapple implements Grapple {
     protected final @NotNull Key hook;
     protected final int maxHooks;
     protected final int cooldown;
+    protected final float pullForce;
     protected final float throwForce;
-    public SimpleGrapple(@NotNull Key hook, int maxHooks, int cooldown, float throwForce) {
+    protected final float pullForceDecayRate;
+    protected final float minPullForceMultiplier;
+    protected final int decayDuration;
+
+    public SimpleGrapple(@NotNull Key hook, int maxHooks, int cooldown, float pullForce, float throwForce,
+                         float pullForceDecayRate, float minPullForceMultiplier, int decayDuration) {
         this.hook = hook;
         this.maxHooks = maxHooks;
         this.cooldown = cooldown;
+        this.pullForce = pullForce;
         this.throwForce = throwForce;
+        this.pullForceDecayRate = pullForceDecayRate;
+        this.minPullForceMultiplier = minPullForceMultiplier;
+        this.decayDuration = decayDuration;
     }
 
     public int getMaxHooks() {
@@ -40,8 +50,28 @@ public class SimpleGrapple implements Grapple {
     }
 
     @Override
+    public float getPullForce() {
+        return pullForce;
+    }
+
+    @Override
     public float getThrowForce() {
         return throwForce;
+    }
+
+    @Override
+    public float getPullForceDecayRate() {
+        return pullForceDecayRate;
+    }
+
+    @Override
+    public float getMinPullForceMultiplier() {
+        return minPullForceMultiplier;
+    }
+
+    @Override
+    public int getDecayDuration() {
+        return decayDuration;
     }
 
     @NotNull
@@ -51,7 +81,8 @@ public class SimpleGrapple implements Grapple {
 
     public GrappleContext buildGrappleContext(ItemUseContext ctx, int id){
         Player p = ctx.getPlayer();
-        return GrappleContext.context(p.getEyeLocation(), p, id, throwForce);
+        return GrappleContext.context(p.getEyeLocation(), p, id, pullForce, throwForce,
+            pullForceDecayRate, minPullForceMultiplier, decayDuration);
     }
 
     @Override

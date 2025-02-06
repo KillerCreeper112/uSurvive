@@ -12,8 +12,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class DisplayReferenceGrappleContext extends SimpleGrappleContext implements DisplayGrappleContext {
     protected final SimpleDisplayGrapple grapple;
-    public DisplayReferenceGrappleContext(@NotNull Location location, @NotNull Entity owner, int id, double force, SimpleDisplayGrapple grapple) {
-        super(location, owner, id, force);
+    public DisplayReferenceGrappleContext(@NotNull Location location, @NotNull Entity owner, int id,
+                                          SimpleDisplayGrapple grapple) {
+        super(location, owner, id, grapple.getPullForce(), grapple.getThrowForce(), grapple.getPullForceDecayRate(), grapple.getMinPullForceMultiplier(), grapple.getDecayDuration());
         this.grapple = grapple;
     }
 
@@ -38,27 +39,7 @@ public class DisplayReferenceGrappleContext extends SimpleGrappleContext impleme
     }
 
     @Override
-    public double getThrowSpeed() {
-        return grapple.getThrowSpeed();
-    }
-
-    @Override
     public double getRetractSpeed() {
         return grapple.getRetractSpeed();
-    }
-
-    @Override
-    public double getPullForceDecayRate() {
-        return grapple.getPullForceDecayRate();
-    }
-
-    @Override
-    public double getMinPullForceMultiplier() {
-        return grapple.getMinPullForceMultiplier();
-    }
-
-    @Override
-    public int getDecayDuration() {
-        return grapple.getDecayDuration();
     }
 }

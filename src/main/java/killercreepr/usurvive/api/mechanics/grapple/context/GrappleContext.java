@@ -6,11 +6,17 @@ import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 public interface GrappleContext {
-    static GrappleContext context(@NotNull Location location, @NotNull Entity owner, int id, double force){
-        return new SimpleGrappleContext(location, owner, id, force);
+    static GrappleContext context(@NotNull Location location, @NotNull Entity owner, int id, double pullForce,
+                                  double throwForce,
+                                  double pullForceDecayRate, double minPullForceMultiplier, int decayDuration){
+        return new SimpleGrappleContext(
+            location, owner, id, pullForce, throwForce,
+            pullForceDecayRate, minPullForceMultiplier, decayDuration
+        );
     }
 
-    double getForce();
+    double getPullForce();
+    double getThrowForce();
 
     @NotNull
     Location getLocation();
@@ -19,4 +25,10 @@ public interface GrappleContext {
     Entity getOwner();
 
     int getId();
+
+    double getPullForceDecayRate();
+
+    double getMinPullForceMultiplier();
+
+    int getDecayDuration();
 }

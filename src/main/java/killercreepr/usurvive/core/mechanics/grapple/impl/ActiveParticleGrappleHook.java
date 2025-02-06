@@ -3,9 +3,7 @@ package killercreepr.usurvive.core.mechanics.grapple.impl;
 import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxLoc;
-import killercreepr.cruxentities.api.combat.EntityDamager;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -16,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 public class ActiveParticleGrappleHook extends BasicGrappleHook implements Holder<Location> {
     protected @NotNull Location location;
     protected final int id;
-    protected final double pullForce; //.04
     protected final int maxDistance;
     protected final double throwSpeed;
     protected final double retractSpeed;
@@ -27,9 +24,12 @@ public class ActiveParticleGrappleHook extends BasicGrappleHook implements Holde
                                      double throwSpeed,
                                      double retractSpeed,
                                      double particleDistance,
+                                     double pullForceDecayRate,
+                                     double minPullForceMultiplier,
+                                     int decayDuration,
                                      @NotNull ParticleBuilder particle) {
+        super(pullForce, pullForceDecayRate, minPullForceMultiplier, decayDuration);
         this.id = id;
-        this.pullForce = pullForce;
         this.location = startLocation.clone();
         this.maxDistance = maxDistance;
         this.throwSpeed = throwSpeed;
@@ -66,13 +66,17 @@ public class ActiveParticleGrappleHook extends BasicGrappleHook implements Holde
         Vector hitPoint = result.getHitPosition();
         location.set(hitPoint.getX(), hitPoint.getY(), hitPoint.getZ());
         if(result.getHitBlock() != null){
-            Vector vel = location.toVector().subtract(CruxEntityUtil.getEyeOrLocation(owner).toVector())
+            if(grappleAttachTime == -1){
+                onGrappleAttach();
+            }
+            pullTowardsTarget(owner, location);
+            /*Vector vel = location.toVector().subtract(CruxEntityUtil.getEyeOrLocation(owner).toVector())
                 .multiply(pullForce);
-            owner.setVelocity(owner.getVelocity().add(vel));
+            owner.setVelocity(owner.getVelocity().add(vel));*/
             return result;
         }
         if(result.getHitEntity() != null){
-            EntityDamager.entityDamager(result.getHitEntity(), owner).setHitPosition(location).attack(4D, 8D);
+            onEntityHit(owner, result.getHitEntity());
         }
         return result;
     }

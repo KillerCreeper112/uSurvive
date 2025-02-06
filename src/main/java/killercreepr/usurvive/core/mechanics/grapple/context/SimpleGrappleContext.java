@@ -9,17 +9,33 @@ public class SimpleGrappleContext implements GrappleContext {
     protected final @NotNull Location location;
     protected final @NotNull Entity owner;
     protected final int id;
-    protected final double force;
+    protected final double pullForce;
+    protected final double throwForce;
+    protected final double pullForceDecayRate;
+    protected final double minPullForceMultiplier;
+    protected final int decayDuration;
 
-    public SimpleGrappleContext(@NotNull Location location, @NotNull Entity owner, int id, double force) {
+    public SimpleGrappleContext(
+        @NotNull Location location, @NotNull Entity owner, int id, double pullForce, double throwForce, double pullForceDecayRate, double minPullForceMultiplier, int decayDuration
+    ) {
         this.location = location;
         this.owner = owner;
         this.id = id;
-        this.force = force;
+        this.pullForce = pullForce;
+        this.throwForce = throwForce;
+        this.pullForceDecayRate = pullForceDecayRate;
+        this.minPullForceMultiplier = minPullForceMultiplier;
+        this.decayDuration = decayDuration;
     }
 
-    public double getForce() {
-        return force;
+    @Override
+    public double getPullForce() {
+        return pullForce;
+    }
+
+    @Override
+    public double getThrowForce() {
+        return throwForce;
     }
 
     @NotNull
@@ -34,5 +50,20 @@ public class SimpleGrappleContext implements GrappleContext {
 
     public int getId() {
         return id;
+    }
+
+    @Override
+    public double getPullForceDecayRate() {
+        return pullForceDecayRate;
+    }
+
+    @Override
+    public double getMinPullForceMultiplier() {
+        return minPullForceMultiplier;
+    }
+
+    @Override
+    public int getDecayDuration() {
+        return decayDuration;
     }
 }

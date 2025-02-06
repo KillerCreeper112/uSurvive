@@ -2,7 +2,6 @@ package killercreepr.usurvive.core.mechanics.grapple.standard;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.api.registry.KeyedRegistry;
-import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
 import killercreepr.usurvive.api.mechanics.grapple.ActiveGrappleHook;
 import killercreepr.usurvive.api.mechanics.grapple.GrappleHook;
@@ -19,68 +18,46 @@ import org.bukkit.entity.ItemDisplay;
 import org.jetbrains.annotations.NotNull;
 
 public class StandardGrappleHooks {
-    public static GrappleHook DEFAULT = new DefaultGrappleHook(
-        Crux.key("default"),
-        NumberProvider.constant(.02D)
-    );
-    public static GrappleHook CONTROLLED = new ControlledGrappleHook(
-        Crux.key("controlled"),
-        NumberProvider.constant(.02D)
-    );
-    public static GrappleHook PUFFERFISH = new PufferFishGrappleHook(
-        Crux.key("pufferfish"),
-        NumberProvider.constant(.02D)
-    );
-    public static GrappleHook CRIT = new ParticleGrappleHook(
-        Crux.key("crit")
-    ) {
+    public static GrappleHook DEFAULT = new DefaultGrappleHook(Crux.key("default"));
+    public static GrappleHook CONTROLLED = new ControlledGrappleHook(Crux.key("controlled"));
+    public static GrappleHook PUFFERFISH = new PufferFishGrappleHook(Crux.key("pufferfish"));
+    public static GrappleHook CRIT = new GenericGrappleHook(Crux.key("crit")) {
         @NotNull
         @Override
         public ActiveGrappleHook throwNew(@NotNull GrappleContext ctx) {
             return new ActiveParticleGrappleHook(
-                ctx.getLocation(), ctx.getId(), (.02D),
-                12, .5D * ctx.getForce(), .3D, .5D,
+                ctx.getLocation(), ctx.getId(), ctx.getPullForce(),
+                12, ctx.getThrowForce(), .3D, .5D,
+                ctx.getPullForceDecayRate(), ctx.getMinPullForceMultiplier(), ctx.getDecayDuration(),
                 new ParticleBuilder(Particle.CRIT).extra(0D)
             );
         }
     };
-    public static GrappleHook DISPLAY = new ParticleGrappleHook(
-        Crux.key("display")
-    ) {
+    public static GrappleHook DISPLAY = new GenericGrappleHook(Crux.key("display")) {
         @NotNull
         @Override
         public ActiveGrappleHook throwNew(@NotNull GrappleContext ctx) {
             Class<? extends Display> displayType;
             Key typeKey;
 
-            double pullForce;
+            double pullForce = ctx.getPullForce();
             int maxDistance;
-            double throwSpeed;
+            double throwSpeed = ctx.getThrowForce();
             double retractSpeed;
-            double pullForceDecayRate;
-            double minPullForceMultiplier;
-            int decayDuration;
+            double pullForceDecayRate = ctx.getPullForceDecayRate();
+            double minPullForceMultiplier = ctx.getMinPullForceMultiplier();
+            int decayDuration = ctx.getDecayDuration();
 
             if(ctx instanceof DisplayGrappleContext ct){
                 displayType = ct.getDisplayType();
                 typeKey = ct.getTypeKey();
-                pullForce = ct.getPullForce();
                 maxDistance = ct.getMaxDistance();
-                throwSpeed = ct.getThrowSpeed();
                 retractSpeed = ct.getRetractSpeed();
-                pullForceDecayRate = 1;
-                minPullForceMultiplier = 0.2D;
-                decayDuration = 20;
             }else{
                 displayType = BlockDisplay.class;
                 typeKey = Key.key("chain");
-                pullForce = .02D;
                 maxDistance = 15;
-                throwSpeed = .5D;
                 retractSpeed = .3D;
-                pullForceDecayRate = 1;
-                minPullForceMultiplier = 0.2D;
-                decayDuration = 20;
             }
             Location loc = ctx.getLocation().clone();
             loc.setPitch(0f);
@@ -97,7 +74,7 @@ public class StandardGrappleHooks {
             );
             return new ActiveDisplayGrappleHook(
                 ctx.getLocation(), ctx.getId(), pullForce,
-                maxDistance, throwSpeed * ctx.getForce(), retractSpeed,
+                maxDistance, throwSpeed, retractSpeed,
                 pullForceDecayRate, minPullForceMultiplier, decayDuration,
                 display
             );

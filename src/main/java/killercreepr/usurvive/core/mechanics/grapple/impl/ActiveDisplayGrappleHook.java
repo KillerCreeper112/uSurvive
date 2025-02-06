@@ -28,13 +28,9 @@ public class ActiveDisplayGrappleHook extends BasicGrappleHook implements Holder
     protected @NotNull Location location;
     protected @NotNull Location lastLocation;
     protected final int id;
-    protected final double pullForce; //.04
     protected final int maxDistance;
     protected final double throwSpeed;
     protected final double retractSpeed;
-    protected final double pullForceDecayRate;// = 1.0; // Rate at which the pull force decays, higher means faster decay
-    protected final double minPullForceMultiplier;// = 0.2; // Minimum value for the pull force multiplier
-    protected final int decayDuration;// = 20; // Duration in ticks over which the pull force decays to its minimum value
 
     protected final @NotNull Display display;
     public ActiveDisplayGrappleHook(@NotNull Location startLocation, int id, double pullForce,
@@ -45,15 +41,12 @@ public class ActiveDisplayGrappleHook extends BasicGrappleHook implements Holder
                                     double minPullForceMultiplier,
                                     int decayDuration,
                                     @NotNull Display display) {
+        super(pullForce, pullForceDecayRate, minPullForceMultiplier, decayDuration);
         this.id = id;
-        this.pullForce = pullForce;
         this.location = startLocation.clone();
         this.maxDistance = maxDistance;
         this.throwSpeed = throwSpeed;
         this.retractSpeed = retractSpeed;
-        this.pullForceDecayRate = pullForceDecayRate;
-        this.minPullForceMultiplier = minPullForceMultiplier;
-        this.decayDuration = decayDuration;
         this.display = display;
         this.lastLocation = startLocation;
     }
@@ -103,7 +96,7 @@ public class ActiveDisplayGrappleHook extends BasicGrappleHook implements Holder
         if(result.getHitBlock() != null) {
             // If first time hitting the block, start the timer
             if (grappleAttachTime == -1) {
-                grappleAttachTime = System.currentTimeMillis(); // Start the attachment time
+                onGrappleAttach();
             }
             pullTowardsTarget(owner, location);
             return result;
@@ -111,6 +104,7 @@ public class ActiveDisplayGrappleHook extends BasicGrappleHook implements Holder
 
         Entity hit = result.getHitEntity();
         if(hit != null) {
+            onEntityHit(owner, hit);
             Location hitLoc = CruxLoc.shiftToward(hitPoint.toLocation(owner.getWorld()), lastLocation, .5D);
             EntityDamager.entityDamager(hit, owner).setHitPosition(hitLoc)
                 .attack(
@@ -120,6 +114,10 @@ public class ActiveDisplayGrappleHook extends BasicGrappleHook implements Holder
                 );
         }
         return result;
+    }
+
+    @Override
+    public void onEntityHit(Entity owner, Entity hit) {
     }
 
     public void pullTowardsTarget(Entity owner, Location target){

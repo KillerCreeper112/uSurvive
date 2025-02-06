@@ -10,62 +10,48 @@ import org.jetbrains.annotations.NotNull;
 public class SimpleDisplayGrapple extends SimpleGrapple {
     protected final Key typeKey;
     protected final String displayType;
-    protected final double pullForce;
     protected final int maxDistance;
-    protected final double throwSpeed;
-    protected final double retractSpeed;
-    protected final double pullForceDecayRate;
-    protected final double minPullForceMultiplier;
-    protected final int decayDuration;
-    public SimpleDisplayGrapple(@NotNull Key hook,
+    protected final float retractSpeed;
+
+    public SimpleDisplayGrapple(@NotNull Key hook, int maxHooks, int cooldown, float pullForce,
+                                float throwForce, float pullForceDecayRate, float minPullForceMultiplier,
+                                int decayDuration, Key typeKey, String displayType,
+                                int maxDistance, float retractSpeed) {
+        super(hook, maxHooks, cooldown, pullForce, throwForce, pullForceDecayRate, minPullForceMultiplier, decayDuration);
+        this.typeKey = typeKey;
+        this.displayType = displayType;
+        this.maxDistance = maxDistance;
+        this.retractSpeed = retractSpeed;
+    }
+
+    /*public SimpleDisplayGrapple(@NotNull Key hook,
                                 int maxHooks,
                                 int cooldown,
-                                float throwForce, Key typeKey, String displayType, double pullForce, int maxDistance, double throwSpeed, double retractSpeed, double pullForceDecayRate, double minPullForceMultiplier, int decayDuration) {
-        super(hook, maxHooks, cooldown, throwForce);
+                                float throwForce, Key typeKey, String displayType, float pullForce, int maxDistance,
+                                float throwSpeed, float retractSpeed, float pullForceDecayRate, float minPullForceMultiplier, int decayDuration) {
+        super(hook, maxHooks, cooldown, throwForce,
+            pullForceDecayRate, minPullForceMultiplier, decayDuration);
         this.typeKey = typeKey;
         this.displayType = displayType;
         this.pullForce = pullForce;
         this.maxDistance = maxDistance;
         this.throwSpeed = throwSpeed;
         this.retractSpeed = retractSpeed;
-        this.pullForceDecayRate = pullForceDecayRate;
-        this.minPullForceMultiplier = minPullForceMultiplier;
-        this.decayDuration = decayDuration;
-    }
-
-    public double getPullForce() {
-        return pullForce;
-    }
+    }*/
 
     public int getMaxDistance() {
         return maxDistance;
     }
 
-    public double getThrowSpeed() {
-        return throwSpeed;
-    }
-
-    public double getRetractSpeed() {
+    public float getRetractSpeed() {
         return retractSpeed;
-    }
-
-    public double getPullForceDecayRate() {
-        return pullForceDecayRate;
-    }
-
-    public double getMinPullForceMultiplier() {
-        return minPullForceMultiplier;
-    }
-
-    public int getDecayDuration() {
-        return decayDuration;
     }
 
     @Override
     public GrappleContext buildGrappleContext(ItemUseContext ctx, int id) {
         Player p = ctx.getPlayer();
         return new DisplayReferenceGrappleContext(
-            p.getEyeLocation(), p, id, throwForce, this
+            p.getEyeLocation(), p, id, this
         );
     }
 

@@ -1,6 +1,5 @@
 package killercreepr.usurvive.core.mechanics.grapple.impl;
 
-import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.usurvive.api.mechanics.grapple.ActiveGrappleHook;
 import killercreepr.usurvive.api.mechanics.grapple.context.GrappleContext;
@@ -13,15 +12,8 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 public class PufferFishGrappleHook extends EntityGrappleHook{
-    protected final @NotNull NumberProvider pullForce;
-    public PufferFishGrappleHook(@NotNull Key key, @NotNull NumberProvider pullForce) {
+    public PufferFishGrappleHook(@NotNull Key key) {
         super(key);
-        this.pullForce = pullForce;
-    }
-
-    @NotNull
-    public NumberProvider getPullForce() {
-        return pullForce;
     }
 
     @NotNull
@@ -31,7 +23,7 @@ public class PufferFishGrappleHook extends EntityGrappleHook{
         return USurviveMobs.GRAPPLE_HOOK.spawnAt(PufferFish.class, ctx.getLocation(), e ->{
             e.setLeashHolder(owner);
             e.setPuffState(3);
-            Vector vel = CruxEntityUtil.getEyeOrLocation(owner).getDirection().multiply(ctx.getForce());
+            Vector vel = CruxEntityUtil.getEyeOrLocation(owner).getDirection().multiply(ctx.getThrowForce());
             e.setVelocity(vel);
         });
     }
@@ -40,6 +32,9 @@ public class PufferFishGrappleHook extends EntityGrappleHook{
     @Override
     public ActiveGrappleHook throwNew(@NotNull GrappleContext ctx) {
         LivingEntity hook = spawnEntity(ctx);
-        return new ActiveEntityGrappleHook(hook, ctx.getId(), pullForce.value().doubleValue());
+        return new ActiveEntityGrappleHook(
+            hook, ctx.getId(), ctx.getPullForce(),
+            ctx.getPullForceDecayRate(), ctx.getMinPullForceMultiplier(), ctx.getDecayDuration()
+        );
     }
 }

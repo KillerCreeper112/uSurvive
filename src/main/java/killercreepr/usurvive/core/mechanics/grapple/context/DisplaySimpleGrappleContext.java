@@ -14,20 +14,15 @@ public class DisplaySimpleGrappleContext extends SimpleGrappleContext implements
     protected final int maxDistance;
     protected final double throwSpeed;
     protected final double retractSpeed;
-    protected final double pullForceDecayRate;
-    protected final double minPullForceMultiplier;
-    protected final int decayDuration;
-    public DisplaySimpleGrappleContext(@NotNull Location location, @NotNull Entity owner, int id, double force, Key typeKey, Class<? extends Display> displayType, double pullForce, int maxDistance, double throwSpeed, double retractSpeed, double pullForceDecayRate, double minPullForceMultiplier, int decayDuration) {
-        super(location, owner, id, force);
+    public DisplaySimpleGrappleContext(@NotNull Location location, @NotNull Entity owner, int id, double pullForce, double throwForce, Key typeKey, Class<? extends Display> displayType, int maxDistance, double throwSpeed, double retractSpeed, double pullForceDecayRate, double minPullForceMultiplier, int decayDuration) {
+        super(location, owner, id, pullForce, throwForce,
+            pullForceDecayRate, minPullForceMultiplier, decayDuration);
         this.typeKey = typeKey;
         this.displayType = displayType;
         this.pullForce = pullForce;
         this.maxDistance = maxDistance;
         this.throwSpeed = throwSpeed;
         this.retractSpeed = retractSpeed;
-        this.pullForceDecayRate = pullForceDecayRate;
-        this.minPullForceMultiplier = minPullForceMultiplier;
-        this.decayDuration = decayDuration;
     }
 
     public Key getTypeKey() {
@@ -54,15 +49,4 @@ public class DisplaySimpleGrappleContext extends SimpleGrappleContext implements
         return retractSpeed;
     }
 
-    public double getPullForceDecayRate() {
-        return pullForceDecayRate;
-    }
-
-    public double getMinPullForceMultiplier() {
-        return minPullForceMultiplier;
-    }
-
-    public int getDecayDuration() {
-        return decayDuration;
-    }
 }

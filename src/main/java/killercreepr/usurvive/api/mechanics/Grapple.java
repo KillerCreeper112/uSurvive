@@ -7,7 +7,10 @@ import org.jetbrains.annotations.NotNull;
 public interface Grapple extends InteractableComponent {
     int getMaxHooks();
     int getCooldown();
+    float getPullForce();
     float getThrowForce();
-    @NotNull
-    Key getHookType();
+    float getPullForceDecayRate();
+    float getMinPullForceMultiplier();
+    int getDecayDuration();
+    @NotNull Key getHookType();
 }
