@@ -167,7 +167,10 @@ public class ActiveDisplayGrappleHook extends BasicGrappleHook implements Holder
         }
         Vector direction = end.toVector().subtract(start.toVector());
         float distance = (float) direction.length();
-        Location tp = start.clone().add(-.5,.5,-.5);
+        Location tp;
+        if(display instanceof BlockDisplay){
+            tp = start.clone().add(-.5,.5,-.5);
+        }else tp = start.clone().add(0, .8, 0);
         tp.setPitch(0f);
         tp.setYaw(0f);
         display.setInterpolationDelay(0);

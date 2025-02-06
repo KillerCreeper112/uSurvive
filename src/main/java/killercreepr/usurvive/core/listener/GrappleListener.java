@@ -49,7 +49,7 @@ public class GrappleListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         HumanEntity p = event.getWhoClicked();
-        if(p.getInventory().getHeldItemSlot() == event.getHotbarButton() || event.getRawSlot() == p.getInventory().getHeldItemSlot()){
+        if(p.getInventory().getHeldItemSlot() == event.getHotbarButton() || event.getSlot() == p.getInventory().getHeldItemSlot()){
             GrapplerHolder grappler = EntityMemory.getDataHolder(p, GrapplerHolder.class);
             if(grappler==null) return;
             grappler.reset(p);
