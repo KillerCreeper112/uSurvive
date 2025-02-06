@@ -5,7 +5,7 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.PlayerTickedDataHolder;
 import killercreepr.usurvive.api.mechanics.grapple.ActiveGrappleHook;
 import killercreepr.usurvive.api.mechanics.grapple.GrappleHook;
-import killercreepr.usurvive.core.mechanics.grapple.GrappleContext;
+import killercreepr.usurvive.api.mechanics.grapple.context.GrappleContext;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;

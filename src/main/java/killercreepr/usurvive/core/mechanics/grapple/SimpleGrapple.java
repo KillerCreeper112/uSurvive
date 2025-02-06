@@ -8,6 +8,7 @@ import killercreepr.cruxitems.api.item.interaction.ItemUseResult;
 import killercreepr.usurvive.api.mechanics.Grapple;
 import killercreepr.usurvive.api.mechanics.grapple.ActiveGrappleHook;
 import killercreepr.usurvive.api.mechanics.grapple.GrappleHook;
+import killercreepr.usurvive.api.mechanics.grapple.context.GrappleContext;
 import killercreepr.usurvive.core.data.entity.GrapplerHolder;
 import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
@@ -50,7 +51,7 @@ public class SimpleGrapple implements Grapple {
 
     public GrappleContext buildGrappleContext(ItemUseContext ctx, int id){
         Player p = ctx.getPlayer();
-        return new GrappleContext(p.getEyeLocation(), p, id, throwForce);
+        return GrappleContext.context(p.getEyeLocation(), p, id, throwForce);
     }
 
     @Override

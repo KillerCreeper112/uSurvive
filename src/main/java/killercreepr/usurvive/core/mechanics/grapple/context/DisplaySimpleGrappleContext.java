@@ -1,19 +1,23 @@
-package killercreepr.usurvive.core.mechanics.grapple;
+package killercreepr.usurvive.core.mechanics.grapple.context;
 
+import killercreepr.usurvive.api.mechanics.grapple.context.DisplayGrappleContext;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
-public class DisplayGrappleContext extends GrappleContext {
+public class DisplaySimpleGrappleContext extends SimpleGrappleContext implements DisplayGrappleContext {
     protected final Key typeKey;
     protected final Class<? extends Display> displayType;
     protected final double pullForce;
     protected final int maxDistance;
     protected final double throwSpeed;
     protected final double retractSpeed;
-    public DisplayGrappleContext(@NotNull Location location, @NotNull Entity owner, int id, double force, Key typeKey, Class<? extends Display> displayType, double pullForce, int maxDistance, double throwSpeed, double retractSpeed) {
+    protected final double pullForceDecayRate;
+    protected final double minPullForceMultiplier;
+    protected final int decayDuration;
+    public DisplaySimpleGrappleContext(@NotNull Location location, @NotNull Entity owner, int id, double force, Key typeKey, Class<? extends Display> displayType, double pullForce, int maxDistance, double throwSpeed, double retractSpeed, double pullForceDecayRate, double minPullForceMultiplier, int decayDuration) {
         super(location, owner, id, force);
         this.typeKey = typeKey;
         this.displayType = displayType;
@@ -21,6 +25,9 @@ public class DisplayGrappleContext extends GrappleContext {
         this.maxDistance = maxDistance;
         this.throwSpeed = throwSpeed;
         this.retractSpeed = retractSpeed;
+        this.pullForceDecayRate = pullForceDecayRate;
+        this.minPullForceMultiplier = minPullForceMultiplier;
+        this.decayDuration = decayDuration;
     }
 
     public Key getTypeKey() {
@@ -45,5 +52,17 @@ public class DisplayGrappleContext extends GrappleContext {
 
     public double getRetractSpeed() {
         return retractSpeed;
+    }
+
+    public double getPullForceDecayRate() {
+        return pullForceDecayRate;
+    }
+
+    public double getMinPullForceMultiplier() {
+        return minPullForceMultiplier;
+    }
+
+    public int getDecayDuration() {
+        return decayDuration;
     }
 }

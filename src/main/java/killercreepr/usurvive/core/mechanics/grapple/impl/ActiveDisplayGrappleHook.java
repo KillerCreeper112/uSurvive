@@ -10,7 +10,6 @@ import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.usurvive.core.attribute.USurviveAttribute;
-import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.entity.BlockDisplay;
@@ -33,11 +32,18 @@ public class ActiveDisplayGrappleHook extends BasicGrappleHook implements Holder
     protected final int maxDistance;
     protected final double throwSpeed;
     protected final double retractSpeed;
+    protected final double pullForceDecayRate;// = 1.0; // Rate at which the pull force decays, higher means faster decay
+    protected final double minPullForceMultiplier;// = 0.2; // Minimum value for the pull force multiplier
+    protected final int decayDuration;// = 20; // Duration in ticks over which the pull force decays to its minimum value
+
     protected final @NotNull Display display;
     public ActiveDisplayGrappleHook(@NotNull Location startLocation, int id, double pullForce,
                                     int maxDistance,
                                     double throwSpeed,
                                     double retractSpeed,
+                                    double pullForceDecayRate,
+                                    double minPullForceMultiplier,
+                                    int decayDuration,
                                     @NotNull Display display) {
         this.id = id;
         this.pullForce = pullForce;
@@ -45,6 +51,9 @@ public class ActiveDisplayGrappleHook extends BasicGrappleHook implements Holder
         this.maxDistance = maxDistance;
         this.throwSpeed = throwSpeed;
         this.retractSpeed = retractSpeed;
+        this.pullForceDecayRate = pullForceDecayRate;
+        this.minPullForceMultiplier = minPullForceMultiplier;
+        this.decayDuration = decayDuration;
         this.display = display;
         this.lastLocation = startLocation;
     }
@@ -75,6 +84,9 @@ public class ActiveDisplayGrappleHook extends BasicGrappleHook implements Holder
         updateDisplay(owner, owner.getLocation(), location);
     }
 
+    // Add a new variable to track the time spent attached to the block
+    private long grappleAttachTime = -1; // -1 means not attached to a block yet
+
     public RayTraceResult rayLogic(@NotNull Entity owner, @NotNull Location location){
         double distance = wasCollidingLastTick ? .5D : lastLocation.distanceSquared(location);
         RayTraceResult result = location.getWorld().rayTrace(lastLocation, lastLocation.getDirection(), distance, FluidCollisionMode.NEVER,
@@ -82,22 +94,25 @@ public class ActiveDisplayGrappleHook extends BasicGrappleHook implements Holder
                 if(e.equals(owner)) return false;
                 return !(e instanceof Display) && !CruxMob.isInCategory(e, MobCategory.OBJECT);
             });
-        if(result==null) return null;
+        if(result == null) return null;
+
         Vector hitPoint = result.getHitPosition();
         location.set(hitPoint.getX(), hitPoint.getY(), hitPoint.getZ());
-        if(result.getHitBlock() != null){
-            Vector vel = location.toVector().subtract(CruxEntityUtil.getEyeOrLocation(owner).toVector())
-                .multiply(pullForce);
-            double velDistance = vel.length();
-            double scaledForce = Math.min(velDistance * 0.1, pullForce * 2);
 
-            vel.normalize().multiply(scaledForce);
-            owner.setVelocity(owner.getVelocity().add(vel));
+        // Block hit handling
+        if(result.getHitBlock() != null) {
+            // If first time hitting the block, start the timer
+            if (grappleAttachTime == -1) {
+                grappleAttachTime = System.currentTimeMillis(); // Start the attachment time
+            }
+            pullTowardsTarget(owner, location);
             return result;
-        }
-        if(result.getHitEntity() != null){
+        }else grappleAttachTime = -1;
+
+        Entity hit = result.getHitEntity();
+        if(hit != null) {
             Location hitLoc = CruxLoc.shiftToward(hitPoint.toLocation(owner.getWorld()), lastLocation, .5D);
-            EntityDamager.entityDamager(result.getHitEntity(), owner).setHitPosition(hitLoc)
+            EntityDamager.entityDamager(hit, owner).setHitPosition(hitLoc)
                 .attack(
                     CruxAttribute.get(owner, USurviveAttribute.GRAPPLE_DAMAGE),
                     CruxAttribute.get(owner, USurviveAttribute.GRAPPLE_KNOCKBACK),
@@ -106,6 +121,24 @@ public class ActiveDisplayGrappleHook extends BasicGrappleHook implements Holder
         }
         return result;
     }
+
+    public void pullTowardsTarget(Entity owner, Location target){
+        // Calculate how long the grapple has been attached
+        long timeAttached = (System.currentTimeMillis() - grappleAttachTime)/50L;
+
+        // Calculate the decay rate based on time spent on the block
+        double pullForceMultiplier = Math.max(1.0 - (timeAttached / (float) decayDuration) * pullForceDecayRate, minPullForceMultiplier);
+
+        // Adjust velocity based on the calculated pull force
+        Vector vel = target.toVector().subtract(CruxEntityUtil.getEyeOrLocation(owner).toVector())
+            .multiply(pullForce * pullForceMultiplier); // Apply the multiplier to the pull force
+        double velDistance = vel.length();
+        double scaledForce = Math.min(velDistance * 0.1, pullForce * 2);
+
+        vel.normalize().multiply(scaledForce);
+        owner.setVelocity(owner.getVelocity().add(vel));
+    }
+
 
     public static @NotNull Matrix4f centerPivot(@NotNull Matrix4f addon, @NotNull Vector pivot){
         float x = (float) pivot.getX();

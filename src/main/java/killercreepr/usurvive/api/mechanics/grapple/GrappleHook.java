@@ -1,6 +1,6 @@
 package killercreepr.usurvive.api.mechanics.grapple;
 
-import killercreepr.usurvive.core.mechanics.grapple.GrappleContext;
+import killercreepr.usurvive.api.mechanics.grapple.context.GrappleContext;
 import net.kyori.adventure.key.Keyed;
 import org.jetbrains.annotations.NotNull;
 

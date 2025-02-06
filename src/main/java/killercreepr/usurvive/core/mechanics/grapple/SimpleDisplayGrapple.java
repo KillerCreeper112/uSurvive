@@ -1,9 +1,9 @@
 package killercreepr.usurvive.core.mechanics.grapple;
 
 import killercreepr.cruxitems.api.item.interaction.ItemUseContext;
+import killercreepr.usurvive.api.mechanics.grapple.context.GrappleContext;
+import killercreepr.usurvive.core.mechanics.grapple.context.DisplayReferenceGrappleContext;
 import net.kyori.adventure.key.Key;
-import org.bukkit.entity.BlockDisplay;
-import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,10 +14,13 @@ public class SimpleDisplayGrapple extends SimpleGrapple {
     protected final int maxDistance;
     protected final double throwSpeed;
     protected final double retractSpeed;
+    protected final double pullForceDecayRate;
+    protected final double minPullForceMultiplier;
+    protected final int decayDuration;
     public SimpleDisplayGrapple(@NotNull Key hook,
                                 int maxHooks,
                                 int cooldown,
-                                float throwForce, Key typeKey, String displayType, double pullForce, int maxDistance, double throwSpeed, double retractSpeed) {
+                                float throwForce, Key typeKey, String displayType, double pullForce, int maxDistance, double throwSpeed, double retractSpeed, double pullForceDecayRate, double minPullForceMultiplier, int decayDuration) {
         super(hook, maxHooks, cooldown, throwForce);
         this.typeKey = typeKey;
         this.displayType = displayType;
@@ -25,6 +28,9 @@ public class SimpleDisplayGrapple extends SimpleGrapple {
         this.maxDistance = maxDistance;
         this.throwSpeed = throwSpeed;
         this.retractSpeed = retractSpeed;
+        this.pullForceDecayRate = pullForceDecayRate;
+        this.minPullForceMultiplier = minPullForceMultiplier;
+        this.decayDuration = decayDuration;
     }
 
     public double getPullForce() {
@@ -43,17 +49,23 @@ public class SimpleDisplayGrapple extends SimpleGrapple {
         return retractSpeed;
     }
 
+    public double getPullForceDecayRate() {
+        return pullForceDecayRate;
+    }
+
+    public double getMinPullForceMultiplier() {
+        return minPullForceMultiplier;
+    }
+
+    public int getDecayDuration() {
+        return decayDuration;
+    }
+
     @Override
     public GrappleContext buildGrappleContext(ItemUseContext ctx, int id) {
         Player p = ctx.getPlayer();
-        return new DisplayGrappleContext(
-            p.getEyeLocation(), p, id, throwForce,
-            typeKey,
-            "item".equalsIgnoreCase(displayType) ? ItemDisplay.class : BlockDisplay.class,
-            pullForce,
-            maxDistance,
-            throwSpeed,
-            retractSpeed
+        return new DisplayReferenceGrappleContext(
+            p.getEyeLocation(), p, id, throwForce, this
         );
     }
 

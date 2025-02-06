@@ -6,12 +6,11 @@ import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
 import killercreepr.usurvive.api.mechanics.grapple.ActiveGrappleHook;
 import killercreepr.usurvive.api.mechanics.grapple.GrappleHook;
-import killercreepr.usurvive.core.mechanics.grapple.DisplayGrappleContext;
-import killercreepr.usurvive.core.mechanics.grapple.GrappleContext;
+import killercreepr.usurvive.api.mechanics.grapple.context.DisplayGrappleContext;
+import killercreepr.usurvive.api.mechanics.grapple.context.GrappleContext;
 import killercreepr.usurvive.core.mechanics.grapple.impl.*;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Registry;
 import org.bukkit.entity.BlockDisplay;
@@ -58,6 +57,9 @@ public class StandardGrappleHooks {
             int maxDistance;
             double throwSpeed;
             double retractSpeed;
+            double pullForceDecayRate;
+            double minPullForceMultiplier;
+            int decayDuration;
 
             if(ctx instanceof DisplayGrappleContext ct){
                 displayType = ct.getDisplayType();
@@ -66,6 +68,9 @@ public class StandardGrappleHooks {
                 maxDistance = ct.getMaxDistance();
                 throwSpeed = ct.getThrowSpeed();
                 retractSpeed = ct.getRetractSpeed();
+                pullForceDecayRate = 1;
+                minPullForceMultiplier = 0.2D;
+                decayDuration = 20;
             }else{
                 displayType = BlockDisplay.class;
                 typeKey = Key.key("chain");
@@ -73,6 +78,9 @@ public class StandardGrappleHooks {
                 maxDistance = 15;
                 throwSpeed = .5D;
                 retractSpeed = .3D;
+                pullForceDecayRate = 1;
+                minPullForceMultiplier = 0.2D;
+                decayDuration = 20;
             }
             Location loc = ctx.getLocation().clone();
             loc.setPitch(0f);
@@ -90,6 +98,7 @@ public class StandardGrappleHooks {
             return new ActiveDisplayGrappleHook(
                 ctx.getLocation(), ctx.getId(), pullForce,
                 maxDistance, throwSpeed * ctx.getForce(), retractSpeed,
+                pullForceDecayRate, minPullForceMultiplier, decayDuration,
                 display
             );
         }
