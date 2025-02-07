@@ -30,6 +30,7 @@ public class USurviveTickables {
             .field("max_dmg_reduction", TextInputField.field(PersistTextParser.FLOAT, e -> (Float) e.get("max_dmg_reduction")))
             .field("item_dmg", TextInputField.field(PersistTextParser.FLOAT, e -> (Float) e.get("item_dmg")))
             .field("damage_types", TextInputField.field(PersistTextParser.LIST.KEY, e -> (List<Key>) e.get("damage_types")))
+            .field("damage_causes", TextInputField.field(PersistTextParser.LIST.STRING, e -> (List<String>) e.get("damage_causes")))
             .apply(InputDecodeContext::get)
             .createInput(Crux.key("data"));
 
@@ -47,6 +48,7 @@ public class USurviveTickables {
                 (float) data.getOrDefault("dmg_reduction_percent", 1f),
                 (float) data.getOrDefault("max_dmg_reduction", 999f),
                 (float) data.getOrDefault("item_dmg", 1f),
+                (Collection<String>) data.get("damage_causes"),
                 (Collection<Key>) data.get("damage_types")
             );
         }

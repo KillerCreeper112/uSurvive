@@ -11,6 +11,7 @@ import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxtickables.api.entity.tickable.EntityTickable;
 import killercreepr.cruxtickables.core.entity.tickable.ListenerActiveEntityTickable;
 import net.kyori.adventure.key.Key;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
@@ -29,15 +30,17 @@ public class ActiveAbsorbDamageTickable extends ListenerActiveEntityTickable imp
     protected final float percentage;
     protected final float max;
     protected final float durabilityDamage;
+    protected final Collection<String> damageCauses;
     protected final Collection<Key> damageTypes;
 
     public ActiveAbsorbDamageTickable(Entity entity, EntityTickable tickable,
-                                      CruxSlot slot, float chance, float percentage, float max, float durabilityDamage, Collection<Key> damageTypes) {
+                                      CruxSlot slot, float chance, float percentage, float max, float durabilityDamage, Collection<String> damageCauses, Collection<Key> damageTypes) {
         super(entity, tickable, slot);
         this.chance = chance;
         this.percentage = percentage;
         this.max = max;
         this.durabilityDamage = durabilityDamage;
+        this.damageCauses = damageCauses;
         this.damageTypes = damageTypes;
     }
 
@@ -60,6 +63,7 @@ public class ActiveAbsorbDamageTickable extends ListenerActiveEntityTickable imp
         if(!event.getEntity().equals(entity)) return;
         if(!CruxMath.testChance(chance)) return;
         if(damageTypes != null && !damageTypes.contains(event.getDamageSource().getDamageType().key())) return;
+        if(damageCauses != null && !damageCauses.contains(event.getCause().toString().toLowerCase())) return;
         double damage = event.getFinalDamage();
         double damageReduced = damage * percentage;
         if(damageReduced > max) damageReduced = max;
