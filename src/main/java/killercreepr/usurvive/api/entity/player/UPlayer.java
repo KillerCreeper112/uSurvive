@@ -3,6 +3,9 @@ package killercreepr.usurvive.api.entity.player;
 import killercreepr.crux.api.data.Loadable;
 import killercreepr.crux.api.data.PluginLoadable;
 import killercreepr.crux.api.math.CruxLocation;
+import killercreepr.usurvive.core.USurvivePlugin;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,6 +13,13 @@ import java.util.Collection;
 import java.util.UUID;
 
 public interface UPlayer extends Loadable, PluginLoadable {
+    static UPlayer getPlayer(Entity e){
+        if(!(e instanceof HumanEntity h)) return null;
+        return USurvivePlugin.inst().getPlayerManager().getPlayer(h);
+    }
+    static UPlayer getPlayer(UUID uuid){
+        return USurvivePlugin.inst().getPlayerManager().getPlayer(uuid);
+    }
     @NotNull UUID getUUID();
     long getLastLogout();
     @Nullable CruxLocation getLastKnownPosition();
