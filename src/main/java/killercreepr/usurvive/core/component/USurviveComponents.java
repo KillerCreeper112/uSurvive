@@ -4,6 +4,7 @@ import killercreepr.crux.api.component.DataComponentType;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.cruxteleport.api.component.TeleporterComponent;
+import killercreepr.usurvive.api.component.InfusedPotions;
 import killercreepr.usurvive.api.mechanics.Grapple;
 import killercreepr.usurvive.core.component.impl.OrbitConduitComponent;
 import killercreepr.usurvive.core.component.impl.SmokeParticleBlockComponent;
@@ -25,6 +26,9 @@ public class USurviveComponents {
         builder);
     public static final DataComponentType<TeleporterComponent> TPA_CHECK_WORLD = register("teleport/tpa_check_world", builder ->
         builder);
+    public static final DataComponentType<InfusedPotions> INFUSED_POTIONS = register("infused_potions", builder ->
+        builder
+            .persistTextParser(USurviveCompParsers.INFUSED_POTIONS.createInput(Crux.key("infused_potions"))));
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());
     }

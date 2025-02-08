@@ -79,6 +79,7 @@ import killercreepr.usurvive.core.data.entity.MemoryPlayerSettingsHolder;
 import killercreepr.usurvive.core.death.PlayerDeath;
 import killercreepr.usurvive.core.death.SimpleDeathManager;
 import killercreepr.usurvive.core.entity.USurviveMobs;
+import killercreepr.usurvive.core.entity.memory.ItemPotionEffectsHolder;
 import killercreepr.usurvive.core.entity.player.SimpleUPlayerManager;
 import killercreepr.usurvive.core.entity.player.settings.SimplePlayerSettingsManager;
 import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettings;
@@ -233,6 +234,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             if(!(mem instanceof PlayerMemory m)) return;
             m.getDataHolders().register(new DeathHolder(m, values(), getDeathManager()));
             m.getDataHolders().register(new MemoryPlayerSettingsHolder(m));
+            m.getDataHolders().register(new ItemPotionEffectsHolder(m));
         });
         StandardGrappleHooks.register(USurviveRegistries.GRAPPLE_HOOK);
         StandardOverworldGroups.register(USurviveRegistries.OVERWORLD_NATURAL_ENTITY_SPAWN_GROUP);

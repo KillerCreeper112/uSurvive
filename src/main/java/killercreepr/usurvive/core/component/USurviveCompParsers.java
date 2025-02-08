@@ -2,10 +2,21 @@ package killercreepr.usurvive.core.component;
 
 import killercreepr.crux.api.component.parser.hybrid.PersistTextParser;
 import killercreepr.crux.api.component.parser.hybrid.TextInputField;
+import killercreepr.crux.core.component.parser.type.ComponentInputParsers;
+import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
+import killercreepr.cruxattributes.core.component.CruxAttributeCompParsers;
+import killercreepr.usurvive.api.component.InfusedPotionGroup;
+import killercreepr.usurvive.api.component.InfusedPotions;
 import killercreepr.usurvive.api.mechanics.Grapple;
+import killercreepr.usurvive.core.component.impl.SimpleInfusedPotionGroup;
+import killercreepr.usurvive.core.component.impl.SimpleInfusedPotions;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleDisplayGrapple;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleGrapple;
 import net.kyori.adventure.key.Key;
+import org.bukkit.potion.PotionEffect;
+
+import java.util.Collection;
+import java.util.List;
 
 public class USurviveCompParsers {
     public static final PersistTextParser<Grapple> GRAPPLE = PersistTextParser.mapBuilder(Grapple.class)
@@ -77,5 +88,23 @@ public class USurviveCompParsers {
                 ctx.getOptional("min_pull_multiplier", .2f),
                 ctx.getOptional("decay_duration", 20)
             );*/
+        });
+
+    public static final PersistTextParser<InfusedPotionGroup> INFUSED_POTION_GROUP = PersistTextParser.mapBuilder(InfusedPotionGroup.class)
+        .field("key", TextInputField.field(PersistTextParser.KEY, InfusedPotionGroup::key))
+        .field("potions", TextInputField.field(ComponentInputParsers.LIST.POTION_EFFECT, InfusedPotionGroup::getPotionEffects))
+        .field("slot", TextInputField.field(CruxAttributeCompParsers.CRUX_SLOT_GROUP, InfusedPotionGroup::getSlot))
+        .apply(ctx ->{
+            Key key = ctx.get("key");
+            List<PotionEffect> potions = ctx.get("potions");
+            CruxSlotGroup slot = ctx.getOptional("slot", CruxSlotGroup.ANY);
+            return new SimpleInfusedPotionGroup(key, potions, slot);
+        });
+
+    public static final PersistTextParser<InfusedPotions> INFUSED_POTIONS = PersistTextParser.mapBuilder(InfusedPotions.class)
+        .field("infusion", TextInputField.field(PersistTextParser.collectionList(INFUSED_POTION_GROUP), InfusedPotions::getInfusedPotions))
+        .apply(ctx ->{
+            Collection<InfusedPotionGroup> infusion = ctx.get("infusion");
+            return new SimpleInfusedPotions(infusion);
         });
 }
