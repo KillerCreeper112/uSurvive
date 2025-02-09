@@ -1,17 +1,12 @@
 package killercreepr.usurvive.core.entity.tickable;
 
 import killercreepr.crux.api.item.CruxItem;
-import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxMath;
-import killercreepr.crux.core.util.GetEntityNear;
-import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.equipment.CruxSlot;
 import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
-import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxtickables.api.entity.tickable.EntityTickable;
 import killercreepr.cruxtickables.core.entity.tickable.ListenerActiveEntityTickable;
 import net.kyori.adventure.key.Key;
-import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;

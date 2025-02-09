@@ -251,7 +251,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new PlayerSettingsHolderTags(),
             new PlayerTags(),
             new PlayerSettingSelectionTags(),
-            new PlayerSettingTags()
+            new PlayerSettingTags(),
+            new ItemStackTags()
         ));
     }
 

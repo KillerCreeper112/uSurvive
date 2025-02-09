@@ -4,6 +4,7 @@ import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.EntityTickedDataHolder;
+import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.cruxattributes.api.equipment.CruxSlot;
 import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
@@ -43,18 +44,41 @@ public class ItemPotionEffectsHolder extends EntityTickedDataHolder {
         return CruxItem.wrap(item);
     }
 
+    protected final Map<Key, PotionEffect> activeThisTick = new HashMap<>();
+    protected final Map<Key, PotionEffect> activeLastTick = new HashMap<>();
+    protected final Map<Key, PotionEffect> applyingEffects = new HashMap<>();
     public ActiveInfusion applyInfusion(@NotNull LivingEntity e, CruxItem item, CruxSlot slot, InfusedPotions infusedPotions){
+        //Collection<PotionEffect> toApply = new HashSet<>();
         Map<Key, Collection<PotionEffect>> applied = new HashMap<>();
+        ActiveInfusion activeInfusion = activeInfusions.getInfusionBySlot(slot);
+
+        if(activeInfusion != null && !activeInfusion.item().item().equals(item.item())){
+            activeInfusions.removeInfusionBySlot(slot);
+            activeInfusion.potions().values().forEach(potions ->{
+                potions.forEach(pot -> e.removePotionEffect(pot.getType()));
+            });
+        }
+
         infusedPotions.getInfusedPotions().forEach(group ->{
             if(!group.getSlot().test(slot)) return;
             group.getPotionEffects().forEach(pot ->{
-                if(activeInfusions.hasAppliedPotionType(pot.getType()) || e.hasPotionEffect(pot.getType())) return;
-                Crux.scheduler().runTask(() -> e.addPotionEffect(pot));
+                if(activeInfusions.hasAppliedPotionType(pot.getType())){
+                    activeThisTick.put(pot.getType().key(), pot);
+                    return;
+                }
+                if(hasPotionEffect(e, pot.getType())) return;
+                //toApply.add(pot);
                 applied.computeIfAbsent(group.key(), dd -> new HashSet<>()).add(pot);
+                activeThisTick.put(pot.getType().key(), pot);
+                applyingEffects.put(pot.getType().key(), pot);
             });
         });
         if(applied.isEmpty()) return null;
         return new ActiveInfusion(applied, item, slot);
+    }
+
+    public boolean hasPotionEffect(LivingEntity e, PotionEffectType type){
+        return e.hasPotionEffect(type) || applyingEffects.containsKey(type.key());
     }
 
     public void tickSlot(LivingEntity e, EntityEquipment equipment, CruxSlot slot){
@@ -77,15 +101,54 @@ public class ItemPotionEffectsHolder extends EntityTickedDataHolder {
         for(CruxSlot slot : CruxSlotGroup.HAND){
             tickSlot(e, equipment, slot);
         }
+        if(!applyingEffects.isEmpty()){
+            /*Crux.scheduler().runTask(() ->{
+                e.addPotionEffects(applyingEffects.values());
+                applyingEffects.clear();
+            });*/
+            e.addPotionEffects(applyingEffects.values());
+            applyingEffects.clear();
+        }
     }
 
+    protected int tick = 0;
     @Override
     public void tick(@NotNull Entity entity) {
+        tick++;
+        if(tick < 2) return;
+        tick = 0;
         if(!(entity instanceof LivingEntity l)) return;
         EntityEquipment equipment = l.getEquipment();
         if(equipment==null) return;
-        tickEquipment(l, equipment);
-        tickActiveInfusions(l, equipment);
+
+        Crux.scheduler().runTask(() ->{
+            if(!CruxEntityUtil.isValid(entity)) return;
+            //if(!applyingEffects.isEmpty()) return;
+            activeThisTick.clear();
+            tickEquipment(l, equipment);
+
+            if(!activeLastTick.isEmpty()){
+                Collection<PotionEffectType> toRemove = new HashSet<>();
+                activeLastTick.values().forEach(pot ->{
+                    if(!activeThisTick.containsKey(pot.getType().key())){
+                        toRemove.add(pot.getType());
+                    }
+                });
+                if(!toRemove.isEmpty()){
+                    toRemove.forEach(l::removePotionEffect);/*Crux.scheduler().runTask(() -> toRemove.forEach(l::removePotionEffect));*/
+                }
+                activeLastTick.clear();
+            }
+            activeLastTick.putAll(activeThisTick);
+
+            tickActiveInfusions(l, equipment);
+        });
+    }
+
+    public PotionEffect getActivePotion(LivingEntity e, PotionEffectType type){
+        PotionEffect active = e.getPotionEffect(type);
+        if(active != null) return active;
+        return applyingEffects.get(type.key());
     }
 
     public void tickActiveInfusions(LivingEntity e, EntityEquipment equipment){
@@ -102,12 +165,14 @@ public class ItemPotionEffectsHolder extends EntityTickedDataHolder {
                 if(group == null) return;
                 List<PotionEffect> newEffects = new ArrayList<>(group.getPotionEffects());
                 effects.forEach(pot ->{
-                    PotionEffect active = e.getPotionEffect(pot.getType());
+                    PotionEffect active = getActivePotion(e, pot.getType());
                     newEffects.removeIf(d -> d.getType().equals(pot.getType()));
                     if(active == null){
                         return;
                     }
-                    newEffects.add(active);
+                    int duration = active.getDuration()-1;
+                    if(duration < 1) return;
+                    newEffects.add(active.withDuration(duration));
                 });
                 InfusedPotionGroup newGroup = group.withPotionEffects(newEffects);
                 newGroups.add(newGroup);
