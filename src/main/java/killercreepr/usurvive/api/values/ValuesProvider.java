@@ -53,4 +53,6 @@ public interface ValuesProvider extends Reloadable {
     @NotNull NumberProvider UPDATE_TAB_TIME();
     @NotNull Holder<String> TAB_HEADER();
     @NotNull Holder<String> TAB_FOOTER();
+    @NotNull Holder<List<String>> INFUSED_POTIONS_TAG_FORMAT();
+    @NotNull Holder<List<String>> INFUSED_POTIONS_EFFECTS_LIST_TAG_FORMAT();
 }

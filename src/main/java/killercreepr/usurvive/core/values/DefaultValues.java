@@ -175,4 +175,16 @@ public class DefaultValues implements ValuesProvider {
     public Holder<String> TAB_FOOTER() {
         return null;
     }
+
+    @NotNull
+    @Override
+    public Holder<List<String>> INFUSED_POTIONS_TAG_FORMAT() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Holder<List<String>> INFUSED_POTIONS_EFFECTS_LIST_TAG_FORMAT() {
+        return null;
+    }
 }

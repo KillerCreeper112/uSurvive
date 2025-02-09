@@ -56,6 +56,13 @@ public class Config extends Cfg implements ValuesProvider {
             <gold>Playtime: <yellow><duration:"{{<player_stat:play_time> * 50}}":sec:false:, :"%dd ":"%hh ":"%mm">
             """
     ){};
+    public final CfgValue<List<String>> INFUSED_POTIONS_TAG_FORMAT = new CommonValue<>(List.of(
+        "",
+        "<gray><crux_slot_group_when_in_slot>:"
+    )){};
+    public final CfgValue<List<String>> INFUSED_POTIONS_EFFECTS_LIST_TAG_FORMAT = new CommonValue<>(List.of(
+        "{e{IF(\"<potion_effect_harmful>\" == \"true\", \"<red>\", \"<blue>\")}}<potion_effect_name> {e{IF(<potion_effect_amplifier> > 0, \" <roman_numeral:{{<potion_effect_amplifier> + 1}}>\", \"\")}} <potion_effect_duration>"
+    )){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -222,5 +229,17 @@ public class Config extends Cfg implements ValuesProvider {
     @Override
     public Holder<String> TAB_FOOTER() {
         return TAB_FOOTER;
+    }
+
+    @NotNull
+    @Override
+    public Holder<List<String>> INFUSED_POTIONS_TAG_FORMAT() {
+        return INFUSED_POTIONS_TAG_FORMAT;
+    }
+
+    @NotNull
+    @Override
+    public Holder<List<String>> INFUSED_POTIONS_EFFECTS_LIST_TAG_FORMAT() {
+        return INFUSED_POTIONS_EFFECTS_LIST_TAG_FORMAT;
     }
 }
