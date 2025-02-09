@@ -61,7 +61,7 @@ public class Config extends Cfg implements ValuesProvider {
         "<gray><crux_slot_group_when_in_slot>:"
     )){};
     public final CfgValue<List<String>> INFUSED_POTIONS_EFFECTS_LIST_TAG_FORMAT = new CommonValue<>(List.of(
-        "{e{IF(\"<potion_effect_harmful>\" == \"true\", \"<red>\", \"<blue>\")}}<potion_effect_name> {e{IF(<potion_effect_amplifier> > 0, \" <roman_numeral:{{<potion_effect_amplifier> + 1}}>\", \"\")}} <potion_effect_duration>"
+        "{e{IF(\"<potion_effect_harmful>\" == \"true\", \"<red>\", \"<blue>\")}}<potion_effect_name>{e{IF(<potion_effect_amplifier> > 0, \" <roman_numeral:{{<potion_effect_amplifier> + 1}}>\", \"\")}} (<duration:{{<potion_effect_duration>*50}}:days,hours:true:\":\":\"\":\"\":\"<math:less:%m:10:0>%m\":\"<math:less:%s:10:0>%s\">)"
     )){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
