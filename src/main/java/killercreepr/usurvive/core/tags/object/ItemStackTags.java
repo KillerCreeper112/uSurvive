@@ -35,7 +35,7 @@ public class ItemStackTags implements ObjectTag<ItemStack> {
         return TagContainer.stringList(tags)
             .add(Tag.stringList("infused_potions", (args, ctx) ->{
                 CruxItem crux = CruxItem.wrap(object);
-                InfusedPotions infused = crux.get(USurviveComponents.INFUSED_POTIONS);
+                InfusedPotions infused = crux.getOrDefaultData(USurviveComponents.INFUSED_POTIONS);
                 if(infused==null) return List.of();
 
                 List<String> format = USurvivePlugin.inst().values().INFUSED_POTIONS_TAG_FORMAT().value();

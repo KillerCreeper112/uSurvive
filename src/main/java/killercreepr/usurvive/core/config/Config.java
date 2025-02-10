@@ -1,6 +1,7 @@
 package killercreepr.usurvive.core.config;
 
 import killercreepr.crux.api.data.Holder;
+import killercreepr.crux.api.item.predicate.ItemPredicate;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.crux.core.util.CruxWorldUtil;

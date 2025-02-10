@@ -5,8 +5,7 @@ import killercreepr.usurvive.api.component.InfusedPotionGroup;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class SimpleInfusedPotionGroup implements InfusedPotionGroup {
     protected final List<PotionEffect> potionEffects;
@@ -52,5 +51,19 @@ public class SimpleInfusedPotionGroup implements InfusedPotionGroup {
     @Override
     public InfusedPotionGroup withPotionEffects(@NotNull List<PotionEffect> effects) {
         return new SimpleInfusedPotionGroup(effects, slot);
+    }
+
+    @Override
+    public InfusedPotionGroup addPotionEffects(@NotNull PotionEffect... effects) {
+        List<PotionEffect> list = new ArrayList<>(this.potionEffects);
+        list.addAll(Arrays.asList(effects));
+        return new SimpleInfusedPotionGroup(list, slot);
+    }
+
+    @Override
+    public InfusedPotionGroup addPotionEffects(@NotNull Collection<PotionEffect> effects) {
+        List<PotionEffect> list = new ArrayList<>(this.potionEffects);
+        list.addAll(effects);
+        return new SimpleInfusedPotionGroup(list, slot);
     }
 }

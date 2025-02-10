@@ -7,9 +7,11 @@ import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.cruxattributes.core.component.CruxAttributeCompParsers;
 import killercreepr.usurvive.api.component.InfusedPotionGroup;
 import killercreepr.usurvive.api.component.InfusedPotions;
+import killercreepr.usurvive.api.component.PotionInfusable;
 import killercreepr.usurvive.api.mechanics.Grapple;
 import killercreepr.usurvive.core.component.impl.SimpleInfusedPotionGroup;
 import killercreepr.usurvive.core.component.impl.SimpleInfusedPotions;
+import killercreepr.usurvive.core.component.impl.SimplePotionInfusable;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleDisplayGrapple;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleGrapple;
 import net.kyori.adventure.key.Key;
@@ -101,7 +103,14 @@ public class USurviveCompParsers {
     public static final PersistTextParser<InfusedPotions> INFUSED_POTIONS = PersistTextParser.mapBuilder(InfusedPotions.class)
         .field("infusion", TextInputField.field(PersistTextParser.list(INFUSED_POTION_GROUP), InfusedPotions::getInfusedPotions))
         .apply(ctx ->{
-            List<InfusedPotionGroup> infusion = ctx.get("infusion");
+            List<InfusedPotionGroup> infusion = ctx.getOptional("infusion", List.of());
             return new SimpleInfusedPotions(infusion);
+        });
+
+    public static final PersistTextParser<PotionInfusable> POTION_INFUSABLE = PersistTextParser.mapBuilder(PotionInfusable.class)
+        .field("max_infusions", TextInputField.field(PersistTextParser.INTEGER, PotionInfusable::getMaxInfusions))
+        .apply(ctx ->{
+            int maxInfusions = ctx.getOptional("max_infusions", 3);
+            return new SimplePotionInfusable(maxInfusions);
         });
 }
