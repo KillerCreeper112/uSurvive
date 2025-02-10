@@ -7,8 +7,6 @@ import killercreepr.crux.api.text.resolver.StringListResolver;
 import killercreepr.crux.api.text.tags.TagParser;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.text.resolver.Tag;
-import killercreepr.crux.core.util.CruxString;
-import killercreepr.cruxcore.CruxCore;
 import killercreepr.usurvive.api.component.InfusedPotions;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.component.USurviveComponents;

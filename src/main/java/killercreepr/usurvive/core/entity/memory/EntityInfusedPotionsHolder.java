@@ -10,10 +10,8 @@ import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
 import killercreepr.usurvive.api.component.InfusedPotionGroup;
 import killercreepr.usurvive.api.component.InfusedPotions;
-import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.component.USurviveComponents;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
@@ -21,7 +19,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -51,6 +48,11 @@ public class EntityInfusedPotionsHolder extends EntityTickedDataHolder {
     public void onMemoryUnload(@NotNull Entity e) {
         super.onMemoryUnload(e);
         if(!(e instanceof LivingEntity l)) return;
+        activeInfusions.getActiveInfusions().forEach(active ->{
+            active.getPotions().forEach(pot ->{
+                l.removePotionEffect(pot.getType());
+            });
+        });
     }
 
     protected int tick = 0;
@@ -96,6 +98,7 @@ public class EntityInfusedPotionsHolder extends EntityTickedDataHolder {
                         if(activeInfusions.hasPotion(typeKey)){
                             ActiveInfusion current = activeInfusions.getByPotionType(typeKey);
                             if(current.getSlot() != slot){
+                                newGroupPotions.add(groupPotion);
                                 continue;
                             }
                             PotionEffect currentInfusion = current.getPotionByType(typeKey);
@@ -105,7 +108,7 @@ public class EntityInfusedPotionsHolder extends EntityTickedDataHolder {
                             }
 
                             PotionEffect entityCurrent = l.getPotionEffect(groupPotion.getType());
-                            if(entityCurrent == null || entityCurrent.getAmplifier() != groupPotion.getAmplifier()){
+                            if(entityCurrent == null || entityCurrent.getAmplifier() != groupPotion.getAmplifier() || (entityCurrent.getDuration()-2) > groupPotion.getDuration()){
                                 activeInfusions.removeInfusion(current);
                                 changed = true;
                                 newGroupPotions.add(groupPotion);
@@ -128,7 +131,8 @@ public class EntityInfusedPotionsHolder extends EntityTickedDataHolder {
                         }
                         int duration = groupPotion.getDuration() - 2;
                         PotionEffect updatedPotion = groupPotion.withDuration(duration);
-                        ActiveInfusion activeInfusion = new ActiveInfusion(activeInfusions, new HashMap<>(), slot).add();
+                        ActiveInfusion activeInfusion = activeInfusions.getBySlot(slot);
+                        activeInfusion = activeInfusion == null ? new ActiveInfusion(activeInfusions, new HashMap<>(), slot).add() : activeInfusion;
                         activeInfusion.addPotion(updatedPotion);
                         if(duration > 0) newGroupPotions.add(updatedPotion);
                         changed = true;
@@ -145,8 +149,18 @@ public class EntityInfusedPotionsHolder extends EntityTickedDataHolder {
                 Key typeKey = potion.getType().key();
                 if(activeInfusions.hasPotion(typeKey)) continue;
                 PotionEffect last = lastTick.get(typeKey);
-                if(last != null && last.getAmplifier() == potion.getAmplifier()){
+                if(last==null) continue;
+                if(last.getAmplifier() == potion.getAmplifier() && (potion.getDuration()-2) <= last.getDuration()){
                     l.removePotionEffect(potion.getType());
+                    continue;
+                }
+                PotionEffect hidden = potion.getHiddenPotionEffect();
+                if(hidden == null) continue;
+                if(hidden.getType() != potion.getType()) continue;
+                if(last.getAmplifier() == hidden.getAmplifier() && (hidden.getDuration()-2) <= last.getDuration()){
+                    l.removePotionEffect(hidden.getType());
+                    l.addPotionEffect(new PotionEffect(hidden.getType(), potion.getDuration(), potion.getAmplifier(), potion.isAmbient(), potion.hasParticles(), potion.hasIcon()));
+                    continue;
                 }
             }
         });

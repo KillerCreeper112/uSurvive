@@ -15,7 +15,6 @@ import killercreepr.usurvive.core.mechanics.grapple.SimpleGrapple;
 import net.kyori.adventure.key.Key;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.Collection;
 import java.util.List;
 
 public class USurviveCompParsers {
@@ -91,14 +90,12 @@ public class USurviveCompParsers {
         });
 
     public static final PersistTextParser<InfusedPotionGroup> INFUSED_POTION_GROUP = PersistTextParser.mapBuilder(InfusedPotionGroup.class)
-        .field("key", TextInputField.field(PersistTextParser.KEY, InfusedPotionGroup::key))
         .field("potions", TextInputField.field(ComponentInputParsers.LIST.POTION_EFFECT, InfusedPotionGroup::getPotionEffects))
         .field("slot", TextInputField.field(CruxAttributeCompParsers.CRUX_SLOT_GROUP, InfusedPotionGroup::getSlot))
         .apply(ctx ->{
-            Key key = ctx.get("key");
             List<PotionEffect> potions = ctx.get("potions");
             CruxSlotGroup slot = ctx.getOptional("slot", CruxSlotGroup.ANY);
-            return new SimpleInfusedPotionGroup(key, potions, slot);
+            return new SimpleInfusedPotionGroup(potions, slot);
         });
 
     public static final PersistTextParser<InfusedPotions> INFUSED_POTIONS = PersistTextParser.mapBuilder(InfusedPotions.class)
