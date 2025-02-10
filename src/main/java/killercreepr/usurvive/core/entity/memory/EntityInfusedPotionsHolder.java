@@ -67,103 +67,109 @@ public class EntityInfusedPotionsHolder extends EntityTickedDataHolder {
 
         Crux.scheduler().runTask(() ->{
             if(!CruxEntityUtil.isValid(entity)) return;
+            primaryTick(l, equipment);
+        });
+    }
 
-            Map<Key, PotionEffect> lastTick = new HashMap<>();
-            activeInfusions.activeInfusionsByPotionType.forEach((key, infusion) ->{
-                lastTick.put(key, infusion.getPotionByType(key));
-            });
+    public void primaryTick(LivingEntity l, EntityEquipment equipment){
+        Map<Key, PotionEffect> lastTick = new HashMap<>();
+        activeInfusions.activeInfusionsByPotionType.forEach((key, infusion) ->{
+            lastTick.put(key, infusion.getPotionByType(key));
+        });
 
-            for(CruxSlot slot : CruxSlotGroup.ARMOR){
-                CruxItem item = getItem(equipment, slot);
-                if(item == null){
-                    activeInfusions.removeInfusion(slot);
+        for(CruxSlot slot : CruxSlotGroup.ARMOR){
+            CruxItem item = getItem(equipment, slot);
+            if(item == null){
+                activeInfusions.removeInfusion(slot);
+                continue;
+            }
+            InfusedPotions infusedPotions = item.getOrDefaultData(USurviveComponents.INFUSED_POTIONS);
+            if(infusedPotions==null){
+                activeInfusions.removeInfusion(slot);
+                continue;
+            }
+
+            List<InfusedPotionGroup> newGroups = new ArrayList<>();
+            boolean changed = false;
+            for (InfusedPotionGroup group : infusedPotions.getInfusedPotions()) {
+                if(!group.getSlot().test(slot)){
+                    newGroups.add(group);
                     continue;
                 }
-                InfusedPotions infusedPotions = item.getOrDefaultData(USurviveComponents.INFUSED_POTIONS);
-                if(infusedPotions==null){
-                    activeInfusions.removeInfusion(slot);
-                    continue;
-                }
+                List<PotionEffect> newGroupPotions = new ArrayList<>();
+                for (PotionEffect groupPotion : group.getPotionEffects()) {
+                    Key typeKey = groupPotion.getType().key();
+                    if(activeInfusions.hasPotion(typeKey)){
+                        ActiveInfusion current = activeInfusions.getByPotionType(typeKey);
+                        if(current.getSlot() != slot){
+                            newGroupPotions.add(groupPotion);
+                            continue;
+                        }
+                        PotionEffect currentInfusion = current.getPotionByType(typeKey);
+                        if(!currentInfusion.equals(groupPotion)){
+                            newGroupPotions.add(groupPotion);
+                            continue;
+                        }
 
-                List<InfusedPotionGroup> newGroups = new ArrayList<>();
-                boolean changed = false;
-                for (InfusedPotionGroup group : infusedPotions.getInfusedPotions()) {
-                    if(!group.getSlot().test(slot)){
-                        newGroups.add(group);
-                        continue;
-                    }
-                    List<PotionEffect> newGroupPotions = new ArrayList<>();
-                    for (PotionEffect groupPotion : group.getPotionEffects()) {
-                        Key typeKey = groupPotion.getType().key();
-                        if(activeInfusions.hasPotion(typeKey)){
-                            ActiveInfusion current = activeInfusions.getByPotionType(typeKey);
-                            if(current.getSlot() != slot){
-                                newGroupPotions.add(groupPotion);
-                                continue;
-                            }
-                            PotionEffect currentInfusion = current.getPotionByType(typeKey);
-                            if(!currentInfusion.equals(groupPotion)){
-                                newGroupPotions.add(groupPotion);
-                                continue;
-                            }
-
-                            PotionEffect entityCurrent = l.getPotionEffect(groupPotion.getType());
-                            if(entityCurrent == null || entityCurrent.getAmplifier() != groupPotion.getAmplifier() || (entityCurrent.getDuration()-2) > groupPotion.getDuration()){
-                                activeInfusions.removeInfusion(current);
-                                changed = true;
-                                newGroupPotions.add(groupPotion);
-                                continue;
-                            }
-                            int duration = entityCurrent.getDuration() - 2;
-                            PotionEffect updatedPotion = entityCurrent.withDuration(duration);
-                            current.updatePotion(updatedPotion);
-                            if(duration > 0) newGroupPotions.add(updatedPotion);
+                        PotionEffect entityCurrent = l.getPotionEffect(groupPotion.getType());
+                        if(entityCurrent == null || entityCurrent.getAmplifier() != groupPotion.getAmplifier() || (entityCurrent.getDuration()-2) > groupPotion.getDuration()){
+                            activeInfusions.removeInfusion(current);
                             changed = true;
-                            continue;
-                        }
-                        if(l.hasPotionEffect(groupPotion.getType())){
                             newGroupPotions.add(groupPotion);
                             continue;
                         }
-                        if(!l.addPotionEffect(groupPotion)){
-                            newGroupPotions.add(groupPotion);
-                            continue;
-                        }
-                        int duration = groupPotion.getDuration() - 2;
-                        PotionEffect updatedPotion = groupPotion.withDuration(duration);
-                        ActiveInfusion activeInfusion = activeInfusions.getBySlot(slot);
-                        activeInfusion = activeInfusion == null ? new ActiveInfusion(activeInfusions, new HashMap<>(), slot).add() : activeInfusion;
-                        activeInfusion.addPotion(updatedPotion);
+                        int duration = entityCurrent.getDuration() - 2;
+                        PotionEffect updatedPotion = entityCurrent.withDuration(duration);
+                        current.updatePotion(updatedPotion);
                         if(duration > 0) newGroupPotions.add(updatedPotion);
                         changed = true;
+                        continue;
                     }
-                    newGroups.add(group.withPotionEffects(newGroupPotions));
+                    if(l.hasPotionEffect(groupPotion.getType())){
+                        newGroupPotions.add(groupPotion);
+                        continue;
+                    }
+                    if(!l.addPotionEffect(groupPotion)){
+                        newGroupPotions.add(groupPotion);
+                        continue;
+                    }
+                    int duration = groupPotion.getDuration() - 2;
+                    PotionEffect updatedPotion = groupPotion.withDuration(duration);
+                    ActiveInfusion activeInfusion = activeInfusions.getBySlot(slot);
+                    activeInfusion = activeInfusion == null ? new ActiveInfusion(activeInfusions, new HashMap<>(), slot).add() : activeInfusion;
+                    activeInfusion.addPotion(updatedPotion);
+                    if(duration > 0) newGroupPotions.add(updatedPotion);
+                    changed = true;
                 }
-                if(!changed) continue;
-
-                infusedPotions = infusedPotions.withInfusedPotions(newGroups);
-                item.set(USurviveComponents.INFUSED_POTIONS, infusedPotions);
+                newGroups.add(group.withPotionEffects(newGroupPotions));
             }
+            if(!changed) continue;
 
-            for(PotionEffect potion : l.getActivePotionEffects()){
-                Key typeKey = potion.getType().key();
-                if(activeInfusions.hasPotion(typeKey)) continue;
-                PotionEffect last = lastTick.get(typeKey);
-                if(last==null) continue;
-                if(last.getAmplifier() == potion.getAmplifier() && (potion.getDuration()-2) <= last.getDuration()){
-                    l.removePotionEffect(potion.getType());
-                    continue;
-                }
-                PotionEffect hidden = potion.getHiddenPotionEffect();
-                if(hidden == null) continue;
-                if(hidden.getType() != potion.getType()) continue;
-                if(last.getAmplifier() == hidden.getAmplifier() && (hidden.getDuration()-2) <= last.getDuration()){
-                    l.removePotionEffect(hidden.getType());
-                    l.addPotionEffect(new PotionEffect(hidden.getType(), potion.getDuration(), potion.getAmplifier(), potion.isAmbient(), potion.hasParticles(), potion.hasIcon()));
-                    continue;
-                }
+            infusedPotions = infusedPotions.withInfusedPotions(newGroups);
+            item.set(USurviveComponents.INFUSED_POTIONS, infusedPotions);
+        }
+
+        for(PotionEffect potion : l.getActivePotionEffects()){
+            Key typeKey = potion.getType().key();
+            if(activeInfusions.hasPotion(typeKey)) continue;
+            PotionEffect last = lastTick.get(typeKey);
+            if(last==null) continue;
+            if(last.getAmplifier() == potion.getAmplifier() && (potion.getDuration()-2) <= last.getDuration()){
+                l.removePotionEffect(potion.getType());
+                continue;
             }
-        });
+            PotionEffect hidden = potion.getHiddenPotionEffect();
+            if(hidden == null) continue;
+            if(hidden.getType() != potion.getType()) continue;
+            if(last.getAmplifier() == hidden.getAmplifier() && (hidden.getDuration()-2) <= last.getDuration()){
+                l.removePotionEffect(hidden.getType());
+                l.addPotionEffect(new PotionEffect(hidden.getType(), potion.getDuration(),
+                    potion.getAmplifier(),
+                    potion.isAmbient(),
+                    potion.hasParticles(),
+                    potion.hasIcon()));
+            }
+        }
     }
 
     public static class ActiveInfusion{
