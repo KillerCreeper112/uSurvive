@@ -23,13 +23,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class ItemPotionEffectsHolder extends EntityTickedDataHolder {
+public class EntityInfusedPotionsHolderCopy extends EntityTickedDataHolder {
     public static final Key KEY = Crux.key("infused_potions");
-    public ItemPotionEffectsHolder(@NotNull Key key, @NotNull EntityMemory parent) {
+    public EntityInfusedPotionsHolderCopy(@NotNull Key key, @NotNull EntityMemory parent) {
         super(key, parent);
     }
 
-    public ItemPotionEffectsHolder(@NotNull EntityMemory parent) {
+    public EntityInfusedPotionsHolderCopy(@NotNull EntityMemory parent) {
         this(KEY, parent);
     }
 
@@ -44,18 +44,32 @@ public class ItemPotionEffectsHolder extends EntityTickedDataHolder {
         return CruxItem.wrap(item);
     }
 
+    @Override
+    public void onMemoryUnload(@NotNull Entity e) {
+        super.onMemoryUnload(e);
+        if(!(e instanceof LivingEntity l)) return;
+        activeInfusions.getActiveInfusions().forEach(active ->{
+            active.potions().values().forEach(potions ->{
+                potions.values().forEach(pot ->{
+                    l.removePotionEffect(pot.getType());
+                });
+            });
+        });
+        activeInfusions.clear();
+    }
+
     protected final Map<Key, PotionEffect> activeThisTick = new HashMap<>();
     protected final Map<Key, PotionEffect> activeLastTick = new HashMap<>();
     protected final Map<Key, PotionEffect> applyingEffects = new HashMap<>();
     public ActiveInfusion applyInfusion(@NotNull LivingEntity e, CruxItem item, CruxSlot slot, InfusedPotions infusedPotions){
         //Collection<PotionEffect> toApply = new HashSet<>();
-        Map<Key, Collection<PotionEffect>> applied = new HashMap<>();
+        Map<Key, Map<Key, PotionEffect>> applied = new HashMap<>();
         ActiveInfusion activeInfusion = activeInfusions.getInfusionBySlot(slot);
 
         if(activeInfusion != null && !activeInfusion.item().item().equals(item.item())){
             activeInfusions.removeInfusionBySlot(slot);
             activeInfusion.potions().values().forEach(potions ->{
-                potions.forEach(pot -> e.removePotionEffect(pot.getType()));
+                potions.values().forEach(pot -> e.removePotionEffect(pot.getType()));
             });
         }
 
@@ -68,13 +82,13 @@ public class ItemPotionEffectsHolder extends EntityTickedDataHolder {
                 }
                 if(hasPotionEffect(e, pot.getType())) return;
                 //toApply.add(pot);
-                applied.computeIfAbsent(group.key(), dd -> new HashSet<>()).add(pot);
+                applied.computeIfAbsent(group.key(), dd -> new HashMap<>()).put(pot.getType().key(), pot);
                 activeThisTick.put(pot.getType().key(), pot);
                 applyingEffects.put(pot.getType().key(), pot);
             });
         });
         if(applied.isEmpty()) return null;
-        return new ActiveInfusion(applied, item, slot);
+        return new ActiveInfusion(applied, item, slot, infusedPotions);
     }
 
     public boolean hasPotionEffect(LivingEntity e, PotionEffectType type){
@@ -127,7 +141,28 @@ public class ItemPotionEffectsHolder extends EntityTickedDataHolder {
             activeThisTick.clear();
             tickEquipment(l, equipment);
 
-            if(!activeLastTick.isEmpty()){
+            for(PotionEffect potion : l.getActivePotionEffects()){
+                Key typeKey = potion.getType().key();
+                PotionEffect activeLastTick = this.activeLastTick.get(typeKey);
+                PotionEffect activeNow = activeThisTick.get(typeKey);
+                if(activeLastTick != null && activeNow == null){
+                    l.removePotionEffect(potion.getType());
+                    continue;
+                }
+                if(activeNow==null) continue;
+
+                if(activeNow.getAmplifier() == potion.getAmplifier() || potion.getDuration() > activeNow.getDuration()) continue;
+
+                activeInfusions.removeInfusionByPotionType(typeKey);
+                activeThisTick.remove(typeKey);
+                PotionEffect hidden = potion.getHiddenPotionEffect();
+                if(hidden != null && hidden.getType() == potion.getType() && hidden.getAmplifier() == activeNow.getAmplifier()){
+                    l.removePotionEffect(potion.getType());
+                    l.addPotionEffect(new PotionEffect(potion.getType(), potion.getDuration(), potion.getAmplifier(), potion.isAmbient(), potion.hasParticles(), potion.hasIcon()));
+                }
+            }
+            activeLastTick.clear();
+            /*if(!activeLastTick.isEmpty()){
                 Collection<PotionEffectType> toRemove = new HashSet<>();
                 activeLastTick.values().forEach(pot ->{
                     if(!activeThisTick.containsKey(pot.getType().key())){
@@ -135,10 +170,10 @@ public class ItemPotionEffectsHolder extends EntityTickedDataHolder {
                     }
                 });
                 if(!toRemove.isEmpty()){
-                    toRemove.forEach(l::removePotionEffect);/*Crux.scheduler().runTask(() -> toRemove.forEach(l::removePotionEffect));*/
+                    toRemove.forEach(l::removePotionEffect);*//*Crux.scheduler().runTask(() -> toRemove.forEach(l::removePotionEffect));*//*
                 }
                 activeLastTick.clear();
-            }
+            }*/
             activeLastTick.putAll(activeThisTick);
 
             tickActiveInfusions(l, equipment);
@@ -153,17 +188,45 @@ public class ItemPotionEffectsHolder extends EntityTickedDataHolder {
 
     public void tickActiveInfusions(LivingEntity e, EntityEquipment equipment){
         for(ActiveInfusion infusion : new HashSet<>(activeInfusions.getActiveInfusions())){
-            CruxItem item = getItem(equipment, infusion.slot());
-            InfusedPotions infused = item == null ? null : item.get(USurviveComponents.INFUSED_POTIONS);
+            CruxItem item = infusion.item(); //getItem(equipment, infusion.slot());
+            InfusedPotions infused = infusion.infusedPotions(); /*item == null ? null : item.get(USurviveComponents.INFUSED_POTIONS);
             if(item == null || infused == null){
                 activeInfusions.removeInfusionBySlot(infusion.slot());
                 return;
-            }
-            Collection<InfusedPotionGroup> newGroups = new HashSet<>(infused.getInfusedPotions());
+            }*/
+            List<InfusedPotionGroup> newGroups = new ArrayList<>(infused.getInfusedPotions());
             infusion.potions().forEach((groupKey, effects) ->{
                 InfusedPotionGroup group = infused.getInfusedPotion(groupKey);
                 if(group == null) return;
-                List<PotionEffect> newEffects = new ArrayList<>(group.getPotionEffects());
+
+                List<PotionEffect> newEffects = new ArrayList<>();
+                Collection<Key> changed = new HashSet<>();
+                group.getPotionEffects().forEach(groupPotion ->{
+                    Key typeKey = groupPotion.getType().key();
+                    if(changed.contains(typeKey)){
+                        newEffects.add(groupPotion);
+                        return;
+                    }
+                    PotionEffect appliedPotion = effects.get(typeKey);
+                    if(appliedPotion==null || appliedPotion.getAmplifier() != groupPotion.getAmplifier()){
+                        newEffects.add(groupPotion);
+                        return;
+                    }
+                    changed.add(typeKey);
+                    PotionEffect active = getActivePotion(e, groupPotion.getType());
+                    if(active == null){
+                        return;
+                    }
+                    int duration = active.getDuration()-1;
+                    if(duration < 1) return;
+                    PotionEffect pot = active.withDuration(duration);
+                    newEffects.add(pot);
+                    effects.put(typeKey, pot);
+                });
+                InfusedPotionGroup newGroup = group.withPotionEffects(newEffects);
+                newGroups.add(newGroup);
+
+                /*List<PotionEffect> newEffects = new ArrayList<>(group.getPotionEffects());
                 effects.forEach(pot ->{
                     PotionEffect active = getActivePotion(e, pot.getType());
                     newEffects.removeIf(d -> d.getType().equals(pot.getType()));
@@ -175,23 +238,73 @@ public class ItemPotionEffectsHolder extends EntityTickedDataHolder {
                     newEffects.add(active.withDuration(duration));
                 });
                 InfusedPotionGroup newGroup = group.withPotionEffects(newEffects);
-                newGroups.add(newGroup);
+                newGroups.add(newGroup);*/
             });
-            item.set(USurviveComponents.INFUSED_POTIONS, infused.withInfusedPotions(newGroups));
+            InfusedPotions newInfusion = infused.withInfusedPotions(newGroups);
+            item.set(USurviveComponents.INFUSED_POTIONS, newInfusion);
+            infusion.infusedPotions(newInfusion);
         }
     }
 
-    public record ActiveInfusion(Map<Key, Collection<PotionEffect>> potions, CruxItem item, CruxSlot slot){
-        public void merge(ActiveInfusion infusion){
-            infusion.potions().forEach((k, p) ->{
-                potions.computeIfAbsent(k, (e) -> new HashSet<>()).addAll(p);
-            });
+    public static class ActiveInfusion {
+        private final Map<Key, Map<Key, PotionEffect>> potions;
+        private final CruxItem item;
+        private final CruxSlot slot;
+        private InfusedPotions infusedPotions;
+
+        public ActiveInfusion(Map<Key, Map<Key, PotionEffect>> potions, CruxItem item, CruxSlot slot, InfusedPotions infusedPotions) {
+            this.potions = potions;
+            this.item = item;
+            this.slot = slot;
+            this.infusedPotions = infusedPotions;
+        }
+
+        public Map<Key, Map<Key, PotionEffect>> potions() {
+            return potions;
+        }
+
+        public CruxItem item() {
+            return item;
+        }
+
+        public CruxSlot slot() {
+            return slot;
+        }
+
+        public InfusedPotions infusedPotions() {
+            return infusedPotions;
+        }
+
+        public ActiveInfusion infusedPotions(InfusedPotions infusedPotions){
+            this.infusedPotions = infusedPotions;
+            return this;
+        }
+
+        public void merge(ActiveInfusion infusion) {
+            if (infusion == null) return;
+            infusion.potions().forEach((k, p) ->
+                potions.computeIfAbsent(k, e -> new HashMap<>()).putAll(p)
+            );
         }
     }
+
+
+    /*public record ActiveInfusion(Map<Key, Map<Key, PotionEffect>> potions, CruxItem item, CruxSlot slot, InfusedPotions infusedPotions){
+        public void merge(ActiveInfusion infusion){
+            infusion.potions().forEach((k, p) ->{
+                potions.computeIfAbsent(k, (e) -> new HashMap<>()).putAll(p);
+            });
+        }
+    }*/
 
     public static class ActiveInfusionHandler {
         protected final Map<Key, ActiveInfusion> potionToActiveInfusions = new HashMap<>();
         protected final Map<CruxSlot, ActiveInfusion> slotToActiveInfusions = new HashMap<>();
+
+        public void clear(){
+            potionToActiveInfusions.clear();
+            slotToActiveInfusions.clear();
+        }
 
         public Collection<ActiveInfusion> getActiveInfusions(){
             return potionToActiveInfusions.values();
@@ -210,7 +323,7 @@ public class ItemPotionEffectsHolder extends EntityTickedDataHolder {
 
             slotToActiveInfusions.put(infusion.slot(), infusion);
             infusion.potions().values().forEach(potions ->{
-                potions.forEach(pot ->{
+                potions.values().forEach(pot ->{
                     potionToActiveInfusions.put(pot.getType().key(), infusion);
                 });
             });
@@ -220,7 +333,7 @@ public class ItemPotionEffectsHolder extends EntityTickedDataHolder {
             ActiveInfusion removed = slotToActiveInfusions.remove(slot);
             if(removed == null) return null;
             removed.potions().values().forEach(potions ->{
-                potions.forEach(pot ->{
+                potions.values().forEach(pot ->{
                     potionToActiveInfusions.remove(pot.getType().key());
                 });
             });

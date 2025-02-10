@@ -8,34 +8,40 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SimpleInfusedPotions implements InfusedPotions {
-    protected final Map<Key, InfusedPotionGroup> infusedPotions;
+    //protected final Map<Key, InfusedPotionGroup> infusedPotions;
+    protected final List<InfusedPotionGroup> infusedPotions;
 
-    public SimpleInfusedPotions(Map<Key, InfusedPotionGroup> infusedPotions) {
+    public SimpleInfusedPotions(List<InfusedPotionGroup> infusedPotions) {
+        this.infusedPotions = infusedPotions;
+    }
+
+    /*public SimpleInfusedPotions(Map<Key, InfusedPotionGroup> infusedPotions) {
         this.infusedPotions = infusedPotions;
     }
 
     public SimpleInfusedPotions(Collection<InfusedPotionGroup> infusedPotions) {
         this(new HashMap<>());
         infusedPotions.forEach(p -> this.infusedPotions.put(p.key(), p));
-    }
+    }*/
 
     @NotNull
     @Override
-    public Collection<InfusedPotionGroup> getInfusedPotions() {
-        return infusedPotions.values();
+    public List<InfusedPotionGroup> getInfusedPotions() {
+        return infusedPotions;
     }
 
     @Nullable
     @Override
     public InfusedPotionGroup getInfusedPotion(@NotNull Key key) {
-        return infusedPotions.get(key);
+        return null;//infusedPotions.get(key);
     }
 
     @Override
-    public InfusedPotions withInfusedPotions(@NotNull Collection<InfusedPotionGroup> effects) {
+    public InfusedPotions withInfusedPotions(@NotNull List<InfusedPotionGroup> effects) {
         return new SimpleInfusedPotions(effects);
     }
 }

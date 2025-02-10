@@ -6,10 +6,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface InfusedPotions {
-    @NotNull Collection<InfusedPotionGroup> getInfusedPotions();
+    @NotNull List<InfusedPotionGroup> getInfusedPotions();
     @Nullable InfusedPotionGroup getInfusedPotion(@NotNull Key key);
     @Contract(pure = true)
-    InfusedPotions withInfusedPotions(@NotNull Collection<InfusedPotionGroup> effects);
+    InfusedPotions withInfusedPotions(@NotNull List<InfusedPotionGroup> effects);
 }

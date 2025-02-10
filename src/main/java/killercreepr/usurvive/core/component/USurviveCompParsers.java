@@ -102,9 +102,9 @@ public class USurviveCompParsers {
         });
 
     public static final PersistTextParser<InfusedPotions> INFUSED_POTIONS = PersistTextParser.mapBuilder(InfusedPotions.class)
-        .field("infusion", TextInputField.field(PersistTextParser.collectionList(INFUSED_POTION_GROUP), InfusedPotions::getInfusedPotions))
+        .field("infusion", TextInputField.field(PersistTextParser.list(INFUSED_POTION_GROUP), InfusedPotions::getInfusedPotions))
         .apply(ctx ->{
-            Collection<InfusedPotionGroup> infusion = ctx.get("infusion");
+            List<InfusedPotionGroup> infusion = ctx.get("infusion");
             return new SimpleInfusedPotions(infusion);
         });
 }
