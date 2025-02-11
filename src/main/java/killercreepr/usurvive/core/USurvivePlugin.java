@@ -304,7 +304,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new SetupListener(values),
             new DisableEndListener(),
             new EnchantsListener(this),
-            new AnimalsAndPotionInfusionListener(),
+            new AnimalsAndPotionInfusionListener(values),
             new ProjectileReflectListener(),
             new SettingsListener()
         );

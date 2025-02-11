@@ -10,6 +10,8 @@ import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
 import killercreepr.usurvive.api.component.InfusedPotionGroup;
 import killercreepr.usurvive.api.component.InfusedPotions;
+import killercreepr.usurvive.api.event.InfusedItemPotionAddToEntityEvent;
+import killercreepr.usurvive.api.event.InfusedItemUpdateEvent;
 import killercreepr.usurvive.core.component.USurviveComponents;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Entity;
@@ -129,6 +131,13 @@ public class EntityInfusedPotionsHolder extends EntityTickedDataHolder {
                         newGroupPotions.add(groupPotion);
                         continue;
                     }
+
+                    InfusedItemPotionAddToEntityEvent event = new InfusedItemPotionAddToEntityEvent(l, item, slot, groupPotion);
+                    if(!event.callEvent()){
+                        newGroupPotions.add(groupPotion);
+                        continue;
+                    }
+
                     if(!l.addPotionEffect(groupPotion)){
                         newGroupPotions.add(groupPotion);
                         continue;
@@ -141,12 +150,17 @@ public class EntityInfusedPotionsHolder extends EntityTickedDataHolder {
                     if(duration > 0) newGroupPotions.add(updatedPotion);
                     changed = true;
                 }
-                newGroups.add(group.withPotionEffects(newGroupPotions));
+                if(newGroupPotions.isEmpty()) continue;
+                InfusedPotionGroup newGroup = group.withPotionEffects(newGroupPotions);
+                newGroups.add(newGroup);
             }
             if(!changed) continue;
 
-            infusedPotions = infusedPotions.withInfusedPotions(newGroups);
-            item.set(USurviveComponents.INFUSED_POTIONS, infusedPotions);
+            InfusedPotions newInfusedPotions = newGroups.isEmpty() ? null : infusedPotions.withInfusedPotions(newGroups);
+            InfusedItemUpdateEvent updateEvent = new InfusedItemUpdateEvent(l, item, slot, infusedPotions, newInfusedPotions);
+            if(!updateEvent.callEvent()) continue;
+
+            item.set(USurviveComponents.INFUSED_POTIONS, updateEvent.getNewInfusedPotions());
         }
 
         for(PotionEffect potion : l.getActivePotionEffects()){

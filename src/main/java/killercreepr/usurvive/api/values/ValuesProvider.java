@@ -2,6 +2,7 @@ package killercreepr.usurvive.api.values;
 
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.data.Reloadable;
+import killercreepr.crux.api.item.predicate.ItemPredicate;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.usurvive.core.data.ResourcePackRequestData;
 import net.kyori.adventure.text.Component;
@@ -55,4 +56,6 @@ public interface ValuesProvider extends Reloadable {
     @NotNull Holder<String> TAB_FOOTER();
     @NotNull Holder<List<String>> INFUSED_POTIONS_TAG_FORMAT();
     @NotNull Holder<List<String>> INFUSED_POTIONS_EFFECTS_LIST_TAG_FORMAT();
+    @NotNull Holder<ItemPredicate> APPLICABLE_INFUSION_BENEFITS();
+    @NotNull NumberProvider INFUSION_DURABILITY_PERCENT();
 }

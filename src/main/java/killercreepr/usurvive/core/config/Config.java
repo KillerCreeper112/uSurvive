@@ -64,6 +64,8 @@ public class Config extends Cfg implements ValuesProvider {
     public final CfgValue<List<String>> INFUSED_POTIONS_EFFECTS_LIST_TAG_FORMAT = new CommonValue<>(List.of(
         "{e{IF(\"<potion_effect_harmful>\" == \"true\", \"<red>\", \"<blue>\")}}<potion_effect_name>{e{IF(<potion_effect_amplifier> > 0, \" <roman_numeral:{{<potion_effect_amplifier> + 1}}>\", \"\")}} (<duration:{{<potion_effect_duration>*50}}:days,hours:true:\":\":\"\":\"\":\"<math:less:%m:10:0>%m\":\"<math:less:%s:10:0>%s\">)"
     )){};
+    public final NumCfgValue INFUSION_DURABILITY_PERCENT = new NumCfgValue(.5f);
+    public final CfgValue<ItemPredicate> APPLICABLE_INFUSION_BENEFITS = new CommonValue<>(){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -242,5 +244,17 @@ public class Config extends Cfg implements ValuesProvider {
     @Override
     public Holder<List<String>> INFUSED_POTIONS_EFFECTS_LIST_TAG_FORMAT() {
         return INFUSED_POTIONS_EFFECTS_LIST_TAG_FORMAT;
+    }
+
+    @NotNull
+    @Override
+    public Holder<ItemPredicate> APPLICABLE_INFUSION_BENEFITS() {
+        return APPLICABLE_INFUSION_BENEFITS;
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider INFUSION_DURABILITY_PERCENT() {
+        return INFUSION_DURABILITY_PERCENT.value();
     }
 }

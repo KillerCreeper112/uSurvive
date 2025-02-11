@@ -13,9 +13,12 @@ import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.usurvive.api.component.InfusedPotions;
 import killercreepr.usurvive.api.component.PotionInfusable;
+import killercreepr.usurvive.api.event.PostItemInfusePotionsEvent;
+import killercreepr.usurvive.api.event.PreItemInfusePotionsEvent;
 import killercreepr.usurvive.core.component.USurviveComponents;
 import killercreepr.usurvive.core.component.impl.SimpleInfusedPotionGroup;
 import killercreepr.usurvive.core.component.impl.SimpleInfusedPotions;
+import killercreepr.usurvive.core.util.ItemUtil;
 import net.kyori.adventure.key.Key;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -73,7 +76,13 @@ public class GoldenItemCauldronHolder extends EntityTickedDataHolder {
         Collection<PotionEffect> totalPotions = infused == null ? List.of() : getAllInfusedPotions(infused);
 
         if((totalPotions.size() + potions.size()) > infusable.getMaxInfusions()) return null;
-        CruxSlotGroup slot = getDefaultSlotGroup(item);
+
+        PreItemInfusePotionsEvent preEvent = new PreItemInfusePotionsEvent(item, potions);
+        if(!preEvent.callEvent() || potions.isEmpty()){
+            return null;
+        }
+
+        CruxSlotGroup slot = ItemUtil.getDefaultSlotGroup(item);
         InfusedPotions newInfused;
         if(infused == null){
             newInfused = new SimpleInfusedPotions(List.of(new SimpleInfusedPotionGroup(potions, slot)));
@@ -86,14 +95,6 @@ public class GoldenItemCauldronHolder extends EntityTickedDataHolder {
         }
         crux.set(USurviveComponents.INFUSED_POTIONS, newInfused);
         return new InfuseResult(crux);
-    }
-
-    public CruxSlotGroup getDefaultSlotGroup(ItemStack item){
-        if(MaterialTags.HELMETS.isTagged(item)) return CruxSlotGroup.HEAD;
-        if(MaterialTags.CHESTPLATES.isTagged(item)) return CruxSlotGroup.CHEST;
-        if(MaterialTags.LEGGINGS.isTagged(item)) return CruxSlotGroup.LEGS;
-        if(MaterialTags.BOOTS.isTagged(item)) return CruxSlotGroup.FEET;
-        return CruxSlotGroup.MAIN_HAND;
     }
 
     public boolean isValidPotionItem(Item item){
@@ -114,8 +115,12 @@ public class GoldenItemCauldronHolder extends EntityTickedDataHolder {
             ItemStack stack = item.getItemStack();
             PotionContents contents = stack.getDataOrDefault(DataComponentTypes.POTION_CONTENTS, stack.getType().getDefaultData(DataComponentTypes.POTION_CONTENTS));
             List<PotionEffect> allPotions = getAllPotions(contents);
-            InfuseResult result = infusePotions(owner.getItemStack(), allPotions);
+            InfuseResult result = infusePotions(owner.getItemStack().clone(), allPotions);
             if(result==null) break;
+
+            PostItemInfusePotionsEvent postEvent = new PostItemInfusePotionsEvent(owner.getItemStack(), allPotions, result.getResult());
+            if(!postEvent.callEvent()) return;
+
             owner.setItemStack(result.getResult().item());
             onMergeSuccess(owner, near);
             break;

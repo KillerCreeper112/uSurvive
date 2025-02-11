@@ -1,6 +1,7 @@
 package killercreepr.usurvive.core.values;
 
 import killercreepr.crux.api.data.Holder;
+import killercreepr.crux.api.item.predicate.ItemPredicate;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.valueproviders.number.UniformNumber;
 import killercreepr.usurvive.api.values.ValuesProvider;
@@ -185,6 +186,18 @@ public class DefaultValues implements ValuesProvider {
     @NotNull
     @Override
     public Holder<List<String>> INFUSED_POTIONS_EFFECTS_LIST_TAG_FORMAT() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Holder<ItemPredicate> APPLICABLE_INFUSION_BENEFITS() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider INFUSION_DURABILITY_PERCENT() {
         return null;
     }
 }
