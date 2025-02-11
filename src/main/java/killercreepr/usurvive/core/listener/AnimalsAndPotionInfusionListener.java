@@ -27,6 +27,7 @@ import killercreepr.usurvive.core.entity.memory.GoldenItemCauldronHolder;
 import killercreepr.usurvive.core.entity.mob.goals.animal.AnimalEnhancedGoal;
 import killercreepr.usurvive.core.util.ItemUtil;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Animals;
@@ -69,6 +70,7 @@ public class AnimalsAndPotionInfusionListener implements Listener {
                     item.item().resetData(DataComponentTypes.MAX_DAMAGE);
                 }else item.item().setData(DataComponentTypes.MAX_DAMAGE, newMaxDamage);
             }
+            updateAttributes(item, getAllInfusedPotions(oldInfused).size()*-1);
             return;
         }
 
@@ -98,6 +100,7 @@ public class AnimalsAndPotionInfusionListener implements Listener {
         }else{
             item.set(USurviveComponents.POTION_INFUSION_DURABILITY_BENEFIT, newBenefit);
         }
+        updateAttributes(item, difference * -1);
     }
 
     public double getValue(ItemAttributeModifiers mods, Attribute attribute){
@@ -109,6 +112,7 @@ public class AnimalsAndPotionInfusionListener implements Listener {
     }
 
     public void updateAttributes(CruxItem item, int difference){
+        if(difference == 0) return;
         Map<Key, Double> benefitsPer = cfg.INFUSION_ATTRIBUTE_BENEFITS().value();
         if(benefitsPer == null || benefitsPer.isEmpty()) return;
         CruxSlotGroup group = ItemUtil.getDefaultSlotGroup(item.item());
@@ -119,6 +123,7 @@ public class AnimalsAndPotionInfusionListener implements Listener {
         }
         Map<Key, Double> attributeMap;
         InfusionAttributesBenefit benefit = item.get(USurviveComponents.POTION_INFUSION_ATTRIBUTES_BENEFIT);
+        if(benefit == null && difference < 0) return;
         ItemAttributeModifiers attributes = item.item().getData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
         if(benefit == null){
             benefit = new InfusionAttributesBenefit(new HashMap<>(), attributes ==null);
@@ -130,15 +135,19 @@ public class AnimalsAndPotionInfusionListener implements Listener {
         benefitsPer.forEach((key, amount) ->{
             double current = attributeMap.getOrDefault(key, 0D);
             double toAdd = (amount * difference);
+            Bukkit.broadcastMessage("toAdd=" + toAdd);
 
             double total = current + toAdd;
+            Bukkit.broadcastMessage("total=" + total);
             if(total == 0D){
                 attributeMap.remove(key);
                 return;
             }
             attributeMap.put(key, total);
         });
+        String modKeyID = "potion_infusion_attribute/" + group.key().value();
         if(attributeMap.isEmpty()){
+            item.set(USurviveComponents.POTION_INFUSION_ATTRIBUTES_BENEFIT, null);
             if(benefit.isKeepDefaults()){
                 item.item().resetData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
                 return;
@@ -146,7 +155,7 @@ public class AnimalsAndPotionInfusionListener implements Listener {
             ItemAttributeModifiers. Builder builder = ItemAttributeModifiers.itemAttributes();
             if(attributes != null){
                 attributes.modifiers().forEach(entry ->{
-                    if(entry.modifier().getKey().getKey().equalsIgnoreCase("potion_infusion_attribute")) return;
+                    if(entry.modifier().getKey().getKey().equalsIgnoreCase(modKeyID)) return;
                     builder.addModifier(entry.attribute(), entry.modifier(), entry.getGroup());
                 });
                 item.item().setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, builder);
@@ -156,7 +165,7 @@ public class AnimalsAndPotionInfusionListener implements Listener {
         ItemAttributeModifiers. Builder builder = ItemAttributeModifiers.itemAttributes();
         if(attributes != null){
             attributes.modifiers().forEach(entry ->{
-                if(entry.modifier().getKey().getKey().equalsIgnoreCase("potion_infusion_attribute")) return;
+                if(entry.modifier().getKey().getKey().equalsIgnoreCase(modKeyID)) return;
                 builder.addModifier(entry.attribute(), entry.modifier(), entry.getGroup());
             });
         }
@@ -167,12 +176,13 @@ public class AnimalsAndPotionInfusionListener implements Listener {
                 Crux.log(Level.WARNING, "Minecraft attribute of " + key + " not found!");
                 return;
             }
-            builder.addModifier(attribute, new AttributeModifier(Crux.key("potion_infusion_attribute"),
+            builder.addModifier(attribute, new AttributeModifier(Crux.key(modKeyID),
                 getValue(defaultData, attribute) + value,
                 AttributeModifier.Operation.ADD_NUMBER,
                 equipGroup));
         });
         item.item().setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, builder);
+        item.set(USurviveComponents.POTION_INFUSION_ATTRIBUTES_BENEFIT, benefit);
     }
 
 
