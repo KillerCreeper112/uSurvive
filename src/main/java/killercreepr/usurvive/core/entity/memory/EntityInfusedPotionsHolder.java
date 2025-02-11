@@ -14,6 +14,7 @@ import killercreepr.usurvive.api.event.InfusedItemPotionAddToEntityEvent;
 import killercreepr.usurvive.api.event.InfusedItemUpdateEvent;
 import killercreepr.usurvive.core.component.USurviveComponents;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
@@ -73,6 +74,113 @@ public class EntityInfusedPotionsHolder extends EntityTickedDataHolder {
         });
     }
 
+    public boolean compareCurrentAndGroupPotion(PotionEffect entityCurrent, PotionEffect groupPotion){
+        if(entityCurrent == null) return false;
+        if(entityCurrent.getAmplifier() != groupPotion.getAmplifier()) return false;
+        if(groupPotion.isInfinite() && entityCurrent.isInfinite()) return true;
+        return (entityCurrent.getDuration() - 2) <= groupPotion.getDuration();
+    }
+
+    public void tickSlot(LivingEntity l, CruxSlot slot, CruxItem item){
+        if(item == null){
+            activeInfusions.removeInfusion(slot);
+            return;
+        }
+        InfusedPotions infusedPotions = item.getOrDefaultData(USurviveComponents.INFUSED_POTIONS);
+        if(infusedPotions==null){
+            activeInfusions.removeInfusion(slot);
+            return;
+        }
+
+        List<InfusedPotionGroup> newGroups = new ArrayList<>();
+        boolean changed = false;
+        for (InfusedPotionGroup group : infusedPotions.getInfusedPotions()) {
+            if(!group.getSlot().test(slot)){
+                newGroups.add(group);
+                continue;
+            }
+            ActiveInfusion activeInfusion = activeInfusions.getBySlot(slot);
+            //If it's not the same item, we need to remove the potion effects
+            if(activeInfusion != null && !activeInfusion.getItem().item().equals(item.item())){
+                activeInfusion.getPotions().forEach(pot ->{
+                    l.removePotionEffect(pot.getType());
+                });
+                activeInfusions.removeInfusion(activeInfusion);
+                activeInfusion = null;
+            }
+
+            List<PotionEffect> newGroupPotions = new ArrayList<>();
+            for (PotionEffect groupPotion : group.getPotionEffects()) {
+                Key typeKey = groupPotion.getType().key();
+                if(activeInfusions.hasPotion(typeKey)){
+                    ActiveInfusion current = activeInfusions.getByPotionType(typeKey);
+                    if(current.getSlot() != slot){
+                        newGroupPotions.add(groupPotion);
+                        continue;
+                    }
+                    PotionEffect currentInfusion = current.getPotionByType(typeKey);
+                    if(!currentInfusion.equals(groupPotion)){
+                        newGroupPotions.add(groupPotion);
+                        continue;
+                    }
+
+                    PotionEffect entityCurrent = l.getPotionEffect(groupPotion.getType());
+                    if(!compareCurrentAndGroupPotion(entityCurrent, groupPotion)){
+                        activeInfusions.removeInfusion(current);
+                        newGroupPotions.add(groupPotion);
+                        continue;
+                    }
+                        /*if(entityCurrent == null || entityCurrent.getAmplifier() != groupPotion.getAmplifier() || (entityCurrent.getDuration()-2) > groupPotion.getDuration()){
+                            activeInfusions.removeInfusion(current);
+                            changed = true;
+                            newGroupPotions.add(groupPotion);
+                            continue;
+                        }*/
+                    if(entityCurrent.isInfinite()){
+                        newGroupPotions.add(groupPotion);
+                        continue;
+                    }
+                    int duration = entityCurrent.getDuration() - 2;
+                    PotionEffect updatedPotion = entityCurrent.withDuration(duration);
+                    current.updatePotion(updatedPotion);
+                    if(duration > 0) newGroupPotions.add(updatedPotion);
+                    changed = true;
+                    continue;
+                }
+                if(l.hasPotionEffect(groupPotion.getType())){
+                    newGroupPotions.add(groupPotion);
+                    continue;
+                }
+
+                InfusedItemPotionAddToEntityEvent event = new InfusedItemPotionAddToEntityEvent(l, item, slot, groupPotion);
+                if(!event.callEvent()){
+                    newGroupPotions.add(groupPotion);
+                    continue;
+                }
+
+                if(!l.addPotionEffect(groupPotion)){
+                    newGroupPotions.add(groupPotion);
+                    continue;
+                }
+                PotionEffect updatedPotion = groupPotion.isInfinite() ? groupPotion : groupPotion.withDuration(groupPotion.getDuration() - 2);
+                activeInfusion = activeInfusion == null ? new ActiveInfusion(activeInfusions, new HashMap<>(), slot, item).add() : activeInfusion;
+                activeInfusion.addPotion(updatedPotion);
+                if(updatedPotion.getDuration() > 0 || updatedPotion.isInfinite()) newGroupPotions.add(updatedPotion);
+                changed = !groupPotion.isInfinite();
+            }
+            if(newGroupPotions.isEmpty()) continue;
+            InfusedPotionGroup newGroup = group.withPotionEffects(newGroupPotions);
+            newGroups.add(newGroup);
+        }
+        if(!changed) return;
+
+        InfusedPotions newInfusedPotions = newGroups.isEmpty() ? null : infusedPotions.withInfusedPotions(newGroups);
+        InfusedItemUpdateEvent updateEvent = new InfusedItemUpdateEvent(l, item, slot, infusedPotions, newInfusedPotions);
+        if(!updateEvent.callEvent()) return;
+
+        item.set(USurviveComponents.INFUSED_POTIONS, updateEvent.getNewInfusedPotions());
+    }
+
     public void primaryTick(LivingEntity l, EntityEquipment equipment){
         Map<Key, PotionEffect> lastTick = new HashMap<>();
         activeInfusions.activeInfusionsByPotionType.forEach((key, infusion) ->{
@@ -81,86 +189,7 @@ public class EntityInfusedPotionsHolder extends EntityTickedDataHolder {
 
         for(CruxSlot slot : CruxSlotGroup.ARMOR){
             CruxItem item = getItem(equipment, slot);
-            if(item == null){
-                activeInfusions.removeInfusion(slot);
-                continue;
-            }
-            InfusedPotions infusedPotions = item.getOrDefaultData(USurviveComponents.INFUSED_POTIONS);
-            if(infusedPotions==null){
-                activeInfusions.removeInfusion(slot);
-                continue;
-            }
-
-            List<InfusedPotionGroup> newGroups = new ArrayList<>();
-            boolean changed = false;
-            for (InfusedPotionGroup group : infusedPotions.getInfusedPotions()) {
-                if(!group.getSlot().test(slot)){
-                    newGroups.add(group);
-                    continue;
-                }
-                List<PotionEffect> newGroupPotions = new ArrayList<>();
-                for (PotionEffect groupPotion : group.getPotionEffects()) {
-                    Key typeKey = groupPotion.getType().key();
-                    if(activeInfusions.hasPotion(typeKey)){
-                        ActiveInfusion current = activeInfusions.getByPotionType(typeKey);
-                        if(current.getSlot() != slot){
-                            newGroupPotions.add(groupPotion);
-                            continue;
-                        }
-                        PotionEffect currentInfusion = current.getPotionByType(typeKey);
-                        if(!currentInfusion.equals(groupPotion)){
-                            newGroupPotions.add(groupPotion);
-                            continue;
-                        }
-
-                        PotionEffect entityCurrent = l.getPotionEffect(groupPotion.getType());
-                        if(entityCurrent == null || entityCurrent.getAmplifier() != groupPotion.getAmplifier() || (entityCurrent.getDuration()-2) > groupPotion.getDuration()){
-                            activeInfusions.removeInfusion(current);
-                            changed = true;
-                            newGroupPotions.add(groupPotion);
-                            continue;
-                        }
-                        int duration = entityCurrent.getDuration() - 2;
-                        PotionEffect updatedPotion = entityCurrent.withDuration(duration);
-                        current.updatePotion(updatedPotion);
-                        if(duration > 0) newGroupPotions.add(updatedPotion);
-                        changed = true;
-                        continue;
-                    }
-                    if(l.hasPotionEffect(groupPotion.getType())){
-                        newGroupPotions.add(groupPotion);
-                        continue;
-                    }
-
-                    InfusedItemPotionAddToEntityEvent event = new InfusedItemPotionAddToEntityEvent(l, item, slot, groupPotion);
-                    if(!event.callEvent()){
-                        newGroupPotions.add(groupPotion);
-                        continue;
-                    }
-
-                    if(!l.addPotionEffect(groupPotion)){
-                        newGroupPotions.add(groupPotion);
-                        continue;
-                    }
-                    int duration = groupPotion.getDuration() - 2;
-                    PotionEffect updatedPotion = groupPotion.withDuration(duration);
-                    ActiveInfusion activeInfusion = activeInfusions.getBySlot(slot);
-                    activeInfusion = activeInfusion == null ? new ActiveInfusion(activeInfusions, new HashMap<>(), slot).add() : activeInfusion;
-                    activeInfusion.addPotion(updatedPotion);
-                    if(duration > 0) newGroupPotions.add(updatedPotion);
-                    changed = true;
-                }
-                if(newGroupPotions.isEmpty()) continue;
-                InfusedPotionGroup newGroup = group.withPotionEffects(newGroupPotions);
-                newGroups.add(newGroup);
-            }
-            if(!changed) continue;
-
-            InfusedPotions newInfusedPotions = newGroups.isEmpty() ? null : infusedPotions.withInfusedPotions(newGroups);
-            InfusedItemUpdateEvent updateEvent = new InfusedItemUpdateEvent(l, item, slot, infusedPotions, newInfusedPotions);
-            if(!updateEvent.callEvent()) continue;
-
-            item.set(USurviveComponents.INFUSED_POTIONS, updateEvent.getNewInfusedPotions());
+            tickSlot(l, slot, item);
         }
 
         for(PotionEffect potion : l.getActivePotionEffects()){
@@ -168,14 +197,14 @@ public class EntityInfusedPotionsHolder extends EntityTickedDataHolder {
             if(activeInfusions.hasPotion(typeKey)) continue;
             PotionEffect last = lastTick.get(typeKey);
             if(last==null) continue;
-            if(last.getAmplifier() == potion.getAmplifier() && (potion.getDuration()-2) <= last.getDuration()){
+            if(last.getAmplifier() == potion.getAmplifier() && compareDuration(potion, last)){
                 l.removePotionEffect(potion.getType());
                 continue;
             }
             PotionEffect hidden = potion.getHiddenPotionEffect();
             if(hidden == null) continue;
             if(hidden.getType() != potion.getType()) continue;
-            if(last.getAmplifier() == hidden.getAmplifier() && (hidden.getDuration()-2) <= last.getDuration()){
+            if(last.getAmplifier() == hidden.getAmplifier() && compareDuration(hidden, last)){
                 l.removePotionEffect(hidden.getType());
                 l.addPotionEffect(new PotionEffect(hidden.getType(), potion.getDuration(),
                     potion.getAmplifier(),
@@ -186,17 +215,30 @@ public class EntityInfusedPotionsHolder extends EntityTickedDataHolder {
         }
     }
 
+    public boolean compareDuration(PotionEffect potion, PotionEffect last){
+        return (potion.isInfinite() && last.isInfinite()) || (potion.getDuration()-2) <= last.getDuration();
+    }
+
     public static class ActiveInfusion{
         protected final ActiveInfusionHandler handler;
         protected final Map<Key, PotionEffect> potions;
         protected final CruxSlot slot;
+        protected final CruxItem item;
 
-        public ActiveInfusion(ActiveInfusionHandler handler, Map<Key, PotionEffect> potions, CruxSlot slot) {
+        public ActiveInfusion(ActiveInfusionHandler handler, Map<Key, PotionEffect> potions, CruxSlot slot, CruxItem item) {
             this.handler = handler;
             this.potions = potions;
             this.slot = slot;
+            this.item = item;
         }
 
+        public ActiveInfusionHandler getHandler() {
+            return handler;
+        }
+
+        public CruxItem getItem() {
+            return item;
+        }
 
         public CruxSlot getSlot() {
             return slot;
@@ -208,7 +250,7 @@ public class EntityInfusedPotionsHolder extends EntityTickedDataHolder {
         }
 
         public void addPotion(PotionEffect effect){
-            if(effect.getDuration() < 1){
+            if(effect.getDuration() < 1 && !effect.isInfinite()){
                 removePotion(effect.getType().key());
                 return;
             }
@@ -234,7 +276,7 @@ public class EntityInfusedPotionsHolder extends EntityTickedDataHolder {
         }
 
         public void updatePotion(PotionEffect effect){
-            if(effect.getDuration() < 1){
+            if(effect.getDuration() < 1 && !effect.isInfinite()){
                 removePotion(effect.getType().key());
             } else addPotion(effect);
         }

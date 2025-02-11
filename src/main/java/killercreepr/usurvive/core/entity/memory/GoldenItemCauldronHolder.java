@@ -50,7 +50,7 @@ public class GoldenItemCauldronHolder extends EntityTickedDataHolder {
     @Override
     public void tick(@NotNull Entity entity) {
         tick++;
-        if(tick < 10) return;
+        if(tick < 15) return;
         tick = 0;
         Block b = entity.getLocation().getBlock();
         if(b.getType() != Material.WATER_CAULDRON) return;
@@ -135,11 +135,12 @@ public class GoldenItemCauldronHolder extends EntityTickedDataHolder {
         Block b = owner.getLocation().getBlock();
 
         if(b.getType() == Material.WATER_CAULDRON && b.getBlockData() instanceof Levelled level){
-            int newLevel = CruxMath.clamp(level.getLevel()-1, level.getMinimumLevel(), level.getMaximumLevel());
+            int unClamped = level.getLevel()-1;
+            int newLevel = CruxMath.clamp(unClamped, level.getMinimumLevel(), level.getMaximumLevel());
             if(newLevel != level.getLevel()){
                 level.setLevel(newLevel);
                 b.setBlockData(level);
-            }else if(newLevel < 1){
+            }else if(unClamped < level.getMinimumLevel()){
                 Crux.handlers().block().setType(b, Material.CAULDRON);
             }
         }
