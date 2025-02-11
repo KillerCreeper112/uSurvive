@@ -6,6 +6,7 @@ import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.valueproviders.number.UniformNumber;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.data.ResourcePackRequestData;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
@@ -198,6 +199,12 @@ public class DefaultValues implements ValuesProvider {
     @NotNull
     @Override
     public NumberProvider INFUSION_DURABILITY_PERCENT() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Holder<Map<Key, Double>> INFUSION_ATTRIBUTE_BENEFITS() {
         return null;
     }
 }

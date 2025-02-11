@@ -1,18 +1,34 @@
 package killercreepr.usurvive.core.listener;
 
+import io.papermc.paper.datacomponent.DataComponentBuilder;
 import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.ItemAttributeModifiers;
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.item.predicate.ItemPredicate;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxGoalUtil;
+import killercreepr.cruxattributes.api.attribute.CruxAttribute;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeContainer;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeMap;
+import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
+import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
+import killercreepr.cruxattributes.core.registries.CruxAttributeRegistries;
 import killercreepr.usurvive.api.component.InfusedPotions;
 import killercreepr.usurvive.api.component.PotionInfusable;
 import killercreepr.usurvive.api.event.InfusedItemUpdateEvent;
 import killercreepr.usurvive.api.event.PostItemInfusePotionsEvent;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.component.USurviveComponents;
+import killercreepr.usurvive.core.component.impl.InfusionAttributesBenefit;
 import killercreepr.usurvive.core.entity.memory.GoldenItemCauldronHolder;
 import killercreepr.usurvive.core.entity.mob.goals.animal.AnimalEnhancedGoal;
+import killercreepr.usurvive.core.util.ItemUtil;
+import net.kyori.adventure.key.Key;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -21,11 +37,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.world.EntitiesLoadEvent;
+import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
+import java.util.logging.Level;
 
 public class AnimalsAndPotionInfusionListener implements Listener {
     protected final ValuesProvider cfg;
@@ -83,8 +100,79 @@ public class AnimalsAndPotionInfusionListener implements Listener {
         }
     }
 
-    public void updateAttributes(CruxItem item, int difference){
+    public double getValue(ItemAttributeModifiers mods, Attribute attribute){
+        if(mods == null) return 0D;
+        for (ItemAttributeModifiers.Entry entry : mods.modifiers()) {
+            if(entry.attribute() == attribute) return entry.modifier().getAmount();
+        }
+        return 0D;
+    }
 
+    public void updateAttributes(CruxItem item, int difference){
+        Map<Key, Double> benefitsPer = cfg.INFUSION_ATTRIBUTE_BENEFITS().value();
+        if(benefitsPer == null || benefitsPer.isEmpty()) return;
+        CruxSlotGroup group = ItemUtil.getDefaultSlotGroup(item.item());
+        EquipmentSlotGroup equipGroup = AttributeBukkitAdaptor.adapt(group);
+        if(equipGroup == null){
+            Crux.log(Level.WARNING, "No EquipmentSlotGroup found from " + group + "!");
+            return;
+        }
+        Map<Key, Double> attributeMap;
+        InfusionAttributesBenefit benefit = item.get(USurviveComponents.POTION_INFUSION_ATTRIBUTES_BENEFIT);
+        ItemAttributeModifiers attributes = item.item().getData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
+        if(benefit == null){
+            benefit = new InfusionAttributesBenefit(new HashMap<>(), attributes ==null);
+        }
+        attributeMap = benefit.getAttributes();
+
+        ItemAttributeModifiers defaultData = benefit.isKeepDefaults() ? item.item().getType().getDefaultData(DataComponentTypes.ATTRIBUTE_MODIFIERS) : null;
+
+        benefitsPer.forEach((key, amount) ->{
+            double current = attributeMap.getOrDefault(key, 0D);
+            double toAdd = (amount * difference);
+
+            double total = current + toAdd;
+            if(total == 0D){
+                attributeMap.remove(key);
+                return;
+            }
+            attributeMap.put(key, total);
+        });
+        if(attributeMap.isEmpty()){
+            if(benefit.isKeepDefaults()){
+                item.item().resetData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
+                return;
+            }
+            ItemAttributeModifiers. Builder builder = ItemAttributeModifiers.itemAttributes();
+            if(attributes != null){
+                attributes.modifiers().forEach(entry ->{
+                    if(entry.modifier().getKey().getKey().equalsIgnoreCase("potion_infusion_attribute")) return;
+                    builder.addModifier(entry.attribute(), entry.modifier(), entry.getGroup());
+                });
+                item.item().setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, builder);
+            }else item.item().resetData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
+            return;
+        }
+        ItemAttributeModifiers. Builder builder = ItemAttributeModifiers.itemAttributes();
+        if(attributes != null){
+            attributes.modifiers().forEach(entry ->{
+                if(entry.modifier().getKey().getKey().equalsIgnoreCase("potion_infusion_attribute")) return;
+                builder.addModifier(entry.attribute(), entry.modifier(), entry.getGroup());
+            });
+        }
+
+        attributeMap.forEach((key, value) ->{
+            Attribute attribute = RegistryAccess.registryAccess().getRegistry(RegistryKey.ATTRIBUTE).get(key);
+            if(attribute== null){
+                Crux.log(Level.WARNING, "Minecraft attribute of " + key + " not found!");
+                return;
+            }
+            builder.addModifier(attribute, new AttributeModifier(Crux.key("potion_infusion_attribute"),
+                getValue(defaultData, attribute) + value,
+                AttributeModifier.Operation.ADD_NUMBER,
+                equipGroup));
+        });
+        item.item().setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, builder);
     }
 
 

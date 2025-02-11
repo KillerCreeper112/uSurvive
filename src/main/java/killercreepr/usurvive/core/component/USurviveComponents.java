@@ -3,15 +3,22 @@ package killercreepr.usurvive.core.component;
 import killercreepr.crux.api.component.DataComponentType;
 import killercreepr.crux.api.component.parser.hybrid.PersistTextParser;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.component.parser.type.ComponentInputParsers;
 import killercreepr.crux.core.registries.CruxRegistries;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeMap;
+import killercreepr.cruxattributes.core.component.CruxAttributeCompParsers;
+import killercreepr.cruxattributes.core.component.CruxAttributeComponents;
 import killercreepr.cruxteleport.api.component.TeleporterComponent;
 import killercreepr.usurvive.api.component.InfusedPotions;
 import killercreepr.usurvive.api.component.PotionInfusable;
 import killercreepr.usurvive.api.mechanics.Grapple;
+import killercreepr.usurvive.core.component.impl.InfusionAttributesBenefit;
 import killercreepr.usurvive.core.component.impl.OrbitConduitComponent;
 import killercreepr.usurvive.core.component.impl.SmokeParticleBlockComponent;
 import killercreepr.usurvive.core.component.impl.SoulParticleBlockComponent;
+import net.kyori.adventure.key.Key;
 
+import java.util.Map;
 import java.util.function.UnaryOperator;
 
 public class USurviveComponents {
@@ -35,8 +42,8 @@ public class USurviveComponents {
 
     public static final DataComponentType<Integer> POTION_INFUSION_DURABILITY_BENEFIT = register("potion_infusion_durability_benefit", builder ->
         builder.persistTextParser(PersistTextParser.INTEGER.createInput(Crux.key("potion_infusion_durability_benefit"))));
-    public static final DataComponentType<Integer> POTION_INFUSION_ATTRIBUTES_BENEFIT = register("potion_infusion_attributes_benefit", builder ->
-        builder.persistTextParser(PersistTextParser.INTEGER.createInput(Crux.key("potion_infusion_attributes_benefit"))));
+    public static final DataComponentType<InfusionAttributesBenefit> POTION_INFUSION_ATTRIBUTES_BENEFIT = register("potion_infusion_attributes_benefit", builder ->
+        builder.persistTextParser(USurviveCompParsers.INFUSION_ATTRIBUTES_BENEFIT.createInput(Crux.key("potion_infusion_attributes_benefit"))));
 
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());

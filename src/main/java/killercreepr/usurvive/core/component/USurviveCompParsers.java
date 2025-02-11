@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.component;
 
+import killercreepr.crux.api.component.parser.InputDecodeContext;
 import killercreepr.crux.api.component.parser.hybrid.PersistTextParser;
 import killercreepr.crux.api.component.parser.hybrid.TextInputField;
 import killercreepr.crux.core.component.parser.type.ComponentInputParsers;
@@ -9,6 +10,7 @@ import killercreepr.usurvive.api.component.InfusedPotionGroup;
 import killercreepr.usurvive.api.component.InfusedPotions;
 import killercreepr.usurvive.api.component.PotionInfusable;
 import killercreepr.usurvive.api.mechanics.Grapple;
+import killercreepr.usurvive.core.component.impl.InfusionAttributesBenefit;
 import killercreepr.usurvive.core.component.impl.SimpleInfusedPotionGroup;
 import killercreepr.usurvive.core.component.impl.SimpleInfusedPotions;
 import killercreepr.usurvive.core.component.impl.SimplePotionInfusable;
@@ -18,6 +20,7 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.List;
+import java.util.Map;
 
 public class USurviveCompParsers {
     public static final PersistTextParser<Grapple> GRAPPLE = PersistTextParser.mapBuilder(Grapple.class)
@@ -113,4 +116,9 @@ public class USurviveCompParsers {
             int maxInfusions = ctx.getOptional("max_infusions", 3);
             return new SimplePotionInfusable(maxInfusions);
         });
+
+    public static final PersistTextParser<InfusionAttributesBenefit> INFUSION_ATTRIBUTES_BENEFIT = PersistTextParser.mapBuilder(InfusionAttributesBenefit.class)
+        .field("attributes", TextInputField.field(ComponentInputParsers.MAP.KEY_DOUBLE_MAP, InfusionAttributesBenefit::getAttributes))
+        .field("keep_defaults", TextInputField.field(PersistTextParser.BOOLEAN, InfusionAttributesBenefit::isKeepDefaults))
+        .apply(ctx -> new InfusionAttributesBenefit(ctx.get("attributes"), ctx.getOptional("keep_defaults")));
 }

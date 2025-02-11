@@ -13,6 +13,7 @@ import killercreepr.cruxconfig.config.bukkit.value.NumCfgValue;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.data.ResourcePackRequestData;
 import killercreepr.usurvive.core.values.DefaultValues;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -66,6 +67,7 @@ public class Config extends Cfg implements ValuesProvider {
     )){};
     public final NumCfgValue INFUSION_DURABILITY_PERCENT = new NumCfgValue(.5f);
     public final CfgValue<ItemPredicate> APPLICABLE_INFUSION_BENEFITS = new CommonValue<>(){};
+    public final CfgValue<Map<Key, Double>> INFUSION_ATTRIBUTE_BENEFITS = new CommonValue<>(Map.of(Key.key("armor"), 1D)){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -256,5 +258,11 @@ public class Config extends Cfg implements ValuesProvider {
     @Override
     public NumberProvider INFUSION_DURABILITY_PERCENT() {
         return INFUSION_DURABILITY_PERCENT.value();
+    }
+
+    @NotNull
+    @Override
+    public Holder<Map<Key, Double>> INFUSION_ATTRIBUTE_BENEFITS() {
+        return INFUSION_ATTRIBUTE_BENEFITS;
     }
 }
