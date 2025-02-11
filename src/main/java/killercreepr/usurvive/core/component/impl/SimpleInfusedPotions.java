@@ -1,7 +1,6 @@
 package killercreepr.usurvive.core.component.impl;
 
 import killercreepr.cruxattributes.api.equipment.CruxSlot;
-import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.usurvive.api.component.InfusedPotionGroup;
 import killercreepr.usurvive.api.component.InfusedPotions;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +9,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;

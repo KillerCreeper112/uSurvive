@@ -1,6 +1,5 @@
 package killercreepr.usurvive.core.entity.memory;
 
-import com.destroystokyo.paper.MaterialTags;
 import com.destroystokyo.paper.ParticleBuilder;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.PotionContents;
@@ -20,7 +19,10 @@ import killercreepr.usurvive.core.component.impl.SimpleInfusedPotionGroup;
 import killercreepr.usurvive.core.component.impl.SimpleInfusedPotions;
 import killercreepr.usurvive.core.util.ItemUtil;
 import net.kyori.adventure.key.Key;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Entity;

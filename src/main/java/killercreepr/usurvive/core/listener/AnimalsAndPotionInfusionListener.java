@@ -1,6 +1,5 @@
 package killercreepr.usurvive.core.listener;
 
-import io.papermc.paper.datacomponent.DataComponentBuilder;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemAttributeModifiers;
 import io.papermc.paper.registry.RegistryAccess;
@@ -10,12 +9,8 @@ import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.item.predicate.ItemPredicate;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxGoalUtil;
-import killercreepr.cruxattributes.api.attribute.CruxAttribute;
-import killercreepr.cruxattributes.api.attribute.CruxAttributeContainer;
-import killercreepr.cruxattributes.api.attribute.CruxAttributeMap;
 import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
-import killercreepr.cruxattributes.core.registries.CruxAttributeRegistries;
 import killercreepr.usurvive.api.component.InfusedPotions;
 import killercreepr.usurvive.api.component.PotionInfusable;
 import killercreepr.usurvive.api.event.InfusedItemUpdateEvent;
@@ -27,7 +22,6 @@ import killercreepr.usurvive.core.entity.memory.GoldenItemCauldronHolder;
 import killercreepr.usurvive.core.entity.mob.goals.animal.AnimalEnhancedGoal;
 import killercreepr.usurvive.core.util.ItemUtil;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Animals;
@@ -42,7 +36,10 @@ import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 public class AnimalsAndPotionInfusionListener implements Listener {
@@ -135,10 +132,8 @@ public class AnimalsAndPotionInfusionListener implements Listener {
         benefitsPer.forEach((key, amount) ->{
             double current = attributeMap.getOrDefault(key, 0D);
             double toAdd = (amount * difference);
-            Bukkit.broadcastMessage("toAdd=" + toAdd);
 
             double total = current + toAdd;
-            Bukkit.broadcastMessage("total=" + total);
             if(total == 0D){
                 attributeMap.remove(key);
                 return;

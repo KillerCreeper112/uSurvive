@@ -5,7 +5,6 @@ import killercreepr.cruxattributes.api.equipment.CruxSlot;
 import killercreepr.usurvive.api.component.InfusedPotions;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
-import org.bukkit.potion.PotionEffect;
 
 public class InfusedItemUpdateEvent extends AbstractInfusedItemPotionEntityEvent implements Cancellable {
     protected boolean cancel = false;

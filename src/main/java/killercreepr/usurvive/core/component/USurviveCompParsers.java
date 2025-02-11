@@ -1,6 +1,5 @@
 package killercreepr.usurvive.core.component;
 
-import killercreepr.crux.api.component.parser.InputDecodeContext;
 import killercreepr.crux.api.component.parser.hybrid.PersistTextParser;
 import killercreepr.crux.api.component.parser.hybrid.TextInputField;
 import killercreepr.crux.core.component.parser.type.ComponentInputParsers;
@@ -20,7 +19,6 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.List;
-import java.util.Map;
 
 public class USurviveCompParsers {
     public static final PersistTextParser<Grapple> GRAPPLE = PersistTextParser.mapBuilder(Grapple.class)
