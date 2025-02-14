@@ -25,9 +25,11 @@ public class ResetWorldModule extends SimpleWorldModule implements Ticked {
         this.type = type;
     }
     protected int tick = 0;
+    protected boolean resetting = false;
     //1 hour = 72,000
     @Override
     public void tick() {
+        if(resetting) return;
         tick++;
         //after 30 seconds of init or every hour, check.
         if(tick == 600 || tick >= 72000){
@@ -44,7 +46,8 @@ public class ResetWorldModule extends SimpleWorldModule implements Ticked {
         int resetTime = this.resetTime.value().value().intValue();
         long lastReset = getLastReset();
         if(CruxMath.hasOccurredWithin(lastReset, resetTime)) return;
-        reset();
+        resetting = true;
+        Crux.scheduler().runTask(() -> reset());
     }
 
     public void reset(){
