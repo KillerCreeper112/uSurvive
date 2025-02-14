@@ -144,6 +144,12 @@ public class DefaultValues implements ValuesProvider {
 
     @NotNull
     @Override
+    public NumberProvider RESOURCE_OVERWORLD_RESET_TIME() {
+        return null;
+    }
+
+    @NotNull
+    @Override
     public NumberProvider TPA_EXPIRE_TICKS() {
         return null;
     }

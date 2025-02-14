@@ -68,6 +68,7 @@ public class Config extends Cfg implements ValuesProvider {
     public final NumCfgValue INFUSION_DURABILITY_PERCENT = new NumCfgValue(.5f);
     public final CfgValue<ItemPredicate> APPLICABLE_INFUSION_BENEFITS = new CommonValue<>(){};
     public final CfgValue<Map<Key, Double>> INFUSION_ATTRIBUTE_BENEFITS = new CommonValue<>(Map.of(Key.key("armor"), 1D)){};
+    public final NumCfgValue RESOURCE_OVERWORLD_RESET_TIME = new NumCfgValue(72_000);
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -198,6 +199,12 @@ public class Config extends Cfg implements ValuesProvider {
     @Override
     public NumberProvider RESOURCE_OVERWORLD_BORDER() {
         return RESOURCE_OVERWORLD_BORDER.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider RESOURCE_OVERWORLD_RESET_TIME() {
+        return RESOURCE_OVERWORLD_RESET_TIME.value();
     }
 
     @NotNull

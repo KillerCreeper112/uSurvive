@@ -29,7 +29,9 @@ public class USurviveWorldTypes {
                 world.getWorldBorder().setSize(borderSize);
             }
             CruxWorldManager worldManager = CruxCore.inst().worldManager();
-            return Objects.requireNonNull(worldManager.getWorld(name), "Unable to generate world " + name + "!");
+            CruxWorld crux = worldManager.getWorld(name);
+            Objects.requireNonNull(crux, "Unable to generate world " + name + "!");
+            return crux;
         }
 
         @Override
