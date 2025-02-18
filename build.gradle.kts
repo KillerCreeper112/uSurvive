@@ -22,8 +22,11 @@ dependencies {
         "E:\\Plugins\\YO\\CruxCurrency\\build\\libs\\CruxCurrency-1.0.jar",
         "E:\\Plugins\\YO\\CruxClaims\\build\\libs\\CruxClaims-1.0-all.jar",
         "E:\\Plugins\\YO\\CruxFriends\\build\\libs\\CruxFriends-1.0-all.jar",
-        "E:\\Plugins\\YO\\CruxParty\\build\\libs\\CruxParty-1.0-all.jar"
+        "E:\\Plugins\\YO\\CruxParty\\build\\libs\\CruxParty-1.0-all.jar",
+
+        "E:\\Plugins\\YO\\CruxCore\\run\\plugins\\QuickShop-Hikari-6.2.0.8.jar"
     ))
+
 
     compileOnly(fileTree("libs"){
         include("*.jar")

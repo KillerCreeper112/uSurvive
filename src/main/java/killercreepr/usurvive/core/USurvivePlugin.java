@@ -321,6 +321,77 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         //deathManager.load();
 
         //cfgManagerLoader.load();
+
+        setupQuickShop();
+    }
+
+    public void setupQuickShop(){
+        /*QuickShop shop = QuickShop.getInstance();
+
+        try{
+            Field field = shop.getClass().getDeclaredField("economy");
+            field.setAccessible(true);
+            field.set(shop, new AbstractEconomy() {
+                @Override
+                public boolean withdraw(@NotNull QUser qUser, double v, @NotNull World world, @Nullable String s) {
+                    return false;
+                }
+
+                @Override
+                public boolean deposit(@NotNull QUser qUser, double v, @NotNull World world, @Nullable String s) {
+                    return false;
+                }
+
+                @Override
+                public double getBalance(@NotNull QUser qUser, @NotNull World world, @Nullable String s) {
+                    return 0;
+                }
+
+                @Override
+                public String getProviderName() {
+                    return "";
+                }
+
+                @Override
+                public String toString() {
+                    return "";
+                }
+
+                @Override
+                public String format(double v, @NotNull World world, @Nullable String s) {
+                    return "";
+                }
+
+                @Nullable
+                @Override
+                public String getLastError() {
+                    return null;
+                }
+
+                @Override
+                public @NotNull Plugin getPlugin() {
+                    return USurvivePlugin.this;
+                }
+
+                @Override
+                public boolean hasCurrency(@NotNull World world, @NotNull String s) {
+                    return true;
+                }
+
+                @Override
+                public boolean isValid() {
+                    return true;
+                }
+
+                @Override
+                public boolean supportCurrency() {
+                    return true;
+                }
+            });
+            field.setAccessible(false);
+        }catch (IllegalAccessException | NoSuchFieldException ignored){
+            ignored.printStackTrace();
+        }*/
     }
 
     public void registerMenuModules(@NotNull FileMenuHolder<?> fileMenuHolder, @NotNull KeyedRegistry<MenuModuleBuilder> registry) {
