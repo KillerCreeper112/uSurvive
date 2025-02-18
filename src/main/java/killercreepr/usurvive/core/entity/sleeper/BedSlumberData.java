@@ -1,0 +1,79 @@
+package killercreepr.usurvive.core.entity.sleeper;
+
+import killercreepr.crux.core.data.util.Pair;
+import killercreepr.crux.core.util.CruxBlockFace;
+import killercreepr.crux.core.util.CruxLoc;
+import killercreepr.crux.core.util.CruxMath;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.type.Bed;
+import org.bukkit.entity.Entity;
+
+public class BedSlumberData extends BaseSlumberData {
+    public BedSlumberData(Entity entity, Location location) {
+        super(entity, location);
+    }
+
+    @Override
+    public Location getUserTeleportLocation() {
+        Block b = location.getBlock();
+        if(!(b.getBlockData() instanceof Bed bed)) return super.getUserTeleportLocation();
+        Pair<Block, Block> pair = getFullBed(b, bed);
+        if(pair == null) return formatSpectateLocation(b);
+        return formatSpectateLocation(pair.getFirst());
+    }
+
+    @Override
+    public Location getDisplayLocation() {
+        Block b = location.getBlock();
+        if(!(b.getBlockData() instanceof Bed bed)) return super.getUserTeleportLocation();
+        Pair<Block, Block> pair = getFullBed(b, bed);
+        if(pair == null) return formatDisplayLocation(b);
+        return formatDisplayLocation(pair.getSecond());
+    }
+
+    public Location formatDisplayLocation(Block b){
+        Location loc = b.getLocation().toCenterLocation().add(0, .2, 0);
+        if(b.getBlockData() instanceof Directional dir){
+            BlockFace direction = dir.getFacing().getOppositeFace();
+            loc = CruxLoc.shift(loc, direction.getDirection(), .45D, 0D, 0D);
+            BlockFace rotated;
+            if(dir.getFacing() == BlockFace.SOUTH || dir.getFacing() == BlockFace.NORTH){
+                rotated = CruxBlockFace.rotateLeft(direction);
+            }else rotated = CruxBlockFace.rotateRight(direction);
+            loc.setDirection(rotated.getDirection());
+        }
+        loc.setPitch(0f);
+        return loc;
+    }
+
+    public Location formatSpectateLocation(Block b){
+        Location loc = b.getLocation().toCenterLocation().add(0, .4, 0);
+        if(b.getBlockData() instanceof Directional dir){
+            loc.setDirection(dir.getFacing().getOppositeFace().getDirection());
+        }
+        loc.setPitch(-90f);
+        return loc;
+    }
+
+    //<head, foot>
+    public Pair<Block, Block> getFullBed(Block block, Bed bed){
+        BlockFace direction;
+        if(bed.getPart() == Bed.Part.FOOT) direction = bed.getFacing();
+        else direction = bed.getFacing().getOppositeFace();
+
+        Block part = block.getRelative(direction);
+        if(!(part.getBlockData() instanceof Bed)) return null;
+        if(bed.getPart() == Bed.Part.FOOT){
+            return new Pair<>(part, block);
+        }
+        return new Pair<>(block, part);
+    }
+
+    @Override
+    public boolean shouldStop() {
+        return super.shouldStop() || !(location.getBlock().getBlockData() instanceof Bed);
+    }
+}

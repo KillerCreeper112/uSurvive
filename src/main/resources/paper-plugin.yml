@@ -26,5 +26,5 @@ dependencies:
     CruxParty:
       load: AFTER
     QuickShop-Hikari:
-      load: AFTER
+      load: BEFORE
       required: false

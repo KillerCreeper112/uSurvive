@@ -80,6 +80,7 @@ import killercreepr.usurvive.core.death.PlayerDeath;
 import killercreepr.usurvive.core.death.SimpleDeathManager;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.memory.EntityInfusedPotionsHolder;
+import killercreepr.usurvive.core.entity.memory.SleeperHolder;
 import killercreepr.usurvive.core.entity.player.SimpleUPlayerManager;
 import killercreepr.usurvive.core.entity.player.settings.SimplePlayerSettingsManager;
 import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettings;
@@ -236,6 +237,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             m.getDataHolders().register(new DeathHolder(m, values(), getDeathManager()));
             m.getDataHolders().register(new MemoryPlayerSettingsHolder(m));
             m.getDataHolders().register(new EntityInfusedPotionsHolder(m));
+            m.getDataHolders().register(new SleeperHolder(m));
         });
         StandardGrappleHooks.register(USurviveRegistries.GRAPPLE_HOOK);
         StandardOverworldGroups.register(USurviveRegistries.OVERWORLD_NATURAL_ENTITY_SPAWN_GROUP);
@@ -253,7 +255,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new PlayerTags(),
             new PlayerSettingSelectionTags(),
             new PlayerSettingTags(),
-            new ItemStackTags()
+            new ItemStackTags(),
+            new WorldTags()
         ));
     }
 
@@ -313,7 +316,9 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new EnchantsListener(this),
             new AnimalsAndPotionInfusionListener(values),
             new ProjectileReflectListener(),
-            new SettingsListener()
+            new SettingsListener(),
+            new MiscListener(),
+            new BedListener()
         );
 
         super.enabled();

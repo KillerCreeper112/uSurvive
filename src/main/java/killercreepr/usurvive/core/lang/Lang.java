@@ -199,6 +199,11 @@ public class Lang {
             .chat("<red>You may not send a teleport here request to <target_name>.")
             .build()
     );
+    public static final Msg SLEEPING_TICK = create(
+        Communicator.builder()
+            .chat("")
+            .build()
+    );
 
     public static Msg create(@NotNull String id, @NotNull Communicator communicator){
         return new Msg(id, communicator, Lang::lang);
