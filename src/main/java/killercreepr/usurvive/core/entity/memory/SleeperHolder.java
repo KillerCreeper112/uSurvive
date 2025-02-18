@@ -27,6 +27,12 @@ public class SleeperHolder extends EntityTickedDataHolder {
     }
 
     @Override
+    public void onMemoryUnload(@NotNull Entity e) {
+        super.onMemoryUnload(e);
+        sleep(null);
+    }
+
+    @Override
     public void tick(@NotNull Entity entity) {
         if(processingData()) return;
         if(isSleeping()){
@@ -56,6 +62,7 @@ public class SleeperHolder extends EntityTickedDataHolder {
     }
 
     public boolean sleep(SlumberData slumberData, boolean silentSlumber, boolean silentLeave) {
+        if(slumberData == this.slumberData) return false;
         if(this.slumberData != null){
 
             if(!silentLeave){
