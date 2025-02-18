@@ -11,10 +11,8 @@ import killercreepr.usurvive.api.entity.sleeper.SlumberSpectator;
 import killercreepr.usurvive.api.event.EntityLeaveSlumberEvent;
 import killercreepr.usurvive.api.event.EntitySlumberEvent;
 import killercreepr.usurvive.api.world.module.SleeperWorldModule;
-import killercreepr.usurvive.core.death.storage.WorldDeathStorage;
 import killercreepr.usurvive.core.entity.memory.SleeperHolder;
 import killercreepr.usurvive.core.entity.sleeper.BedSlumberData;
-import killercreepr.usurvive.core.world.module.SimpleDeathWorldModule;
 import killercreepr.usurvive.core.world.module.SimpleSleeperWorldModule;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -24,9 +22,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityTeleportEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-
-import java.util.concurrent.ConcurrentHashMap;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 public class BedListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
@@ -62,6 +61,34 @@ public class BedListener implements Listener {
         SleeperWorldModule sleep = crux.getModule(SleeperWorldModule.class);
         if(sleep == null) return;
         sleep.removeSleeper(e.getUniqueId());
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityTeleport(EntityTeleportEvent event) {
+        Entity e = event.getEntity();
+        SleeperHolder sleeper = EntityMemory.getDataHolder(e, SleeperHolder.class);
+        if(sleeper==null) return;
+        if(!sleeper.isSleeping()) return;
+        sleeper.sleep(null);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerTeleport(PlayerTeleportEvent event) {
+        Entity e = event.getPlayer();
+        SleeperHolder sleeper = EntityMemory.getDataHolder(e, SleeperHolder.class);
+        if(sleeper==null) return;
+        if(!sleeper.isSleeping()) return;
+        sleeper.sleep(null);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
+        Entity e = event.getPlayer();
+        SleeperHolder sleeper = EntityMemory.getDataHolder(e, SleeperHolder.class);
+        if(sleeper==null) return;
+        if(!sleeper.isSleeping()) return;
+        sleeper.sleep(null);
+
     }
 
     @EventHandler(ignoreCancelled = true)
