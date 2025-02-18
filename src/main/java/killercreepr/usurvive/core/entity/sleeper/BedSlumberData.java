@@ -3,7 +3,6 @@ package killercreepr.usurvive.core.entity.sleeper;
 import killercreepr.crux.core.data.util.Pair;
 import killercreepr.crux.core.util.CruxBlockFace;
 import killercreepr.crux.core.util.CruxLoc;
-import killercreepr.crux.core.util.CruxMath;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;

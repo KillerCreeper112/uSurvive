@@ -60,6 +60,7 @@ import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsManager;
 import killercreepr.usurvive.api.tpa.TPAManager;
+import killercreepr.usurvive.api.values.SleeperCfg;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.attribute.USurviveAttribute;
 import killercreepr.usurvive.core.block.USurviveBlocks;
@@ -69,9 +70,7 @@ import killercreepr.usurvive.core.command.USurviveCommands;
 import killercreepr.usurvive.core.component.USurviveComponents;
 import killercreepr.usurvive.core.config.Config;
 import killercreepr.usurvive.core.config.component.CfgUSurviveComponents;
-import killercreepr.usurvive.core.config.handler.FilePlayerDeath;
-import killercreepr.usurvive.core.config.handler.FilePlayerSetting;
-import killercreepr.usurvive.core.config.handler.FilePlayerSettingSelection;
+import killercreepr.usurvive.core.config.handler.*;
 import killercreepr.usurvive.core.data.ResourcePackData;
 import killercreepr.usurvive.core.data.ResourcePackRequestData;
 import killercreepr.usurvive.core.data.entity.DeathHolder;
@@ -84,6 +83,8 @@ import killercreepr.usurvive.core.entity.memory.SleeperHolder;
 import killercreepr.usurvive.core.entity.player.SimpleUPlayerManager;
 import killercreepr.usurvive.core.entity.player.settings.SimplePlayerSettingsManager;
 import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettings;
+import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeakness;
+import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeaknessCalculator;
 import killercreepr.usurvive.core.entity.tickable.USurviveTickables;
 import killercreepr.usurvive.core.item.QuickAccessItem;
 import killercreepr.usurvive.core.item.USurviveItems;
@@ -237,7 +238,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             m.getDataHolders().register(new DeathHolder(m, values(), getDeathManager()));
             m.getDataHolders().register(new MemoryPlayerSettingsHolder(m));
             m.getDataHolders().register(new EntityInfusedPotionsHolder(m));
-            m.getDataHolders().register(new SleeperHolder(m));
+            m.getDataHolders().register(new SleeperHolder(m, () -> (SleeperCfg) values()));
         });
         StandardGrappleHooks.register(USurviveRegistries.GRAPPLE_HOOK);
         StandardOverworldGroups.register(USurviveRegistries.OVERWORLD_NATURAL_ENTITY_SPAWN_GROUP);
@@ -503,6 +504,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     public void registerSimpleCfgHandlers(@NotNull FileRegistry registry){
         registry.registerFileHandler(PlayerSetting.class, new FilePlayerSetting());
         registry.registerFileHandler(PlayerSettingSelection.class, new FilePlayerSettingSelection());
+        registry.registerFileHandler(SleepWeakness.class, new FileSleepWeakness());
+        registry.registerFileHandler(SleepWeaknessCalculator.class, new FileSleepWeaknessCalculator());
     }
 
     public void registerCfgHandlers(@NotNull FileRegistry registry){

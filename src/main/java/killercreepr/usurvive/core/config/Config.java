@@ -10,8 +10,11 @@ import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
 import killercreepr.cruxconfig.config.bukkit.value.CfgValue;
 import killercreepr.cruxconfig.config.bukkit.value.CommonValue;
 import killercreepr.cruxconfig.config.bukkit.value.NumCfgValue;
+import killercreepr.usurvive.api.values.SleeperCfg;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.data.ResourcePackRequestData;
+import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeakness;
+import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeaknessCalculator;
 import killercreepr.usurvive.core.values.DefaultValues;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -25,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 @killercreepr.cruxconfig.config.common.annotations.Config(autoUpdate = true)
-public class Config extends Cfg implements ValuesProvider {
+public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     public final CfgValue<String> SPAWN_WORLD = new CommonValue<>(DefaultValues.SPAWN_WORLD.value()){};
     public final CfgValue<String> RESPAWN_WORLD = new CommonValue<>(DefaultValues.SPAWN_WORLD.value()){};
     public final NumCfgValue RESPAWN_X = new NumCfgValue(NumberProvider.constant(0));
@@ -69,6 +72,11 @@ public class Config extends Cfg implements ValuesProvider {
     public final CfgValue<ItemPredicate> APPLICABLE_INFUSION_BENEFITS = new CommonValue<>(){};
     public final CfgValue<Map<Key, Double>> INFUSION_ATTRIBUTE_BENEFITS = new CommonValue<>(Map.of(Key.key("armor"), 1D)){};
     public final NumCfgValue RESOURCE_OVERWORLD_RESET_TIME = new NumCfgValue(72_000);
+    public final NumCfgValue SLEEP_WEAKNESS_SLUMBER_TICK_START = new NumCfgValue(10_000);
+    public final NumCfgValue SLEEP_WEAKNESS_SLUMBER_DROP_OFF = new NumCfgValue(20);
+    public final NumCfgValue SLEEP_WEAKNESS_SLUMBER_DROP_OFF_AMOUNT = new NumCfgValue(1);
+    public final CfgValue<Map<Integer, SleepWeakness>> SLEEP_WEAKNESS_LEVELS = new CommonValue<>(){};
+    public final CfgValue<SleepWeaknessCalculator> SLEEP_WEAKNESS_LEVELS_DEFINITION = new CommonValue<>(){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -86,6 +94,31 @@ public class Config extends Cfg implements ValuesProvider {
     public void reload(@NotNull CruxPlugin plugin) {
         reload();
         setup();
+    }
+
+    @Override
+    public NumberProvider SLEEP_WEAKNESS_SLUMBER_TICK_START() {
+        return SLEEP_WEAKNESS_SLUMBER_TICK_START.value();
+    }
+
+    @Override
+    public NumberProvider SLEEP_WEAKNESS_SLUMBER_DROP_OFF() {
+        return SLEEP_WEAKNESS_SLUMBER_DROP_OFF.value();
+    }
+
+    @Override
+    public NumberProvider SLEEP_WEAKNESS_SLUMBER_DROP_OFF_AMOUNT() {
+        return SLEEP_WEAKNESS_SLUMBER_DROP_OFF_AMOUNT.value();
+    }
+
+    @Override
+    public Holder<Map<Integer, SleepWeakness>> SLEEP_WEAKNESS_LEVELS() {
+        return SLEEP_WEAKNESS_LEVELS;
+    }
+
+    @Override
+    public Holder<SleepWeaknessCalculator> SLEEP_WEAKNESS_LEVELS_DEFINITION() {
+        return SLEEP_WEAKNESS_LEVELS_DEFINITION;
     }
 
     @NotNull

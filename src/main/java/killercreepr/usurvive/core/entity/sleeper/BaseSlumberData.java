@@ -10,7 +10,9 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Pose;
 
 public class BaseSlumberData implements SlumberData, SlumberSpectator {
     protected final Entity entity;

@@ -2,8 +2,6 @@ package killercreepr.usurvive.core.entity.mob;
 
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
-import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
-import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;

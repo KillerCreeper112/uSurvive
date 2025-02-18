@@ -14,7 +14,6 @@ import killercreepr.usurvive.api.event.InfusedItemPotionAddToEntityEvent;
 import killercreepr.usurvive.api.event.InfusedItemUpdateEvent;
 import killercreepr.usurvive.core.component.USurviveComponents;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
