@@ -4,6 +4,7 @@ import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeakness;
 import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeaknessCalculator;
+import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeaknessWarning;
 
 import java.util.Map;
 
@@ -23,5 +24,15 @@ public interface SleeperCfg {
     //end
     Holder<Map<Integer, SleepWeakness>> SLEEP_WEAKNESS_LEVELS();
     Holder<SleepWeaknessCalculator> SLEEP_WEAKNESS_LEVELS_DEFINITION();
+    Holder<SleepWeaknessWarning> SLEEP_WEAKNESS_WARNINGS();
 
+    NumberProvider DEEP_SLEEP_START_TIME();
+
+    NumberProvider SLEEP_REGENERATION_RATE();
+    NumberProvider SLEEP_REGENERATION_AMOUNT();
+
+    NumberProvider SLEEP_HUNGER_RATE();
+    NumberProvider SLEEP_HUNGER_AMOUNT();
+    NumberProvider SLEEP_HUNGER_SATURATION_RATE();
+    NumberProvider SLEEP_HUNGER_SATURATION_AMOUNT();
 }

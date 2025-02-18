@@ -85,6 +85,7 @@ import killercreepr.usurvive.core.entity.player.settings.SimplePlayerSettingsMan
 import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettings;
 import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeakness;
 import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeaknessCalculator;
+import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeaknessWarning;
 import killercreepr.usurvive.core.entity.tickable.USurviveTickables;
 import killercreepr.usurvive.core.item.QuickAccessItem;
 import killercreepr.usurvive.core.item.USurviveItems;
@@ -506,6 +507,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         registry.registerFileHandler(PlayerSettingSelection.class, new FilePlayerSettingSelection());
         registry.registerFileHandler(SleepWeakness.class, new FileSleepWeakness());
         registry.registerFileHandler(SleepWeaknessCalculator.class, new FileSleepWeaknessCalculator());
+        registry.registerFileHandler(SleepWeaknessWarning.class, new FileSleepWeaknessWarning());
     }
 
     public void registerCfgHandlers(@NotNull FileRegistry registry){

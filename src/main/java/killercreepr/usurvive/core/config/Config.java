@@ -15,6 +15,7 @@ import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.data.ResourcePackRequestData;
 import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeakness;
 import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeaknessCalculator;
+import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeaknessWarning;
 import killercreepr.usurvive.core.values.DefaultValues;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -77,6 +78,14 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     public final NumCfgValue SLEEP_WEAKNESS_SLUMBER_DROP_OFF_AMOUNT = new NumCfgValue(1);
     public final CfgValue<Map<Integer, SleepWeakness>> SLEEP_WEAKNESS_LEVELS = new CommonValue<>(){};
     public final CfgValue<SleepWeaknessCalculator> SLEEP_WEAKNESS_LEVELS_DEFINITION = new CommonValue<>(){};
+    public final CfgValue<SleepWeaknessWarning> SLEEP_WEAKNESS_WARNINGS = new CommonValue<>(){};
+    public final NumCfgValue DEEP_SLEEP_START_TIME = new NumCfgValue(80);
+    public final NumCfgValue SLEEP_REGENERATION_RATE = new NumCfgValue(NumberProvider.uniform(10, 15));
+    public final NumCfgValue SLEEP_REGENERATION_AMOUNT = new NumCfgValue(1);
+    public final NumCfgValue SLEEP_HUNGER_RATE = new NumCfgValue(20);
+    public final NumCfgValue SLEEP_HUNGER_AMOUNT = new NumCfgValue(-1);
+    public final NumCfgValue SLEEP_HUNGER_SATURATION_RATE = new NumCfgValue(20);
+    public final NumCfgValue SLEEP_HUNGER_SATURATION_AMOUNT = new NumCfgValue(-1);
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -94,6 +103,41 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     public void reload(@NotNull CruxPlugin plugin) {
         reload();
         setup();
+    }
+
+    @Override
+    public NumberProvider DEEP_SLEEP_START_TIME() {
+        return DEEP_SLEEP_START_TIME.value();
+    }
+
+    @Override
+    public NumberProvider SLEEP_REGENERATION_RATE() {
+        return SLEEP_REGENERATION_RATE.value();
+    }
+
+    @Override
+    public NumberProvider SLEEP_REGENERATION_AMOUNT() {
+        return SLEEP_REGENERATION_AMOUNT.value();
+    }
+
+    @Override
+    public NumberProvider SLEEP_HUNGER_RATE() {
+        return SLEEP_HUNGER_RATE.value();
+    }
+
+    @Override
+    public NumberProvider SLEEP_HUNGER_AMOUNT() {
+        return SLEEP_HUNGER_AMOUNT.value();
+    }
+
+    @Override
+    public NumberProvider SLEEP_HUNGER_SATURATION_RATE() {
+        return SLEEP_HUNGER_SATURATION_RATE.value();
+    }
+
+    @Override
+    public NumberProvider SLEEP_HUNGER_SATURATION_AMOUNT() {
+        return SLEEP_HUNGER_SATURATION_AMOUNT.value();
     }
 
     @Override
@@ -119,6 +163,11 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     @Override
     public Holder<SleepWeaknessCalculator> SLEEP_WEAKNESS_LEVELS_DEFINITION() {
         return SLEEP_WEAKNESS_LEVELS_DEFINITION;
+    }
+
+    @Override
+    public Holder<SleepWeaknessWarning> SLEEP_WEAKNESS_WARNINGS() {
+        return SLEEP_WEAKNESS_WARNINGS;
     }
 
     @NotNull
