@@ -1,19 +1,24 @@
 package killercreepr.usurvive.core.entity.memory;
 
 import killercreepr.crux.api.data.Holder;
+import killercreepr.crux.api.entity.CruxEntity;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.EntityTickedDataHolder;
+import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.usurvive.api.entity.sleeper.SlumberData;
 import killercreepr.usurvive.api.event.EntityLeaveSlumberEvent;
 import killercreepr.usurvive.api.event.EntitySlumberEvent;
 import killercreepr.usurvive.api.values.SleeperCfg;
 import killercreepr.usurvive.core.entity.sleeper.BedSlumberData;
+import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeakness;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 public class SleeperHolder extends EntityTickedDataHolder {
     public static final Key KEY = Crux.key("sleeper");
@@ -36,6 +41,7 @@ public class SleeperHolder extends EntityTickedDataHolder {
     protected long lastAwoken;
     protected int slumberTicks;
     protected int ticksAwake = 0;
+    protected int sleepWeakness = 0;
 
     public boolean processingData(){
         return ticksSleeping == -1;
@@ -45,6 +51,21 @@ public class SleeperHolder extends EntityTickedDataHolder {
     public void onMemoryUnload(@NotNull Entity e) {
         super.onMemoryUnload(e);
         sleep(null);
+    }
+
+    public void updateSleepWeaknessTick(){
+        if(ticksSleeping % 6 != 0) return;
+        sleepWeakness = calculateSleepWeaknessLevel(slumberTicks);
+    }
+
+    public void sleepWeaknessTick(int level){
+        SleepWeakness effects = cfg().SLEEP_WEAKNESS_LEVELS().valueOr(Map.of()).get(level);
+        if(effects==null) return;
+        if(!(parent.value() instanceof Player p)) return;
+        Crux.scheduler().runTask(() ->{
+            if(!CruxEntityUtil.isValid(p)) return;
+            p.addPotionEffects(effects.getPotions());
+        });
     }
 
     @Override
@@ -74,6 +95,9 @@ public class SleeperHolder extends EntityTickedDataHolder {
         if(ticksAwake % cfg.SLEEP_WEAKNESS_SLUMBER_DROP_OFF().value().intValue() == 0){
             setSlumberTicks(slumberTicks - cfg.SLEEP_WEAKNESS_SLUMBER_DROP_OFF_AMOUNT().value().intValue());
         }
+        if(sleepWeakness > 0){
+            sleepWeaknessTick(sleepWeakness);
+        }
     }
 
     public void sleepTick(){
@@ -90,6 +114,7 @@ public class SleeperHolder extends EntityTickedDataHolder {
         if(slumberData != null){
             slumberData.tick();
             slumberTicks++;
+            updateSleepWeaknessTick();
         }
     }
 
