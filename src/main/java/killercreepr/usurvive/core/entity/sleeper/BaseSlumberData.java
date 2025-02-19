@@ -56,6 +56,8 @@ public class BaseSlumberData implements SlumberData, SlumberSpectator {
         PlayerDisguise disguise = new PlayerDisguise(p);
         disguise.setNameVisible(false);
         disguise.getWatcher().setSleeping(true);
+        disguise.getWatcher().setCustomNameVisible(false);
+        disguise.getWatcher().setNameVisible(false);
         DisguiseAPI.disguiseEntity(display, disguise);
 
         previousGameMode = p.getGameMode();
