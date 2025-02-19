@@ -30,11 +30,13 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
@@ -187,6 +189,28 @@ public class BedListener implements Listener {
         if(!(sleeper.getSlumberData() instanceof SlumberTargetLogic logic)) return;
         logic.onTargetEntityTakeDamage(event);
     }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onEntityPotionEffect(EntityPotionEffectEvent event) {
+        if(event.getNewEffect() == null) return;
+        Entity e = event.getEntity();
+        if(!CruxMob.is(e, USurviveMobs.SLEEP_TARGET)) return;
+        UUID ownerUUID = CruxPersist.OWNER.get(e);
+        if(ownerUUID == null) return;
+        Entity owner = e.getWorld().getEntity(ownerUUID);
+        if(!(owner instanceof LivingEntity o)) return;
+
+        SleeperHolder sleeper = EntityMemory.getDataHolder(owner, SleeperHolder.class);
+        if(sleeper==null || !sleeper.isSleeping()) return;
+
+        o.addPotionEffect(event.getNewEffect());
+        if(o instanceof Player p){
+            if(!isHealthyEnoughToSleep(p)){
+                sleeper.sleep(null);
+            }
+        }
+    }
+
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event) {

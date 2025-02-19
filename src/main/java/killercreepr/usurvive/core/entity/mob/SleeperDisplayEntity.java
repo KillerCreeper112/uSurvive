@@ -27,7 +27,7 @@ public class SleeperDisplayEntity extends SimpleCruxMob {
             e.setPersistent(false);
             e.setRemoveWhenFarAway(true);
             e.setMarker(true);
-            e.setInvisible(true);
+            //e.setInvisible(true);
             //e.setVisibleByDefault(false);
             load(e);
             if(consumer != null) consumer.accept(e);

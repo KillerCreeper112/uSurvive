@@ -1,6 +1,7 @@
 package killercreepr.usurvive.core.entity.mob.goals;
 
 import com.destroystokyo.paper.entity.ai.GoalKey;
+import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
 import killercreepr.crux.core.location.DynamicLocation;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.GetEntityNear;
@@ -8,6 +9,8 @@ import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import org.bukkit.entity.Mob;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class SleeperTargetGoal extends CruxMobGoal {
@@ -35,5 +38,18 @@ public class SleeperTargetGoal extends CruxMobGoal {
                 if(!enemy.hasLineOfSight(mob)) return;
                 enemy.setTarget(mob);
             });
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityPathfind(EntityPathfindEvent event){
+        if(!event.getEntity().equals(mob)) return;
+        event.setCancelled(true);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityTarget(EntityTargetEvent event){
+        if(!event.getEntity().equals(mob)) return;
+        if(event.getTarget() == null) return;
+        event.setCancelled(true);
     }
 }

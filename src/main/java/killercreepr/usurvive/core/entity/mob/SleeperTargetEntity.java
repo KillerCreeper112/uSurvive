@@ -21,11 +21,10 @@ public class SleeperTargetEntity extends SimpleCruxMob {
     @Override
     protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
         return location.getWorld().spawn(location, Villager.class, e ->{
-            e.setAI(false);
             e.setSilent(true);
             e.setPersistent(false);
             e.setRemoveWhenFarAway(true);
-            e.setInvisible(true);
+            //e.setInvisible(true);
             e.setVisibleByDefault(false);
             load(e);
             if(consumer != null) consumer.accept(e);

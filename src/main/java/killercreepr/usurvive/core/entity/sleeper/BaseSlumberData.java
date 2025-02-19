@@ -32,6 +32,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 public class BaseSlumberData implements SlumberData, SlumberSpectator, SlumberSneaker, SlumberTargetLogic {
     protected final Entity entity;
