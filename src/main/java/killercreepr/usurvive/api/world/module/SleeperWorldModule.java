@@ -18,4 +18,6 @@ public interface SleeperWorldModule extends WorldModule {
     void addDeepSleeper(@NotNull UUID uuid);
     void removeDeepSleeper(@NotNull UUID uuid);
     boolean hasDeepSleeper(@NotNull UUID uuid);
+
+    int getTimeSkipPerTick();
 }

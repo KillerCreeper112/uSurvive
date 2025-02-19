@@ -110,7 +110,7 @@ public class SpawnListener implements Listener {
         spawnFireworks(p);
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player p = event.getPlayer();
         savePlayer(p);

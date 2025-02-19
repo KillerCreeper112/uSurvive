@@ -35,6 +35,13 @@ public class WorldTags implements ObjectTag<World> {
                 if(sleeperModule == null) return "0";
                 return sleeperModule.getSleepersAmount() + "";
             }))
+            .add(Tag.string("usurvive_time_skip_per_tick", (args, ctx) ->{
+                CruxWorld crux = CruxCore.core().worldManager().getWorld(object.getUID());
+                if(crux == null) return "0";
+                SleeperWorldModule sleeperModule = crux.getModule(SleeperWorldModule.class);
+                if(sleeperModule == null) return "0";
+                return sleeperModule.getTimeSkipPerTick() + "";
+            }))
             ;
     }
 }

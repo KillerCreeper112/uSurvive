@@ -174,6 +174,7 @@ public class SleeperHolder extends EntityTickedDataHolder {
             EntityDeepSlumberEvent event = new EntityDeepSlumberEvent(e, slumberData);
             event.callEvent();
             setTimeStartedBeforeDeepSleep(e.getWorld().getFullTime());
+            Lang.START_DEEP_SLEEP.use(e, TagContainer.merged().hook(e));
         }else if(isDeepSleeping()){
             long timePassed = getTimeBetweenDeepSleep(e.getWorld().getFullTime());
             if(timePassed >= cfg().AUTO_KICK_SLEEPER_AFTER_TIME_PASSED().value().intValue()){
@@ -242,6 +243,9 @@ public class SleeperHolder extends EntityTickedDataHolder {
         tickHealth = 0;
         tickHunger = 0;
         deepSleepLastTick = false;
+        Entity e = parent.value();
+        if(e==null) return;
+        Lang.WAKE_FROM_SLEEP.use(e, TagContainer.merged().hook(e));
     }
 
     public void onSleep(SlumberData to){
@@ -249,6 +253,9 @@ public class SleeperHolder extends EntityTickedDataHolder {
         tickHealth = 0;
         tickHunger = 0;
         deepSleepLastTick = false;
+        Entity e = parent.value();
+        if(e==null) return;
+        Lang.START_SLEEP.use(e, TagContainer.merged().hook(e));
         if(!(parent.value() instanceof Player p)) return;
         if(to instanceof BedSlumberData data){
             p.incrementStatistic(Statistic.SLEEP_IN_BED);
@@ -289,7 +296,7 @@ public class SleeperHolder extends EntityTickedDataHolder {
             slumberData.started();
         }
         this.slumberData = slumberData;
-        onSleep(slumberData);
+        if(slumberData != null) onSleep(slumberData);
         return true;
     }
 

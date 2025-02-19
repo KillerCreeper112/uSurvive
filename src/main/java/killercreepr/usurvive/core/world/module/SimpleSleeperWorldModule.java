@@ -109,4 +109,9 @@ public class SimpleSleeperWorldModule extends SimpleWorldModule implements Ticke
     public boolean hasDeepSleeper(@NotNull UUID uuid) {
         return deepSleepers.contains(uuid);
     }
+
+    @Override
+    public int getTimeSkipPerTick() {
+        return timeSkip;
+    }
 }

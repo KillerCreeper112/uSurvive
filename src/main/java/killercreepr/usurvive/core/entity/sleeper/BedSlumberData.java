@@ -115,7 +115,7 @@ public class BedSlumberData extends BaseSlumberData {
         if(b.getBlockData() instanceof Directional dir){
             loc.setDirection(dir.getFacing().getOppositeFace().getDirection());
         }
-        loc.setPitch(-90f);
+        loc.setPitch(-65f);
         return loc;
     }
 

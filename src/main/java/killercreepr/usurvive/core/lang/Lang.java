@@ -2,10 +2,12 @@ package killercreepr.usurvive.core.lang;
 
 import killercreepr.crux.api.communication.Communicator;
 import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.communication.CreateTitle;
 import killercreepr.crux.api.communication.lang.CreateLang;
 import killercreepr.crux.core.communication.lang.Msg;
 import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -199,6 +201,23 @@ public class Lang {
             .chat("<red>You may not send a teleport here request to <target_name>.")
             .build()
     );
+    public static final Msg START_SLEEP = create(
+        Communicator.builder()
+            .title(CreateTitle.title(
+                "<black><font:'crux:title'>1", null, 100, 999999999, 100
+            ))
+            .build()
+    );
+    public static final Msg START_DEEP_SLEEP = create(
+        null
+    );
+    public static final Msg WAKE_FROM_SLEEP = create(
+        Communicator.builder()
+            .title(CreateTitle.title(
+                "<black><font:'crux:title'>1", null, 0, 1, 25
+            ))
+            .build()
+    );
     public static final Msg SLEEPING_TICK = create(
         Communicator.builder()
             .chat("<white>Sneak to wake up.")
@@ -230,11 +249,11 @@ public class Lang {
             .build()
     );
 
-    public static Msg create(@NotNull String id, @NotNull Communicator communicator){
+    public static Msg create(@NotNull String id, @Nullable Communicator communicator){
         return new Msg(id, communicator, Lang::lang);
     }
 
-    public static Msg create(@NotNull Communicator communicator){
+    public static Msg create(@Nullable Communicator communicator){
         return new Msg(communicator, Lang::lang);
     }
 

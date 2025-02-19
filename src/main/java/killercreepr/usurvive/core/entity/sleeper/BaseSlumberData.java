@@ -1,7 +1,11 @@
 package killercreepr.usurvive.core.entity.sleeper;
 
 import com.destroystokyo.paper.event.player.PlayerStopSpectatingEntityEvent;
-import killercreepr.crux.core.Crux;
+import com.github.retrooper.packetevents.protocol.particle.Particle;
+import com.github.retrooper.packetevents.protocol.particle.data.ParticleColorData;
+import com.github.retrooper.packetevents.protocol.particle.type.ParticleTypes;
+import killercreepr.crux.api.item.CruxItem;
+import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.usurvive.api.entity.sleeper.SlumberData;
 import killercreepr.usurvive.api.entity.sleeper.SlumberSpectator;
 import killercreepr.usurvive.core.entity.USurviveMobs;
@@ -14,6 +18,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Pose;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 
 public class BaseSlumberData implements SlumberData, SlumberSpectator {
     protected final Entity entity;
@@ -42,7 +49,7 @@ public class BaseSlumberData implements SlumberData, SlumberSpectator {
 
     @Override
     public boolean shouldStop() {
-        return forceStop;
+        return forceStop || !CruxEntityUtil.isValid(entity) || (display != null && !display.isValid()) || (spectator != null && !spectator.isValid());
     }
 
     @Override
@@ -55,11 +62,24 @@ public class BaseSlumberData implements SlumberData, SlumberSpectator {
         spectator = USurviveMobs.SLEEPER_OBJECT.spawn(getUserTeleportLocation());
         display = USurviveMobs.SLEEPER_DISPLAY.spawn(getDisplayLocation());
         PlayerDisguise disguise = new PlayerDisguise(p);
-        disguise.setNameVisible(false);
+
+        for(EquipmentSlot slot : EquipmentSlot.values()){
+            if(!p.canUseEquipmentSlot(slot)) continue;
+            ItemStack item = p.getInventory().getItem(slot);
+            if(CruxItem.isEmpty(item)) continue;
+            disguise.getWatcher().setItemStack(slot, item);
+        }
+
+        for(PotionEffect effect : p.getActivePotionEffects()){
+            if(!effect.hasParticles()) continue;
+            disguise.getWatcher().addParticle(new Particle<>(ParticleTypes.EFFECT, new ParticleColorData(
+                effect.getType().getColor().asRGB()
+            )));
+        }
+
         disguise.setName("");
+        disguise.setNameVisible(false);
         disguise.getWatcher().setSleeping(true);
-        /*disguise.getWatcher().setCustomNameVisible(false);
-        disguise.getWatcher().setNameVisible(false);*/
         DisguiseAPI.disguiseEntity(display, disguise);
 
         previousGameMode = p.getGameMode();
@@ -73,8 +93,10 @@ public class BaseSlumberData implements SlumberData, SlumberSpectator {
         if(!(entity instanceof Player p)){
             entity.setPose(Pose.SLEEPING, true);
         }else{
-            if(p.getGameMode() == GameMode.SPECTATOR) p.setSpectatorTarget(null);
-            if(previousGameMode != null) p.setGameMode(previousGameMode);
+            if(p.getGameMode() == GameMode.SPECTATOR){
+                p.setSpectatorTarget(null);
+                if(previousGameMode != null) p.setGameMode(previousGameMode);
+            }
             Location spawn = RespawnUtil.findRespawnLocationOrTop(location.getBlock());
             p.teleport(spawn, PlayerTeleportEvent.TeleportCause.EXIT_BED);
         }

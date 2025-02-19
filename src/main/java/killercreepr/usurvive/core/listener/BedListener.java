@@ -18,6 +18,7 @@ import killercreepr.usurvive.core.entity.memory.SleeperHolder;
 import killercreepr.usurvive.core.entity.sleeper.BedSlumberData;
 import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.world.module.SimpleSleeperWorldModule;
+import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Bed;
@@ -46,13 +47,12 @@ public class BedListener implements Listener {
         SleeperHolder sleeper = EntityMemory.getDataHolder(p, SleeperHolder.class);
         if(sleeper==null) return;
 
-        event.setCancelled(true);
-
         if(!canSleepInBed(b)){
             Lang.BED_CANNOT_USE_HERE.use(p);
             return;
         }
 
+        event.setCancelled(true);
         BedSlumberData slumberData = new BedSlumberData(p, b.getLocation());
         if(!slumberData.canSleep()){
             Lang.BED_OBSTRUCTED.use(p);
@@ -62,7 +62,7 @@ public class BedListener implements Listener {
             Lang.BED_OCCUPIED.use(p);
             return;
         }
-        if (areMonstersNearby(b)) {
+        if (p.getGameMode() != GameMode.CREATIVE && areMonstersNearby(b)) {
             Lang.BED_MONSTERS_NEARBY.use(p);
             return;
         }
