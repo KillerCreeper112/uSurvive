@@ -18,7 +18,7 @@ public interface SleeperCfg {
     //def=1
     NumberProvider SLEEP_WEAKNESS_SLUMBER_DROP_OFF_AMOUNT();
     //end
-    Holder<Map<Integer, SleepWeakness>> SLEEP_WEAKNESS_LEVELS();
+    Holder<Map<Byte, SleepWeakness>> SLEEP_WEAKNESS_LEVELS();
     Holder<SleepWeaknessCalculator> SLEEP_WEAKNESS_LEVELS_DEFINITION();
     Holder<SleepWeaknessWarning> SLEEP_WEAKNESS_WARNINGS();
 

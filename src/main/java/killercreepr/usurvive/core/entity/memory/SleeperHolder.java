@@ -140,7 +140,7 @@ public class SleeperHolder extends EntityTickedDataHolder implements Loadable {
         if(sleepWeakness < 1) lastWarningIndex = -1;
     }
 
-    public void sleepWeaknessTick(int level){
+    public void sleepWeaknessTick(byte level){
         SleepWeakness effects = cfg().SLEEP_WEAKNESS_LEVELS().valueOr(Map.of()).get(level);
         if(effects==null) return;
         if(!(parent.value() instanceof Player p)) return;

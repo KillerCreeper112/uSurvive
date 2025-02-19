@@ -78,7 +78,7 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
 
     public final NumCfgValue SLEEP_WEAKNESS_SLUMBER_DROP_OFF = new NumCfgValue(20);
     public final NumCfgValue SLEEP_WEAKNESS_SLUMBER_DROP_OFF_AMOUNT = new NumCfgValue(1);
-    public final CfgValue<Map<Integer, SleepWeakness>> SLEEP_WEAKNESS_LEVELS = new CommonValue<>(){};
+    public final CfgValue<Map<Byte, SleepWeakness>> SLEEP_WEAKNESS_LEVELS = new CommonValue<>(){};
     public final CfgValue<SleepWeaknessCalculator> SLEEP_WEAKNESS_LEVELS_DEFINITION = new CommonValue<>(){};
     public final CfgValue<SleepWeaknessWarning> SLEEP_WEAKNESS_WARNINGS = new CommonValue<>(){};
     public final NumCfgValue DEEP_SLEEP_START_TIME = new NumCfgValue(80);
@@ -160,7 +160,7 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     }
 
     @Override
-    public Holder<Map<Integer, SleepWeakness>> SLEEP_WEAKNESS_LEVELS() {
+    public Holder<Map<Byte, SleepWeakness>> SLEEP_WEAKNESS_LEVELS() {
         return SLEEP_WEAKNESS_LEVELS;
     }
 

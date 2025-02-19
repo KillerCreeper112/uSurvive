@@ -221,6 +221,17 @@ public class BedListener implements Listener {
         sleeper.setLastTookDamage(System.currentTimeMillis());
     }
 
+    @EventHandler(ignoreCancelled = true,priority = EventPriority.LOW)
+    public void onPlayerTeleportLow(PlayerTeleportEvent event) {
+        if(event.getCause() == PlayerTeleportEvent.TeleportCause.UNKNOWN) return;
+        Entity e = event.getPlayer();
+        SleeperHolder sleeper = EntityMemory.getDataHolder(e, SleeperHolder.class);
+        if(sleeper==null) return;
+        if(!sleeper.isSleeping()) return;
+        if(event.getCause() == PlayerTeleportEvent.TeleportCause.SPECTATE){
+            event.setCancelled(true);
+        }
+    }
 
     @EventHandler(ignoreCancelled = true,priority = EventPriority.MONITOR)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
