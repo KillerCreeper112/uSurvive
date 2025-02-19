@@ -35,4 +35,5 @@ public interface SleeperCfg {
     NumberProvider SLEEP_HUNGER_AMOUNT();
     NumberProvider SLEEP_HUNGER_SATURATION_RATE();
     NumberProvider SLEEP_HUNGER_SATURATION_AMOUNT();
+    NumberProvider AUTO_KICK_SLEEPER_AFTER_TIME_PASSED();
 }

@@ -8,6 +8,7 @@ import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.creator.CruxWorldModuleCreator;
 import killercreepr.usurvive.api.entity.sleeper.SlumberData;
 import killercreepr.usurvive.api.entity.sleeper.SlumberSpectator;
+import killercreepr.usurvive.api.event.EntityDeepSlumberEvent;
 import killercreepr.usurvive.api.event.EntityLeaveSlumberEvent;
 import killercreepr.usurvive.api.event.EntitySlumberEvent;
 import killercreepr.usurvive.api.world.module.SleeperWorldModule;
@@ -53,6 +54,17 @@ public class BedListener implements Listener {
         if(sleep == null) return;
         sleep.addSleeper(e.getUniqueId());
     }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityDeepSlumber(EntityDeepSlumberEvent event) {
+        Entity e = event.getEntity();
+        CruxWorld crux = CruxCore.core().worldManager().getWorld(e.getWorld().getUID());
+        if(crux == null) return;
+        SleeperWorldModule sleep = crux.getModule(SleeperWorldModule.class);
+        if(sleep == null) return;
+        sleep.addDeepSleeper(e.getUniqueId());
+    }
+
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityLeaveSlumber(EntityLeaveSlumberEvent event) {

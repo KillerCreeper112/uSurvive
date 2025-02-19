@@ -50,8 +50,8 @@ public class BaseSlumberData implements SlumberData, SlumberSpectator {
         spectator = USurviveMobs.SLEEPER_OBJECT.spawn(getUserTeleportLocation());
         display = USurviveMobs.SLEEPER_DISPLAY.spawn(getDisplayLocation());
         PlayerDisguise disguise = new PlayerDisguise(p);
+        disguise.setNameVisible(false);
         disguise.getWatcher().setSleeping(true);
-        disguise.getWatcher().setNameVisible(false);
         DisguiseAPI.disguiseEntity(display, disguise);
 
         previousGameMode = p.getGameMode();

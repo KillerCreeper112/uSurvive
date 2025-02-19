@@ -9,6 +9,7 @@ import killercreepr.crux.core.entity.memory.EntityTickedDataHolder;
 import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.usurvive.api.entity.sleeper.SlumberData;
+import killercreepr.usurvive.api.event.EntityDeepSlumberEvent;
 import killercreepr.usurvive.api.event.EntityLeaveSlumberEvent;
 import killercreepr.usurvive.api.event.EntitySlumberEvent;
 import killercreepr.usurvive.api.values.SleeperCfg;
@@ -48,6 +49,20 @@ public class SleeperHolder extends EntityTickedDataHolder {
     protected int slumberTicks;
     protected int ticksAwake = 0;
     protected int sleepWeakness = 0;
+    protected long timeStartedBeforeDeepSleep = -1;
+
+    public long getTimeBetweenDeepSleep(long currentWorldTime){
+        if(timeStartedBeforeDeepSleep < 0) return 0L;
+        return (currentWorldTime - timeStartedBeforeDeepSleep + 24000) % 24000;
+    }
+
+    public long getTimeStartedBeforeDeepSleep() {
+        return timeStartedBeforeDeepSleep;
+    }
+
+    public void setTimeStartedBeforeDeepSleep(long timeStartedBeforeDeepSleep) {
+        this.timeStartedBeforeDeepSleep = timeStartedBeforeDeepSleep;
+    }
 
     public boolean processingData(){
         return ticksSleeping == -1;
@@ -128,14 +143,19 @@ public class SleeperHolder extends EntityTickedDataHolder {
         }
     }
 
+    public void scheduleForAwaken(){
+        if(!isSleeping()) return;
+        ticksSleeping = -1;
+        Crux.scheduler().runTask(() ->{
+            sleep(null);
+            ticksSleeping = 0;
+        });
+    }
+
     public void sleepTick(Entity e){
         ticksAwake = 0;
         if(slumberData != null && slumberData.shouldStop()){
-            ticksSleeping = -1;
-            Crux.scheduler().runTask(() ->{
-                sleep(null);
-                ticksSleeping = 0;
-            });
+            scheduleForAwaken();
             return;
         }
         ticksSleeping++;
@@ -149,6 +169,18 @@ public class SleeperHolder extends EntityTickedDataHolder {
         }
 
         sleepMsgTick(e);
+
+        if(isDeepSleeping() && !deepSleepLastTick){
+            deepSleepLastTick = isDeepSleeping();
+            EntityDeepSlumberEvent event = new EntityDeepSlumberEvent(e, slumberData);
+            event.callEvent();
+            setTimeStartedBeforeDeepSleep(e.getWorld().getTime());
+        }else if(isDeepSleeping()){
+            long timePassed = getTimeBetweenDeepSleep(e.getWorld().getTime());
+            if(timePassed >= cfg().AUTO_KICK_SLEEPER_AFTER_TIME_PASSED().value().intValue()){
+                scheduleForAwaken();
+            }
+        }
     }
 
     public void sleepMsgTick(Entity e){
@@ -161,6 +193,7 @@ public class SleeperHolder extends EntityTickedDataHolder {
 
     protected int tickHealth;
     protected int tickHunger;
+    protected boolean deepSleepLastTick = false;
 
     public void sleepTickNotWeak(){
         SleeperCfg cfg = cfg();
@@ -209,12 +242,14 @@ public class SleeperHolder extends EntityTickedDataHolder {
         lastAwoken = System.currentTimeMillis();
         tickHealth = 0;
         tickHunger = 0;
+        deepSleepLastTick = false;
     }
 
     public void onSleep(SlumberData to){
         lastSlept = System.currentTimeMillis();
         tickHealth = 0;
         tickHunger = 0;
+        deepSleepLastTick = false;
         if(!(parent.value() instanceof Player p)) return;
         if(to instanceof BedSlumberData){
             p.incrementStatistic(Statistic.SLEEP_IN_BED);
