@@ -1,11 +1,9 @@
 package killercreepr.usurvive.core.entity.sleeper;
 
 import com.destroystokyo.paper.event.player.PlayerStopSpectatingEntityEvent;
-import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.usurvive.api.entity.sleeper.SlumberData;
 import killercreepr.usurvive.api.entity.sleeper.SlumberSpectator;
 import killercreepr.usurvive.core.entity.USurviveMobs;
-import killercreepr.usurvive.core.lang.Lang;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import org.bukkit.GameMode;

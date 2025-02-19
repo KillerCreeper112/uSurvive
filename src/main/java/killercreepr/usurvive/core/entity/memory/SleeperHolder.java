@@ -52,9 +52,9 @@ public class SleeperHolder extends EntityTickedDataHolder {
     protected long timeStartedBeforeDeepSleep = -1;
 
     public long getTimeBetweenDeepSleep(long currentWorldTime){
-        if(timeStartedBeforeDeepSleep < 0) return 0L;
-        return (currentWorldTime - timeStartedBeforeDeepSleep + 24000) % 24000;
+        return currentWorldTime - timeStartedBeforeDeepSleep;
     }
+
 
     public long getTimeStartedBeforeDeepSleep() {
         return timeStartedBeforeDeepSleep;
@@ -171,12 +171,12 @@ public class SleeperHolder extends EntityTickedDataHolder {
         sleepMsgTick(e);
 
         if(isDeepSleeping() && !deepSleepLastTick){
-            deepSleepLastTick = isDeepSleeping();
+            deepSleepLastTick = true;
             EntityDeepSlumberEvent event = new EntityDeepSlumberEvent(e, slumberData);
             event.callEvent();
-            setTimeStartedBeforeDeepSleep(e.getWorld().getTime());
+            setTimeStartedBeforeDeepSleep(e.getWorld().getFullTime());
         }else if(isDeepSleeping()){
-            long timePassed = getTimeBetweenDeepSleep(e.getWorld().getTime());
+            long timePassed = getTimeBetweenDeepSleep(e.getWorld().getFullTime());
             if(timePassed >= cfg().AUTO_KICK_SLEEPER_AFTER_TIME_PASSED().value().intValue()){
                 scheduleForAwaken();
             }
