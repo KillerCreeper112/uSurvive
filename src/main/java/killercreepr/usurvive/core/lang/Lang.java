@@ -209,6 +209,26 @@ public class Lang {
             .chat("")
             .build()
     );
+    public static final Msg BED_OBSTRUCTED = create(
+        Communicator.builder()
+            .actionBar("<red>Bed is obstructed.")
+            .build()
+    );
+    public static final Msg BED_MONSTERS_NEARBY = create(
+        Communicator.builder()
+            .chat("You may not sleep now. There are monster nearby.")
+            .build()
+    );
+    public static final Msg BED_OCCUPIED = create(
+        Communicator.builder()
+            .actionBar("<red>Bed is occupied.")
+            .build()
+    );
+    public static final Msg BED_CANNOT_USE_HERE = create(
+        Communicator.builder()
+            .actionBar("<red>Beds may not be used here.")
+            .build()
+    );
 
     public static Msg create(@NotNull String id, @NotNull Communicator communicator){
         return new Msg(id, communicator, Lang::lang);

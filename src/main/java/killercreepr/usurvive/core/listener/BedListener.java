@@ -2,7 +2,10 @@ package killercreepr.usurvive.core.listener;
 
 import com.destroystokyo.paper.event.player.PlayerStopSpectatingEntityEvent;
 import killercreepr.crux.api.entity.memory.EntityMemory;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxworlds.api.event.CruxWorldPreCreateEvent;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.creator.CruxWorldModuleCreator;
@@ -15,7 +18,10 @@ import killercreepr.usurvive.api.world.module.SleeperWorldModule;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.entity.memory.SleeperHolder;
 import killercreepr.usurvive.core.entity.sleeper.BedSlumberData;
+import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.world.module.SimpleSleeperWorldModule;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.BedBlock;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Bed;
@@ -39,13 +45,47 @@ public class BedListener implements Listener {
         if(p.isSneaking() || event.getHand() != EquipmentSlot.HAND) return;
         Block b = event.getClickedBlock();
         if(b == null) return;
-        if(!(b.getBlockData() instanceof Bed)) return;
-        event.setCancelled(true);
+        if(!(b.getBlockData() instanceof Bed bed)) return;
 
         SleeperHolder sleeper = EntityMemory.getDataHolder(p, SleeperHolder.class);
         if(sleeper==null) return;
-        SlumberData slumberData = new BedSlumberData(p, b.getLocation());
+
+        event.setCancelled(true);
+
+        if(!canSleepInBed(b)){
+            Lang.BED_CANNOT_USE_HERE.use(p);
+            return;
+        }
+
+        BedSlumberData slumberData = new BedSlumberData(p, b.getLocation());
+        if(!slumberData.canSleep()){
+            Lang.BED_OBSTRUCTED.use(p);
+            return;
+        }
+        if(isBedOccupied(b, bed)){
+            Lang.BED_OCCUPIED.use(p);
+            return;
+        }
+        if (areMonstersNearby(b)) {
+            Lang.BED_MONSTERS_NEARBY.use(p);
+            return;
+        }
         sleeper.sleep(slumberData);
+    }
+
+    public boolean canSleepInBed(Block b){
+        World world = b.getWorld();
+        return world.isNatural() || world.isBedWorks();
+    }
+
+    public boolean isBedOccupied(Block b, Bed bed){
+        return bed.isOccupied();
+    }
+
+    public boolean areMonstersNearby(Block b){
+        return !b.getWorld().getNearbyEntities(b.getLocation().toCenterLocation(), 8D, 5D, 8D, e ->{
+            return CruxMob.isInCategory(e, MobCategory.MONSTER);
+        }).isEmpty();
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)

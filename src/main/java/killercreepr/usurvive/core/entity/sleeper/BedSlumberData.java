@@ -16,8 +16,65 @@ public class BedSlumberData extends BaseSlumberData {
         super(entity, location);
     }
 
+    public boolean canSleep(){
+        Block b = location.getBlock();
+        if(!(b.getBlockData() instanceof Bed bed)){
+            return isEmptyOrPassable(b.getRelative(BlockFace.UP));
+        }
+        Pair<Block, Block> fullBed = getFullBed(b, bed);
+        if(fullBed == null){
+            return isEmptyOrPassable(b.getRelative(BlockFace.UP));
+        }
+        return isEmptyOrPassable(fullBed.getFirst().getRelative(BlockFace.UP)) ||
+            isEmptyOrPassable(fullBed.getSecond().getRelative(BlockFace.UP));
+    }
+
+    public boolean isEmptyOrPassable(Block b){
+        return b.isEmpty() || b.isPassable();
+    }
+
     public boolean shouldSetBedLocation(){
         return true;
+    }
+
+    @Override
+    public void started() {
+        super.started();
+        Block b = location.getBlock();
+        if(!(b.getBlockData() instanceof Bed bed)) return;
+        Pair<Block, Block> pair = getFullBed(b, bed);
+        if(pair != null){
+            bed = (Bed) pair.getFirst().getBlockData();
+            bed.setOccupied(true);
+            pair.getFirst().setBlockData(bed);
+
+            bed = (Bed) pair.getSecond().getBlockData();
+            bed.setOccupied(true);
+            pair.getSecond().setBlockData(bed);
+        }else{
+            bed.setOccupied(true);
+            b.setBlockData(bed);
+        }
+    }
+
+    @Override
+    public void stopped() {
+        super.stopped();
+        Block b = location.getBlock();
+        if(!(b.getBlockData() instanceof Bed bed)) return;
+        Pair<Block, Block> pair = getFullBed(b, bed);
+        if(pair != null){
+            bed = (Bed) pair.getFirst().getBlockData();
+            bed.setOccupied(false);
+            pair.getFirst().setBlockData(bed);
+
+            bed = (Bed) pair.getSecond().getBlockData();
+            bed.setOccupied(false);
+            pair.getSecond().setBlockData(bed);
+        }else{
+            bed.setOccupied(false);
+            b.setBlockData(bed);
+        }
     }
 
     @Override
