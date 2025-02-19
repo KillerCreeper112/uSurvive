@@ -1,6 +1,7 @@
 package killercreepr.usurvive.core.entity.sleeper;
 
 import com.destroystokyo.paper.event.player.PlayerStopSpectatingEntityEvent;
+import killercreepr.crux.core.Crux;
 import killercreepr.usurvive.api.entity.sleeper.SlumberData;
 import killercreepr.usurvive.api.entity.sleeper.SlumberSpectator;
 import killercreepr.usurvive.core.entity.USurviveMobs;
@@ -55,9 +56,10 @@ public class BaseSlumberData implements SlumberData, SlumberSpectator {
         display = USurviveMobs.SLEEPER_DISPLAY.spawn(getDisplayLocation());
         PlayerDisguise disguise = new PlayerDisguise(p);
         disguise.setNameVisible(false);
+        disguise.setName("");
         disguise.getWatcher().setSleeping(true);
-        disguise.getWatcher().setCustomNameVisible(false);
-        disguise.getWatcher().setNameVisible(false);
+        /*disguise.getWatcher().setCustomNameVisible(false);
+        disguise.getWatcher().setNameVisible(false);*/
         DisguiseAPI.disguiseEntity(display, disguise);
 
         previousGameMode = p.getGameMode();
