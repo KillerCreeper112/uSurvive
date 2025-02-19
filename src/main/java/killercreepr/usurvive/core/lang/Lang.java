@@ -235,7 +235,7 @@ public class Lang {
     );
     public static final Msg BED_MONSTERS_NEARBY = create(
         Communicator.builder()
-            .chat("You may not sleep now. There are monster nearby.")
+            .chat("You may not rest now; there are monster nearby.")
             .build()
     );
     public static final Msg BED_OCCUPIED = create(
@@ -251,6 +251,11 @@ public class Lang {
     public static final Msg BED_CANNOT_USE_HERE = create(
         Communicator.builder()
             .actionBar("<red>Beds may not be used here.")
+            .build()
+    );
+    public static final Msg BED_NOT_IN_HEALTHY_STATE = create(
+        Communicator.builder()
+            .chat("You may not rest now; you are not in a healthy state.")
             .build()
     );
 

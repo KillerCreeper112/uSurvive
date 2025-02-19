@@ -6,6 +6,7 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Villager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,11 +20,15 @@ public class SleeperDisplayEntity extends SimpleCruxMob {
     @Override
     protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
         return location.getWorld().spawn(location, ArmorStand.class, e ->{
+            e.setAI(false);
+            e.setSilent(true);
             e.setCanTick(false);
             e.setCanMove(false);
             e.setPersistent(false);
             e.setRemoveWhenFarAway(true);
             e.setMarker(true);
+            e.setInvisible(true);
+            //e.setVisibleByDefault(false);
             load(e);
             if(consumer != null) consumer.accept(e);
         });

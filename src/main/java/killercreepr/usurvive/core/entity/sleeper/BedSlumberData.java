@@ -12,8 +12,13 @@ import org.bukkit.block.data.type.Bed;
 import org.bukkit.entity.Entity;
 
 public class BedSlumberData extends BaseSlumberData {
+    protected final Pair<Block, Block> fullBed;
     public BedSlumberData(Entity entity, Location location) {
         super(entity, location);
+        Block b = location.getBlock();
+        if(b.getBlockData() instanceof Bed bed){
+            this.fullBed = getFullBed(b, bed);
+        }else fullBed = null;
     }
 
     public boolean canSleep(){
@@ -40,58 +45,69 @@ public class BedSlumberData extends BaseSlumberData {
     @Override
     public void started() {
         super.started();
-        Block b = location.getBlock();
-        if(!(b.getBlockData() instanceof Bed bed)) return;
-        Pair<Block, Block> pair = getFullBed(b, bed);
-        if(pair != null){
-            bed = (Bed) pair.getFirst().getBlockData();
+        if(fullBed == null){
+            Block b = location.getBlock();
+            if(b.getBlockData() instanceof Bed bed){
+                bed.setOccupied(true);
+                b.setBlockData(bed);
+            }
+            return;
+        }
+        var pair = fullBed;
+        if(fullBed.getFirst().getBlockData() instanceof Bed bed){
             bed.setOccupied(true);
             pair.getFirst().setBlockData(bed);
-
-            bed = (Bed) pair.getSecond().getBlockData();
+        }
+        if(fullBed.getSecond().getBlockData() instanceof Bed bed){
             bed.setOccupied(true);
             pair.getSecond().setBlockData(bed);
-        }else{
-            bed.setOccupied(true);
-            b.setBlockData(bed);
         }
     }
 
     @Override
     public void stopped() {
         super.stopped();
-        Block b = location.getBlock();
-        if(!(b.getBlockData() instanceof Bed bed)) return;
-        Pair<Block, Block> pair = getFullBed(b, bed);
-        if(pair != null){
-            bed = (Bed) pair.getFirst().getBlockData();
+        if(fullBed == null){
+            Block b = location.getBlock();
+            if(b.getBlockData() instanceof Bed bed){
+                bed.setOccupied(false);
+                b.setBlockData(bed);
+            }
+            return;
+        }
+        var pair = fullBed;
+        if(fullBed.getFirst().getBlockData() instanceof Bed bed){
             bed.setOccupied(false);
             pair.getFirst().setBlockData(bed);
-
-            bed = (Bed) pair.getSecond().getBlockData();
+        }
+        if(fullBed.getSecond().getBlockData() instanceof Bed bed){
             bed.setOccupied(false);
             pair.getSecond().setBlockData(bed);
-        }else{
-            bed.setOccupied(false);
-            b.setBlockData(bed);
         }
     }
 
     @Override
     public Location getUserTeleportLocation() {
-        Block b = location.getBlock();
-        if(!(b.getBlockData() instanceof Bed bed)) return super.getUserTeleportLocation();
-        Pair<Block, Block> pair = getFullBed(b, bed);
-        if(pair == null) return formatSpectateLocation(b);
+        Pair<Block, Block> pair = fullBed;
+        if(pair == null) return formatSpectateLocation(location.getBlock());
         return formatSpectateLocation(pair.getFirst());
     }
 
     @Override
+    public Location getTargetLocation() {
+        if(fullBed == null) return super.getTargetLocation();
+        Block first = fullBed.getFirst();
+        if(!(first.getBlockData() instanceof Bed bed)) return super.getTargetLocation();
+        BlockFace direction = bed.getFacing().getOppositeFace();
+        Location loc = first.getLocation().toCenterLocation().subtract(0, .5, 0);
+        loc = CruxLoc.shift(loc, direction.getDirection(), .5, 0, 0);
+        return loc;
+    }
+
+    @Override
     public Location getDisplayLocation() {
-        Block b = location.getBlock();
-        if(!(b.getBlockData() instanceof Bed bed)) return super.getUserTeleportLocation();
-        Pair<Block, Block> pair = getFullBed(b, bed);
-        if(pair == null) return formatDisplayLocation(b);
+        Pair<Block, Block> pair = fullBed;
+        if(pair == null) return formatDisplayLocation(location.getBlock());
         return formatDisplayLocation(pair.getSecond());
     }
 

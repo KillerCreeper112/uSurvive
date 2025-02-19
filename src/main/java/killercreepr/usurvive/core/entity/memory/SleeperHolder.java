@@ -50,6 +50,19 @@ public class SleeperHolder extends EntityTickedDataHolder {
     protected int ticksAwake = 0;
     protected int sleepWeakness = 0;
     protected long timeStartedBeforeDeepSleep = -1;
+    protected long lastTookDamage;
+
+    public boolean hasTakenDamageWithin(int ticks){
+        return CruxMath.hasOccurredWithin(lastTookDamage, ticks);
+    }
+
+    public long getLastTookDamage() {
+        return lastTookDamage;
+    }
+
+    public void setLastTookDamage(long lastTookDamage) {
+        this.lastTookDamage = lastTookDamage;
+    }
 
     public long getTimeBetweenDeepSleep(long currentWorldTime){
         return currentWorldTime - timeStartedBeforeDeepSleep;

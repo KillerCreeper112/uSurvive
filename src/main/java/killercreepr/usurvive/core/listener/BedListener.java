@@ -3,6 +3,7 @@ package killercreepr.usurvive.core.listener;
 import com.destroystokyo.paper.event.player.PlayerStopSpectatingEntityEvent;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.core.data.util.Pair;
+import killercreepr.crux.core.persistence.CruxPersist;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
@@ -11,11 +12,13 @@ import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.creator.CruxWorldModuleCreator;
 import killercreepr.usurvive.api.entity.sleeper.SlumberSneaker;
 import killercreepr.usurvive.api.entity.sleeper.SlumberSpectator;
+import killercreepr.usurvive.api.entity.sleeper.SlumberTargetLogic;
 import killercreepr.usurvive.api.event.EntityDeepSlumberEvent;
 import killercreepr.usurvive.api.event.EntityLeaveSlumberEvent;
 import killercreepr.usurvive.api.event.EntitySlumberEvent;
 import killercreepr.usurvive.api.world.module.SleeperWorldModule;
 import killercreepr.usurvive.core.USurvivePlugin;
+import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.memory.SleeperHolder;
 import killercreepr.usurvive.core.entity.sleeper.BedSlumberData;
 import killercreepr.usurvive.core.lang.Lang;
@@ -35,6 +38,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.potion.PotionEffectType;
+
+import java.util.UUID;
 
 public class BedListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
@@ -69,11 +75,25 @@ public class BedListener implements Listener {
             Lang.BED_TOO_FAR.use(p);
             return;
         }
-        if (p.getGameMode() != GameMode.CREATIVE && areMonstersNearby(b)) {
-            Lang.BED_MONSTERS_NEARBY.use(p);
-            return;
+        if(p.getGameMode() != GameMode.CREATIVE){
+            if(areMonstersNearby(b)){
+                Lang.BED_MONSTERS_NEARBY.use(p);
+                return;
+            }
+            if(!isHealthyEnoughToSleep(p)){
+                Lang.BED_NOT_IN_HEALTHY_STATE.use(p);
+                return;
+            }
         }
         sleeper.sleep(slumberData);
+    }
+
+    public boolean isHealthyEnoughToSleep(Player p){
+        if(p.hasPotionEffect(PotionEffectType.POISON) || p.hasPotionEffect(PotionEffectType.WITHER)){
+            return false;
+        }
+        if(p.getFoodLevel() < 1 || p.isFrozen() || p.getFireTicks() > 0) return false;
+        return true;
     }
 
     public boolean isBedCloseEnough(Pair<Block, Block> bedPair, Location pos){
@@ -147,17 +167,35 @@ public class BedListener implements Listener {
         sleeper.sleep(null);
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onEntityDamageLow(EntityDamageEvent event) {
+        Entity e = event.getEntity();
+        if(!CruxMob.is(e, USurviveMobs.SLEEP_TARGET)) return;
+        switch (event.getCause()){
+            case FALLING_BLOCK, SUFFOCATION -> {
+                event.setCancelled(true);
+                return;
+            }
+        }
+        UUID ownerUUID = CruxPersist.OWNER.get(e);
+        if(ownerUUID == null) return;
+        Entity owner = e.getWorld().getEntity(ownerUUID);
+        if(owner==null) return;
+
+        SleeperHolder sleeper = EntityMemory.getDataHolder(owner, SleeperHolder.class);
+        if(sleeper==null || !sleeper.isSleeping()) return;
+        if(!(sleeper.getSlumberData() instanceof SlumberTargetLogic logic)) return;
+        logic.onTargetEntityTakeDamage(event);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event) {
         Entity e = event.getEntity();
         SleeperHolder sleeper = EntityMemory.getDataHolder(e, SleeperHolder.class);
         if(sleeper==null) return;
-        if(!sleeper.isSleeping()) return;
-        if(event.getCause() == EntityDamageEvent.DamageCause.SUFFOCATION){
-            return;
-        }
-        sleeper.sleep(null);
+        sleeper.setLastTookDamage(System.currentTimeMillis());
     }
+
 
     @EventHandler(ignoreCancelled = true,priority = EventPriority.MONITOR)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
