@@ -3,6 +3,7 @@ package killercreepr.usurvive.core.entity.sleeper;
 import killercreepr.crux.core.data.util.Pair;
 import killercreepr.crux.core.util.CruxBlockFace;
 import killercreepr.crux.core.util.CruxLoc;
+import killercreepr.usurvive.core.util.RespawnUtil;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -13,6 +14,10 @@ import org.bukkit.entity.Entity;
 public class BedSlumberData extends BaseSlumberData {
     public BedSlumberData(Entity entity, Location location) {
         super(entity, location);
+    }
+
+    public boolean shouldSetBedLocation(){
+        return true;
     }
 
     @Override
@@ -59,16 +64,7 @@ public class BedSlumberData extends BaseSlumberData {
 
     //<head, foot>
     public Pair<Block, Block> getFullBed(Block block, Bed bed){
-        BlockFace direction;
-        if(bed.getPart() == Bed.Part.FOOT) direction = bed.getFacing();
-        else direction = bed.getFacing().getOppositeFace();
-
-        Block part = block.getRelative(direction);
-        if(!(part.getBlockData() instanceof Bed)) return null;
-        if(bed.getPart() == Bed.Part.FOOT){
-            return new Pair<>(part, block);
-        }
-        return new Pair<>(block, part);
+        return RespawnUtil.getFullBed(block, bed);
     }
 
     @Override

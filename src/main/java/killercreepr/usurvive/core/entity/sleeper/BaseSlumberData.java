@@ -4,6 +4,7 @@ import com.destroystokyo.paper.event.player.PlayerStopSpectatingEntityEvent;
 import killercreepr.usurvive.api.entity.sleeper.SlumberData;
 import killercreepr.usurvive.api.entity.sleeper.SlumberSpectator;
 import killercreepr.usurvive.core.entity.USurviveMobs;
+import killercreepr.usurvive.core.util.RespawnUtil;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import org.bukkit.GameMode;
@@ -11,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Pose;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 public class BaseSlumberData implements SlumberData, SlumberSpectator {
     protected final Entity entity;
@@ -23,6 +25,10 @@ public class BaseSlumberData implements SlumberData, SlumberSpectator {
     public BaseSlumberData(Entity entity, Location location) {
         this.entity = entity;
         this.location = location;
+    }
+
+    public Location getLocation() {
+        return location;
     }
 
     public Location getUserTeleportLocation(){
@@ -66,6 +72,8 @@ public class BaseSlumberData implements SlumberData, SlumberSpectator {
         }else{
             p.setSpectatorTarget(null);
             if(previousGameMode != null) p.setGameMode(previousGameMode);
+            Location spawn = RespawnUtil.findRespawnLocationOrTop(location.getBlock());
+            p.teleport(spawn, PlayerTeleportEvent.TeleportCause.EXIT_BED);
         }
         if(display != null) display.remove();
         if(spectator != null) spectator.remove();

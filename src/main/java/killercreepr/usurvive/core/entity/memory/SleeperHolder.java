@@ -55,7 +55,6 @@ public class SleeperHolder extends EntityTickedDataHolder {
         return currentWorldTime - timeStartedBeforeDeepSleep;
     }
 
-
     public long getTimeStartedBeforeDeepSleep() {
         return timeStartedBeforeDeepSleep;
     }
@@ -251,8 +250,11 @@ public class SleeperHolder extends EntityTickedDataHolder {
         tickHunger = 0;
         deepSleepLastTick = false;
         if(!(parent.value() instanceof Player p)) return;
-        if(to instanceof BedSlumberData){
+        if(to instanceof BedSlumberData data){
             p.incrementStatistic(Statistic.SLEEP_IN_BED);
+            if(data.shouldSetBedLocation()){
+                p.setRespawnLocation(data.getLocation());
+            }
         }
     }
 
