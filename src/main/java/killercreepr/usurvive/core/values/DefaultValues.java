@@ -213,4 +213,10 @@ public class DefaultValues implements ValuesProvider {
     public Holder<Map<Key, Double>> INFUSION_ATTRIBUTE_BENEFITS() {
         return null;
     }
+
+    @NotNull
+    @Override
+    public NumberProvider SLEEPER_WORLD_TIME_SKIP() {
+        return null;
+    }
 }
