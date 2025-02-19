@@ -243,6 +243,11 @@ public class Lang {
             .actionBar("<red>Bed is occupied.")
             .build()
     );
+    public static final Msg BED_TOO_FAR = create(
+        Communicator.builder()
+            .chat("You may not rest now; the best is too far away.")
+            .build()
+    );
     public static final Msg BED_CANNOT_USE_HERE = create(
         Communicator.builder()
             .actionBar("<red>Beds may not be used here.")

@@ -2,12 +2,14 @@ package killercreepr.usurvive.core.listener;
 
 import com.destroystokyo.paper.event.player.PlayerStopSpectatingEntityEvent;
 import killercreepr.crux.api.entity.memory.EntityMemory;
+import killercreepr.crux.core.data.util.Pair;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxworlds.api.event.CruxWorldPreCreateEvent;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.creator.CruxWorldModuleCreator;
+import killercreepr.usurvive.api.entity.sleeper.SlumberSneaker;
 import killercreepr.usurvive.api.entity.sleeper.SlumberSpectator;
 import killercreepr.usurvive.api.event.EntityDeepSlumberEvent;
 import killercreepr.usurvive.api.event.EntityLeaveSlumberEvent;
@@ -17,8 +19,10 @@ import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.entity.memory.SleeperHolder;
 import killercreepr.usurvive.core.entity.sleeper.BedSlumberData;
 import killercreepr.usurvive.core.lang.Lang;
+import killercreepr.usurvive.core.util.RespawnUtil;
 import killercreepr.usurvive.core.world.module.SimpleSleeperWorldModule;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Bed;
@@ -27,11 +31,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTeleportEvent;
-import org.bukkit.event.player.PlayerBedEnterEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 
 public class BedListener implements Listener {
@@ -54,7 +56,8 @@ public class BedListener implements Listener {
 
         event.setCancelled(true);
         BedSlumberData slumberData = new BedSlumberData(p, b.getLocation());
-        if(!slumberData.canSleep()){
+        Pair<Block, Block> bedPair = RespawnUtil.getFullBed(b, bed);
+        if(bedPair == null || !slumberData.canSleep()){
             Lang.BED_OBSTRUCTED.use(p);
             return;
         }
@@ -62,11 +65,26 @@ public class BedListener implements Listener {
             Lang.BED_OCCUPIED.use(p);
             return;
         }
+        if(!isBedCloseEnough(bedPair, p.getLocation())){
+            Lang.BED_TOO_FAR.use(p);
+            return;
+        }
         if (p.getGameMode() != GameMode.CREATIVE && areMonstersNearby(b)) {
             Lang.BED_MONSTERS_NEARBY.use(p);
             return;
         }
         sleeper.sleep(slumberData);
+    }
+
+    public boolean isBedCloseEnough(Pair<Block, Block> bedPair, Location pos){
+        return isReachableBed(bedPair.getFirst(), pos) || isReachableBed(bedPair.getSecond(), pos);
+    }
+
+    private boolean isReachableBed(Block bed, Location pos) {
+        Location vec = bed.getLocation().toCenterLocation().subtract(0, .5, 0);
+        return Math.abs(pos.getX() - vec.x()) <= (double)3.0F
+            && Math.abs(pos.getY() - vec.y()) <= (double)2.0F &&
+            Math.abs(pos.getZ() - vec.z()) <= (double)3.0F;
     }
 
     public boolean canSleepInBed(Block b){
@@ -120,7 +138,7 @@ public class BedListener implements Listener {
         sleep.removeSleeper(e.getUniqueId());
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true,priority = EventPriority.MONITOR)
     public void onEntityTeleport(EntityTeleportEvent event) {
         Entity e = event.getEntity();
         SleeperHolder sleeper = EntityMemory.getDataHolder(e, SleeperHolder.class);
@@ -129,8 +147,21 @@ public class BedListener implements Listener {
         sleeper.sleep(null);
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onEntityDamage(EntityDamageEvent event) {
+        Entity e = event.getEntity();
+        SleeperHolder sleeper = EntityMemory.getDataHolder(e, SleeperHolder.class);
+        if(sleeper==null) return;
+        if(!sleeper.isSleeping()) return;
+        if(event.getCause() == EntityDamageEvent.DamageCause.SUFFOCATION){
+            return;
+        }
+        sleeper.sleep(null);
+    }
+
+    @EventHandler(ignoreCancelled = true,priority = EventPriority.MONITOR)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
+        if(event.getCause() == PlayerTeleportEvent.TeleportCause.UNKNOWN) return;
         Entity e = event.getPlayer();
         SleeperHolder sleeper = EntityMemory.getDataHolder(e, SleeperHolder.class);
         if(sleeper==null) return;
@@ -148,7 +179,17 @@ public class BedListener implements Listener {
 
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
+        Player p = event.getPlayer();
+        SleeperHolder sleeper = EntityMemory.getDataHolder(p, SleeperHolder.class);
+        if(sleeper==null) return;
+        if(!sleeper.isSleeping()) return;
+        if(!(sleeper.getSlumberData() instanceof SlumberSneaker spec)) return;
+        spec.onToggleSneak(event);
+    }
+
+    @EventHandler(ignoreCancelled = true,priority = EventPriority.HIGH)
     public void onPlayerStopSpectatingEntity(PlayerStopSpectatingEntityEvent event) {
         Player p = event.getPlayer();
         SleeperHolder sleeper = EntityMemory.getDataHolder(p, SleeperHolder.class);

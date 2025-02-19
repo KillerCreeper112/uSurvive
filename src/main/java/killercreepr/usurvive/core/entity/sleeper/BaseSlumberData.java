@@ -7,6 +7,7 @@ import com.github.retrooper.packetevents.protocol.particle.type.ParticleTypes;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.usurvive.api.entity.sleeper.SlumberData;
+import killercreepr.usurvive.api.entity.sleeper.SlumberSneaker;
 import killercreepr.usurvive.api.entity.sleeper.SlumberSpectator;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.util.RespawnUtil;
@@ -18,11 +19,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Pose;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-public class BaseSlumberData implements SlumberData, SlumberSpectator {
+public class BaseSlumberData implements SlumberData, SlumberSpectator, SlumberSneaker {
     protected final Entity entity;
     protected final Location location;
     protected Entity display;
@@ -52,6 +54,7 @@ public class BaseSlumberData implements SlumberData, SlumberSpectator {
         return forceStop || !CruxEntityUtil.isValid(entity) || (display != null && !display.isValid()) || (spectator != null && !spectator.isValid());
     }
 
+    protected Boolean wasVisibleByDefault;
     @Override
     public void started() {
         if(!(entity instanceof Player p)){
@@ -83,9 +86,11 @@ public class BaseSlumberData implements SlumberData, SlumberSpectator {
         DisguiseAPI.disguiseEntity(display, disguise);
 
         previousGameMode = p.getGameMode();
+        //wasVisibleByDefault = p.isVisibleByDefault();
+        //p.setVisibleByDefault(false);
         p.setGameMode(GameMode.SPECTATOR);
         p.teleport(spectator);
-        if(p.getGameMode() == GameMode.SPECTATOR) p.setSpectatorTarget(spectator);
+        if(p.getGameMode() == GameMode.SPECTATOR && spectator != null) p.setSpectatorTarget(spectator);
     }
 
     @Override
@@ -93,7 +98,10 @@ public class BaseSlumberData implements SlumberData, SlumberSpectator {
         if(!(entity instanceof Player p)){
             entity.setPose(Pose.SLEEPING, true);
         }else{
-            if(p.getGameMode() == GameMode.SPECTATOR){
+            if(wasVisibleByDefault != null){
+                p.setVisibleByDefault(wasVisibleByDefault);
+            }
+            if(p.getGameMode() == GameMode.SPECTATOR && spectator != null){
                 p.setSpectatorTarget(null);
                 if(previousGameMode != null) p.setGameMode(previousGameMode);
             }
@@ -106,11 +114,18 @@ public class BaseSlumberData implements SlumberData, SlumberSpectator {
 
     @Override
     public void tick() {
+        //entity.teleportAsync(getUserTeleportLocation(), PlayerTeleportEvent.TeleportCause.UNKNOWN);
     }
 
     @Override
     public void onStopSpectating(PlayerStopSpectatingEntityEvent event) {
         event.setCancelled(true);
+        forceStop = true;
+    }
+
+    @Override
+    public void onToggleSneak(PlayerToggleSneakEvent event) {
+        if(!event.isSneaking()) return;
         forceStop = true;
     }
 }

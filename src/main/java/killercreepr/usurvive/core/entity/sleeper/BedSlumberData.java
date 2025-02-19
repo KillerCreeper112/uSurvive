@@ -25,7 +25,7 @@ public class BedSlumberData extends BaseSlumberData {
         if(fullBed == null){
             return isEmptyOrPassable(b.getRelative(BlockFace.UP));
         }
-        return isEmptyOrPassable(fullBed.getFirst().getRelative(BlockFace.UP)) ||
+        return isEmptyOrPassable(fullBed.getFirst().getRelative(BlockFace.UP)) &&
             isEmptyOrPassable(fullBed.getSecond().getRelative(BlockFace.UP));
     }
 
@@ -110,12 +110,21 @@ public class BedSlumberData extends BaseSlumberData {
         return loc;
     }
 
-    public Location formatSpectateLocation(Block b){
-        Location loc = b.getLocation().toCenterLocation().add(0, .4, 0);
+    /*public Location formatSpectateLocation(Block b){
+        Location loc = b.getLocation().toCenterLocation().add(0, -1.1, 0);
         if(b.getBlockData() instanceof Directional dir){
             loc.setDirection(dir.getFacing().getOppositeFace().getDirection());
         }
-        loc.setPitch(-65f);
+        loc.setPitch(-15f);
+        return loc;
+    }*/
+
+    public Location formatSpectateLocation(Block b){
+        Location loc = b.getLocation().toCenterLocation().add(0, .455, 0);
+        if(b.getBlockData() instanceof Directional dir){
+            loc.setDirection(dir.getFacing().getOppositeFace().getDirection());
+        }
+        loc.setPitch(-15f);
         return loc;
     }
 
