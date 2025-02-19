@@ -2,6 +2,7 @@ package killercreepr.usurvive.core.entity.memory;
 
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.entity.memory.EntityMemory;
+import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.data.util.Pair;
 import killercreepr.crux.core.entity.memory.EntityTickedDataHolder;
@@ -14,6 +15,7 @@ import killercreepr.usurvive.api.values.SleeperCfg;
 import killercreepr.usurvive.core.entity.sleeper.BedSlumberData;
 import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeakness;
 import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeaknessWarningData;
+import killercreepr.usurvive.core.lang.Lang;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Statistic;
 import org.bukkit.attribute.Attribute;
@@ -85,10 +87,14 @@ public class SleeperHolder extends EntityTickedDataHolder {
     public void tick(@NotNull Entity entity) {
         if(processingData()) return;
         if(isSleeping()){
-            sleepTick();
+            sleepTick(entity);
             return;
         }
         nonSleepTick();
+    }
+
+    public boolean isDeepSleeping(){
+        return ticksSleeping >= cfg().DEEP_SLEEP_START_TIME().value().intValue();
     }
 
     public Pair<SleepWeaknessWarningData, Integer> calculateSleepWeaknessWarning(int slumberTicks){
@@ -122,7 +128,7 @@ public class SleeperHolder extends EntityTickedDataHolder {
         }
     }
 
-    public void sleepTick(){
+    public void sleepTick(Entity e){
         ticksAwake = 0;
         if(slumberData != null && slumberData.shouldStop()){
             ticksSleeping = -1;
@@ -141,30 +147,54 @@ public class SleeperHolder extends EntityTickedDataHolder {
         if(sleepWeakness < 1){
             sleepTickNotWeak();
         }
+
+        sleepMsgTick(e);
     }
+
+    public void sleepMsgTick(Entity e){
+        if(isDeepSleeping()){
+            Lang.DEEP_SLEEPING_TICK.use(e, TagContainer.merged().hook(e));
+        }else{
+            Lang.SLEEPING_TICK.use(e, TagContainer.merged().hook(e));
+        }
+    }
+
+    protected int tickHealth;
+    protected int tickHunger;
+
     public void sleepTickNotWeak(){
         SleeperCfg cfg = cfg();
-        if(ticksAwake < cfg.DEEP_SLEEP_START_TIME().value().intValue()) return;
+        if(!isDeepSleeping()) return;
         if(!(parent.value() instanceof HumanEntity p)) return;
 
-        if(p.getHealth() > 0D && ticksAwake % cfg.SLEEP_REGENERATION_RATE().value().intValue() == 0){
+        if(tickHealth == 0){
+            tickHealth = ticksSleeping + cfg.SLEEP_REGENERATION_RATE().value().intValue();
+        }
+        if(p.getHealth() > 0D && p.getFoodLevel() > 0 && ticksSleeping > tickHealth){
+            tickHealth = ticksSleeping + cfg.SLEEP_REGENERATION_RATE().value().intValue();
             double hp = cfg.SLEEP_REGENERATION_AMOUNT().value().doubleValue();
-            double newHP = CruxMath.clamp(
-                p.getHealth() + hp, 0D, p.getAttribute(Attribute.MAX_HEALTH).getValue()
-            );
+            double newHP = CruxMath.clamp(p.getHealth() + hp, 0D, p.getAttribute(Attribute.MAX_HEALTH).getValue());
             if(newHP != p.getHealth()){
                 p.setHealth(newHP);
             }
         }
 
-        if(p.getSaturation() > 0f && ticksAwake % cfg.SLEEP_HUNGER_SATURATION_RATE().value().intValue() == 0){
+        if(tickHunger == 0){
+            tickHunger = ticksSleeping + cfg.SLEEP_HUNGER_SATURATION_RATE().value().intValue();
+        }
+        if(p.getSaturation() > 0f && ticksSleeping > tickHunger){
+            tickHunger = ticksSleeping + cfg.SLEEP_HUNGER_SATURATION_RATE().value().intValue();
             float value = cfg.SLEEP_HUNGER_SATURATION_AMOUNT().value().floatValue();
             float newValue = CruxMath.clamp(p.getSaturation() + value, 0f, 20f);
             if(p.getSaturation() != newValue) p.setSaturation(newValue);
             return;
         }
 
-        if(p.getFoodLevel() > 0 && ticksAwake % cfg.SLEEP_HUNGER_RATE().value().intValue() == 0){
+        if(tickHunger == 0){
+            tickHunger = ticksSleeping + cfg.SLEEP_HUNGER_RATE().value().intValue();
+        }
+        if(p.getFoodLevel() > 0 && ticksSleeping > tickHunger){
+            tickHunger = ticksSleeping + cfg.SLEEP_HUNGER_RATE().value().intValue();
             int value = cfg.SLEEP_HUNGER_AMOUNT().value().intValue();
             int newValue = CruxMath.clamp(p.getFoodLevel() + value, 0, 20);
             if(p.getFoodLevel() != newValue) p.setFoodLevel(newValue);
@@ -177,10 +207,14 @@ public class SleeperHolder extends EntityTickedDataHolder {
 
     public void onAwaken(SlumberData from){
         lastAwoken = System.currentTimeMillis();
+        tickHealth = 0;
+        tickHunger = 0;
     }
 
     public void onSleep(SlumberData to){
         lastSlept = System.currentTimeMillis();
+        tickHealth = 0;
+        tickHunger = 0;
         if(!(parent.value() instanceof Player p)) return;
         if(to instanceof BedSlumberData){
             p.incrementStatistic(Statistic.SLEEP_IN_BED);

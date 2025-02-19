@@ -11,6 +11,7 @@ import killercreepr.usurvive.api.entity.sleeper.SlumberSpectator;
 import killercreepr.usurvive.api.event.EntityLeaveSlumberEvent;
 import killercreepr.usurvive.api.event.EntitySlumberEvent;
 import killercreepr.usurvive.api.world.module.SleeperWorldModule;
+import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.entity.memory.SleeperHolder;
 import killercreepr.usurvive.core.entity.sleeper.BedSlumberData;
 import killercreepr.usurvive.core.world.module.SimpleSleeperWorldModule;
@@ -101,7 +102,9 @@ public class BedListener implements Listener {
         spec.onStopSpectating(event);
     }
 
-    protected final CruxWorldModuleCreator moduleCreator = SimpleSleeperWorldModule::new;
+    protected final CruxWorldModuleCreator moduleCreator = world -> new SimpleSleeperWorldModule(
+        world, () -> USurvivePlugin.inst().values().SLEEPER_WORLD_TIME_SKIP()
+    );
     @EventHandler(ignoreCancelled = true)
     public void onCruxWorldPreCreate(CruxWorldPreCreateEvent event) {
         World world = event.getWorld();

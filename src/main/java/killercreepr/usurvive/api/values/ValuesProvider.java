@@ -61,4 +61,5 @@ public interface ValuesProvider extends Reloadable {
     @NotNull Holder<ItemPredicate> APPLICABLE_INFUSION_BENEFITS();
     @NotNull NumberProvider INFUSION_DURABILITY_PERCENT();
     @NotNull Holder<Map<Key, Double>> INFUSION_ATTRIBUTE_BENEFITS();
+    @NotNull NumberProvider SLEEPER_WORLD_TIME_SKIP();
 }

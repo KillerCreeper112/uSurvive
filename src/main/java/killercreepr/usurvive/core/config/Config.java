@@ -86,6 +86,7 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     public final NumCfgValue SLEEP_HUNGER_AMOUNT = new NumCfgValue(-1);
     public final NumCfgValue SLEEP_HUNGER_SATURATION_RATE = new NumCfgValue(20);
     public final NumCfgValue SLEEP_HUNGER_SATURATION_AMOUNT = new NumCfgValue(-1);
+    public final NumCfgValue SLEEPER_WORLD_TIME_SKIP = new NumCfgValue(1);
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -353,5 +354,11 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     @Override
     public Holder<Map<Key, Double>> INFUSION_ATTRIBUTE_BENEFITS() {
         return INFUSION_ATTRIBUTE_BENEFITS;
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider SLEEPER_WORLD_TIME_SKIP() {
+        return SLEEPER_WORLD_TIME_SKIP.value();
     }
 }

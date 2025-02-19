@@ -75,7 +75,6 @@ public class BaseSlumberData implements SlumberData, SlumberSpectator {
 
     @Override
     public void tick() {
-        Lang.SLEEPING_TICK.use(entity, TagContainer.merged().hook(entity));
     }
 
     @Override

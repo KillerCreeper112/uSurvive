@@ -201,6 +201,11 @@ public class Lang {
     );
     public static final Msg SLEEPING_TICK = create(
         Communicator.builder()
+            .chat("<white>Sneak to wake up.")
+            .build()
+    );
+    public static final Msg DEEP_SLEEPING_TICK = create(
+        Communicator.builder()
             .chat("")
             .build()
     );
