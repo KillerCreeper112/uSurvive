@@ -20,16 +20,16 @@ public class RespawnUtil {
     public static Location findRespawnLocationOrTop(Block... points){
         for(Block b : points){
             if(canSpawn(b)){
-                return formatSafeRespawnLocation(b);
+                return formatSafeRespawnLocation(b, b);
             }
             Block check = findSafeSpawnNear(b, 1);
-            if(check != null) return formatSafeRespawnLocation(check);
+            if(check != null) return formatSafeRespawnLocation(check, b);
         }
         Location fallback = null;
         for(Block b : points){
             Block check = b.getRelative(BlockFace.UP);
-            if(fallback == null) fallback = formatSafeRespawnLocation(check);
-            if(canSpawn(check)) return formatSafeRespawnLocation(check);
+            if(fallback == null) fallback = formatSafeRespawnLocation(check, b);
+            if(canSpawn(check)) return formatSafeRespawnLocation(check, b);
         }
         return fallback;
     }
@@ -53,14 +53,14 @@ public class RespawnUtil {
     public static Location findRespawnLocation(Supplier<Location> fallback, Block... points){
         for(Block b : points){
             if(canSpawn(b)){
-                return formatSafeRespawnLocation(b);
+                return formatSafeRespawnLocation(b, b);
             }
             Block check = findSafeSpawnNear(b, 1);
-            if(check != null) return formatSafeRespawnLocation(check);
+            if(check != null) return formatSafeRespawnLocation(check, b);
         }
         for(Block b : points){
             Block check = b.getRelative(BlockFace.UP);
-            if(canSpawn(check)) return formatSafeRespawnLocation(check);
+            if(canSpawn(check)) return formatSafeRespawnLocation(check, b);
         }
         return fallback == null ? null : fallback.get();
     }
@@ -89,9 +89,9 @@ public class RespawnUtil {
         return new Pair<>(block, part);
     }
 
-    public static Location formatSafeRespawnLocation(Block block){
+    public static Location formatSafeRespawnLocation(Block block, Block point){
         Location respawn = formatRespawnLocation(block);
-        return formatRespawnLocation(respawn, block);
+        return formatRespawnLocation(respawn, point);
     }
 
     public static Location formatRespawnLocation(Location loc, Block point) {

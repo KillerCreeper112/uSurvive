@@ -25,15 +25,18 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTeleportEvent;
+import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 public class BedListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onPlayerInteract(PlayerInteractEvent event) {
         if(!event.getAction().isRightClick()) return;
         Player p = event.getPlayer();
+        if(p.isSneaking() || event.getHand() != EquipmentSlot.HAND) return;
         Block b = event.getClickedBlock();
         if(b == null) return;
         if(!(b.getBlockData() instanceof Bed)) return;
@@ -43,6 +46,11 @@ public class BedListener implements Listener {
         if(sleeper==null) return;
         SlumberData slumberData = new BedSlumberData(p, b.getLocation());
         sleeper.sleep(slumberData);
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    public void onPlayerBedEnter(PlayerBedEnterEvent event) {
+        event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

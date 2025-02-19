@@ -60,9 +60,8 @@ public class BaseSlumberData implements SlumberData, SlumberSpectator {
 
         previousGameMode = p.getGameMode();
         p.setGameMode(GameMode.SPECTATOR);
-
         p.teleport(spectator);
-        p.setSpectatorTarget(spectator);
+        if(p.getGameMode() == GameMode.SPECTATOR) p.setSpectatorTarget(spectator);
     }
 
     @Override
@@ -70,7 +69,7 @@ public class BaseSlumberData implements SlumberData, SlumberSpectator {
         if(!(entity instanceof Player p)){
             entity.setPose(Pose.SLEEPING, true);
         }else{
-            p.setSpectatorTarget(null);
+            if(p.getGameMode() == GameMode.SPECTATOR) p.setSpectatorTarget(null);
             if(previousGameMode != null) p.setGameMode(previousGameMode);
             Location spawn = RespawnUtil.findRespawnLocationOrTop(location.getBlock());
             p.teleport(spawn, PlayerTeleportEvent.TeleportCause.EXIT_BED);

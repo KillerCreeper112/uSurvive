@@ -269,14 +269,14 @@ public class SleeperHolder extends EntityTickedDataHolder {
     public boolean sleep(SlumberData slumberData, boolean silentSlumber, boolean silentLeave) {
         if(slumberData == this.slumberData) return false;
         if(this.slumberData != null){
-
             if(!silentLeave){
                 EntityLeaveSlumberEvent leaveEvent = new EntityLeaveSlumberEvent(parent.value(), this.slumberData);
                 if(!leaveEvent.callEvent()) return false;
             }
-
-            this.slumberData.stopped();
-            onAwaken(slumberData);
+            SlumberData current = this.slumberData;
+            this.slumberData = null;
+            current.stopped();
+            onAwaken(current);
         }
 
         ticksSleeping = 0;
