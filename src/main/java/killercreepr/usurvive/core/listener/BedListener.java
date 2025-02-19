@@ -82,7 +82,7 @@ public class BedListener implements Listener {
                 Lang.BED_MONSTERS_NEARBY.use(p);
                 return;
             }
-            if(!isHealthyEnoughToSleep(p)){
+            if(!isHealthyEnoughToSleep(p, sleeper)){
                 Lang.BED_NOT_IN_HEALTHY_STATE.use(p);
                 return;
             }
@@ -90,11 +90,12 @@ public class BedListener implements Listener {
         sleeper.sleep(slumberData);
     }
 
-    public boolean isHealthyEnoughToSleep(Player p){
+    public boolean isHealthyEnoughToSleep(Player p, SleeperHolder sleeper){
         if(p.hasPotionEffect(PotionEffectType.POISON) || p.hasPotionEffect(PotionEffectType.WITHER)){
             return false;
         }
         if(p.getFoodLevel() < 1 || p.isFrozen() || p.getFireTicks() > 0) return false;
+        if(sleeper.hasTakenDamageWithin(USurvivePlugin.inst().values().SLEEP_PREVENT_IF_ATTACKED_WITHIN().value().intValue())) return false;
         return true;
     }
 
@@ -205,7 +206,7 @@ public class BedListener implements Listener {
 
         o.addPotionEffect(event.getNewEffect());
         if(o instanceof Player p){
-            if(!isHealthyEnoughToSleep(p)){
+            if(!isHealthyEnoughToSleep(p, sleeper)){
                 sleeper.sleep(null);
             }
         }

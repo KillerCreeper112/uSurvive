@@ -73,7 +73,9 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     public final CfgValue<ItemPredicate> APPLICABLE_INFUSION_BENEFITS = new CommonValue<>(){};
     public final CfgValue<Map<Key, Double>> INFUSION_ATTRIBUTE_BENEFITS = new CommonValue<>(Map.of(Key.key("armor"), 1D)){};
     public final NumCfgValue RESOURCE_OVERWORLD_RESET_TIME = new NumCfgValue(72_000);
-    public final NumCfgValue SLEEP_WEAKNESS_SLUMBER_TICK_START = new NumCfgValue(10_000);
+
+    public final NumCfgValue SLEEP_PREVENT_IF_ATTACKED_WITHIN = new NumCfgValue(100);
+
     public final NumCfgValue SLEEP_WEAKNESS_SLUMBER_DROP_OFF = new NumCfgValue(20);
     public final NumCfgValue SLEEP_WEAKNESS_SLUMBER_DROP_OFF_AMOUNT = new NumCfgValue(1);
     public final CfgValue<Map<Integer, SleepWeakness>> SLEEP_WEAKNESS_LEVELS = new CommonValue<>(){};
@@ -145,11 +147,6 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     @Override
     public NumberProvider AUTO_KICK_SLEEPER_AFTER_TIME_PASSED() {
         return AUTO_KICK_SLEEPER_AFTER_TIME_PASSED.value();
-    }
-
-    @Override
-    public NumberProvider SLEEP_WEAKNESS_SLUMBER_TICK_START() {
-        return SLEEP_WEAKNESS_SLUMBER_TICK_START.value();
     }
 
     @Override
@@ -366,5 +363,10 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     @Override
     public NumberProvider SLEEPER_WORLD_TIME_SKIP() {
         return SLEEPER_WORLD_TIME_SKIP.value();
+    }
+
+    @Override
+    public NumberProvider SLEEP_PREVENT_IF_ATTACKED_WITHIN() {
+        return SLEEP_PREVENT_IF_ATTACKED_WITHIN.value();
     }
 }

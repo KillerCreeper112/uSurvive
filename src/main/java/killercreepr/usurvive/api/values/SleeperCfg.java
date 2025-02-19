@@ -12,10 +12,6 @@ import java.util.Map;
 //50 seconds = 1000 ticks
 //10000 hours
 public interface SleeperCfg {
-    //if slumber ticks reaches this value, then start sleep weakness
-    //def=10,000
-    NumberProvider SLEEP_WEAKNESS_SLUMBER_TICK_START();
-
     //start, for every tick the player sleeps, the player must not sleep for 1 second to remove a slumber tick.
     //def=20
     NumberProvider SLEEP_WEAKNESS_SLUMBER_DROP_OFF();

@@ -9,20 +9,20 @@ import java.util.Map;
 
 public class SleepWeaknessCalculator {
     private static class SleepWeaknessEntry {
-        final int level;
+        final byte level;
         final int minTicks;
         final int maxTicks;
 
-        SleepWeaknessEntry(int level, int minTicks, int maxTicks) {
+        SleepWeaknessEntry(byte level, int minTicks, int maxTicks) {
             this.level = level;
             this.minTicks = minTicks;
             this.maxTicks = maxTicks;
         }
     }
 
-    public SleepWeaknessCalculator(Map<Integer, NumberProvider> map) {
+    public SleepWeaknessCalculator(Map<Byte, NumberProvider> map) {
         sortedSleepWeaknessLevels = new ArrayList<>(map.size());
-        for (Map.Entry<Integer, NumberProvider> entry : map.entrySet()) {
+        for (Map.Entry<Byte, NumberProvider> entry : map.entrySet()) {
             int min = entry.getValue().getMinValue().intValue();
             int max = entry.getValue().getMaxValue().intValue();
             sortedSleepWeaknessLevels.add(new SleepWeaknessEntry(entry.getKey(), min, max));
@@ -33,7 +33,7 @@ public class SleepWeaknessCalculator {
 
     private final List<SleepWeaknessEntry> sortedSleepWeaknessLevels;
 
-    public int calculateSleepWeaknessLevel(int slumberTicks) {
+    public byte calculateSleepWeaknessLevel(int slumberTicks) {
         if (sortedSleepWeaknessLevels.isEmpty()) return 0;
 
         // Binary search to find the closest valid range

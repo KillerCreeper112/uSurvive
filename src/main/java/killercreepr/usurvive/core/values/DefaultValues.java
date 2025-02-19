@@ -219,4 +219,9 @@ public class DefaultValues implements ValuesProvider {
     public NumberProvider SLEEPER_WORLD_TIME_SKIP() {
         return null;
     }
+
+    @Override
+    public NumberProvider SLEEP_PREVENT_IF_ATTACKED_WITHIN() {
+        return null;
+    }
 }

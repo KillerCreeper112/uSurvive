@@ -1,6 +1,7 @@
 package killercreepr.usurvive.core.entity.memory;
 
 import killercreepr.crux.api.data.Holder;
+import killercreepr.crux.api.data.Loadable;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
@@ -8,6 +9,9 @@ import killercreepr.crux.core.data.util.Pair;
 import killercreepr.crux.core.entity.memory.EntityTickedDataHolder;
 import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
+import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
+import killercreepr.cruxconfig.config.common.file.DataFile;
 import killercreepr.usurvive.api.entity.sleeper.SlumberData;
 import killercreepr.usurvive.api.event.EntityDeepSlumberEvent;
 import killercreepr.usurvive.api.event.EntityLeaveSlumberEvent;
@@ -24,22 +28,52 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.UUID;
 
-public class SleeperHolder extends EntityTickedDataHolder {
+public class SleeperHolder extends EntityTickedDataHolder implements Loadable {
     public static final Key KEY = Crux.key("sleeper");
     protected final Holder<SleeperCfg> cfgHolder;
     public SleeperHolder(@NotNull Key key, @NotNull EntityMemory parent, Holder<SleeperCfg> cfg) {
         super(key, parent);
         this.cfgHolder = cfg;
+        load();
     }
     public SleeperHolder(@NotNull EntityMemory parent, Holder<SleeperCfg> cfg) {
         this(KEY, parent, cfg);
     }
 
+    @Override
+    public void save() {
+        DataFile file = getDataFile(parent.getUUID(), true);
+        file.serialize("lastSlept", lastSlept);
+        file.serialize("lastAwoken", lastAwoken);
+        file.serialize("slumberTicks", slumberTicks);
+        file.serialize("sleepWeakness", sleepWeakness);
+        file.serialize("lastTookDamage", lastTookDamage);
+        file.save();
+    }
+
+    @Override
+    public void load() {
+        DataFile file = getDataFile(parent.getUUID(), false);
+        if(file == null) return;
+        lastSlept = file.deserializeOrDefault("lastSlept", Long.class, 0L);
+        lastAwoken = file.deserializeOrDefault("lastAwoken", Long.class, 0L);
+        slumberTicks = file.deserializeOrDefault("slumberTicks", Integer.class, 0);
+        sleepWeakness = file.deserializeOrDefault("sleepWeakness", Byte.class, (byte) 0);
+        lastTookDamage = file.deserializeOrDefault("lastTookDamage", Long.class, 0L);
+        file.close();
+    }
+
     public SleeperCfg cfg(){
         return cfgHolder.value();
+    }
+
+    public DataFile getDataFile(UUID p, boolean createIfNeeded){
+        return BukkitDataFile.parseFromGeneralPath(CruxFolder.file(Crux.getMainPlugin(), "data/usurvive/player/sleeper/" + p + ".json"), createIfNeeded);
     }
 
     protected SlumberData slumberData;
@@ -48,7 +82,7 @@ public class SleeperHolder extends EntityTickedDataHolder {
     protected long lastAwoken;
     protected int slumberTicks;
     protected int ticksAwake = 0;
-    protected int sleepWeakness = 0;
+    protected byte sleepWeakness = 0;
     protected long timeStartedBeforeDeepSleep = -1;
     protected long lastTookDamage;
 
@@ -84,6 +118,12 @@ public class SleeperHolder extends EntityTickedDataHolder {
     public void onMemoryUnload(@NotNull Entity e) {
         super.onMemoryUnload(e);
         sleep(null);
+    }
+
+    @Override
+    protected void removingFromMemory(@Nullable Entity e) {
+        super.removingFromMemory(e);
+        save();
     }
 
     protected int lastWarningIndex = -1;
@@ -130,7 +170,7 @@ public class SleeperHolder extends EntityTickedDataHolder {
         return map.calculateWarningData(slumberTicks);
     }
 
-    public int calculateSleepWeaknessLevel(int slumberTicks){
+    public byte calculateSleepWeaknessLevel(int slumberTicks){
         var map = cfg().SLEEP_WEAKNESS_LEVELS_DEFINITION().value();
         if(map == null) return 0;
         return map.calculateSleepWeaknessLevel(slumberTicks);

@@ -20,8 +20,8 @@ public class FileSleepWeaknessCalculator implements FileObjectHandler<SleepWeakn
     @Nullable
     @Override
     public SleepWeaknessCalculator deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement e) {
-        Map<Integer, NumberProvider> map = ctx.getRegistry().deserializeFromFile(
-            new TypeToken<Map<Integer, NumberProvider>>(){}.getType(), e
+        Map<Byte, NumberProvider> map = ctx.getRegistry().deserializeFromFile(
+            new TypeToken<Map<Byte, NumberProvider>>(){}.getType(), e
         );
         if(map == null || map.isEmpty()) return null;
         return new SleepWeaknessCalculator(map);
