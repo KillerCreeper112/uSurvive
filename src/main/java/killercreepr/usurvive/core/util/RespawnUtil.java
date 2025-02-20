@@ -1,6 +1,7 @@
 package killercreepr.usurvive.core.util;
 
 import killercreepr.crux.core.data.util.Pair;
+import killercreepr.crux.core.util.CruxLoc;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -65,14 +66,27 @@ public class RespawnUtil {
         return fallback == null ? null : fallback.get();
     }
 
+    public static final int[][] checkSafe = {
+        {1, 0}, {-1, 0}, {0, 1}, {0, -1},
+        {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
+    };
     public static Block findSafeSpawnNear(Block b, int range){
-        for(int x = -range; x <= range; x++){
-            for(int z = -range; z <= range; z++){
-                if(x == 0 && z == 0) continue;
-                Block check = b.getRelative(x, 0, z);
-                if(canSpawn(check)) return check;
+        BlockFace dir;
+        if(b.getBlockData() instanceof Bed bed){
+            dir = bed.getPart() == Bed.Part.HEAD ? bed.getFacing().getOppositeFace() : bed.getFacing();
+        }else dir = null;
+
+        for(int[] ints : checkSafe){
+            Block check;
+            if (dir == null) {
+                check = b.getRelative(ints[0], 0, ints[1]);
+            } else {
+                check = CruxLoc.shift(b.getLocation().toCenterLocation(), dir.getDirection(), ints[1], 0D, ints[0]).getBlock();
             }
+
+            if (canSpawn(check)) return check;
         }
+
         return null;
     }
 
