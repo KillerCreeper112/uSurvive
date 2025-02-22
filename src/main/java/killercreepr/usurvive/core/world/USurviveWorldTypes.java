@@ -17,8 +17,8 @@ import java.util.Objects;
 public class USurviveWorldTypes {
     public static final CruxWorldType RESOURCE_OVERWORLD = new CruxWorldType() {
         @Override
-        public @NotNull CruxWorld generate(@NotNull String name) {
-            World world = new WorldCreator(name).createWorld();
+        public @NotNull CruxWorld generate(@NotNull Key name) {
+            World world = new WorldCreator(name.value()).createWorld();
             if(world==null) throw new IllegalStateException("Cannot generate world! " + key());
 
             ValuesProvider cfg = USurvivePlugin.inst().values();
@@ -35,8 +35,8 @@ public class USurviveWorldTypes {
         }
 
         @Override
-        public @NotNull String defaultWorldName() {
-            return "world_resource_overworld";
+        public @NotNull Key defaultWorldKey() {
+            return Key.key("world_resource_overworld");
         }
 
         @Override

@@ -33,7 +33,7 @@ public class PlayerDeathTags implements ObjectTag<PlayerDeath> {
             .add(Tag.string("player_uuid", (args, ctx) -> death.getPlayerUUID() + ""))
             .add(Tag.string("guardian_uuid", (args, ctx) -> death.getGuardianUUID() + ""))
             .add(Tag.string("time", (args, ctx) -> death.getTime() + ""))
-            .add(Tag.string("world_uuid", (args, ctx) -> death.getWorldUUID() + ""))
+            .add(Tag.string("world_key", (args, ctx) -> death.getWorldKey() + ""))
             .add(Tag.string("time_until_expire", (args, ctx) -> death.getTimeUntilExpire() + ""))
             .add(Tag.string("expiry_time", (args, ctx) -> death.getExpiryTime() + ""))
             ;

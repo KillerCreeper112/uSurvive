@@ -29,21 +29,21 @@ public class WorldTags implements ObjectTag<World> {
     public @Nullable TagContainer<StringResolver> requestStrings(@NotNull World object, @NotNull TagParser tags) {
         return TagContainer.string(tags)
             .add(Tag.string("usurvive_sleepers", (args, ctx) ->{
-                CruxWorld crux = CruxCore.core().worldManager().getWorld(object.getUID());
+                CruxWorld crux = CruxCore.core().worldManager().getWorld(object.key());
                 if(crux == null) return "0";
                 SleeperWorldModule sleeperModule = crux.getModule(SleeperWorldModule.class);
                 if(sleeperModule == null) return "0";
                 return sleeperModule.getSleepersAmount() + "";
             }))
             .add(Tag.string("usurvive_deep_sleepers", (args, ctx) ->{
-                CruxWorld crux = CruxCore.core().worldManager().getWorld(object.getUID());
+                CruxWorld crux = CruxCore.core().worldManager().getWorld(object.key());
                 if(crux == null) return "0";
                 SleeperWorldModule sleeperModule = crux.getModule(SleeperWorldModule.class);
                 if(sleeperModule == null) return "0";
                 return sleeperModule.getDeepSleepersAmount() + "";
             }))
             .add(Tag.string("usurvive_time_skip_per_tick", (args, ctx) ->{
-                CruxWorld crux = CruxCore.core().worldManager().getWorld(object.getUID());
+                CruxWorld crux = CruxCore.core().worldManager().getWorld(object.key());
                 if(crux == null) return "0";
                 SleeperWorldModule sleeperModule = crux.getModule(SleeperWorldModule.class);
                 if(sleeperModule == null) return "0";

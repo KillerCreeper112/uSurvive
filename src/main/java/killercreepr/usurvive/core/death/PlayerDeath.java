@@ -2,6 +2,7 @@ package killercreepr.usurvive.core.death;
 
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.api.math.PositionPosed;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -14,7 +15,7 @@ import java.util.UUID;
 
 public class PlayerDeath implements PositionPosed {
     protected final @NotNull UUID playerUUID;
-    protected @NotNull UUID worldUUID;
+    protected @NotNull Key worldKey;
     protected @NotNull CruxPosition deathPosition;
     protected @NotNull CruxPosition gravePosition;
     protected final @NotNull UUID guardianUUID;
@@ -24,14 +25,14 @@ public class PlayerDeath implements PositionPosed {
     protected final int expiryTime;
 
     public PlayerDeath(@NotNull UUID playerUUID,
-                       @NotNull UUID worldUUID,
+                       @NotNull Key worldKey,
                        @NotNull CruxPosition deathPosition,
                        @NotNull CruxPosition gravePosition,
                        @NotNull UUID guardianUUID,
                        @NotNull Collection<ItemStack> drops,
                        int experience, long time, int expiryTime) {
         this.playerUUID = playerUUID;
-        this.worldUUID = worldUUID;
+        this.worldKey = worldKey;
         this.deathPosition = deathPosition;
         this.gravePosition = gravePosition;
         this.guardianUUID = guardianUUID;
@@ -53,8 +54,8 @@ public class PlayerDeath implements PositionPosed {
         return getTimeUntilExpire() < 1;
     }
 
-    public void setWorldUUID(@NotNull UUID worldUUID) {
-        this.worldUUID = worldUUID;
+    public void setWorldKey(@NotNull Key worldKey) {
+        this.worldKey = worldKey;
     }
 
     public void setDrops(@NotNull Collection<ItemStack> drops) {
@@ -75,7 +76,7 @@ public class PlayerDeath implements PositionPosed {
     }
 
     public @Nullable World getWorld(){
-        return Bukkit.getWorld(worldUUID);
+        return Bukkit.getWorld(worldKey);
     }
 
     public @Nullable Entity getGuardian(){
@@ -88,8 +89,8 @@ public class PlayerDeath implements PositionPosed {
     }
 
     @NotNull
-    public UUID getWorldUUID() {
-        return worldUUID;
+    public Key getWorldKey() {
+        return worldKey;
     }
 
     @NotNull

@@ -133,7 +133,7 @@ public class BedListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntitySlumber(EntitySlumberEvent event) {
         Entity e = event.getEntity();
-        CruxWorld crux = CruxCore.core().worldManager().getWorld(e.getWorld().getUID());
+        CruxWorld crux = CruxCore.core().worldManager().getWorld(e.getWorld().key());
         if(crux == null) return;
         SleeperWorldModule sleep = crux.getModule(SleeperWorldModule.class);
         if(sleep == null) return;
@@ -143,7 +143,7 @@ public class BedListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDeepSlumber(EntityDeepSlumberEvent event) {
         Entity e = event.getEntity();
-        CruxWorld crux = CruxCore.core().worldManager().getWorld(e.getWorld().getUID());
+        CruxWorld crux = CruxCore.core().worldManager().getWorld(e.getWorld().key());
         if(crux == null) return;
         SleeperWorldModule sleep = crux.getModule(SleeperWorldModule.class);
         if(sleep == null) return;
@@ -154,7 +154,7 @@ public class BedListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityLeaveSlumber(EntityLeaveSlumberEvent event) {
         Entity e = event.getEntity();
-        CruxWorld crux = CruxCore.core().worldManager().getWorld(e.getWorld().getUID());
+        CruxWorld crux = CruxCore.core().worldManager().getWorld(e.getWorld().key());
         if(crux == null) return;
         SleeperWorldModule sleep = crux.getModule(SleeperWorldModule.class);
         if(sleep == null) return;

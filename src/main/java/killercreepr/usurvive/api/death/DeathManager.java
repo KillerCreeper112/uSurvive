@@ -2,6 +2,7 @@ package killercreepr.usurvive.api.death;
 
 import killercreepr.usurvive.api.world.module.DeathWorldModule;
 import killercreepr.usurvive.core.death.PlayerDeath;
+import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,13 +15,13 @@ import java.util.function.Predicate;
 public interface DeathManager {
     @NotNull
     Collection<PlayerDeath> getAllDeaths(@Nullable Predicate<PlayerDeath> filter);
-    @NotNull Collection<PlayerDeath> getAllDeathsInWorld(@NotNull UUID player, @NotNull UUID world);
+    @NotNull Collection<PlayerDeath> getAllDeathsInWorld(@NotNull UUID player, @NotNull Key world);
     @NotNull Collection<PlayerDeath> getAllDeaths(@NotNull UUID player);
     default @NotNull Collection<PlayerDeath> getAllDeaths(@NotNull Player player){
         return getAllDeaths(player.getUniqueId());
     }
     default @NotNull Collection<PlayerDeath> getAllDeathsInWorld(@NotNull Player p){
-        return getAllDeathsInWorld(p.getUniqueId(), p.getWorld().getUID());
+        return getAllDeathsInWorld(p.getUniqueId(), p.getWorld().key());
     }
     boolean addDeath(@NotNull PlayerDeath death);
     boolean removeDeath(@NotNull PlayerDeath death);

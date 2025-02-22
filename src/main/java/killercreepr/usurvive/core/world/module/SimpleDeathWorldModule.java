@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import killercreepr.crux.api.data.world.ChunkBlockStorage;
 import killercreepr.crux.api.data.world.WorldChunkStorage;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxKey;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
 import killercreepr.cruxcore.CruxCore;
@@ -13,6 +14,7 @@ import killercreepr.usurvive.api.event.PlayerDeathExpireEvent;
 import killercreepr.usurvive.api.world.module.DeathWorldModule;
 import killercreepr.usurvive.core.death.PlayerDeath;
 import killercreepr.usurvive.core.death.storage.WorldDeathStorage;
+import net.kyori.adventure.key.Key;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,9 +52,9 @@ public class SimpleDeathWorldModule extends SimpleWorldModule implements DeathWo
     public void onDelete() {
         super.onDelete();
         deaths.getDeathManager().removeDeathWorldModule(this);
-        UUID uuid = parent.getUUID();
+        Key uuid = parent.key();
         try{
-            FileUtils.deleteDirectory(new CruxFolder(CruxCore.inst(), "data/usurvive/deaths/" + uuid).file());
+            FileUtils.deleteDirectory(new CruxFolder(CruxCore.inst(), "data/usurvive/deaths/" + CruxKey.toFileName(uuid)).file());
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -63,9 +65,9 @@ public class SimpleDeathWorldModule extends SimpleWorldModule implements DeathWo
     }
 
     public void save(@NotNull WorldChunkStorage<PlayerDeath> chunk){
-        UUID uuid = parent.getUUID();
+        Key uuid = parent.key();
         try{
-            FileUtils.deleteDirectory(new CruxFolder(CruxCore.inst(), "data/usurvive/deaths/" + uuid).file());
+            FileUtils.deleteDirectory(new CruxFolder(CruxCore.inst(), "data/usurvive/deaths/" + CruxKey.toFileName(uuid)).file());
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -74,8 +76,8 @@ public class SimpleDeathWorldModule extends SimpleWorldModule implements DeathWo
         });
     }
 
-    public void save(@NotNull UUID world, long chunk, @NotNull ChunkBlockStorage<PlayerDeath> block){
-        CruxJson file = new CruxJson(CruxCore.inst(), "data/usurvive/deaths/" + world + "/" + chunk);
+    public void save(@NotNull Key world, long chunk, @NotNull ChunkBlockStorage<PlayerDeath> block){
+        CruxJson file = new CruxJson(CruxCore.inst(), "data/usurvive/deaths/" + CruxKey.toFileName(world) + "/" + chunk);
         file.serialize("values", block.getData().values());
         file.save();
     }

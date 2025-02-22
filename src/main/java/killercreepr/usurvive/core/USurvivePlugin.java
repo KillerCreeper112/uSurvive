@@ -263,19 +263,19 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     }
 
     public void registerWorldData(CruxWorldManager worldManager){
-        worldManager.getModuleCreatorRegistry().register("world", new CruxWorldModuleCreator() {
+        worldManager.getModuleCreatorRegistry().register(Key.key("world"), new CruxWorldModuleCreator() {
             @Override
             public @NotNull WorldModule create(@NotNull CruxWorld world) {
                 return new USurviveOverworld(world);
             }
         });
-        worldManager.getModuleCreatorRegistry().register("world_nether", new CruxWorldModuleCreator() {
+        worldManager.getModuleCreatorRegistry().register(Key.key("world_nether"), new CruxWorldModuleCreator() {
             @Override
             public @NotNull WorldModule create(@NotNull CruxWorld world) {
                 return new USurviveNether(world);
             }
         });
-        worldManager.getModuleCreatorRegistry().register("world_resource_overworld", new CruxWorldModuleCreator() {
+        worldManager.getModuleCreatorRegistry().register(Key.key("world_resource_overworld"), new CruxWorldModuleCreator() {
             @Override
             public @NotNull WorldModule create(@NotNull CruxWorld world) {
                 return new ResetWorldModule(world, () -> values().RESOURCE_OVERWORLD_RESET_TIME(), USurviveWorldTypes.RESOURCE_OVERWORLD);

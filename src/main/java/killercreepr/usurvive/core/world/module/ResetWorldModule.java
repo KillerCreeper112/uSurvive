@@ -52,19 +52,19 @@ public class ResetWorldModule extends SimpleWorldModule implements Ticked {
 
     public void reset(){
         CruxWorldManager worldManager = CruxCore.core().worldManager();
-        Crux.log(Level.INFO, "[ResetWorldModule] Resetting world, " + parent.getName() + "...");
+        Crux.log(Level.INFO, "[ResetWorldModule] Resetting world, " + parent.key() + "...");
         worldManager.deleteWorld(parent).whenComplete((value, throwable) ->{
             if(throwable != null) Crux.log(Level.SEVERE, throwable.getMessage());
             if(!value){
-                Crux.log(Level.SEVERE, "[ResetWorldModule] COULD NOT DELETE " + parent.getName() + ".");
+                Crux.log(Level.SEVERE, "[ResetWorldModule] COULD NOT DELETE " + parent.key() + ".");
                 return;
             }
             CruxWorld created = worldManager.getOrCreateWorld(type);
             if(created != null){
                 CruxTag.set(created.toBukkitWorld(), "last_reset", PersistentDataType.LONG, System.currentTimeMillis());
-                Crux.log(Level.INFO, "[ResetWorldModule] World, " + parent.getName() + " has been reset.");
+                Crux.log(Level.INFO, "[ResetWorldModule] World, " + parent.key() + " has been reset.");
             }else{
-                Crux.log(Level.SEVERE, "[ResetWorldModule] COULD NOT CREATE NEW " + parent.getName() + ".");
+                Crux.log(Level.SEVERE, "[ResetWorldModule] COULD NOT CREATE NEW " + parent.key() + ".");
             }
         });
     }

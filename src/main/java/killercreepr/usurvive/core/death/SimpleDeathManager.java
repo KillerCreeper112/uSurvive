@@ -22,6 +22,7 @@ import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.mob.goals.EchoGoal;
 import killercreepr.usurvive.core.stat.USurviveStats;
 import killercreepr.usurvive.core.world.module.SimpleDeathWorldModule;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -220,7 +221,7 @@ public class SimpleDeathManager implements DeathManager, Listener {
         int maxGravestones = (int) BukkitStatHolder.holder(p).getStatValue(USurviveStats.MAX_GRAVESTONES);
         if(maxGravestones < 1) return;
 
-        CruxWorld crux = worldManager.getWorld(deathWorld.getUID());
+        CruxWorld crux = worldManager.getWorld(deathWorld.key());
         if(crux == null) return;
         DeathWorldModule module = crux.getModule(DeathWorldModule.class);
         if(module == null) return;
@@ -253,7 +254,7 @@ public class SimpleDeathManager implements DeathManager, Listener {
                 Entity echo = USurviveMobs.ECHO.spawn(gravePosition.toLocation(deathWorld));
 
                 PlayerDeath death = new PlayerDeath(
-                    p.getUniqueId(), deathWorld.getUID(),
+                    p.getUniqueId(), deathWorld.key(),
                     CruxPosition.location(deathLocation),
                     gravePosition,
                     echo.getUniqueId(),
@@ -304,7 +305,7 @@ public class SimpleDeathManager implements DeathManager, Listener {
                             //deaths.remove(oldest.getWorldUUID(), oldest.getPosition().toChunkKey(), oldest.getPosition());
                         }));
                     }else{
-                        Crux.log(Level.WARNING, "PlayerDeath world, " + oldest.getWorldUUID() + " was not loaded. From player: " + oldest.getPlayerUUID());
+                        Crux.log(Level.WARNING, "PlayerDeath world, " + oldest.getWorldKey() + " was not loaded. From player: " + oldest.getPlayerUUID());
                         Entity e = plugin.getServer().getEntity(oldest.getGuardianUUID());
                         if(e!=null){
                             if(e instanceof LivingEntity d) d.damage(99999999D, DamageSource.builder(DamageType.GENERIC_KILL).build());
@@ -335,7 +336,7 @@ public class SimpleDeathManager implements DeathManager, Listener {
 
     @NotNull
     @Override
-    public Collection<PlayerDeath> getAllDeathsInWorld(@NotNull UUID player, @NotNull UUID world) {
+    public Collection<PlayerDeath> getAllDeathsInWorld(@NotNull UUID player, @NotNull Key world) {
         CruxWorld crux = worldManager.getWorld(world);
         if(crux == null) return new HashSet<>();
         DeathWorldModule module = crux.getModule(DeathWorldModule.class);
@@ -351,7 +352,7 @@ public class SimpleDeathManager implements DeathManager, Listener {
 
     @Override
     public boolean addDeath(@NotNull PlayerDeath death) {
-        CruxWorld world = worldManager.getWorld(death.getWorldUUID());
+        CruxWorld world = worldManager.getWorld(death.getWorldKey());
         if(world == null) return false;
         DeathWorldModule module = world.getModule(DeathWorldModule.class);
         if(module == null) return false;
@@ -360,7 +361,7 @@ public class SimpleDeathManager implements DeathManager, Listener {
 
     @Override
     public boolean removeDeath(@NotNull PlayerDeath death) {
-        CruxWorld world = worldManager.getWorld(death.getWorldUUID());
+        CruxWorld world = worldManager.getWorld(death.getWorldKey());
         if(world == null) return false;
         DeathWorldModule module = world.getModule(DeathWorldModule.class);
         if(module == null) return false;
