@@ -23,6 +23,8 @@ public class StandardPlayerSettingSelections {
     public static final PlayerSettingSelection ACTION_BAR = register(PlayerSettingSelection.playerSettingSelection(Crux.key("action_bar")));
     public static final PlayerSettingSelection SOUND = register(PlayerSettingSelection.playerSettingSelection(Crux.key("sound")));
     public static final PlayerSettingSelection CHAT = register(PlayerSettingSelection.playerSettingSelection(Crux.key("chat")));
+    public static final PlayerSettingSelection STRONG = register(PlayerSettingSelection.playerSettingSelection(Crux.key("strong")));
+    public static final PlayerSettingSelection WEAK = register(PlayerSettingSelection.playerSettingSelection(Crux.key("weak")));
 
     public static PlayerSettingSelection register(PlayerSettingSelection s){
         return USurviveRegistries.PLAYER_SETTING_SELECTION.register(s);
