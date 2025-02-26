@@ -14,25 +14,50 @@ public class WaterProjectileHolder extends EntityTickedDataHolder {
     public WaterProjectileHolder(@NotNull Key key, @NotNull EntityMemory parent, WaterProjectile data) {
         super(key, parent);
         this.data = data;
+        this.maxTicks = data.maxTime() * (1.0 / data.dropOffRate()); // Scale the max ticks based on drop-off speed
     }
 
     public WaterProjectileHolder(@NotNull EntityMemory parent, WaterProjectile data) {
         this(KEY, parent, data);
     }
 
+    public boolean isInWater(Entity e){
+        return e.isInWater();
+        //return e.getLocation().getBlock().getType() == Material.WATER;
+    }
+
     protected final WaterProjectile data;
 
     protected int tick = 0;
+    protected int inWaterTick = 0;
+    protected final double maxTicks;
+    protected Vector last;
+    protected Vector dir;
+    protected boolean hadGravity;
     @Override
     public void tick(@NotNull Entity entity) {
         tick++;
+        if(!isInWater(entity)){
+            if(inWaterTick < 1) return;
+            entity.setGravity(hadGravity);
+            return;
+        }
+        inWaterTick++;
+        if(inWaterTick == 1){
+            last = entity.getLocation().toVector();
+            hadGravity = entity.hasGravity();
+            return;
+        }
+        if(entity.hasGravity()) entity.setGravity(false);
+        if(dir == null){
+            dir = entity.getLocation().toVector().subtract(last).normalize();
+        }
         if(tick >= data.maxTime()) return;
         //double dropOffSpeed = 2.0; // Adjust this to control how fast the force weakens (Higher = faster drop-off)
-        double maxTicks = data.maxTime() * (1.0 / data.dropOffRate()); // Scale the max ticks based on drop-off speed
         double decayFactor = Math.max(0, 1 - Math.pow(tick / maxTicks, 2));
 
-        Vector dir = entity.getLocation().getDirection().normalize();
-        dir.multiply(data.force() * decayFactor);
-        entity.setVelocity(entity.getVelocity().add(dir));
+        try{
+            entity.setVelocity(dir.clone().multiply(data.force() * decayFactor));
+        }catch (Exception ignored){}
     }
 }

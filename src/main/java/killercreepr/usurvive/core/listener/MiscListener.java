@@ -27,7 +27,10 @@ public class MiscListener implements Listener {
         CruxItem crux = CruxItem.wrap(arrow);
         WaterProjectile water = crux.getOrDefaultData(USurviveComponents.WATER_PROJECTILE);
         if(water==null) return;
-        EntityMemory.getOrCreateDataHolder(event.getProjectile(), WaterProjectileHolder.class, mem -> new WaterProjectileHolder(mem, water));
+        EntityMemory.getOrCreateDataHolder(event.getProjectile(), WaterProjectileHolder.class, mem ->{
+            event.getProjectile().setPersistent(false);
+            return new WaterProjectileHolder(mem, water);
+        });
     }
 
 }
