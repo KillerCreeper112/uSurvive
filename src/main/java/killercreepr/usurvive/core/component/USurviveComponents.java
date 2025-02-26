@@ -7,6 +7,7 @@ import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.cruxteleport.api.component.TeleporterComponent;
 import killercreepr.usurvive.api.component.InfusedPotions;
 import killercreepr.usurvive.api.component.PotionInfusable;
+import killercreepr.usurvive.api.component.WaterProjectile;
 import killercreepr.usurvive.api.mechanics.Grapple;
 import killercreepr.usurvive.core.component.impl.InfusionAttributesBenefit;
 import killercreepr.usurvive.core.component.impl.OrbitConduitComponent;
@@ -38,6 +39,9 @@ public class USurviveComponents {
         builder.persistTextParser(PersistTextParser.INTEGER.createInput(Crux.key("potion_infusion_durability_benefit"))));
     public static final DataComponentType<InfusionAttributesBenefit> POTION_INFUSION_ATTRIBUTES_BENEFIT = register("potion_infusion_attributes_benefit", builder ->
         builder.persistTextParser(USurviveCompParsers.INFUSION_ATTRIBUTES_BENEFIT.createInput(Crux.key("potion_infusion_attributes_benefit"))));
+
+    public static final DataComponentType<WaterProjectile> WATER_PROJECTILE = register("water_projectile", builder ->
+        builder.persistTextParser(USurviveCompParsers.WATER_PROJECTILE.createInput(Crux.key("water_projectile"))));
 
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());

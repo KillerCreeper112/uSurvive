@@ -8,11 +8,9 @@ import killercreepr.cruxattributes.core.component.CruxAttributeCompParsers;
 import killercreepr.usurvive.api.component.InfusedPotionGroup;
 import killercreepr.usurvive.api.component.InfusedPotions;
 import killercreepr.usurvive.api.component.PotionInfusable;
+import killercreepr.usurvive.api.component.WaterProjectile;
 import killercreepr.usurvive.api.mechanics.Grapple;
-import killercreepr.usurvive.core.component.impl.InfusionAttributesBenefit;
-import killercreepr.usurvive.core.component.impl.SimpleInfusedPotionGroup;
-import killercreepr.usurvive.core.component.impl.SimpleInfusedPotions;
-import killercreepr.usurvive.core.component.impl.SimplePotionInfusable;
+import killercreepr.usurvive.core.component.impl.*;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleDisplayGrapple;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleGrapple;
 import net.kyori.adventure.key.Key;
@@ -119,4 +117,14 @@ public class USurviveCompParsers {
         .field("attributes", TextInputField.field(ComponentInputParsers.MAP.KEY_DOUBLE_MAP, InfusionAttributesBenefit::getAttributes))
         .field("keep_defaults", TextInputField.field(PersistTextParser.BOOLEAN, InfusionAttributesBenefit::isKeepDefaults))
         .apply(ctx -> new InfusionAttributesBenefit(ctx.get("attributes"), ctx.getOptional("keep_defaults")));
+
+    public static final PersistTextParser<WaterProjectile> WATER_PROJECTILE = PersistTextParser.mapBuilder(WaterProjectile.class)
+        .field("force", TextInputField.field(PersistTextParser.DOUBLE, WaterProjectile::force))
+        .field("drop_off_rate", TextInputField.field(PersistTextParser.DOUBLE, WaterProjectile::dropOffRate))
+        .field("max_time", TextInputField.field(PersistTextParser.INTEGER, WaterProjectile::maxTime))
+        .apply(ctx -> new SimpleWaterProjectile(
+            ctx.getOptional("force", .05D),
+            ctx.getOptional("drop_off_rate", 2D),
+            ctx.getOptional("max_time", 50)
+        ));
 }
