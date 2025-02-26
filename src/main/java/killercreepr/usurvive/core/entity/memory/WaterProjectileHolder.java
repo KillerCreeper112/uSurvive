@@ -7,6 +7,7 @@ import killercreepr.usurvive.api.component.WaterProjectile;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Projectile;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,6 +59,7 @@ public class WaterProjectileHolder extends EntityTickedDataHolder {
         if(inWaterTick == 1){
             last = entity.getLocation().toVector();
             hadGravity = entity.hasGravity();
+            if(entity instanceof AbstractArrow a) a.setDamage(a.getDamage()*1.5D);
             return;
         }
         if(entity.hasGravity()) entity.setGravity(false);
