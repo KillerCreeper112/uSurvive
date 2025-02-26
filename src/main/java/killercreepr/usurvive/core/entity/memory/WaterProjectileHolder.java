@@ -5,9 +5,11 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.EntityTickedDataHolder;
 import killercreepr.usurvive.api.component.WaterProjectile;
 import net.kyori.adventure.key.Key;
+import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class WaterProjectileHolder extends EntityTickedDataHolder {
     public static final Key KEY = Crux.key("water_projectile");
@@ -26,6 +28,11 @@ public class WaterProjectileHolder extends EntityTickedDataHolder {
         //return e.getLocation().getBlock().getType() == Material.WATER;
     }
 
+    @Override
+    public boolean shouldRemoveFromMemory(@Nullable Entity e) {
+        return super.shouldRemoveFromMemory(e) || tick > data.maxTime();
+    }
+
     protected final WaterProjectile data;
 
     protected int tick = 0;
@@ -42,6 +49,11 @@ public class WaterProjectileHolder extends EntityTickedDataHolder {
             entity.setGravity(hadGravity);
             return;
         }
+
+        if(entity instanceof AbstractArrow a && a.isInBlock()){
+            return;
+        }
+
         inWaterTick++;
         if(inWaterTick == 1){
             last = entity.getLocation().toVector();
