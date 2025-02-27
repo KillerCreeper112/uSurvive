@@ -11,6 +11,7 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
+import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.usurvive.api.component.InfusedPotions;
 import killercreepr.usurvive.api.component.PotionInfusable;
 import killercreepr.usurvive.api.event.InfusedItemUpdateEvent;
@@ -237,6 +238,7 @@ public class AnimalsAndPotionInfusionListener implements Listener {
     }
 
     public void loadAnimal(@NotNull Animals a){
+        if(CruxMob.is(a)) return;
         /*CruxMob mob = NotOkayMobs.getVanilla(a.getClass());
         if(mob != null){
             mob.load(a);
