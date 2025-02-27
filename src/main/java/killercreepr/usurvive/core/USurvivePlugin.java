@@ -320,7 +320,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new ProjectileReflectListener(),
             new SettingsListener(),
             new MiscListener(),
-            new BedListener()
+            new BedListener(),
+            new ArmorTrimListener()
         );
 
         super.enabled();
