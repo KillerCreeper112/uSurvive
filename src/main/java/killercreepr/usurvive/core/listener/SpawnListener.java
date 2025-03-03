@@ -11,6 +11,7 @@ import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.api.entity.player.UPlayerManager;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.lang.Lang;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
@@ -66,13 +67,13 @@ public class SpawnListener implements Listener {
         if(uPlay == null) return;
         uPlay.load();
 
-        String worldName = uPlay.getLastKnownWorld();
-        if(worldName == null) return;
+        Key worldKey = uPlay.getLastKnownWorld();
+        if(worldKey == null) return;
         CruxLocation pos = uPlay.getLastKnownPosition();
         if(pos == null) return;
-        World world = CruxWorldUtil.getOrLoadWorld(worldName);
+        World world = CruxWorldUtil.getOrLoadWorld(worldKey);
         if(world == null){
-            Crux.log(Level.WARNING, "World " + worldName + " does not exist! " + p.getName() + " cannot spawn there.");
+            Crux.log(Level.WARNING, "World " + worldKey + " does not exist! " + p.getName() + " cannot spawn there.");
             return;
         }
 
@@ -121,7 +122,7 @@ public class SpawnListener implements Listener {
         if(uPlay == null) return;
         //uPlay.load();
         uPlay.setLastLogout(System.currentTimeMillis());
-        uPlay.setLastKnownWorld(p.getWorld().getName());
+        uPlay.setLastKnownWorld(p.getWorld().key());
         uPlay.setLastKnownPosition(CruxLocation.location(p.getLocation()));
         uPlay.setLastKnownName(p.getName());
         uPlay.save();

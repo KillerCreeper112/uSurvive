@@ -4,6 +4,7 @@ import killercreepr.crux.api.data.Loadable;
 import killercreepr.crux.api.data.PluginLoadable;
 import killercreepr.crux.api.math.CruxLocation;
 import killercreepr.usurvive.core.USurvivePlugin;
+import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
@@ -23,16 +24,17 @@ public interface UPlayer extends Loadable, PluginLoadable {
     @NotNull UUID getUUID();
     long getLastLogout();
     @Nullable CruxLocation getLastKnownPosition();
-    @Nullable String getLastKnownWorld();
+    @Nullable Key getLastKnownWorld();
     @Nullable String getLastKnownName();
     @NotNull Collection<UUID> getFriends();
     @NotNull Collection<UUID> getPartyMembers();
 
     void setLastLogout(long time);
     void setLastKnownPosition(@Nullable CruxLocation pos);
-    void setLastKnownWorld(@Nullable String name);
+    void setLastKnownWorld(@Nullable Key key);
     void setLastKnownName(@Nullable String name);
 
     boolean hasFriend(@NotNull UUID uuid);
     boolean isApartOfParty(@NotNull UUID uuid);
+    boolean isOnline();
 }

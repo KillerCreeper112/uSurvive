@@ -12,6 +12,7 @@ import killercreepr.cruxparty.api.party.Party;
 import killercreepr.cruxparty.api.party.PartyHolder;
 import killercreepr.cruxparty.core.CruxPartyPlugin;
 import killercreepr.usurvive.api.entity.player.UPlayer;
+import net.kyori.adventure.key.Key;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +27,7 @@ public class DataUPlayer implements UPlayer {
     protected final @NotNull UUID uuid;
     protected long lastLogout;
     protected CruxLocation lastKnownPosition;
-    protected String lastKnownWorldName;
+    protected Key lastKnownWorld;
     protected String lastKnownName;
 
     public DataUPlayer(@NotNull UUID uuid) {
@@ -79,6 +80,11 @@ public class DataUPlayer implements UPlayer {
         return party.owner().equals(uuid) || party.hasMember(uuid);
     }
 
+    @Override
+    public boolean isOnline() {
+        return Crux.getServer().getPlayer(uuid) != null;
+    }
+
     @NotNull
     @Override
     public UUID getUUID() {
@@ -98,8 +104,8 @@ public class DataUPlayer implements UPlayer {
 
     @Nullable
     @Override
-    public String getLastKnownWorld() {
-        return lastKnownWorldName;
+    public Key getLastKnownWorld() {
+        return lastKnownWorld;
     }
 
     @Override
@@ -113,8 +119,8 @@ public class DataUPlayer implements UPlayer {
     }
 
     @Override
-    public void setLastKnownWorld(@Nullable String name) {
-        this.lastKnownWorldName = name;
+    public void setLastKnownWorld(@Nullable Key name) {
+        this.lastKnownWorld = name;
     }
 
     @Override
@@ -133,7 +139,7 @@ public class DataUPlayer implements UPlayer {
         if(file == null) return;
         file.serialize("last_known_name", lastKnownName);
         file.serialize("last_known_location", lastKnownPosition);
-        file.serialize("last_known_location_world_name", lastKnownWorldName);
+        file.serialize("last_known_location_world", lastKnownWorld);
         file.serialize("last_logout", lastLogout);
         file.save();
     }
@@ -144,9 +150,9 @@ public class DataUPlayer implements UPlayer {
         if(file == null) return;
         lastKnownName = file.deserialize("last_known_name", String.class);
         lastKnownPosition = file.deserialize("last_known_location", CruxLocation.class);
-        lastKnownWorldName = file.deserialize("last_known_location_world_name", String.class);
-        Number n = file.deserialize("last_logout", Number.class);
-        if(n != null) lastLogout = n.longValue();
+        lastKnownWorld = file.deserialize("last_known_location_world", Key.class);
+        Long n = file.deserialize("last_logout", Long.class);
+        if(n != null) lastLogout = n;
         file.close();
     }
 
