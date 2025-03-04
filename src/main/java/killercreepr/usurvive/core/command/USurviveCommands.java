@@ -13,6 +13,8 @@ import killercreepr.crux.api.communication.Communicator;
 import killercreepr.crux.api.component.parser.DataComponentDecoder;
 import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.entity.memory.EntityMemory;
+import killercreepr.crux.api.item.dynamic.DynamicItem;
+import killercreepr.crux.api.text.context.TextParserContext;
 import killercreepr.crux.api.text.tags.TagsPrefixBuilder;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
@@ -36,6 +38,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -138,8 +142,16 @@ public class USurviveCommands {
                 Commands.literal("rules")
                     .executes(ctx ->{
                         if(!(getExecutor(ctx.getSource()) instanceof Player p)) return -1;
-                        CruxCore.inst().cruxMenus().menuRegistry().menuHolders().get(Crux.key("guide_rules"))
-                            .open(p);
+
+                        ItemStack book = DynamicItem.builder()
+                            .material("crux:rules").build()
+                            .buildItem(TextParserContext.empty());
+                        if(book == null || !(book.getItemMeta() instanceof BookMeta meta)){
+                            CruxCore.inst().cruxMenus().menuRegistry().menuHolders().get(Crux.key("guide_rules"))
+                                .open(p);
+                            return 1;
+                        }
+                        p.openBook(meta);
                         return 1;
                     })
                     .build(), List.of("guidelines", "tos", "terms")
