@@ -72,7 +72,7 @@ public class ActiveAbsorbDamageTickable extends ListenerActiveEntityTickable imp
         if(CruxItem.isEmpty(item)) return;
         if(entity instanceof LivingEntity d){
             ItemStack newItem = d.damageItemStack(item, itemDmg);
-            if(!(d.getEquipment() instanceof PlayerInventory)) return;
+            if((d.getEquipment() instanceof PlayerInventory)) return;
             d.getEquipment().setItem(AttributeBukkitAdaptor.adapt(slot), newItem);
         }
         //nothing for normal entity

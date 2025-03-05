@@ -54,6 +54,38 @@ public class USurviveTickables {
         }
     });
 
+    public static final EntityTickable ABSORB_NEARBY_FRIENDLY_DAMAGE = register(new SimpleDataEntityTickable(Crux.key("absorb_nearby_friendly_damage")) {
+        public static final PersistParser<?> DATA_PARSER = PersistTextParser.mapBuilder(Map.class)
+            .field("chance", TextInputField.field(PersistTextParser.FLOAT, e -> (Float) e.get("chance")))
+            .field("dmg_reduction_percent", TextInputField.field(PersistTextParser.FLOAT, e -> (Float) e.get("dmg_reduction_percent")))
+            .field("max_dmg_reduction", TextInputField.field(PersistTextParser.FLOAT, e -> (Float) e.get("max_dmg_reduction")))
+            .field("item_dmg", TextInputField.field(PersistTextParser.FLOAT, e -> (Float) e.get("item_dmg")))
+            .field("damage_types", TextInputField.field(PersistTextParser.LIST.KEY, e -> (List<Key>) e.get("damage_types")))
+            .field("damage_causes", TextInputField.field(PersistTextParser.LIST.STRING, e -> (List<String>) e.get("damage_causes")))
+            .apply(InputDecodeContext::get)
+            .createInput(Crux.key("data"));
+
+        @Override
+        public PersistParser<?> getDataParser() {
+            return DATA_PARSER;
+        }
+
+        @Override
+        public @Nullable ActiveEntityTickable buildActive(@NotNull Entity entity, @Nullable CruxSlot slot, @NotNull EntityTickableModifier mod) {
+            Map data = (Map) mod.getData();
+            return new ActiveAbsorbNearbyFriendlyDamageTickable(
+                entity, this, slot,
+                (float) data.getOrDefault("chance", 100f),
+                (float) data.getOrDefault("dmg_reduction_percent", .7f),
+                (float) data.getOrDefault("max_dmg_reduction", 999f),
+                (float) data.getOrDefault("item_dmg", 0f),
+                (Collection<String>) data.get("damage_causes"),
+                (Collection<Key>) data.get("damage_types"),
+                (float) data.getOrDefault("range", 8f)
+            );
+        }
+    });
+
     private static EntityTickable register(EntityTickable tickable){
         return CruxTickableRegistries.ENTITY_TICKABLE.register(tickable);
     }
