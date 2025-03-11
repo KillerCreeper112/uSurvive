@@ -5,6 +5,7 @@ import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
 import killercreepr.usurvive.api.event.EntityTrampleEnchantEvent;
 import killercreepr.usurvive.core.data.entity.TrampleHolder;
 import killercreepr.usurvive.core.enchant.USurviveEnchant;
@@ -14,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,6 +24,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -98,8 +101,36 @@ public class EnchantsListener implements Listener {
         }
     }
 
+    public void burningThorns(EntityDamageByEntityEvent event,
+                              LivingEntity victim, EntityEquipment victimEquip){
+        int fireTicks = 0;
+        float chance = 0f;
+        for(EquipmentSlot slot : AttributeBukkitAdaptor.ARMOR_SLOTS){
+            if(!victim.canUseEquipmentSlot(slot)) continue;
+            ItemStack item = victimEquip.getItem(slot);
+            if(CruxItem.isEmpty(item)) continue;
+            int level = item.getEnchantmentLevel(USurviveEnchant.BURNING_THORNS);
+            if(level == 0) continue;
+            fireTicks += 80 * level;
+            chance += 12 * level;
+        }
+        if(fireTicks < 1) return;
+        if(!CruxMath.testChance(chance)) return;
+        Entity dmger = event.getDamager();
+        if(dmger.getFireTicks() >= fireTicks) return;
+
+        dmger.setFireTicks(fireTicks);
+    }
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if(event.getEntity() instanceof LivingEntity victim){
+            EntityEquipment victimEquip = victim.getEquipment();
+            if(victimEquip != null){
+                burningThorns(event, victim, victimEquip);
+            }
+        }
+
         if(event.getDamager() instanceof LivingEntity damager && event.getEntity() instanceof LivingEntity victim){
             EntityEquipment dmgerEquip = damager.getEquipment();
             if(dmgerEquip != null && !CruxItem.isEmpty(dmgerEquip.getItemInMainHand())){

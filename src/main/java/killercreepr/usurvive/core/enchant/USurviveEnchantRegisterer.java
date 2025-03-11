@@ -47,5 +47,16 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .activeSlots(EquipmentSlotGroup.MAINHAND)
                 //.exclusiveWith(RegistrySet.keySet(RegistryKey.ENCHANTMENT, TypedKey.create(RegistryKey.ENCHANTMENT, Key.key("feather_falling"))))
         );
+        register(
+            "burning_thorns", b -> b.description(Component.text("Burning Thorns"))
+                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_ARMOR))
+                .anvilCost(1)
+                .maxLevel(1)
+                .weight(5)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.ARMOR)
+            //.exclusiveWith(RegistrySet.keySet(RegistryKey.ENCHANTMENT, TypedKey.create(RegistryKey.ENCHANTMENT, Key.key("feather_falling"))))
+        );
     }
 }
