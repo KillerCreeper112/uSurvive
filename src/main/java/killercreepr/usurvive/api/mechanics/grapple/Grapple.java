@@ -1,4 +1,4 @@
-package killercreepr.usurvive.api.mechanics;
+package killercreepr.usurvive.api.mechanics.grapple;
 
 import killercreepr.cruxitems.api.item.component.InteractableComponent;
 import net.kyori.adventure.key.Key;

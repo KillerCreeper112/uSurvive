@@ -5,7 +5,7 @@ import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxitems.api.item.interaction.ItemUseContext;
 import killercreepr.cruxitems.api.item.interaction.ItemUseResult;
-import killercreepr.usurvive.api.mechanics.Grapple;
+import killercreepr.usurvive.api.mechanics.grapple.Grapple;
 import killercreepr.usurvive.api.mechanics.grapple.ActiveGrappleHook;
 import killercreepr.usurvive.api.mechanics.grapple.GrappleHook;
 import killercreepr.usurvive.api.mechanics.grapple.context.GrappleContext;
@@ -86,7 +86,7 @@ public class SimpleGrapple implements Grapple {
     }
 
     @Override
-    public @NotNull ItemUseResult onUse(@NotNull ItemUseContext ctx) {
+    public @NotNull ItemUseResult onInteract(@NotNull ItemUseContext ctx) {
         if(ctx.getEntityClicked() != null && ctx.getAction().isLeftClick()) return ItemUseResult.empty();
         GrappleHook hook = USurviveRegistries.GRAPPLE_HOOK.get(getHookType());
         if(hook==null || maxHooks < 1) return ItemUseResult.empty();
@@ -118,7 +118,7 @@ public class SimpleGrapple implements Grapple {
     }
 
     @Override
-    public boolean isUsable(@NotNull ItemUseContext ctx) {
+    public boolean isInteractable(@NotNull ItemUseContext ctx) {
         if(ctx.getAction() == Action.PHYSICAL) return false;
         return true;
     }

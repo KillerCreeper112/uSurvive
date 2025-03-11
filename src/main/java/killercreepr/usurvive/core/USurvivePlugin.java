@@ -92,6 +92,7 @@ import killercreepr.usurvive.core.item.USurviveItems;
 import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.listener.*;
 import killercreepr.usurvive.core.mechanics.grapple.standard.StandardGrappleHooks;
+import killercreepr.usurvive.core.mechanics.whip.standard.StandardWhipHooks;
 import killercreepr.usurvive.core.menu.action.CancelTPAAction;
 import killercreepr.usurvive.core.menu.action.ConfirmTPAAction;
 import killercreepr.usurvive.core.menu.action.PlayerSettingCacheAction;
@@ -242,6 +243,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             m.getDataHolders().register(new SleeperHolder(m, () -> (SleeperCfg) values()));
         });
         StandardGrappleHooks.register(USurviveRegistries.GRAPPLE_HOOK);
+        StandardWhipHooks.register(USurviveRegistries.WHIP_HOOK);
         StandardOverworldGroups.register(USurviveRegistries.OVERWORLD_NATURAL_ENTITY_SPAWN_GROUP);
 
         CruxWorldManager worldManager = CruxCore.inst().worldManager();

@@ -8,7 +8,8 @@ import killercreepr.cruxteleport.api.component.TeleporterComponent;
 import killercreepr.usurvive.api.component.InfusedPotions;
 import killercreepr.usurvive.api.component.PotionInfusable;
 import killercreepr.usurvive.api.component.WaterProjectile;
-import killercreepr.usurvive.api.mechanics.Grapple;
+import killercreepr.usurvive.api.mechanics.grapple.Grapple;
+import killercreepr.usurvive.api.mechanics.whip.Whip;
 import killercreepr.usurvive.core.component.impl.InfusionAttributesBenefit;
 import killercreepr.usurvive.core.component.impl.OrbitConduitComponent;
 import killercreepr.usurvive.core.component.impl.SmokeParticleBlockComponent;
@@ -22,6 +23,8 @@ public class USurviveComponents {
         .persistTextParser(USurviveCompParsers.GRAPPLE.createInput(Crux.key("grapple"))));
     public static final DataComponentType<Grapple> GRAPPLE_DISPLAY = register("grapple_display", builder -> builder
         .persistTextParser(USurviveCompParsers.GRAPPLE_DISPLAY.createInput(Crux.key("grapple_display"))));
+    public static final DataComponentType<Whip> WHIP_DISPLAY = register("whip_display", builder -> builder
+        .persistTextParser(USurviveCompParsers.WHIP_DISPLAY.createInput(Crux.key("whip_display"))));
     public static final DataComponentType<OrbitConduitComponent> DEPOSIT_CONDUIT = register("deposit_conduit", builder ->
         builder);
     public static final DataComponentType<SoulParticleBlockComponent> SOUL_PARTICLE_BLOCK = register("soul_particle_block", builder ->

@@ -9,10 +9,12 @@ import killercreepr.usurvive.api.component.InfusedPotionGroup;
 import killercreepr.usurvive.api.component.InfusedPotions;
 import killercreepr.usurvive.api.component.PotionInfusable;
 import killercreepr.usurvive.api.component.WaterProjectile;
-import killercreepr.usurvive.api.mechanics.Grapple;
+import killercreepr.usurvive.api.mechanics.grapple.Grapple;
+import killercreepr.usurvive.api.mechanics.whip.Whip;
 import killercreepr.usurvive.core.component.impl.*;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleDisplayGrapple;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleGrapple;
+import killercreepr.usurvive.core.mechanics.whip.SimpleDisplayWhip;
 import net.kyori.adventure.key.Key;
 import org.bukkit.potion.PotionEffect;
 
@@ -30,7 +32,7 @@ public class USurviveCompParsers {
         .apply(ctx ->{
             Key grappleType = ctx.get("grapple_type");
             int maxHooks = ctx.getOptional("max_hooks", 1);
-            int cooldown = ctx.getOptional("cooldown", 0);
+            int cooldown = ctx.getOptional("cooldown", 2);
             float pullForce = ctx.getOptional("pull_force", .4f);
             float throwForce = ctx.getOptional("throw_force", 1f);
             return new SimpleGrapple(
@@ -74,20 +76,27 @@ public class USurviveCompParsers {
                 ctx.getOptional("range", 16),
                 ctx.getOptional("retract_speed", .5f)
             );
+        });
 
-            /*return new SimpleDisplayGrapple(
-                grappleType, maxHooks, cooldown, throwForce,
+    public static final PersistTextParser<Whip> WHIP_DISPLAY = PersistTextParser.mapBuilder(Whip.class)
+        .field("whip_type", TextInputField.field(PersistTextParser.KEY, Whip::getWhipType))
+        .field("max_hooks", TextInputField.field(PersistTextParser.INTEGER, Whip::getMaxWhips))
+        .field("throw_sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND, Whip::getThrowSound))
+
+        .field("type_key", TextInputField.field(PersistTextParser.KEY, e -> ((SimpleDisplayWhip) e).getTypeKey()))
+        .field("display_type", TextInputField.field(PersistTextParser.STRING, e -> ((SimpleDisplayWhip) e).getDisplayType()))
+        .apply(ctx ->{
+            Key whipType = ctx.get("whip_type");
+
+            int maxHooks = ctx.getOptional("max_hooks", 1);
+            int cooldown = ctx.getOptional("cooldown", 0);
+
+            return new SimpleDisplayWhip(
+                whipType, maxHooks, cooldown,
+                ctx.getOptional("throw_sound"),
                 ctx.get("type_key"),
-                ctx.getOptional("display_type", "block"),
-                ctx.getOptional("pull_force", 0.2f),
-                ctx.getOptional("range", 16),
-                ctx.getOptional("throw_speed", .8D),
-                ctx.getOptional("retract_speed", .5f),
-
-                ctx.getOptional("pull_decay_rate", 1f),
-                ctx.getOptional("min_pull_multiplier", .2f),
-                ctx.getOptional("decay_duration", 20)
-            );*/
+                ctx.getOptional("display_type", "block")
+            );
         });
 
     public static final PersistTextParser<InfusedPotionGroup> INFUSED_POTION_GROUP = PersistTextParser.mapBuilder(InfusedPotionGroup.class)
