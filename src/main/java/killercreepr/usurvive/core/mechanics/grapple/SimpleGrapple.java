@@ -1,5 +1,7 @@
 package killercreepr.usurvive.core.mechanics.grapple;
 
+import io.papermc.paper.datacomponent.DataComponentType;
+import io.papermc.paper.datacomponent.DataComponentTypes;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.Crux;
@@ -120,6 +122,8 @@ public class SimpleGrapple implements Grapple {
     @Override
     public boolean isInteractable(@NotNull ItemUseContext ctx) {
         if(ctx.getAction() == Action.PHYSICAL) return false;
+        CruxItem item = ctx.getItem();
+        if(item.item().getData(DataComponentTypes.CONSUMABLE) != null) return false;
         return true;
     }
 }

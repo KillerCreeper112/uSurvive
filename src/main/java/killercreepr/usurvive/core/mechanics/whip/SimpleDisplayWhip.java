@@ -17,9 +17,10 @@ public class SimpleDisplayWhip extends SimpleWhip {
     protected final String displayType;
 
     public SimpleDisplayWhip(@NotNull Key hook, int maxHooks, int cooldown,
+                             int itemDamage,
                              CreateSound throwSound,
                              Key typeKey, String displayType) {
-        super(hook, maxHooks, cooldown, throwSound);
+        super(hook, maxHooks, cooldown, itemDamage, throwSound);
         this.typeKey = typeKey;
         this.displayType = displayType;
     }

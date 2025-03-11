@@ -29,6 +29,7 @@ public class USurviveCompParsers {
         .field("pull_decay_rate", TextInputField.field(PersistTextParser.FLOAT, Grapple::getPullForceDecayRate))
         .field("min_pull_multiplier", TextInputField.field(PersistTextParser.FLOAT, Grapple::getMinPullForceMultiplier))
         .field("decay_duration", TextInputField.field(PersistTextParser.INTEGER, Grapple::getDecayDuration))
+        .field("cooldown", TextInputField.field(PersistTextParser.INTEGER, Grapple::getCooldown))
         .apply(ctx ->{
             Key grappleType = ctx.get("grapple_type");
             int maxHooks = ctx.getOptional("max_hooks", 1);
@@ -47,6 +48,7 @@ public class USurviveCompParsers {
     public static final PersistTextParser<Grapple> GRAPPLE_DISPLAY = PersistTextParser.mapBuilder(Grapple.class)
         .field("grapple_type", TextInputField.field(PersistTextParser.KEY, Grapple::getHookType))
         .field("max_hooks", TextInputField.field(PersistTextParser.INTEGER, Grapple::getMaxHooks))
+        .field("cooldown", TextInputField.field(PersistTextParser.INTEGER, Grapple::getCooldown))
         .field("throw_force", TextInputField.field(PersistTextParser.FLOAT, Grapple::getThrowForce))
         .field("pull_force", TextInputField.field(PersistTextParser.FLOAT, Grapple::getPullForce))
         .field("pull_decay_rate", TextInputField.field(PersistTextParser.FLOAT, Grapple::getPullForceDecayRate))
@@ -60,7 +62,7 @@ public class USurviveCompParsers {
         .apply(ctx ->{
             Key grappleType = ctx.get("grapple_type");
             int maxHooks = ctx.getOptional("max_hooks", 1);
-            int cooldown = ctx.getOptional("cooldown", 0);
+            int cooldown = ctx.getOptional("cooldown", 2);
             float pullForce = ctx.getOptional("pull_force", .4f);
             float throwForce = ctx.getOptional("throw_force", .8f);
 
@@ -81,7 +83,9 @@ public class USurviveCompParsers {
     public static final PersistTextParser<Whip> WHIP_DISPLAY = PersistTextParser.mapBuilder(Whip.class)
         .field("whip_type", TextInputField.field(PersistTextParser.KEY, Whip::getWhipType))
         .field("max_hooks", TextInputField.field(PersistTextParser.INTEGER, Whip::getMaxWhips))
+        .field("item_damage", TextInputField.field(PersistTextParser.INTEGER, Whip::getItemDamage))
         .field("throw_sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND, Whip::getThrowSound))
+        .field("cooldown", TextInputField.field(PersistTextParser.INTEGER, Whip::getCooldown))
 
         .field("type_key", TextInputField.field(PersistTextParser.KEY, e -> ((SimpleDisplayWhip) e).getTypeKey()))
         .field("display_type", TextInputField.field(PersistTextParser.STRING, e -> ((SimpleDisplayWhip) e).getDisplayType()))
@@ -89,10 +93,11 @@ public class USurviveCompParsers {
             Key whipType = ctx.get("whip_type");
 
             int maxHooks = ctx.getOptional("max_hooks", 1);
-            int cooldown = ctx.getOptional("cooldown", 0);
+            int cooldown = ctx.getOptional("cooldown", 2);
+            int itemDamage = ctx.getOptional("item_damage", 1);
 
             return new SimpleDisplayWhip(
-                whipType, maxHooks, cooldown,
+                whipType, maxHooks, cooldown, itemDamage,
                 ctx.getOptional("throw_sound"),
                 ctx.get("type_key"),
                 ctx.getOptional("display_type", "block")

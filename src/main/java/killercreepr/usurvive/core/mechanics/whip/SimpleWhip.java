@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.mechanics.whip;
 
+import io.papermc.paper.datacomponent.DataComponentTypes;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.item.CruxItem;
@@ -28,12 +29,14 @@ public class SimpleWhip implements Whip {
     protected final @NotNull Key whipType;
     protected final int maxWhips;
     protected final int cooldown;
+    protected final int itemDamage;
     protected final CreateSound throwSound;
 
-    public SimpleWhip(@NotNull Key whipType, int maxWhips, int cooldown, CreateSound throwSound) {
+    public SimpleWhip(@NotNull Key whipType, int maxWhips, int cooldown, int itemDamage, CreateSound throwSound) {
         this.whipType = whipType;
         this.maxWhips = maxWhips;
         this.cooldown = cooldown;
+        this.itemDamage = itemDamage;
         this.throwSound = throwSound;
     }
 
@@ -45,6 +48,11 @@ public class SimpleWhip implements Whip {
     @Override
     public int getCooldown() {
         return cooldown;
+    }
+
+    @Override
+    public int getItemDamage() {
+        return itemDamage;
     }
 
     @NotNull
@@ -90,23 +98,24 @@ public class SimpleWhip implements Whip {
         ActiveWhip previous = whipper.getWhip(id);
         if(previous != null){
             previous.remove(p);
-            return true;
+            return false;
         }
         if(p.hasCooldown(item.item())){
             return false;
         }
-        if(cooldown > 0) p.setCooldown(item.item(), cooldown);
-        whipper.throwNewHook(hook, buildWhipContext(ctx, id));
+        WhipContext whipCtx = buildWhipContext(ctx, id);
+        if(whipCtx.getThrowForce() == 0D) return false;
+
+        whipper.throwNewHook(hook, whipCtx);
         if(throwSound != null) throwSound.playAt(p.getLocation());
-        if(p.getGameMode() != GameMode.CREATIVE){
-            Crux.handlers().item().damageItem(item.item(), 1, p);
-        }
         return true;
     }
 
     @Override
     public boolean isInteractable(@NotNull ItemUseContext ctx) {
         if(ctx.getAction() == Action.PHYSICAL) return false;
+        CruxItem item = ctx.getItem();
+        if(item.item().getData(DataComponentTypes.CONSUMABLE) != null) return false;
         return true;
     }
 
@@ -116,7 +125,13 @@ public class SimpleWhip implements Whip {
         if(hook==null || maxWhips < 1) return ItemConsumeResult.cancelled();
         Player p = ctx.getPlayer();
         CruxItem item = ctx.getItem();
-        throwWhip(hook, p, item, ctx);
+        if(throwWhip(hook, p, item, ctx)){
+            if(p.getGameMode() != GameMode.CREATIVE){
+                p.damageItemStack(ctx.getSlot(), itemDamage);
+                if(cooldown > 0) p.setCooldown(item.item(), cooldown);
+            }
+        }
+        Crux.scheduler().runTask(() ->p.setActiveItemRemainingTime(0));
         return ItemConsumeResult.cancelled();
     }
 

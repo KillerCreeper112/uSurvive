@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 public interface Whip extends InteractableComponent, ConsumableComponent {
     int getMaxWhips();
     int getCooldown();
+    int getItemDamage();
     @NotNull Key getWhipType();
     @Nullable CreateSound getThrowSound();
 }
