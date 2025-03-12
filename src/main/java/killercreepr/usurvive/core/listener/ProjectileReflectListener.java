@@ -45,7 +45,7 @@ public class ProjectileReflectListener implements Listener {
             CruxAttribute.get(proj, CruxAttribute.PROJECTILE_RICOCHET_ENTITY_VELOCITY_DROP_OFF, .7D),
             CruxPersist.RICOCHET_ENTITY, event.getHitBlock(), event.getHitBlockFace(), event.getHitEntity()
         );
-        if(event.isCancelled()){
+        if(x.isCancelled()){
             x.getNewProjectile().remove();
             return;
         }
