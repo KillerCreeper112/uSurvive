@@ -6,16 +6,21 @@ import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeInstance;
+import killercreepr.usurvive.api.event.ProjectileRicochetEvent;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.ThrowableProjectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.Vector;
 
 public class ProjectileReflectListener implements Listener {
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onProjectileHit(ProjectileHitEvent event) {
         Projectile proj = event.getEntity();
         if(event.getHitEntity() != null){
@@ -36,10 +41,14 @@ public class ProjectileReflectListener implements Listener {
 
         Vector normal = proj.getLocation().toVector().normalize();
 
-        reflectProjectile(proj, normal, reflected,
+        ProjectileRicochetEvent x = reflectProjectile(proj, normal, reflected,
             CruxAttribute.get(proj, CruxAttribute.PROJECTILE_RICOCHET_ENTITY_VELOCITY_DROP_OFF, .7D),
-            CruxPersist.RICOCHET_ENTITY
+            CruxPersist.RICOCHET_ENTITY, event.getHitBlock(), event.getHitBlockFace(), event.getHitEntity()
         );
+        if(event.isCancelled()){
+            x.getNewProjectile().remove();
+            return;
+        }
         proj.remove();
     }
 
@@ -57,17 +66,26 @@ public class ProjectileReflectListener implements Listener {
 
         event.setCancelled(true);
 
-        reflectProjectile(proj, normal, reflected,
+        ProjectileRicochetEvent x = reflectProjectile(proj, normal, reflected,
             CruxAttribute.get(proj, CruxAttribute.PROJECTILE_RICOCHET_BLOCK_VELOCITY_DROP_OFF, .7D),
-            CruxPersist.RICOCHET_BLOCK
+            CruxPersist.RICOCHET_BLOCK, event.getHitBlock(), event.getHitBlockFace(), event.getHitEntity()
         );
+        if(x.isCancelled()){
+            event.setCancelled(false);
+            x.getNewProjectile().remove();
+            return;
+        }
         proj.remove();
     }
 
-    public void reflectProjectile(Projectile proj, Vector normal, int reflected, double dropOff, PersistTag<Integer> tag){
+    public ProjectileRicochetEvent reflectProjectile(Projectile proj, Vector normal, int reflected, double dropOff, PersistTag<Integer> tag,
+                                                     Block block,
+                                                     BlockFace hitFace,
+                                                     Entity entity){
         Vector dir = proj.getVelocity();
         Vector v = CruxMath.reflect(dir, normal).multiply(dropOff);
-        proj.getWorld().spawnEntity(proj.getLocation(), proj.getType(), CreatureSpawnEvent.SpawnReason.CUSTOM, x->{
+
+        Entity newProjectile = proj.getWorld().spawnEntity(proj.getLocation(), proj.getType(), CreatureSpawnEvent.SpawnReason.CUSTOM, x->{
             CruxTag.copyAll(x, proj);
             x.setVelocity(v);
 
@@ -88,5 +106,22 @@ public class ProjectileReflectListener implements Listener {
             }
             tag.set(x, reflected+1);
         });
+
+        ProjectileRicochetEvent event = new ProjectileRicochetEvent(
+            proj, newProjectile, v, reflected+1, block, hitFace, entity
+        );
+        event.callEvent();
+        if(event.isCancelled()) return event;
+
+        if(event.getReflectedAmount() != reflected+1){
+            tag.set(newProjectile, reflected+1);
+        }
+        if(!event.getReflectDirection().equals(v)){
+            newProjectile.setVelocity(event.getReflectDirection());
+        }
+        if(!event.getNewProjectile().equals(newProjectile)){
+            newProjectile.remove();
+        }
+        return event;
     }
 }
