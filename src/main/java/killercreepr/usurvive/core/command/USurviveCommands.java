@@ -139,6 +139,18 @@ public class USurviveCommands {
             );
 
             commands.register(
+                Commands.literal("recipes")
+                    .requires(source -> source.getSender().hasPermission("usurvive.cmds.recipes.use"))
+                    .executes(ctx ->{
+                        if(!(getExecutor(ctx.getSource()) instanceof Player p)) return -1;
+                        CruxCore.inst().cruxMenus().menuRegistry().menuHolders().get(Crux.key("crafting/standard/recipe_list"))
+                            .open(p);
+                        return 1;
+                    })
+                    .build(), List.of("crafting", "craft")
+            );
+
+            commands.register(
                 Commands.literal("rules")
                     .executes(ctx ->{
                         if(!(getExecutor(ctx.getSource()) instanceof Player p)) return -1;
