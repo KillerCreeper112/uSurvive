@@ -49,6 +49,18 @@ public class StandardPlayerSettings {
         )
     ));
 
+    public static final PlayerSetting QUICK_RECIPE_BOOK = register(new SimplePlayerSetting(
+        Crux.key("quick_recipe_book"), StandardPlayerSettingSelections.ENABLED,
+        List.of(
+            StandardPlayerSettingSelections.ENABLED,
+            StandardPlayerSettingSelections.DISABLED
+        ),
+        Map.of(
+            StandardPlayerSettingSelections.ENABLED, "When you have a crafting table menu opened, swap your hands (default key is F) to quickly open the custom recipes book.",
+            StandardPlayerSettingSelections.DISABLED, "Swapping your hands while you have a crafting table menu opened will no longer open the custom recipes book. You can still access it via your quick access menu or with /recipes."
+        )
+    ));
+
     public static PlayerSetting register(PlayerSetting s){
         return USurviveRegistries.PLAYER_SETTING.register(s);
     }
