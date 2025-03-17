@@ -16,6 +16,7 @@ import killercreepr.crux.core.communication.MsgContainer;
 import killercreepr.crux.core.communication.lang.LangPopulator;
 import killercreepr.crux.core.communication.lang.Msg;
 import killercreepr.crux.core.communication.lang.SimpleCreateLang;
+import killercreepr.crux.core.item.tag.BaseItemTag;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.crux.core.plugin.module.StandardModules;
 import killercreepr.crux.core.registries.CruxRegistries;
@@ -114,6 +115,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -323,7 +325,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new SettingsListener(),
             new MiscListener(),
             new BedListener(),
-            new ArmorTrimListener()
+            new ArmorTrimListener(),
+            new CustomObjectivesListener()
         );
 
         super.enabled();
