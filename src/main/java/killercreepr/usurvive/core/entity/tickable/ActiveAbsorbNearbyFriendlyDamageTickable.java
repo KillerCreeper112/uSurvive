@@ -2,7 +2,6 @@ package killercreepr.usurvive.core.entity.tickable;
 
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.api.item.CruxItem;
-import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxattributes.api.equipment.CruxSlot;
 import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
@@ -26,7 +25,6 @@ import org.bukkit.inventory.PlayerInventory;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 public class ActiveAbsorbNearbyFriendlyDamageTickable extends ListenerActiveEntityTickable implements Listener {

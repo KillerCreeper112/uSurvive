@@ -2,7 +2,6 @@ package killercreepr.usurvive.core.mechanics.whip.standard;
 
 import killercreepr.crux.api.registry.KeyedRegistry;
 import killercreepr.crux.core.Crux;
-import killercreepr.usurvive.api.mechanics.grapple.context.DisplayGrappleContext;
 import killercreepr.usurvive.api.mechanics.whip.ActiveWhip;
 import killercreepr.usurvive.api.mechanics.whip.WhipHook;
 import killercreepr.usurvive.api.mechanics.whip.context.DisplayWhipContext;

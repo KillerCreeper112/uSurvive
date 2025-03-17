@@ -1,15 +1,11 @@
 package killercreepr.usurvive.core.entity.memory;
 
 import killercreepr.crux.api.entity.memory.EntityMemory;
-import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.EntityTickedDataHolder;
-import killercreepr.crux.core.entity.memory.PlayerTickedDataHolder;
 import killercreepr.crux.core.util.CruxMath;
-import killercreepr.cruxentities.entity.CruxMob;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
