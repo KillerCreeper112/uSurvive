@@ -3,6 +3,7 @@ package killercreepr.usurvive.core.entity.memory;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.EntityTickedDataHolder;
+import killercreepr.crux.core.util.CruxEntityUtil;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -45,7 +46,10 @@ public class ToxicSurvivorHolder extends EntityTickedDataHolder {
         duration++;
         if(duration >= 3600){
             markForRemoval();
-            onComplete.accept(entity);
+            Crux.scheduler().runTask(() ->{
+                if(!CruxEntityUtil.isValid(entity)) return;
+                onComplete.accept(entity);
+            });
         }
     }
 }

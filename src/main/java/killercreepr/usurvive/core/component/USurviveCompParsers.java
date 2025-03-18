@@ -12,6 +12,7 @@ import killercreepr.usurvive.api.component.WaterProjectile;
 import killercreepr.usurvive.api.mechanics.grapple.Grapple;
 import killercreepr.usurvive.api.mechanics.whip.Whip;
 import killercreepr.usurvive.core.component.impl.*;
+import killercreepr.usurvive.core.component.teleport.TeleportCheckInStructure;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleDisplayGrapple;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleGrapple;
 import killercreepr.usurvive.core.mechanics.whip.SimpleDisplayWhip;
@@ -140,5 +141,11 @@ public class USurviveCompParsers {
             ctx.getOptional("force", .05D),
             ctx.getOptional("drop_off_rate", 2D),
             ctx.getOptional("max_time", 50)
+        ));
+
+    public static final PersistTextParser<TeleportCheckInStructure> TELEPORT_STRUCTURE_CHECK = PersistTextParser.mapBuilder(TeleportCheckInStructure.class)
+        .field("blacklist", TextInputField.field(ComponentInputParsers.KEY_PREDICATE, TeleportCheckInStructure::getBlacklist))
+        .apply(ctx -> new TeleportCheckInStructure(
+            ctx.getOptional("blacklist")
         ));
 }

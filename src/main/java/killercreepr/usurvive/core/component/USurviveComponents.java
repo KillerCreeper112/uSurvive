@@ -14,6 +14,7 @@ import killercreepr.usurvive.core.component.impl.InfusionAttributesBenefit;
 import killercreepr.usurvive.core.component.impl.OrbitConduitComponent;
 import killercreepr.usurvive.core.component.impl.SmokeParticleBlockComponent;
 import killercreepr.usurvive.core.component.impl.SoulParticleBlockComponent;
+import killercreepr.usurvive.core.component.teleport.TeleportCheckInStructure;
 
 import java.util.function.UnaryOperator;
 
@@ -45,6 +46,10 @@ public class USurviveComponents {
 
     public static final DataComponentType<WaterProjectile> WATER_PROJECTILE = register("water_projectile", builder ->
         builder.persistTextParser(USurviveCompParsers.WATER_PROJECTILE.createInput(Crux.key("water_projectile"))));
+
+
+    public static final DataComponentType<TeleportCheckInStructure> TELEPORT_STRUCTURE_CHECK = register("teleport/structure_check", builder ->
+        builder.persistTextParser(USurviveCompParsers.TELEPORT_STRUCTURE_CHECK.createInput(Crux.key("teleport/structure_check"))));
 
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());
