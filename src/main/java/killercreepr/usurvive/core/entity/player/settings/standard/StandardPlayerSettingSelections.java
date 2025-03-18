@@ -25,6 +25,8 @@ public class StandardPlayerSettingSelections {
     public static final PlayerSettingSelection CHAT = register(PlayerSettingSelection.playerSettingSelection(Crux.key("chat")));
     public static final PlayerSettingSelection STRONG = register(PlayerSettingSelection.playerSettingSelection(Crux.key("strong")));
     public static final PlayerSettingSelection WEAK = register(PlayerSettingSelection.playerSettingSelection(Crux.key("weak")));
+    public static final PlayerSettingSelection SIMPLE = register(PlayerSettingSelection.playerSettingSelection(Crux.key("simple")));
+    public static final PlayerSettingSelection ADVANCED = register(PlayerSettingSelection.playerSettingSelection(Crux.key("advanced")));
 
     public static PlayerSettingSelection register(PlayerSettingSelection s){
         return USurviveRegistries.PLAYER_SETTING_SELECTION.register(s);
