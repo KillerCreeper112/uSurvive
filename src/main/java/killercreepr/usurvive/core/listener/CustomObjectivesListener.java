@@ -3,11 +3,12 @@ package killercreepr.usurvive.core.listener;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.event.CruxEntityDeathEvent;
-import killercreepr.crux.core.Crux;
 import killercreepr.cruxadvancements.api.advancement.CruxAdvancement;
 import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementManager;
 import killercreepr.cruxadvancements.core.registries.AdvancementRegistries;
 import killercreepr.cruxentities.api.combat.EntityDamager;
+import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.entity.memory.EchoOfTheAbyssHolder;
 import killercreepr.usurvive.core.entity.memory.LivingInfernoHolder;
@@ -29,10 +30,10 @@ import java.util.UUID;
 public class CustomObjectivesListener implements Listener {
     protected final Holder<CruxAdvancementManager> MANAGER = () -> AdvancementRegistries.ADVANCEMENT_MANAGERS
         .get(USurvivePlugin.inst().key("main"));
-    protected final Holder<CruxAdvancement> TOXIC_SURVIVOR = () -> MANAGER.value().getAdvancement(Crux.key("toxic_survivor"));
+    protected final Holder<CruxAdvancement> TOXIC_SURVIVOR = () -> MANAGER.value().getAdvancement(USurvivePlugin.inst().key("main/toxic_survivor"));
 
-    protected final Holder<CruxAdvancement> LIVING_INFERNO = () -> MANAGER.value().getAdvancement(Crux.key("living_inferno"));
-    protected final Holder<CruxAdvancement> ECHO_OF_THE_ABYSS = () -> MANAGER.value().getAdvancement(Crux.key("echo_of_the_abyss"));
+    protected final Holder<CruxAdvancement> LIVING_INFERNO = () -> MANAGER.value().getAdvancement(USurvivePlugin.inst().key("main/living_inferno"));
+    protected final Holder<CruxAdvancement> ECHO_OF_THE_ABYSS = () -> MANAGER.value().getAdvancement(USurvivePlugin.inst().key("main/echo_of_the_abyss"));
 
     protected final Collection<UUID> death = new HashSet<>();
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -81,7 +82,8 @@ public class CustomObjectivesListener implements Listener {
 
 
     public void onDeath(Entity victim, Entity killer){
-        if(!(killer instanceof Player p)) return;
+        if(!(killer instanceof Player p) || p.hasPotionEffect(PotionEffectType.FIRE_RESISTANCE)) return;
+        if(!CruxMob.isInCategory(victim, MobCategory.ENEMY)) return;
         if(p.getFireTicks() < 1) return;
         if(LIVING_INFERNO.value() == null || LIVING_INFERNO.value().isGranted(p)) return;
         LivingInfernoHolder holder = EntityMemory.getOrCreateDataHolder(killer, LivingInfernoHolder.class, mem ->{
@@ -89,7 +91,7 @@ public class CustomObjectivesListener implements Listener {
             data.setLastKill(System.currentTimeMillis());
             return data;
         });
-        if(holder == null) return;
+        if(holder == null || holder.shouldRemoveFromMemory(killer)) return;
 
         holder.setLastKill(System.currentTimeMillis());
         holder.setStreak(holder.getStreak() + 1);

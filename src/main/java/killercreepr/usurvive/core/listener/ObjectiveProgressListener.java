@@ -28,6 +28,7 @@ public class ObjectiveProgressListener implements Listener {
         if(p == null) return;
         CruxAdvancement advancement = event.getAdvancement();
         if(!(advancement instanceof ObjectiveAdvancement)) return;
+        if(advancement.reward() == null) return;
 
         MergedTagContainer tags = TagContainer.merged()
             .hook(advancement)

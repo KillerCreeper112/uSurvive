@@ -6,6 +6,8 @@ import killercreepr.crux.core.entity.memory.EntityTickedDataHolder;
 import killercreepr.crux.core.util.CruxMath;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +31,7 @@ public class LivingInfernoHolder extends EntityTickedDataHolder {
         if(super.shouldRemoveFromMemory(e)) return true;
         if(e == null) return true;
         if(e.getFireTicks() < 1) return true;
-        return !CruxMath.hasOccurredWithin(lastKill, 1200);
+        return !CruxMath.hasOccurredWithin(lastKill, 1200) || (e instanceof LivingEntity d && d.hasPotionEffect(PotionEffectType.FIRE_RESISTANCE));
     }
 
     @Override
