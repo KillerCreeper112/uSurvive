@@ -96,6 +96,7 @@ import killercreepr.usurvive.core.mechanics.grapple.standard.StandardGrappleHook
 import killercreepr.usurvive.core.mechanics.whip.standard.StandardWhipHooks;
 import killercreepr.usurvive.core.menu.action.CancelTPAAction;
 import killercreepr.usurvive.core.menu.action.ConfirmTPAAction;
+import killercreepr.usurvive.core.menu.action.PlayerSettingAction;
 import killercreepr.usurvive.core.menu.action.PlayerSettingCacheAction;
 import killercreepr.usurvive.core.menu.module.CurrencyDepositModule;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
@@ -234,6 +235,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         registerMenuModules(menusModule.menuRegistry().menuModule(), menusModule.menuModuleRegistry());
         Registry<MenuAction> menuActions = menusModule.menuRegistry().menuActions();
         menuActions.register(new PlayerSettingCacheAction(Crux.key("player_settings_cache")));
+        menuActions.register(new PlayerSettingAction(Crux.key("player_settings")));
         menuActions.register(new ConfirmTPAAction(Crux.key("confirm_tpa")));
         menuActions.register(new CancelTPAAction(Crux.key("cancel_tpa")));
 
