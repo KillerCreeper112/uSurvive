@@ -12,6 +12,7 @@ import killercreepr.cruxconfig.config.bukkit.value.CommonValue;
 import killercreepr.cruxconfig.config.bukkit.value.NumCfgValue;
 import killercreepr.usurvive.api.values.SleeperCfg;
 import killercreepr.usurvive.api.values.ValuesProvider;
+import killercreepr.usurvive.core.data.PremiumRank;
 import killercreepr.usurvive.core.data.ResourcePackRequestData;
 import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeakness;
 import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeaknessCalculator;
@@ -30,6 +31,7 @@ import java.util.Map;
 
 @killercreepr.cruxconfig.config.common.annotations.Config(autoUpdate = true)
 public class Config extends Cfg implements ValuesProvider, SleeperCfg {
+    public final CfgValue<List<PremiumRank>> PREMIUM_RANKS = new CommonValue<>(){};
     public final CfgValue<String> SPAWN_WORLD = new CommonValue<>(DefaultValues.SPAWN_WORLD.value()){};
     public final CfgValue<String> RESPAWN_WORLD = new CommonValue<>(DefaultValues.SPAWN_WORLD.value()){};
     public final NumCfgValue RESPAWN_X = new NumCfgValue(NumberProvider.constant(0));
@@ -172,6 +174,12 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     @Override
     public Holder<SleepWeaknessWarning> SLEEP_WEAKNESS_WARNINGS() {
         return SLEEP_WEAKNESS_WARNINGS;
+    }
+
+    @NotNull
+    @Override
+    public Holder<List<PremiumRank>> PREMIUM_RANKS() {
+        return PREMIUM_RANKS;
     }
 
     @NotNull

@@ -4,6 +4,7 @@ import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.data.Reloadable;
 import killercreepr.crux.api.item.predicate.ItemPredicate;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import killercreepr.usurvive.core.data.PremiumRank;
 import killercreepr.usurvive.core.data.ResourcePackRequestData;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -14,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface ValuesProvider extends Reloadable {
+    @NotNull
+    Holder<List<PremiumRank>> PREMIUM_RANKS();
     @NotNull
     Holder<String> SPAWN_WORLD();
     @NotNull

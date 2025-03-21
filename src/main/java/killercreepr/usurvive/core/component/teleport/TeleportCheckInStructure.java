@@ -1,20 +1,16 @@
 package killercreepr.usurvive.core.component.teleport;
 
 import killercreepr.crux.api.key.tag.KeyPredicate;
-import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstructures.api.structure.StoredStructure;
 import killercreepr.cruxstructures.api.world.module.StructureWorldModule;
 import killercreepr.cruxstructures.core.structure.component.StoredStructureComponents;
 import killercreepr.cruxteleport.api.component.TeleportLocationCheck;
 import killercreepr.cruxworlds.api.world.CruxWorld;
-import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class TeleportCheckInStructure implements TeleportLocationCheck {
     protected final KeyPredicate blacklist;

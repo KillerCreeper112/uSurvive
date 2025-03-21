@@ -5,6 +5,7 @@ import killercreepr.crux.api.item.predicate.ItemPredicate;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.valueproviders.number.UniformNumber;
 import killercreepr.usurvive.api.values.ValuesProvider;
+import killercreepr.usurvive.core.data.PremiumRank;
 import killercreepr.usurvive.core.data.ResourcePackRequestData;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -34,6 +35,12 @@ public class DefaultValues implements ValuesProvider {
         "10 + (<exp> / 50)"
     );
     public static final NumberProvider DEATH_EXPIRY_TIME = NumberProvider.constant(72000);
+
+    @NotNull
+    @Override
+    public Holder<List<PremiumRank>> PREMIUM_RANKS() {
+        return null;
+    }
 
     @NotNull
     @Override

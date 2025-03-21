@@ -16,7 +16,6 @@ import killercreepr.crux.core.communication.MsgContainer;
 import killercreepr.crux.core.communication.lang.LangPopulator;
 import killercreepr.crux.core.communication.lang.Msg;
 import killercreepr.crux.core.communication.lang.SimpleCreateLang;
-import killercreepr.crux.core.item.tag.BaseItemTag;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.crux.core.plugin.module.StandardModules;
 import killercreepr.crux.core.registries.CruxRegistries;
@@ -66,12 +65,14 @@ import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.attribute.USurviveAttribute;
 import killercreepr.usurvive.core.block.USurviveBlocks;
 import killercreepr.usurvive.core.block.component.USurviveBlockComponents;
+import killercreepr.usurvive.core.command.StoreCommands;
 import killercreepr.usurvive.core.command.TPACommands;
 import killercreepr.usurvive.core.command.USurviveCommands;
 import killercreepr.usurvive.core.component.USurviveComponents;
 import killercreepr.usurvive.core.config.Config;
 import killercreepr.usurvive.core.config.component.CfgUSurviveComponents;
 import killercreepr.usurvive.core.config.handler.*;
+import killercreepr.usurvive.core.data.PremiumRank;
 import killercreepr.usurvive.core.data.ResourcePackData;
 import killercreepr.usurvive.core.data.ResourcePackRequestData;
 import killercreepr.usurvive.core.data.entity.DeathHolder;
@@ -116,7 +117,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -189,6 +189,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         USurviveAttribute.register();
         USurviveTickables.register();
         new USurviveCommands(this).register();
+        new StoreCommands(this).register();
         new TPACommands(this).register();
 
         CfgRegistries.FILE.forEach(this::registerCfgHandlers);
@@ -516,6 +517,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         registry.registerFileHandler(SleepWeakness.class, new FileSleepWeakness());
         registry.registerFileHandler(SleepWeaknessCalculator.class, new FileSleepWeaknessCalculator());
         registry.registerFileHandler(SleepWeaknessWarning.class, new FileSleepWeaknessWarning());
+        registry.registerFileHandler(new AutoFileHandler<>(PremiumRank.class));
     }
 
     public void registerCfgHandlers(@NotNull FileRegistry registry){

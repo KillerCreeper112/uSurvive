@@ -1,6 +1,8 @@
 package killercreepr.usurvive.core.entity.player;
 
 import killercreepr.crux.api.math.CruxLocation;
+import killercreepr.crux.api.text.provider.StringTagProvider;
+import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
@@ -11,24 +13,26 @@ import killercreepr.cruxfriends.core.CruxFriendsPlugin;
 import killercreepr.cruxparty.api.party.Party;
 import killercreepr.cruxparty.api.party.PartyHolder;
 import killercreepr.cruxparty.core.CruxPartyPlugin;
+import killercreepr.usurvive.api.entity.player.ShopSpender;
 import killercreepr.usurvive.api.entity.player.UPlayer;
+import killercreepr.usurvive.core.USurvivePlugin;
+import killercreepr.usurvive.core.data.PremiumRank;
 import net.kyori.adventure.key.Key;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
-public class DataUPlayer implements UPlayer {
+public class DataUPlayer implements UPlayer, ShopSpender {
     protected final @NotNull UUID uuid;
     protected long lastLogout;
     protected CruxLocation lastKnownPosition;
     protected Key lastKnownWorld;
     protected String lastKnownName;
+    protected double totalPaid;
 
     public DataUPlayer(@NotNull UUID uuid) {
         this.uuid = uuid;
@@ -141,6 +145,7 @@ public class DataUPlayer implements UPlayer {
         file.serialize("last_known_location", lastKnownPosition);
         file.serialize("last_known_location_world", lastKnownWorld);
         file.serialize("last_logout", lastLogout);
+        file.serialize("total_premium_paid", totalPaid);
         file.save();
     }
 
@@ -153,6 +158,8 @@ public class DataUPlayer implements UPlayer {
         lastKnownWorld = file.deserialize("last_known_location_world", Key.class);
         Long n = file.deserialize("last_logout", Long.class);
         if(n != null) lastLogout = n;
+        Double totalPaid = file.deserialize("total_premium_paid", Double.class);
+        if(totalPaid != null) this.totalPaid = totalPaid;
         file.close();
     }
 
@@ -171,5 +178,43 @@ public class DataUPlayer implements UPlayer {
         }
         if(BukkitDataFile.isSupported(f)) return BukkitDataFile.parse(f);
         return null;
+    }
+
+    @Override
+    public double getTotalPayed() {
+        return totalPaid;
+    }
+
+    @Override
+    public void addTotalPayed(double amount) {
+        this.totalPaid += amount;
+    }
+
+    @Override
+    public void setTotalPayed(double amount) {
+        this.totalPaid = amount;
+    }
+
+    @Override
+    public void onPurchase(double spent, String reason) {
+        addTotalPayed(spent);
+        Player p = Crux.getServer().getPlayer(uuid);
+        if(p == null) return;
+        List<PremiumRank> ranks = USurvivePlugin.inst().values().PREMIUM_RANKS().value();
+        if(ranks == null || ranks.isEmpty()) return;
+
+        for(PremiumRank rank : ranks){
+            if(totalPaid < rank.getCost()) continue;
+            if(p.hasPermission(rank.getPermission())) continue;
+
+            List<String> cmds = rank.getReachedCommands();
+            if(cmds != null){
+                StringTagProvider tags = TagContainer.string().hook(p);
+                cmds.forEach(cc ->{
+                    cc = Crux.format().deserializeString(cc, tags);
+                    Crux.getServer().dispatchCommand(Crux.getServer().getConsoleSender(), cc);
+                });
+            }
+        }
     }
 }
