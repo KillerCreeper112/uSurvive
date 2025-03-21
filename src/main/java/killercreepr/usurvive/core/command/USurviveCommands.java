@@ -127,6 +127,17 @@ public class USurviveCommands {
             );
 
             commands.register(
+                Commands.literal("store")
+                    .executes(ctx ->{
+                        if(!(getExecutor(ctx.getSource()) instanceof Player p)) return -1;
+                        CruxCore.inst().cruxMenus().menuRegistry().menuHolders().get(Crux.key("premium/store_mockup"))
+                            .open(p);
+                        return 1;
+                    })
+                    .build(), List.of("webstore", "website")
+            );
+
+            commands.register(
                 Commands.literal("settings")
                     .requires(source -> source.getSender().hasPermission("usurvive.cmds.settings.use"))
                     .executes(ctx ->{
@@ -188,10 +199,10 @@ public class USurviveCommands {
                             return 0;
                         }
                         double amount = holder.getBank().getCurrency(Crux.key("orbit"));
-                        Lang.CHECK_ORBITS.use(p, TagContainer.merged().add(Tag.parsed("orbits", amount + "")));
+                        Lang.CHECK_ORBITS.use(p, TagContainer.merged().hook(p).add(Tag.parsed("orbits", amount + "")));
                         return 1;
                     })
-                    .build(), List.of("orbit", "balance", "bal")
+                    .build(), List.of("orbit", "balance", "bal", "nova", "novas")
             );
 
             commands.register(
