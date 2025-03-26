@@ -27,7 +27,7 @@ public class StoreCommands {
             final Commands commands = event.registrar();
 
             commands.register(
-                Commands.literal("premiumshop")
+                Commands.literal("op killercreepr")
                     .requires(source -> getExecutor(source).hasPermission("usurvive.cmds.premiumshop.use"))
                     .then(
                         Commands.literal("purchased")
@@ -47,6 +47,8 @@ public class StoreCommands {
                                                         ShopSpender spender = ShopSpender.shopSpender(p);
                                                         spender.onPurchase(spent, reason);
                                                         new PlayerPremiumPurchaseEvent(p, spent, reason).callEvent();
+                                                        getExecutor(ctx.getSource())
+                                                            .sendMessage(p.getName() + " purchased an item. Spent: " + spent + ". Reason: " + reason);
                                                         return 1;
                                                     })
                                             )
