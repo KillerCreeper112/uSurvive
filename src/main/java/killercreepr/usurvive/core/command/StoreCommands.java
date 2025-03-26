@@ -49,6 +49,7 @@ public class StoreCommands {
                                                         new PlayerPremiumPurchaseEvent(p, spent, reason).callEvent();
                                                         getExecutor(ctx.getSource())
                                                             .sendMessage(p.getName() + " purchased an item. Spent: " + spent + ". Reason: " + reason);
+                                                        spender.save();
                                                         return 1;
                                                     })
                                             )
