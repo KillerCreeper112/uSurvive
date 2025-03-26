@@ -27,7 +27,7 @@ public class StoreCommands {
             final Commands commands = event.registrar();
 
             commands.register(
-                Commands.literal("op killercreepr")
+                Commands.literal("premiumshop")
                     .requires(source -> getExecutor(source).hasPermission("usurvive.cmds.premiumshop.use"))
                     .then(
                         Commands.literal("purchased")
