@@ -5,6 +5,7 @@ import killercreepr.cruxconfig.config.bukkit.handler.impl.component.FileDataComp
 import killercreepr.cruxconfig.config.bukkit.registry.FileDataComponentRegistry;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileObject;
+import killercreepr.usurvive.core.block.GlintingOreBlockComponent;
 import killercreepr.usurvive.core.component.USurviveComponents;
 import killercreepr.usurvive.core.component.impl.SmokeParticleBlockComponent;
 import killercreepr.usurvive.core.component.impl.SoulParticleBlockComponent;
@@ -23,6 +24,12 @@ public class USurviveBlockComponents {
             @Override
             public @Nullable TypedDataComponent<SmokeParticleBlockComponent> deserializeFromFile(@NotNull FileContext<?> fileContext, @NotNull FileObject fileObject) {
                 return TypedDataComponent.create(USurviveComponents.SMOKE_PARTICLE_BLOCK, new SmokeParticleBlockComponent());
+            }
+        });
+        registry.register("glinting_ore_block", new FileDataComponentType<GlintingOreBlockComponent>() {
+            @Override
+            public @Nullable TypedDataComponent<GlintingOreBlockComponent> deserializeFromFile(@NotNull FileContext<?> fileContext, @NotNull FileObject fileObject) {
+                return TypedDataComponent.create(USurviveComponents.GLINTING_ORE_BLOCK, new GlintingOreBlockComponent());
             }
         });
     }

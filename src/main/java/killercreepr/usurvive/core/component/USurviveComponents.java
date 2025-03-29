@@ -10,6 +10,7 @@ import killercreepr.usurvive.api.component.PotionInfusable;
 import killercreepr.usurvive.api.component.WaterProjectile;
 import killercreepr.usurvive.api.mechanics.grapple.Grapple;
 import killercreepr.usurvive.api.mechanics.whip.Whip;
+import killercreepr.usurvive.core.block.GlintingOreBlockComponent;
 import killercreepr.usurvive.core.component.impl.InfusionAttributesBenefit;
 import killercreepr.usurvive.core.component.impl.OrbitConduitComponent;
 import killercreepr.usurvive.core.component.impl.SmokeParticleBlockComponent;
@@ -31,6 +32,8 @@ public class USurviveComponents {
     public static final DataComponentType<SoulParticleBlockComponent> SOUL_PARTICLE_BLOCK = register("soul_particle_block", builder ->
         builder);
     public static final DataComponentType<SmokeParticleBlockComponent> SMOKE_PARTICLE_BLOCK = register("smoke_particle_block", builder ->
+        builder);
+    public static final DataComponentType<GlintingOreBlockComponent> GLINTING_ORE_BLOCK = register("glinting_ore_block", builder ->
         builder);
     public static final DataComponentType<TeleporterComponent> TPA_CHECK_WORLD = register("teleport/tpa_check_world", builder ->
         builder);

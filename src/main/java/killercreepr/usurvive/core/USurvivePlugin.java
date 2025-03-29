@@ -109,6 +109,7 @@ import killercreepr.usurvive.core.world.USurviveNether;
 import killercreepr.usurvive.core.world.USurviveOverworld;
 import killercreepr.usurvive.core.world.USurviveWorldTypes;
 import killercreepr.usurvive.core.world.entity.StandardOverworldGroups;
+import killercreepr.usurvive.core.world.module.GenericOverworldModule;
 import killercreepr.usurvive.core.world.module.ResetWorldModule;
 import net.kyori.adventure.key.Key;
 import org.bukkit.OfflinePlayer;
@@ -286,6 +287,12 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             @Override
             public @NotNull WorldModule create(@NotNull CruxWorld world) {
                 return new ResetWorldModule(world, () -> values().RESOURCE_OVERWORLD_RESET_TIME(), USurviveWorldTypes.RESOURCE_OVERWORLD);
+            }
+        });
+        worldManager.getModuleCreatorRegistry().register(Key.key("world_resource_overworld"), new CruxWorldModuleCreator() {
+            @Override
+            public @NotNull WorldModule create(@NotNull CruxWorld world) {
+                return new GenericOverworldModule(world);
             }
         });
     }

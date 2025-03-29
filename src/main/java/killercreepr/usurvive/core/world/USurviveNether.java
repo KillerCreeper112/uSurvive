@@ -55,14 +55,14 @@ public class USurviveNether extends SimpleWorldModule {
         NumberProvider.constant(0),
         NumberProvider.constant(0),//15 clump chance
 
-        NumberProvider.constant(50),
+        NumberProvider.constant(25),
 
         CruxNoise.fast().frequency(.13f)
             .noiseType(CruxNoise.NoiseType.OpenSimplex2)
             .fractalType(CruxNoise.FractalType.FBm)
             .fractalOctaves(3),
         null,
-        NumberProvider.uniform(18, 36)
+        NumberProvider.uniform(10, 25)
     ){
         @Override
         public void place(@NotNull LimitedRegion limitedRegion, int x, int y, int z) {
