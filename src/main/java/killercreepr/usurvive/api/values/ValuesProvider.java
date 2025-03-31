@@ -22,6 +22,10 @@ public interface ValuesProvider extends Reloadable {
     @NotNull
     Holder<String> SPAWN_TELEPORT_COMPONENTS();
     @NotNull
+    Holder<String> PLAYER_TAB_NAME();
+    @NotNull
+    Holder<String> PLAYER_NAME_TAG();
+    @NotNull
     NumberProvider DEATH_GUIDE_TICK_EVERY();
     @NotNull
     NumberProvider DEATH_GUIDE_PARTICLE_AMOUNT();

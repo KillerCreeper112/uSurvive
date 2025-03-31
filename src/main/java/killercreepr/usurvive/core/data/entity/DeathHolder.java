@@ -44,14 +44,17 @@ public class DeathHolder extends PlayerTickedDataHolder {
             Crux.format().deserialize(cfg.TAB_HEADER().valueOr(""), tags),
             Crux.format().deserialize(cfg.TAB_FOOTER().valueOr(""), tags)
         );
+        cfg.PLAYER_TAB_NAME().ifPresent(name ->{
+            p.playerListName(Crux.format().deserialize(name, tags));
+        });
     }
 
     //merged tab updater here for optimization.
     protected int tick = 0;
     @Override
     public void onTick(@NotNull Player p) {
-        tick++;
         tabTick(p);
+        tick++;
         int every = cfg.DEATH_GUIDE_TICK_EVERY().value().intValue();
         if(every==0) return;
         if(tick % every != 0) return;

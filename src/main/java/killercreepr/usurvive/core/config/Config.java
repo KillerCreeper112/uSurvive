@@ -92,6 +92,8 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     public final NumCfgValue SLEEP_HUNGER_SATURATION_AMOUNT = new NumCfgValue(-1);
     public final NumCfgValue SLEEPER_WORLD_TIME_SKIP = new NumCfgValue(1);
     public final NumCfgValue AUTO_KICK_SLEEPER_AFTER_TIME_PASSED = new NumCfgValue(24000);
+    public final CfgValue<String> PLAYER_TAB_NAME = new CommonValue<>(){};
+    public final CfgValue<String> PLAYER_NAME_TAG = new CommonValue<>(){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -192,6 +194,18 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     @Override
     public Holder<String> SPAWN_TELEPORT_COMPONENTS() {
         return SPAWN_TELEPORT_COMPONENTS;
+    }
+
+    @NotNull
+    @Override
+    public Holder<String> PLAYER_TAB_NAME() {
+        return PLAYER_TAB_NAME;
+    }
+
+    @NotNull
+    @Override
+    public Holder<String> PLAYER_NAME_TAG() {
+        return PLAYER_NAME_TAG;
     }
 
     @NotNull

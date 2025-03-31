@@ -55,6 +55,18 @@ public class DefaultValues implements ValuesProvider {
 
     @NotNull
     @Override
+    public Holder<String> PLAYER_TAB_NAME() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Holder<String> PLAYER_NAME_TAG() {
+        return null;
+    }
+
+    @NotNull
+    @Override
     public NumberProvider DEATH_GUIDE_TICK_EVERY() {
         return DEATH_GUIDE_TICK_EVERY;
     }
