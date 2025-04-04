@@ -1,6 +1,5 @@
 package killercreepr.usurvive.core.world.module;
 
-import com.destroystokyo.paper.MaterialSetTag;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.data.tick.Ticked;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
@@ -8,17 +7,10 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxcore.CruxCore;
-import killercreepr.cruxgeneration.util.CruxNoise;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
 import killercreepr.cruxworlds.api.world.type.CruxWorldType;
 import killercreepr.cruxworlds.core.world.module.SimpleWorldModule;
-import killercreepr.usurvive.core.block.USurviveBlocks;
-import killercreepr.usurvive.core.world.generation.OreGenerator;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.generator.LimitedRegion;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 

@@ -13,7 +13,6 @@ import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.usurvive.api.component.InfusedPotions;
 import killercreepr.usurvive.api.component.PotionInfusable;
 import killercreepr.usurvive.api.event.PostItemInfusePotionsEvent;
-import killercreepr.usurvive.api.event.PostItemStackInfusePotionsEvent;
 import killercreepr.usurvive.api.event.PreItemInfusePotionsEvent;
 import killercreepr.usurvive.core.component.USurviveComponents;
 import killercreepr.usurvive.core.component.impl.SimpleInfusedPotionGroup;

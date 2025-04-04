@@ -1,14 +1,12 @@
 package killercreepr.usurvive.core.advancement.objective;
 
 import killercreepr.crux.api.loot.LootContext;
-import killercreepr.crux.api.loot.bukkit.EventLootContexts;
 import killercreepr.cruxadvancements.api.advancement.ObjectiveAdvancement;
 import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementManager;
 import killercreepr.cruxadvancements.core.advancement.objective.NumberObjective;
 import killercreepr.cruxadvancements.core.advancement.objective.ObjectiveCommonData;
 import killercreepr.usurvive.api.event.PostItemInfusePotionsEvent;
 import killercreepr.usurvive.core.loot.USurviveEventLootContexts;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;

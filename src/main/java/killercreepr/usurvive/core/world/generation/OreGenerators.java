@@ -3,7 +3,6 @@ package killercreepr.usurvive.core.world.generation;
 import com.destroystokyo.paper.MaterialSetTag;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.util.CruxMath;
-import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementManager;
 import killercreepr.cruxgeneration.util.CruxNoise;
 import killercreepr.usurvive.core.block.USurviveBlocks;
 import org.bukkit.Material;

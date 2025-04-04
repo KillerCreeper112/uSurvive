@@ -182,6 +182,7 @@ public class SleeperHolder extends EntityTickedDataHolder implements Loadable {
 
     public void nonSleepTick(){
         ticksAwake++;
+
         if(slumberTicks < 1){
             return;
         }
