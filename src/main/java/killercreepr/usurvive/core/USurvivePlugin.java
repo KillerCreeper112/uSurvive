@@ -69,6 +69,7 @@ import killercreepr.usurvive.core.command.StoreCommands;
 import killercreepr.usurvive.core.command.TPACommands;
 import killercreepr.usurvive.core.command.USurviveCommands;
 import killercreepr.usurvive.core.component.USurviveComponents;
+import killercreepr.usurvive.core.config.CfgHook;
 import killercreepr.usurvive.core.config.Config;
 import killercreepr.usurvive.core.config.component.CfgUSurviveComponents;
 import killercreepr.usurvive.core.config.handler.*;
@@ -193,6 +194,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         new StoreCommands(this).register();
         new TPACommands(this).register();
 
+        CfgHook.load();
         CfgRegistries.FILE.forEach(this::registerCfgHandlers);
         CfgRegistries.SIMPLE_REGISTRY.forEach(this::registerSimpleCfgHandlers);
         CfgUSurviveComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());

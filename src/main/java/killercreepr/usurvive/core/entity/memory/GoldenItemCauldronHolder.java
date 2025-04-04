@@ -13,6 +13,7 @@ import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.usurvive.api.component.InfusedPotions;
 import killercreepr.usurvive.api.component.PotionInfusable;
 import killercreepr.usurvive.api.event.PostItemInfusePotionsEvent;
+import killercreepr.usurvive.api.event.PostItemStackInfusePotionsEvent;
 import killercreepr.usurvive.api.event.PreItemInfusePotionsEvent;
 import killercreepr.usurvive.core.component.USurviveComponents;
 import killercreepr.usurvive.core.component.impl.SimpleInfusedPotionGroup;
@@ -120,7 +121,7 @@ public class GoldenItemCauldronHolder extends EntityTickedDataHolder {
             InfuseResult result = infusePotions(owner.getItemStack().clone(), allPotions);
             if(result==null) break;
 
-            PostItemInfusePotionsEvent postEvent = new PostItemInfusePotionsEvent(owner.getItemStack(), allPotions, result.getResult());
+            PostItemInfusePotionsEvent postEvent = new PostItemInfusePotionsEvent(owner.getItemStack(), allPotions, result.getResult(), owner);
             if(!postEvent.callEvent()) return;
 
             owner.setItemStack(result.getResult().item());

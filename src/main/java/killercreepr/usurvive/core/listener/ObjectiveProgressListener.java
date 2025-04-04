@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.listener;
 
+import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.text.resolver.Tag;
@@ -9,12 +10,21 @@ import killercreepr.cruxadvancements.api.advancement.icon.CriterionDisplay;
 import killercreepr.cruxadvancements.api.event.CruxAdvancementGrantEvent;
 import killercreepr.cruxadvancements.api.event.objective.PostNumberObjectiveProgressChangeEvent;
 import killercreepr.cruxadvancements.core.advancement.objective.NumberObjective;
+import killercreepr.cruxadvancements.core.advancement.objective.standard.ConsumeItemObjective;
+import killercreepr.cruxadvancements.core.entity.memory.AdvancementHolder;
+import killercreepr.cruxentities.api.combat.EntityDamager;
+import killercreepr.usurvive.api.event.PostItemInfusePotionsEvent;
+import killercreepr.usurvive.api.event.PostItemStackInfusePotionsEvent;
+import killercreepr.usurvive.core.advancement.objective.ItemInfusePotionObjective;
 import killercreepr.usurvive.core.lang.Lang;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 public class ObjectiveProgressListener implements Listener {
     protected final Plugin plugin;
@@ -60,5 +70,20 @@ public class ObjectiveProgressListener implements Listener {
             .add(Tag.parsed("format", display.getCriterionFormat(objective.getCriterion()) + ""));
 
         Lang.ADVANCEMENT_PROGRESS_CRITERION_DISPLAY.use(p, tags);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPostItemInfusePotions(PostItemInfusePotionsEvent event) {
+        Entity p = EntityDamager.getOwner(event.getItemHolder());
+        if(p == null) return;
+        AdvancementHolder holder = holder(p);
+        if(holder==null) return;
+        holder.getAdvancementTracker().apply(ItemInfusePotionObjective.class, (manager, advancement, objective) -> {
+            objective.trigger(p.getUniqueId(), manager, advancement, event);
+        });
+    }
+
+    private AdvancementHolder holder(@NotNull Entity p){
+        return EntityMemory.getDataHolder(p, AdvancementHolder.class);
     }
 }

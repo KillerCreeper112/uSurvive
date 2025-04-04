@@ -15,7 +15,7 @@ import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.usurvive.api.component.InfusedPotions;
 import killercreepr.usurvive.api.component.PotionInfusable;
 import killercreepr.usurvive.api.event.InfusedItemUpdateEvent;
-import killercreepr.usurvive.api.event.PostItemInfusePotionsEvent;
+import killercreepr.usurvive.api.event.PostItemStackInfusePotionsEvent;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.component.USurviveComponents;
 import killercreepr.usurvive.core.component.impl.InfusionAttributesBenefit;
@@ -183,7 +183,7 @@ public class AnimalsAndPotionInfusionListener implements Listener {
 
 
     @EventHandler(ignoreCancelled = true)
-    public void onPostItemInfusePotions(PostItemInfusePotionsEvent event) {
+    public void onPostItemInfusePotions(PostItemStackInfusePotionsEvent event) {
         CruxItem result = event.getResult();
         ItemPredicate filter = cfg.APPLICABLE_INFUSION_BENEFITS().value();
         if(filter != null && !filter.test(result.item())) return;
