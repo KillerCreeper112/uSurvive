@@ -17,7 +17,6 @@ public class USurviveEventLootContexts {
                     .putAll(event.getPotions(), "potions")
                     .putAll(itemHolder, "item_holder")
                     .putAll(event.getItem(), "item")
-                    .putAll(event.getItem(), "item")
                     .build()
             )
             .location(itemHolder.getLocation())
