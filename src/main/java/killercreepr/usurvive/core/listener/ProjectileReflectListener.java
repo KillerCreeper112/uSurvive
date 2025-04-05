@@ -22,6 +22,8 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.Vector;
 
+import java.util.function.Consumer;
+
 public class ProjectileReflectListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onProjectileHit(ProjectileHitEvent event) {
@@ -46,7 +48,8 @@ public class ProjectileReflectListener implements Listener {
 
         ProjectileRicochetEvent x = reflectProjectile(proj, normal, reflected,
             CruxAttribute.get(proj, CruxAttribute.PROJECTILE_RICOCHET_ENTITY_VELOCITY_DROP_OFF, .7D),
-            CruxPersist.RICOCHET_ENTITY, event.getHitBlock(), event.getHitBlockFace(), event.getHitEntity()
+            CruxPersist.RICOCHET_ENTITY, event.getHitBlock(), event.getHitBlockFace(), event.getHitEntity(),
+            null
         );
         if(x.isCancelled()){
             x.getNewProjectile().remove();
@@ -71,7 +74,8 @@ public class ProjectileReflectListener implements Listener {
 
         ProjectileRicochetEvent x = reflectProjectile(proj, normal, reflected,
             CruxAttribute.get(proj, CruxAttribute.PROJECTILE_RICOCHET_BLOCK_VELOCITY_DROP_OFF, .7D),
-            CruxPersist.RICOCHET_BLOCK, event.getHitBlock(), event.getHitBlockFace(), event.getHitEntity()
+            CruxPersist.RICOCHET_BLOCK, event.getHitBlock(), event.getHitBlockFace(), event.getHitEntity(),
+            null
         );
         if(x.isCancelled()){
             event.setCancelled(false);
@@ -82,9 +86,10 @@ public class ProjectileReflectListener implements Listener {
     }
 
     public static ProjectileRicochetEvent reflectProjectile(Projectile proj, Vector normal, int reflected, double dropOff, PersistTag<Integer> tag,
-                                                     Block block,
-                                                     BlockFace hitFace,
-                                                     Entity entity){
+                                                            Block block,
+                                                            BlockFace hitFace,
+                                                            Entity entity,
+                                                            Consumer<Entity> newProjectileConsumer){
         Vector dir = proj.getVelocity();
         Vector v = CruxMath.reflect(dir, normal).multiply(dropOff);
 
@@ -124,6 +129,7 @@ public class ProjectileReflectListener implements Listener {
                 newSpawn.setPierceLevel(old.getPierceLevel());
             }
             tag.set(x, reflected+1);
+            if(newProjectileConsumer != null) newProjectileConsumer.accept(x);
         });
 
         ProjectileRicochetEvent event = new ProjectileRicochetEvent(
