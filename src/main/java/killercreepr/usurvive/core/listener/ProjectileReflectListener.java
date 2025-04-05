@@ -2,13 +2,16 @@ package killercreepr.usurvive.core.listener;
 
 import killercreepr.crux.core.persistence.CruxPersist;
 import killercreepr.crux.core.persistence.PersistTag;
+import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeInstance;
 import killercreepr.usurvive.api.event.ProjectileRicochetEvent;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.ThrowableProjectile;
@@ -78,14 +81,19 @@ public class ProjectileReflectListener implements Listener {
         proj.remove();
     }
 
-    public ProjectileRicochetEvent reflectProjectile(Projectile proj, Vector normal, int reflected, double dropOff, PersistTag<Integer> tag,
+    public static ProjectileRicochetEvent reflectProjectile(Projectile proj, Vector normal, int reflected, double dropOff, PersistTag<Integer> tag,
                                                      Block block,
                                                      BlockFace hitFace,
                                                      Entity entity){
         Vector dir = proj.getVelocity();
         Vector v = CruxMath.reflect(dir, normal).multiply(dropOff);
 
-        Entity newProjectile = proj.getWorld().spawnEntity(proj.getLocation(), proj.getType(), CreatureSpawnEvent.SpawnReason.CUSTOM, x->{
+        Location spawn;
+        if(entity == null){
+            spawn = CruxLoc.shift(proj.getLocation(), v, .2, 0, 0);
+        }else spawn = proj.getLocation();
+
+        Entity newProjectile = proj.getWorld().spawnEntity(spawn, proj.getType(), CreatureSpawnEvent.SpawnReason.CUSTOM, x->{
             CruxTag.copyAll(x, proj);
             x.setVelocity(v);
 
@@ -100,9 +108,20 @@ public class ProjectileReflectListener implements Listener {
             x.setVisualFire(proj.isVisualFire());
             if(x instanceof ThrowableProjectile newSpawn && proj instanceof ThrowableProjectile old){
                 newSpawn.setItem(old.getItem());
+                newSpawn.setShooter(old.getShooter());
             }
             if(x instanceof Projectile d){
                 d.setShooter(proj.getShooter());
+            }
+            if(x instanceof AbstractArrow newSpawn && proj instanceof AbstractArrow old){
+                newSpawn.setHitSound(old.getHitSound());
+                newSpawn.setDamage(old.getDamage());
+                newSpawn.setCritical(old.isCritical());
+                newSpawn.setItemStack(old.getItemStack());
+                newSpawn.setLifetimeTicks(old.getLifetimeTicks());
+                newSpawn.setPickupStatus(old.getPickupStatus());
+                newSpawn.setWeapon(old.getWeapon());
+                newSpawn.setPierceLevel(old.getPierceLevel());
             }
             tag.set(x, reflected+1);
         });
@@ -110,8 +129,7 @@ public class ProjectileReflectListener implements Listener {
         ProjectileRicochetEvent event = new ProjectileRicochetEvent(
             proj, newProjectile, v, reflected+1, block, hitFace, entity
         );
-        event.callEvent();
-        if(event.isCancelled()) return event;
+        if(!event.callEvent()) return event;
 
         if(event.getReflectedAmount() != reflected+1){
             tag.set(newProjectile, reflected+1);

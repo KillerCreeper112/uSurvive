@@ -13,7 +13,9 @@ import killercreepr.cruxadvancements.core.advancement.objective.NumberObjective;
 import killercreepr.cruxadvancements.core.entity.memory.AdvancementHolder;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.usurvive.api.event.PostItemInfusePotionsEvent;
+import killercreepr.usurvive.api.event.ProjectileRicochetEvent;
 import killercreepr.usurvive.core.advancement.objective.ItemInfusePotionObjective;
+import killercreepr.usurvive.core.advancement.objective.ReflectProjectileObjective;
 import killercreepr.usurvive.core.lang.Lang;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -76,6 +78,17 @@ public class ObjectiveProgressListener implements Listener {
         AdvancementHolder holder = holder(p);
         if(holder==null) return;
         holder.getAdvancementTracker().apply(ItemInfusePotionObjective.class, (manager, advancement, objective) -> {
+            objective.trigger(p.getUniqueId(), manager, advancement, event);
+        });
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onProjectileRicochet(ProjectileRicochetEvent event) {
+        Entity owner = EntityDamager.getOwner(event.getNewProjectile());
+        if(!(owner instanceof Player p)) return;
+        AdvancementHolder holder = holder(p);
+        if(holder==null) return;
+        holder.getAdvancementTracker().apply(ReflectProjectileObjective.class, (manager, advancement, objective) -> {
             objective.trigger(p.getUniqueId(), manager, advancement, event);
         });
     }
