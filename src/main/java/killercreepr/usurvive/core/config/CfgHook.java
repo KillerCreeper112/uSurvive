@@ -9,6 +9,9 @@ import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.advancement.objective.ItemInfusePotionObjective;
+import killercreepr.usurvive.core.advancement.objective.SlumberDeepObjective;
+import killercreepr.usurvive.core.advancement.objective.SlumberLeaveObjective;
+import killercreepr.usurvive.core.advancement.objective.SlumberObjective;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +25,33 @@ public class CfgHook {
                 Integer maxProgress = e.getObject(Integer.class, "amount");
                 if (maxProgress == null) maxProgress = 1;
                 return new ItemInfusePotionObjective(data, maxProgress);
+            }
+        });
+        fileAdvancementObjective.registerCustomHandler(new FileSimpleAdvanceObjective<>(USurvivePlugin.inst().key("slumber")) {
+
+            @Override
+            public @Nullable AdvancementObjective deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e, @NotNull ObjectiveCommonData data) {
+                Integer maxProgress = e.getObject(Integer.class, "amount");
+                if (maxProgress == null) maxProgress = 1;
+                return new SlumberObjective(data, maxProgress);
+            }
+        });
+        fileAdvancementObjective.registerCustomHandler(new FileSimpleAdvanceObjective<>(USurvivePlugin.inst().key("slumber_deep")) {
+
+            @Override
+            public @Nullable AdvancementObjective deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e, @NotNull ObjectiveCommonData data) {
+                Integer maxProgress = e.getObject(Integer.class, "amount");
+                if (maxProgress == null) maxProgress = 1;
+                return new SlumberDeepObjective(data, maxProgress);
+            }
+        });
+        fileAdvancementObjective.registerCustomHandler(new FileSimpleAdvanceObjective<>(USurvivePlugin.inst().key("slumber_leave")) {
+
+            @Override
+            public @Nullable AdvancementObjective deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e, @NotNull ObjectiveCommonData data) {
+                Integer maxProgress = e.getObject(Integer.class, "amount");
+                if (maxProgress == null) maxProgress = 1;
+                return new SlumberLeaveObjective(data, maxProgress);
             }
         });
     }
