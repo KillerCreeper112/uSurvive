@@ -66,7 +66,7 @@ public class ActiveCurrencyDepositModule extends SimpleActiveMenuModuled {
                 CruxCurrency currency = currencyItem.getCurrency().value();
                 int amount = newItem.getAmount();
                 newItem.setAmount(0);
-                EconomyHandler.handler().depositBalance(p, currency, amount);
+                EconomyHandler.handler().depositBalance(p, currency, amount, "usurvive:menu/currency_deposit");
                 Crux.scheduler().runTask(menu::refresh);
                 if(module.depositMsg != null && p instanceof Player online){
                     module.depositMsg.use(online);
