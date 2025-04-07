@@ -10,7 +10,10 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.component.parser.TextDataComponentDecoder;
 import killercreepr.crux.core.data.util.MapBuilder;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
 import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
+import killercreepr.cruxconfig.config.common.element.FileArray;
+import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.usurvive.core.USurvivePlugin;
 import net.kyori.adventure.key.Key;
 import org.bukkit.command.CommandSender;
@@ -32,6 +35,7 @@ public class DevCommands {
         .put("harvestCrop", new HarvestCrop())
         .put("catchFish", new CatchFish())
         .put("breakBlock", new BreakBlock())
+        .put("menuModule", new MenuModule())
         .build();
     public void register() {
         plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
@@ -86,6 +90,60 @@ public class DevCommands {
             list.add((int) CruxMath.evaluate(s.toString()));
         }
         return list;
+    }
+
+    //key=combat/kill/monster/,levels=7,slot=10,parent=2
+    public static class MenuModule implements AdvanceCreator{
+
+        @Override
+        public void generateFile(Map<String, Object> data) {
+            String key = data.get("key").toString();
+            if(key.split(":", 2).length == 1){
+                key = "usurvive:" + key;
+            }
+            //usurvive:combat/kill/monster/
+            int levels = (int) CruxMath.evaluate(data.getOrDefault("levels", "7").toString());
+            int slot = (int) CruxMath.evaluate(data.getOrDefault("slot", "10").toString());
+            int parent = (int) CruxMath.evaluate(data.getOrDefault("parent", "2").toString());
+
+            CruxConfig cfg = new CruxConfig(USurvivePlugin.inst(), "dev/generated/menu/modules");
+
+            //- type: items_container
+            //  base_items: quest_items
+            //  base_item:
+            //    slot: 11
+            //    data:
+            //      advancement: usurvive:combat/kill/monster/2
+            FileArray a;
+            if(cfg.getElement("modules") instanceof FileArray dd){
+                a = dd;
+            }else a = new FileArray();
+            for(int i = 1; i <= levels; i++){
+                FileObject o = new FileObject()
+                    .addProperty("type", "items_container")
+                    .addProperty("base_items", "quest_items")
+                    .add("base_item",
+                        new FileObject()
+                            .addProperty("slot", slot)
+                            .add("data",
+                                new FileObject().addProperty("advancement", key + i)
+                            )
+                    );
+
+                //  items:
+                //    default:
+                //      base: parent_requirement
+                if(i >= parent){
+                    o.add("items", new FileObject().add("default", new FileObject().addProperty("base", "parent_requirement")));
+                }
+
+                a.add(o);
+                slot++;
+            }
+
+            cfg.serialize("modules", a);
+            cfg.save();
+        }
     }
 
     //id=blaze,title="Blaze Buster",material=blaze_rod,amounts=[10, 25, 50, 100, 250, 500, 1000],levels=7
