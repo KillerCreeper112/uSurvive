@@ -9,6 +9,7 @@ version = "1.0"
 
 repositories {
     mavenCentral()
+    maven("https://jitpack.io")
 }
 
 dependencies {
@@ -29,6 +30,7 @@ dependencies {
         "E:\\Plugins\\YO\\CruxCore\\run\\plugins\\ProtocolLib.jar"
     ))
 
+    compileOnly("com.github.ZockerAxel", "CrazyAdvancementsAPI", "2.1.19")
 
     compileOnly(fileTree("libs"){
         include("*.jar")

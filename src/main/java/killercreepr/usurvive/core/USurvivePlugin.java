@@ -62,9 +62,11 @@ import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsManager;
 import killercreepr.usurvive.api.tpa.TPAManager;
 import killercreepr.usurvive.api.values.SleeperCfg;
 import killercreepr.usurvive.api.values.ValuesProvider;
+import killercreepr.usurvive.core.advancement.auto.KillMobAdvanceMaker;
 import killercreepr.usurvive.core.attribute.USurviveAttribute;
 import killercreepr.usurvive.core.block.USurviveBlocks;
 import killercreepr.usurvive.core.block.component.USurviveBlockComponents;
+import killercreepr.usurvive.core.command.DevCommands;
 import killercreepr.usurvive.core.command.StoreCommands;
 import killercreepr.usurvive.core.command.TPACommands;
 import killercreepr.usurvive.core.command.USurviveCommands;
@@ -193,6 +195,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         new USurviveCommands(this).register();
         new StoreCommands(this).register();
         new TPACommands(this).register();
+        new DevCommands(this).register();
 
         CfgHook.load();
         CfgRegistries.FILE.forEach(this::registerCfgHandlers);
@@ -517,7 +520,9 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new CruxFolder(this, "menus").file()
         );
 
-        cfgManagerLoader.refresh();
+        cfgManagerLoader.refresh(manager ->{
+            KillMobAdvanceMaker.registerAll();
+        });
     }
 
     public void registerSimpleCfgHandlers(@NotNull FileRegistry registry){
