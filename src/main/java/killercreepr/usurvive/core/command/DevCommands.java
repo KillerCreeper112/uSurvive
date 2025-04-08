@@ -174,8 +174,6 @@ public class DevCommands {
             List<Integer> amounts = amounts(data.get("amounts"));
             int levels = (int) CruxMath.evaluate(data.get("levels").toString());
             String entityType = data.getOrDefault("entity", id).toString();
-            String x = data.getOrDefault("x", "1").toString();
-            String y = data.getOrDefault("y", "0").toString();
 
             Key managerKey = Crux.key(data.getOrDefault("manager", "usurvive:combat").toString());
 
@@ -183,6 +181,13 @@ public class DevCommands {
             int level = 0;
             for(int amount : amounts){
                 level++;
+
+                String x = data.getOrDefault("x", "1").toString();
+                String y = data.getOrDefault("y", "0").toString();
+                if(level == 1){
+                    x = "1";
+                    y = "0";
+                }
 
                 String advanceID = managerKey + "/" + id + "/" + level;
 
@@ -193,7 +198,7 @@ public class DevCommands {
                 String criteriaRequirement = objectiveAmount;
                 String titleName = title + " " + CruxMath.numeral(level);
                 String materialID = material;
-                String description = "Kill " + objectiveAmount + " " + addS(id);
+                String description = "Kill " + CruxMath.format(amount) + " " + addS(id);
                 String visibilityType = level == 1 ? "vanilla" : "parent_granted";
 
                 String orbits = data.getOrDefault("orbits", this.orbits.get(level) + "").toString();
@@ -287,7 +292,7 @@ public class DevCommands {
     }
 
     public static String addS(String s, boolean formatUnderscore){
-        if(formatUnderscore) s = s.replace("_", "");
+        if(formatUnderscore) s = s.replace("_", " ");
         if(s.endsWith("s")) return s;
         return s + "s";
     }
@@ -319,8 +324,6 @@ public class DevCommands {
             List<Integer> amounts = amounts(data.get("amounts"));
             int levels = (int) CruxMath.evaluate(data.get("levels").toString());
             String block = data.getOrDefault("block", id).toString();
-            String x = data.getOrDefault("x", "1").toString();
-            String y = data.getOrDefault("y", "0").toString();
 
             Key managerKey = Crux.key(data.getOrDefault("manager", "usurvive:farming").toString());
 
@@ -328,7 +331,12 @@ public class DevCommands {
             int level = 0;
             for(int amount : amounts){
                 level++;
-
+                String x = data.getOrDefault("x", "1").toString();
+                String y = data.getOrDefault("y", "0").toString();
+                if(level == 1){
+                    x = "1";
+                    y = "0";
+                }
                 String advanceID = managerKey + "/" + id + "/" + level;
 
                 String parent = level == 1 ? (managerKey.asString() + "/root") :
@@ -338,7 +346,7 @@ public class DevCommands {
                 String criteriaRequirement = objectiveAmount;
                 String titleName = title + " " + CruxMath.numeral(level);
                 String materialID = material;
-                String description = "Plant and harvest " + objectiveAmount + " " + addS(id);
+                String description = "Plant and harvest " + CruxMath.format(amount) + " " + addS(id);
                 String visibilityType = level == 1 ? "vanilla" : "parent_granted";
 
                 String orbits = data.getOrDefault("orbits", this.orbits.get(level) + "").toString();
@@ -410,7 +418,8 @@ public class DevCommands {
                     "y": %s
                   }
                 }
-        """, parent, objectiveAmount, blockPredicate, objectiveAmount, blockPredicate, orbits, exp, criteriaRequirement, titleName, materialID, parent, materialID, titleName, description, visibilityType,
+        """, parent, objectiveAmount, blockPredicate, objectiveAmount, blockPredicate, (amount * 2)+"", orbits, exp, titleName, materialID,
+                    parent, materialID, titleName, description, visibilityType,
                     x, y);
 
                 Crux.logInfo(jsonText);
@@ -462,12 +471,10 @@ public class DevCommands {
         public void generateFile(Map<String, Object> data) {
             String id = data.get("id").toString();
             String title = data.getOrDefault("title", "none").toString();
-            String material = data.getOrDefault("material", "stone").toString();
+            String material = data.getOrDefault("material", id).toString();
             List<Integer> amounts = amounts(data.get("amounts"));
             int levels = (int) CruxMath.evaluate(data.get("levels").toString());
             String item = data.getOrDefault("item", id).toString();
-            String x = data.getOrDefault("x", "1").toString();
-            String y = data.getOrDefault("y", "0").toString();
 
             Key managerKey = Crux.key(data.getOrDefault("manager", "usurvive:fishing").toString());
 
@@ -476,16 +483,23 @@ public class DevCommands {
             for(int amount : amounts){
                 level++;
 
+                String x = data.getOrDefault("x", "1").toString();
+                String y = data.getOrDefault("y", "0").toString();
+                if(level == 1){
+                    x = "1";
+                    y = "0";
+                }
+
                 String advanceID = managerKey + "/" + id + "/" + level;
 
                 String parent = level == 1 ? (managerKey.asString() + "/root") :
-                    (managerKey.asString() + "/kill/" + id + "/" + (level-1));
+                    (managerKey.asString() + "/catch/" + id + "/" + (level-1));
                 String objectiveAmount = amount + "";
                 String itemPredicate = item;
                 String criteriaRequirement = objectiveAmount;
                 String titleName = title + " " + CruxMath.numeral(level);
                 String materialID = material;
-                String description = "Kill " + objectiveAmount + " " + addS(id);
+                String description = "Catch " + CruxMath.format(amount) + " " + addS(id);
                 String visibilityType = level == 1 ? "vanilla" : "parent_granted";
 
                 String orbits = data.getOrDefault("orbits", this.orbits.get(level) + "").toString();
@@ -597,30 +611,34 @@ public class DevCommands {
         public void generateFile(Map<String, Object> data) {
             String id = data.get("id").toString();
             String title = data.getOrDefault("title", "none").toString();
-            String material = data.getOrDefault("material", "stone").toString();
+            String material = data.getOrDefault("material", id).toString();
             List<Integer> amounts = amounts(data.get("amounts"));
             int levels = (int) CruxMath.evaluate(data.get("levels").toString());
             String block = data.getOrDefault("block", id).toString();
-            String x = data.getOrDefault("x", "1").toString();
-            String y = data.getOrDefault("y", "0").toString();
 
             Key managerKey = Crux.key(data.getOrDefault("manager", "usurvive:mining").toString());
-
 
             int level = 0;
             for(int amount : amounts){
                 level++;
 
+                String x = data.getOrDefault("x", "1").toString();
+                String y = data.getOrDefault("y", "0").toString();
+                if(level == 1){
+                    x = "1";
+                    y = "0";
+                }
+
                 String advanceID = managerKey + "/" + id + "/" + level;
 
                 String parent = level == 1 ? (managerKey.asString() + "/root") :
-                    (managerKey.asString() + "/kill/" + id + "/" + (level-1));
+                    (managerKey.asString() + "/mine/" + id + "/" + (level-1));
                 String objectiveAmount = amount + "";
                 String blockPredicate = block;
                 String criteriaRequirement = objectiveAmount;
                 String titleName = title + " " + CruxMath.numeral(level);
                 String materialID = material;
-                String description = "Kill " + objectiveAmount + " " + addS(id);
+                String description = "Mine " + CruxMath.format(amount) + " " + addS(id);
                 String visibilityType = level == 1 ? "vanilla" : "parent_granted";
 
                 String orbits = data.getOrDefault("orbits", this.orbits.get(level) + "").toString();
