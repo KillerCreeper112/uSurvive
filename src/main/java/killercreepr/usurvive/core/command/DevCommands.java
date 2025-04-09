@@ -130,6 +130,46 @@ public class DevCommands {
                                                     )
                                             )
                                     )
+                            ).then(
+                                Commands.literal("replacein")
+                                    .then(
+                                        Commands.argument("path", StringArgumentType.string())
+                                            .then(
+                                                Commands.argument("args", StringArgumentType.greedyString())
+                                                    .executes(ctx ->{
+                                                        String text = ctx.getArgument("args", String.class);
+                                                        var data = TextDataComponentDecoder.parseComponentMap(text);
+
+                                                        String path = ctx.getArgument("path", String.class);
+                                                        File[] files = new CruxFolder(plugin, path).file().listFiles();
+                                                        for(File f : files){
+                                                            String content = null;
+                                                            try {
+                                                                content = new String(Files.readAllBytes(f.toPath()));
+                                                            } catch (IOException e) {
+                                                                throw new RuntimeException(e);
+                                                            }
+
+                                                            for(var entry : data.entrySet()){
+                                                                content = content.replace(entry.getKey(), entry.getValue().toString());
+                                                            }
+
+                                                            // Step 3: Optionally parse it to ensure it's still valid JSON
+                                                            JsonElement jsonElement = JsonParser.parseString(content);
+
+                                                            // Step 4: Write it back to the file
+                                                            try (FileWriter writer = new FileWriter(f)) {
+                                                                new GsonBuilder().setPrettyPrinting().create().toJson(jsonElement, writer);
+                                                            } catch (Exception e) {
+                                                                throw new RuntimeException(e);
+                                                            }
+                                                        }
+
+                                                        return 1;
+                                                    })
+                                            )
+                                    )
+
                             )
                     )
                     .build()
