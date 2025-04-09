@@ -86,6 +86,16 @@ public class KillMobAdvanceMaker {
 
         new KillMobAdvanceMaker("wither", "Wither Wrecker", "wither_skeleton_skull",
             List.of(1,2,3,4,5,6,7)).createAll();
+
+
+        new KillMobAdvanceMaker("crux:toxicator", "Toxic Terminator", "crux:toxicator_mask_wounded",
+            List.of(10, 25, 50, 100, 250, 500, 1000)).createAll();
+        new KillMobAdvanceMaker("crux:scourger", "Scourge Slayer", "crux:scourger_horns",
+            List.of(10, 25, 50, 100, 250, 500, 1000)).createAll();
+        new KillMobAdvanceMaker("crux:abyssal_eyevine", "Eyestalk Eraser", "crux:abyssal_tendril",
+            List.of(10, 25, 50, 100, 250, 500, 1000)).createAll();
+        new KillMobAdvanceMaker("crux:plaguewing", "Plaguewing Purger", "crux:plague_wing",
+            List.of(10, 25, 50, 100, 250, 500, 1000)).createAll();
     }
 
     protected final String id;
@@ -95,18 +105,23 @@ public class KillMobAdvanceMaker {
     protected final EntityPredicate predicate;
 
     public KillMobAdvanceMaker(String id, String title, String material, List<Integer> amounts, EntityPredicate predicate) {
-        this.id = id;
+        this.id = removeColon(id);
         this.title = title;
         this.material = material.isBlank() ? (id + "_spawn_egg") : material;
         this.amounts = amounts;
         this.predicate = predicate;
     }
     public KillMobAdvanceMaker(String id, String title, String material, List<Integer> amounts) {
-        this.id = id;
+        this.id = removeColon(id);
         this.title = title;
         this.material = material.isBlank() ? (id + "_spawn_egg") : material;
         this.amounts = amounts;
         this.predicate = EntityPredicate.fromType(Key.key(id));
+    }
+
+    public static String removeColon(String d){
+        String[] split = d.split(":", 2);
+        return split.length > 1 ? split[1] : split[0];
     }
 
     public void createAll(){
