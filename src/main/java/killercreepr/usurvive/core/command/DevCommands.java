@@ -2,6 +2,8 @@ package killercreepr.usurvive.core.command;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
@@ -11,6 +13,7 @@ import killercreepr.crux.core.component.parser.TextDataComponentDecoder;
 import killercreepr.crux.core.data.util.MapBuilder;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
+import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
 import killercreepr.cruxconfig.config.common.element.FileArray;
 import killercreepr.cruxconfig.config.common.element.FileObject;
@@ -22,6 +25,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class DevCommands {
@@ -67,6 +73,61 @@ public class DevCommands {
                                                         creator.generateFile(data);
                                                         return 1;
                                                     })
+                                            )
+                                    )
+                            ).then(
+                                Commands.literal("prefix")
+                                    .then(
+                                        Commands.argument("replace", StringArgumentType.string())
+                                            .then(
+                                                Commands.argument("with", StringArgumentType.string())
+                                                    .then(
+                                                        Commands.argument("replace2", StringArgumentType.string())
+                                                            .then(
+                                                                Commands.argument("with2", StringArgumentType.string())
+                                                                    .then(
+                                                                        Commands.argument("path", StringArgumentType.string())
+                                                                            .executes(ctx ->{
+                                                                                String replace = ctx.getArgument("replace", String.class);
+                                                                                String with = ctx.getArgument("with", String.class);
+                                                                                String replace2 = ctx.getArgument("replace2", String.class);
+                                                                                String with2 = ctx.getArgument("with2", String.class);
+                                                                                String path = ctx.getArgument("path", String.class);
+
+                                                                                File[] files = new CruxFolder(plugin, path).file().listFiles();
+                                                                                for(File f : files){
+                                                                                    String content = null;
+                                                                                    try {
+                                                                                        content = new String(Files.readAllBytes(f.toPath()));
+                                                                                    } catch (IOException e) {
+                                                                                        throw new RuntimeException(e);
+                                                                                    }
+
+                                                                                    var jsonFile =new CruxJson(plugin, "dev/generated/prefixed/" + with + "/"
+                                                                                        + CruxFolder.withoutFileExtension(f.getName()));
+                                                                                    jsonFile.createNewFileIfNeeded();
+                                                                                    jsonFile.close();
+                                                                                    File newFile = jsonFile.file();
+
+                                                                                    // Step 2: Replace text (simple string replacement)
+                                                                                    content = content.replace(replace, with)
+                                                                                        .replace(replace2, with2);
+
+                                                                                    // Step 3: Optionally parse it to ensure it's still valid JSON
+                                                                                    JsonElement jsonElement = JsonParser.parseString(content);
+
+                                                                                    // Step 4: Write it back to the file
+                                                                                    try (FileWriter writer = new FileWriter(newFile)) {
+                                                                                        new GsonBuilder().setPrettyPrinting().create().toJson(jsonElement, writer);
+                                                                                    } catch (Exception e) {
+                                                                                        throw new RuntimeException(e);
+                                                                                    }
+                                                                                }
+                                                                                return 1;
+                                                                            })
+                                                                    )
+                                                            )
+                                                    )
                                             )
                                     )
                             )
@@ -644,6 +705,23 @@ public class DevCommands {
                 String orbits = data.getOrDefault("orbits", this.orbits.get(level) + "").toString();
                 String exp = data.getOrDefault("exp", this.exp.get(level) + "").toString();
 
+                //     "conditions": {
+                //        "condition": "all_of",
+                //        "terms": [
+                //          {
+                //            "condition": "block",
+                //            "target": "looted",
+                //            "block_predicate": "minecraft:acacia_log"
+                //          },
+                //          {
+                //            "condition": "invert",
+                //            "term": {
+                //              "condition": "block_entity_placed",
+                //              "target": "looted"
+                //            }
+                //          }
+                //        ]
+                //      }
                 String jsonText = String.format("""
                 {
                   "parent": "%s",
@@ -654,10 +732,22 @@ public class DevCommands {
                         "amount": %s
                       },
                       "conditions": {
-                        "condition": "block",
-                        "target": "looted",
-                        "block_predicate": "%s"
-                      }
+                          "condition": "all_of",
+                          "terms": [
+                            {
+                              "condition": "block",
+                              "target": "looted",
+                              "block_predicate": "%s"
+                            },
+                            {
+                              "condition": "invert",
+                              "term": {
+                                "condition": "block_entity_placed",
+                                "target": "looted"
+                              }
+                            }
+                          ]
+                        }
                     }
                   },
                   "update_advancement_period": 10,
