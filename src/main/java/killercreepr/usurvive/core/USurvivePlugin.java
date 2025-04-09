@@ -19,6 +19,7 @@ import killercreepr.crux.core.communication.lang.SimpleCreateLang;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.crux.core.plugin.module.StandardModules;
 import killercreepr.crux.core.registries.CruxRegistries;
+import killercreepr.crux.core.util.CruxWorldUtil;
 import killercreepr.cruxadvancements.core.config.loader.CfgCrazyAdvancementManagerCfgLoader;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.handler.BukkitCfgHandlers;
@@ -111,6 +112,7 @@ import killercreepr.usurvive.core.values.DefaultValues;
 import killercreepr.usurvive.core.world.USurviveNether;
 import killercreepr.usurvive.core.world.USurviveOverworld;
 import killercreepr.usurvive.core.world.USurviveWorldTypes;
+import killercreepr.usurvive.core.world.WorldUtil;
 import killercreepr.usurvive.core.world.entity.StandardOverworldGroups;
 import killercreepr.usurvive.core.world.module.GenericOverworldModule;
 import killercreepr.usurvive.core.world.module.ResetWorldModule;
@@ -351,6 +353,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         //cfgManagerLoader.load();
 
         setupQuickShop();
+
+        values.AUTO_LOAD_WORLDS().valueOr(List.of()).forEach(CruxWorldUtil::getOrLoadWorld);
     }
 
     public void setupQuickShop(){
