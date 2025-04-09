@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.command;
 
+import com.destroystokyo.paper.MaterialTags;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -19,6 +20,7 @@ import killercreepr.cruxconfig.config.common.element.FileArray;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.usurvive.core.USurvivePlugin;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Tag;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -139,6 +141,8 @@ public class DevCommands {
                                                     .executes(ctx ->{
                                                         String text = ctx.getArgument("args", String.class);
                                                         var data = TextDataComponentDecoder.parseComponentMap(text);
+                                                        getExecutor(ctx.getSource())
+                                                            .sendMessage(data + "");
 
                                                         String path = ctx.getArgument("path", String.class);
                                                         File[] files = new CruxFolder(plugin, path).file().listFiles();
@@ -151,9 +155,10 @@ public class DevCommands {
                                                             }
 
                                                             for(var entry : data.entrySet()){
-                                                                content = content.replace(entry.getKey(), entry.getValue().toString());
+                                                                if(entry.getValue() instanceof List<?> list){
+                                                                    content = content.replace(list.getFirst().toString(), list.get(1).toString());
+                                                                }
                                                             }
-
                                                             // Step 3: Optionally parse it to ensure it's still valid JSON
                                                             JsonElement jsonElement = JsonParser.parseString(content);
 
