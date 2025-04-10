@@ -354,7 +354,9 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
         setupQuickShop();
 
-        values.AUTO_LOAD_WORLDS().valueOr(List.of()).forEach(CruxWorldUtil::getOrLoadWorld);
+        getServer().getScheduler().runTaskLater(this, () ->{
+            values.AUTO_LOAD_WORLDS().valueOr(List.of()).forEach(CruxWorldUtil::getOrLoadWorld);
+        }, 200L);
     }
 
     public void setupQuickShop(){
