@@ -265,7 +265,7 @@ public class Lang {
     );
     public static final Msg RESOURCE_WORLD_RESETTING_IN = create(
         Communicator.builder()
-            .chat("<aqua><latinfont:resource world> <yellow>The world is going to reset in <duration:\"<resetting_in>\">")
+            .chat("<aqua><latinfont:resource world> <yellow>The world is going to reset in <duration:\"<resetting_in>\">...")
             .build()
     );
 
