@@ -55,6 +55,7 @@ public interface ValuesProvider extends Reloadable {
     Holder<ResourcePackRequestData> RESOURCE_PACKS();
 
     @NotNull NumberProvider RESOURCE_OVERWORLD_BORDER();
+    @NotNull NumberProvider RESOURCE_NETHER_BORDER();
     @NotNull NumberProvider RESOURCE_OVERWORLD_RESET_TIME();
 
     @NotNull NumberProvider TPA_EXPIRE_TICKS();

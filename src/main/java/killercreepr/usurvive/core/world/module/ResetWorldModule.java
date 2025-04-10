@@ -11,18 +11,22 @@ import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
 import killercreepr.cruxworlds.api.world.type.CruxWorldType;
 import killercreepr.cruxworlds.core.world.module.SimpleWorldModule;
+import net.kyori.adventure.key.Key;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.logging.Level;
 
 public class ResetWorldModule extends SimpleWorldModule implements Ticked {
     protected final Holder<NumberProvider> resetTime;
     protected final CruxWorldType type;
-    public ResetWorldModule(@NotNull CruxWorld parent, Holder<NumberProvider>  resetTime, CruxWorldType type) {
+    protected final Map<Key, CruxWorldType> linkedWorlds;
+    public ResetWorldModule(@NotNull CruxWorld parent, Holder<NumberProvider>  resetTime, CruxWorldType type, Map<Key, CruxWorldType> linkedWorlds) {
         super(parent);
         this.resetTime = resetTime;
         this.type = type;
+        this.linkedWorlds = linkedWorlds;
     }
     protected int tick = 0;
     protected boolean resetting = false;
@@ -51,6 +55,18 @@ public class ResetWorldModule extends SimpleWorldModule implements Ticked {
     }
 
     public void reset(){
+        reset(parent, type);
+        linkedWorlds.forEach((key, type) ->{
+            CruxWorldManager worldManager = CruxCore.core().worldManager();
+            worldManager.loadWorld(key).whenComplete((world, throwable) ->{
+                if(throwable != null) throwable.printStackTrace();
+                if(world == null) return;
+                reset(world, type);
+            });
+        });
+    }
+
+    public void reset(CruxWorld parent, CruxWorldType type){
         CruxWorldManager worldManager = CruxCore.core().worldManager();
         Crux.log(Level.INFO, "[ResetWorldModule] Resetting world, " + parent.key() + "...");
         worldManager.deleteWorld(parent).whenComplete((value, throwable) ->{

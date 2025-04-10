@@ -163,6 +163,12 @@ public class DefaultValues implements ValuesProvider {
 
     @NotNull
     @Override
+    public NumberProvider RESOURCE_NETHER_BORDER() {
+        return null;
+    }
+
+    @NotNull
+    @Override
     public NumberProvider RESOURCE_OVERWORLD_RESET_TIME() {
         return null;
     }

@@ -112,10 +112,10 @@ import killercreepr.usurvive.core.values.DefaultValues;
 import killercreepr.usurvive.core.world.USurviveNether;
 import killercreepr.usurvive.core.world.USurviveOverworld;
 import killercreepr.usurvive.core.world.USurviveWorldTypes;
-import killercreepr.usurvive.core.world.WorldUtil;
 import killercreepr.usurvive.core.world.entity.StandardOverworldGroups;
 import killercreepr.usurvive.core.world.module.GenericOverworldModule;
 import killercreepr.usurvive.core.world.module.ResetWorldModule;
+import killercreepr.usurvive.core.world.module.ResourceWorldModule;
 import net.kyori.adventure.key.Key;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -284,24 +284,52 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
                 return new USurviveOverworld(world);
             }
         });
-        worldManager.getModuleCreatorRegistry().register(Key.key("world_nether"), new CruxWorldModuleCreator() {
+        var customNether = new CruxWorldModuleCreator() {
             @Override
             public @NotNull WorldModule create(@NotNull CruxWorld world) {
                 return new USurviveNether(world);
             }
-        });
-        worldManager.getModuleCreatorRegistry().register(Key.key("world_resource_overworld"), new CruxWorldModuleCreator() {
-            @Override
-            public @NotNull WorldModule create(@NotNull CruxWorld world) {
-                return new ResetWorldModule(world, () -> values().RESOURCE_OVERWORLD_RESET_TIME(), USurviveWorldTypes.RESOURCE_OVERWORLD);
+        };
+        worldManager.getModuleCreatorRegistry().register(Key.key("world_nether"), customNether);
+
+        Key resourceOverworld = Key.key("world_resource_overworld");
+        Key resourceNether = Key.key("world_resource_nether");
+
+        worldManager.getModuleCreatorRegistry().register(
+            resourceOverworld,
+            new CruxWorldModuleCreator() {
+                @Override
+                public @NotNull WorldModule create(@NotNull CruxWorld world) {
+                    return new ResetWorldModule(world, () -> values().RESOURCE_OVERWORLD_RESET_TIME(), USurviveWorldTypes.RESOURCE_OVERWORLD,
+                        Map.of(resourceNether, USurviveWorldTypes.RESOURCE_NETHER));
+                }
+            },
+            new CruxWorldModuleCreator() {
+                @Override
+                public @NotNull WorldModule create(@NotNull CruxWorld world) {
+                    return new GenericOverworldModule(world);
+                }
+            },
+            new CruxWorldModuleCreator(){
+                @NotNull
+                @Override
+                public WorldModule create(@NotNull CruxWorld world) {
+                    return new ResourceWorldModule(world, USurvivePlugin.this, resourceNether, null);
+                }
             }
-        });
-        worldManager.getModuleCreatorRegistry().register(Key.key("world_resource_overworld"), new CruxWorldModuleCreator() {
-            @Override
-            public @NotNull WorldModule create(@NotNull CruxWorld world) {
-                return new GenericOverworldModule(world);
+        );
+
+        worldManager.getModuleCreatorRegistry().register(
+            resourceNether,
+            customNether,
+            new CruxWorldModuleCreator(){
+                @NotNull
+                @Override
+                public WorldModule create(@NotNull CruxWorld world) {
+                    return new ResourceWorldModule(world, USurvivePlugin.this, resourceOverworld, null);
+                }
             }
-        });
+        );
     }
 
     protected LangProvider langProvider;
@@ -496,6 +524,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         getServer().getScheduler().runTaskLater(this, task ->{
+            if(!p.isOnline()) return;
             cfgManagerLoader.load(p);
         }, 20L);
     }

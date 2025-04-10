@@ -52,6 +52,7 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     public final CfgValue<Component> SERVER_MOTD = new CommonValue<>(){};
     public final CfgValue<ResourcePackRequestData> RESOURCE_PACKS = new CommonValue<>(){};
     public final NumCfgValue RESOURCE_OVERWORLD_BORDER = new NumCfgValue(20000);
+    public final NumCfgValue RESOURCE_NETHER_BORDER = new NumCfgValue(20000);
     public final NumCfgValue DEATH_GRAVE_SPAWN_SEARCH_RANGE = new NumCfgValue(80);
     public final NumCfgValue TPA_EXPIRE_TICKS = new NumCfgValue(1200);
     public final NumCfgValue TPA_CONFIRM_EXPIRE_TICKS = new NumCfgValue(300);
@@ -308,6 +309,12 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     @Override
     public NumberProvider RESOURCE_OVERWORLD_BORDER() {
         return RESOURCE_OVERWORLD_BORDER.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider RESOURCE_NETHER_BORDER() {
+        return RESOURCE_NETHER_BORDER.value();
     }
 
     @NotNull
