@@ -2,8 +2,10 @@ package killercreepr.usurvive.core.world.module;
 
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.data.tick.Ticked;
+import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxcore.CruxCore;
@@ -11,11 +13,16 @@ import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
 import killercreepr.cruxworlds.api.world.type.CruxWorldType;
 import killercreepr.cruxworlds.core.world.module.SimpleWorldModule;
+import killercreepr.usurvive.core.USurvivePlugin;
+import killercreepr.usurvive.core.lang.Lang;
 import net.kyori.adventure.key.Key;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public class ResetWorldModule extends SimpleWorldModule implements Ticked {
@@ -42,22 +49,73 @@ public class ResetWorldModule extends SimpleWorldModule implements Ticked {
         }
     }
 
+    public void forEachAllPlayers(Consumer<Player> consumer){
+        parent.toBukkitWorld().getPlayers().forEach(consumer);
+        CruxWorldManager worldManager = CruxCore.core().worldManager();
+        for(Key key : linkedWorlds.keySet()){
+            CruxWorld crux = worldManager.getWorld(key);
+            if(crux == null) continue;
+            crux.toBukkitWorld().getPlayers().forEach(consumer);
+        }
+    }
+
     public long getLastReset(){
         return CruxTag.get(parent.toBukkitWorld(), "last_reset", PersistentDataType.LONG, 0L);
+    }
+
+    public long getResettingIn(){
+        int resetTime = this.resetTime.value().value().intValue();
+        long lastReset = getLastReset();
+
+        long resetTimeInMillis = resetTime * 50L;  // Minecraft runs at 20 ticks per second (1000ms / 20 = 50ms per tick)
+
+        // Calculate the time remaining until the reset
+        long currentTime = System.currentTimeMillis();
+        long timeElapsedSinceLastReset = currentTime - lastReset;  // in milliseconds
+
+        // The time remaining until the reset
+        long timeRemaining = resetTimeInMillis - timeElapsedSinceLastReset;
+
+        // Return the time remaining
+        return timeRemaining < 0L ? 0 : timeRemaining;
     }
 
     public void check(){
         int resetTime = this.resetTime.value().value().intValue();
         long lastReset = getLastReset();
-        if(CruxMath.hasOccurredWithin(lastReset, resetTime)) return;
+        if(CruxMath.hasOccurredWithin(lastReset, resetTime)){
+            long time = getResettingIn();
+            var tags = TagContainer.merged().add(Tag.parsed("resetting_in", time + ""));
+            forEachAllPlayers(p ->{
+                Lang.RESOURCE_WORLD_RESETTING_IN.use(p, tags);
+            });
+            return;
+        }
+        forEachAllPlayers(Lang.RESOURCE_WORLD_RESETTING::use);
         resetting = true;
         Crux.scheduler().runTask(() -> reset());
     }
 
+    public void teleportPlayersToSpawn(World world){
+        var cfg = USurvivePlugin.inst().values();
+        World spawnWorld = Crux.getServer().getWorld(cfg.SPAWN_WORLD().valueOr("a"));
+        if(spawnWorld == null) return;
+        for (Player p : world.getPlayers()) {
+            p.teleport(spawnWorld.getSpawnLocation());
+        }
+    }
+
     public void reset(){
+        CruxWorldManager worldManager = CruxCore.core().worldManager();
+        for(Key key : linkedWorlds.keySet()){
+            CruxWorld crux = worldManager.getWorld(key);
+            if(crux == null) continue;
+            teleportPlayersToSpawn(crux.toBukkitWorld());
+        }
+        teleportPlayersToSpawn(parent.toBukkitWorld());
+
         reset(parent, type);
         linkedWorlds.forEach((key, type) ->{
-            CruxWorldManager worldManager = CruxCore.core().worldManager();
             worldManager.loadWorld(key).whenComplete((world, throwable) ->{
                 if(throwable != null) throwable.printStackTrace();
                 if(world == null) return;

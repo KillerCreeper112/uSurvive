@@ -262,6 +262,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         CruxWorldManager worldManager = CruxCore.inst().worldManager();
         registerWorldData(worldManager);
         WorldsRegistries.WORLD_TYPE.register(USurviveWorldTypes.RESOURCE_OVERWORLD);
+        WorldsRegistries.WORLD_TYPE.register(USurviveWorldTypes.RESOURCE_NETHER);
 
         /*CruxWorldManager worldManager = CruxCore.inst().worldManager();
         worldManager.getCreatorRegistry().register("world", USurviveOverworld::new);

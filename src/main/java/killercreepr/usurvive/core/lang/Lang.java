@@ -258,6 +258,16 @@ public class Lang {
             .chat("You may not rest now; you are not in a healthy state.")
             .build()
     );
+    public static final Msg RESOURCE_WORLD_RESETTING = create(
+        Communicator.builder()
+            .chat("<aqua><yellow>The world is now resetting! You will be teleported to spawn...")
+            .build()
+    );
+    public static final Msg RESOURCE_WORLD_RESETTING_IN = create(
+        Communicator.builder()
+            .chat("<aqua><latinfont:resource world> <yellow>The world is going to reset in <duration:\"<resetting_in>\">")
+            .build()
+    );
 
     public static Msg create(@NotNull String id, @Nullable Communicator communicator){
         return new Msg(id, communicator, Lang::lang);

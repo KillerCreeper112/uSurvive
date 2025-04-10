@@ -5,7 +5,9 @@ import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.core.world.module.SimpleWorldModule;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
@@ -44,17 +46,31 @@ public class ResourceWorldModule extends SimpleWorldModule implements Listener {
             case NETHER_PORTAL -> {
                 if(netherPortalWorld == null) return null;
                 CruxWorld crux = CruxCore.core().worldManager().getWorld(netherPortalWorld);
-                if(crux == null) return null;
+                if(crux == null){
+                    plugin.getLogger().warning("Cannot find world " + netherPortalWorld);
+                    return null;
+                }
                 double x, y, z;
-
-                x = from.getX() / 8;
-                y = from.getY() / 8;
-                z = from.getZ() / 8;
-
+                if(crux.toBukkitWorld().getEnvironment() == World.Environment.NETHER){
+                    x = from.getX() / 8;
+                    y = from.getY() / 8;
+                    z = from.getZ() / 8;
+                }else if(from.getWorld().getEnvironment() == World.Environment.NETHER){
+                    x = from.getX() * 8;
+                    y = from.getY() * 8;
+                    z = from.getZ() * 8;
+                }else{
+                    x = from.getX();
+                    y = from.getY();
+                    z = from.getZ();
+                }
                 return new Location(crux.toBukkitWorld(), x, y, z, to.getYaw(), to.getPitch());
             }
             case END_PORTAL -> {
-                if(endPortalWorld == null) return null;
+                if(endPortalWorld == null){
+                    plugin.getLogger().warning("Cannot find world " + endPortalWorld);
+                    return null;
+                }
                 CruxWorld crux = CruxCore.core().worldManager().getWorld(endPortalWorld);
                 if(crux == null) return null;
                 return null;
