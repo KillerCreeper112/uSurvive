@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.listener;
 
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.persistence.CruxPersist;
 import killercreepr.crux.core.persistence.PersistTag;
 import killercreepr.crux.core.util.CruxLoc;
@@ -129,6 +130,8 @@ public class ProjectileReflectListener implements Listener {
                 newSpawn.setPierceLevel(old.getPierceLevel());
             }
             tag.set(x, reflected+1);
+            CruxPersist.RICOCHET_LAST_HIT_BLOCK_TYPE.set(x, block == null ? null : Crux.handlers().block().getType(block));
+            CruxPersist.RICOCHET_LAST_HIT_ENTITY_TYPE.set(x, entity == null ? null : Crux.handlers().entity().getType(entity));
             if(newProjectileConsumer != null) newProjectileConsumer.accept(x);
         });
 
