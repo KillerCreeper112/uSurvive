@@ -249,10 +249,4 @@ public class DefaultValues implements ValuesProvider {
     public NumberProvider SLEEP_PREVENT_IF_ATTACKED_WITHIN() {
         return null;
     }
-
-    @NotNull
-    @Override
-    public Holder<List<Key>> AUTO_LOAD_WORLDS() {
-        return null;
-    }
 }

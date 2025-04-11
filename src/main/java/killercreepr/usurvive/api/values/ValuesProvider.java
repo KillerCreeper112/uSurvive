@@ -71,5 +71,4 @@ public interface ValuesProvider extends Reloadable {
     @NotNull Holder<Map<Key, Double>> INFUSION_ATTRIBUTE_BENEFITS();
     @NotNull NumberProvider SLEEPER_WORLD_TIME_SKIP();
     NumberProvider SLEEP_PREVENT_IF_ATTACKED_WITHIN();
-    @NotNull Holder<List<Key>> AUTO_LOAD_WORLDS();
 }
