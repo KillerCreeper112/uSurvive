@@ -256,4 +256,9 @@ public class DefaultValues implements ValuesProvider {
     public Holder<Collection<CfgLootData>> CHESTS_LOOT_DATA() {
         return null;
     }
+
+    @Override
+    public Holder<Collection<CfgLootData>> BLOCK_DISPENSE_LOOT_DATA() {
+        return null;
+    }
 }

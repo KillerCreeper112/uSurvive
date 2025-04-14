@@ -98,6 +98,7 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     public final CfgValue<String> PLAYER_TAB_NAME = new CommonValue<>(){};
     public final CfgValue<String> PLAYER_NAME_TAG = new CommonValue<>(){};
     public final CfgValue<Collection<CfgLootData>> CHESTS_LOOT_DATA = new CommonValue<>(){};
+    public final CfgValue<Collection<CfgLootData>> BLOCK_DISPENSE_LOOT_DATA = new CommonValue<>(){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -405,5 +406,10 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     @Override
     public Holder<Collection<CfgLootData>> CHESTS_LOOT_DATA() {
         return CHESTS_LOOT_DATA;
+    }
+
+    @Override
+    public Holder<Collection<CfgLootData>> BLOCK_DISPENSE_LOOT_DATA() {
+        return BLOCK_DISPENSE_LOOT_DATA;
     }
 }

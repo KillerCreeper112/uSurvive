@@ -75,4 +75,5 @@ public interface ValuesProvider extends Reloadable {
     NumberProvider SLEEP_PREVENT_IF_ATTACKED_WITHIN();
 
     Holder<Collection<CfgLootData>> CHESTS_LOOT_DATA();
+    Holder<Collection<CfgLootData>> BLOCK_DISPENSE_LOOT_DATA();
 }
