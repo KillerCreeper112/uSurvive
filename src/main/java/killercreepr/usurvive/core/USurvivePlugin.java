@@ -76,6 +76,7 @@ import killercreepr.usurvive.core.config.CfgHook;
 import killercreepr.usurvive.core.config.Config;
 import killercreepr.usurvive.core.config.component.CfgUSurviveComponents;
 import killercreepr.usurvive.core.config.handler.*;
+import killercreepr.usurvive.core.data.CfgLootData;
 import killercreepr.usurvive.core.data.PremiumRank;
 import killercreepr.usurvive.core.data.ResourcePackData;
 import killercreepr.usurvive.core.data.ResourcePackRequestData;
@@ -563,7 +564,10 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         registry.registerFileHandler(SleepWeakness.class, new FileSleepWeakness());
         registry.registerFileHandler(SleepWeaknessCalculator.class, new FileSleepWeaknessCalculator());
         registry.registerFileHandler(SleepWeaknessWarning.class, new FileSleepWeaknessWarning());
-        registry.registerFileHandler(new AutoFileHandler<>(PremiumRank.class));
+        registry.registerFileHandler(
+            new AutoFileHandler<>(PremiumRank.class),
+            new AutoFileHandler<>(CfgLootData.class)
+        );
     }
 
     public void registerCfgHandlers(@NotNull FileRegistry registry){

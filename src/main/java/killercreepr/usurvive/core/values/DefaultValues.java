@@ -5,6 +5,7 @@ import killercreepr.crux.api.item.predicate.ItemPredicate;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.valueproviders.number.UniformNumber;
 import killercreepr.usurvive.api.values.ValuesProvider;
+import killercreepr.usurvive.core.data.CfgLootData;
 import killercreepr.usurvive.core.data.PremiumRank;
 import killercreepr.usurvive.core.data.ResourcePackRequestData;
 import net.kyori.adventure.key.Key;
@@ -12,6 +13,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -247,6 +249,11 @@ public class DefaultValues implements ValuesProvider {
 
     @Override
     public NumberProvider SLEEP_PREVENT_IF_ATTACKED_WITHIN() {
+        return null;
+    }
+
+    @Override
+    public Holder<Collection<CfgLootData>> CHESTS_LOOT_DATA() {
         return null;
     }
 }

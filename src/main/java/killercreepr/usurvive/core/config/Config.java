@@ -12,6 +12,7 @@ import killercreepr.cruxconfig.config.bukkit.value.CommonValue;
 import killercreepr.cruxconfig.config.bukkit.value.NumCfgValue;
 import killercreepr.usurvive.api.values.SleeperCfg;
 import killercreepr.usurvive.api.values.ValuesProvider;
+import killercreepr.usurvive.core.data.CfgLootData;
 import killercreepr.usurvive.core.data.PremiumRank;
 import killercreepr.usurvive.core.data.ResourcePackRequestData;
 import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeakness;
@@ -26,6 +27,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -95,6 +97,7 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     public final NumCfgValue AUTO_KICK_SLEEPER_AFTER_TIME_PASSED = new NumCfgValue(24000);
     public final CfgValue<String> PLAYER_TAB_NAME = new CommonValue<>(){};
     public final CfgValue<String> PLAYER_NAME_TAG = new CommonValue<>(){};
+    public final CfgValue<Collection<CfgLootData>> CHESTS_LOOT_DATA = new CommonValue<>(){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -397,5 +400,10 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     @Override
     public NumberProvider SLEEP_PREVENT_IF_ATTACKED_WITHIN() {
         return SLEEP_PREVENT_IF_ATTACKED_WITHIN.value();
+    }
+
+    @Override
+    public Holder<Collection<CfgLootData>> CHESTS_LOOT_DATA() {
+        return CHESTS_LOOT_DATA;
     }
 }
