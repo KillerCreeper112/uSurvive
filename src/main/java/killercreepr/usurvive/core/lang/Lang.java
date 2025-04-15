@@ -268,6 +268,12 @@ public class Lang {
             .chat("<aqua><latinfont:resource world> <yellow>The world is going to reset in <duration:\"<resetting_in>\">...")
             .build()
     );
+    public static final Msg WARP_CANNOT_CREATE_IN_RESOURCE_WORLD = create(
+        Communicator.builder()
+            .chat("<red>You may not create warps in resource worlds.")
+            .sound(CreateSound.sound(Sound.ENTITY_VILLAGER_NO))
+            .build()
+    );
 
     public static Msg create(@NotNull String id, @Nullable Communicator communicator){
         return new Msg(id, communicator, Lang::lang);

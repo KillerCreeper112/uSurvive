@@ -28,3 +28,5 @@ dependencies:
     QuickShop-Hikari:
       load: BEFORE
       required: false
+    CruxWarps:
+      required: false

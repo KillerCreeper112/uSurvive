@@ -376,6 +376,12 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new CustomObjectivesListener()
         );
 
+        if(getServer().getPluginManager().getPlugin("CruxWarps") != null){
+            registerListeners(
+                new CruxWarpsListener()
+            );
+        }
+
         super.enabled();
 
         //deathManager.load();
