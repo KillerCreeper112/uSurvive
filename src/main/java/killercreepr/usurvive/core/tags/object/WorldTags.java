@@ -9,6 +9,7 @@ import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.usurvive.api.world.module.SleeperWorldModule;
+import killercreepr.usurvive.core.world.module.ResetWorldModule;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,6 +49,13 @@ public class WorldTags implements ObjectTag<World> {
                 SleeperWorldModule sleeperModule = crux.getModule(SleeperWorldModule.class);
                 if(sleeperModule == null) return "0";
                 return sleeperModule.getTimeSkipPerTick() + "";
+            }))
+            .add(Tag.string("usurvive_resetting_in", (args, ctx) ->{
+                CruxWorld crux = CruxCore.core().worldManager().getWorld(object.key());
+                if(crux == null) return "0";
+                ResetWorldModule sleeperModule = crux.getModule(ResetWorldModule.class);
+                if(sleeperModule == null) return "0";
+                return sleeperModule.getResettingIn() + "";
             }))
             ;
     }
