@@ -37,4 +37,6 @@ public interface UPlayer extends Loadable, PluginLoadable {
     boolean hasFriend(@NotNull UUID uuid);
     boolean isApartOfParty(@NotNull UUID uuid);
     boolean isOnline();
+
+    void load();
 }

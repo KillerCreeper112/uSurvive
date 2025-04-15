@@ -65,7 +65,6 @@ public class SpawnListener implements Listener {
         }
         UPlayer uPlay = playerManager.getPlayer(p);
         if(uPlay == null) return;
-        uPlay.load();
 
         Key worldKey = uPlay.getLastKnownWorld();
         if(worldKey == null) return;
