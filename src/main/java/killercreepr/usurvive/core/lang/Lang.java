@@ -3,6 +3,7 @@ package killercreepr.usurvive.core.lang;
 import killercreepr.crux.api.communication.Communicator;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.communication.CreateTitle;
+import killercreepr.crux.api.communication.boss.CreateBossBar;
 import killercreepr.crux.api.communication.lang.CreateLang;
 import killercreepr.crux.core.communication.lang.Msg;
 import org.bukkit.Sound;
@@ -266,6 +267,16 @@ public class Lang {
     public static final Msg RESOURCE_WORLD_RESETTING_IN = create(
         Communicator.builder()
             .chat("<aqua><latinfont:resource world> <yellow>The world is going to reset in <duration:\"<resetting_in>\">...")
+            .build()
+    );
+    public static final Msg RESOURCE_WORLD_RESETTING_IN_TICK = create(
+        Communicator.builder()
+            .bossBar(CreateBossBar.builder()
+                .key("resource_world")
+                .progress("<last_reset>/<reset_time>")
+                .color("yellow")
+                .duration("100")
+                .build())
             .build()
     );
     public static final Msg WARP_CANNOT_CREATE_IN_RESOURCE_WORLD = create(

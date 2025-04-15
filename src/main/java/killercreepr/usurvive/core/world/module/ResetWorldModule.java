@@ -35,6 +35,7 @@ public class ResetWorldModule extends SimpleWorldModule implements Ticked {
         this.type = type;
         this.linkedWorlds = linkedWorlds;
     }
+
     protected int tick = 0;
     protected boolean resetting = false;
     //1 hour = 72,000
@@ -42,6 +43,19 @@ public class ResetWorldModule extends SimpleWorldModule implements Ticked {
     public void tick() {
         if(resetting) return;
         tick++;
+        //every 5 seconds, let the players know.
+        if(tick % 100 == 0){
+            long time = getResettingIn();
+            if(time > 5 && time < 3600000){
+                var tags = TagContainer.merged().add(Tag.parsed("resetting_in", time + ""))
+                    .add(Tag.parsed("reset_time", getResetTimeAt() + ""))
+                    .add(Tag.parsed("last_reset", getLastReset() + ""));
+                forEachAllPlayers(p ->{
+                    Lang.RESOURCE_WORLD_RESETTING_IN_TICK.use(p, tags);
+                });
+            }
+        }
+
         //after 30 seconds of init or every hour, check.
         if(tick == 600 || tick >= 72000){
             if(tick != 600) tick = 600;
@@ -61,6 +75,11 @@ public class ResetWorldModule extends SimpleWorldModule implements Ticked {
 
     public long getLastReset(){
         return CruxTag.get(parent.toBukkitWorld(), "last_reset", PersistentDataType.LONG, 0L);
+    }
+
+    public long getResetTimeAt(){
+        int resetTime = this.resetTime.value().value().intValue();
+        return getLastReset() + (resetTime*50L);
     }
 
     public long getResettingIn(){
