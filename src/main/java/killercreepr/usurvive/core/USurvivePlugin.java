@@ -107,6 +107,7 @@ import killercreepr.usurvive.core.menu.action.PlayerSettingCacheAction;
 import killercreepr.usurvive.core.menu.module.CurrencyDepositModule;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
 import killercreepr.usurvive.core.stat.USurviveStats;
+import killercreepr.usurvive.core.tags.USurviveTag;
 import killercreepr.usurvive.core.tags.object.*;
 import killercreepr.usurvive.core.tpa.SimpleTPAManager;
 import killercreepr.usurvive.core.values.DefaultValues;
@@ -277,6 +278,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new ItemStackTags(),
             new WorldTags()
         ));
+        Crux.format().globalStringResolvers().register(new USurviveTag());
     }
 
     public void registerWorldData(CruxWorldManager worldManager){
