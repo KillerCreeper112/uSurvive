@@ -16,6 +16,7 @@ import killercreepr.crux.core.communication.MsgContainer;
 import killercreepr.crux.core.communication.lang.LangPopulator;
 import killercreepr.crux.core.communication.lang.Msg;
 import killercreepr.crux.core.communication.lang.SimpleCreateLang;
+import killercreepr.crux.core.data.util.Pair;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.crux.core.plugin.module.StandardModules;
 import killercreepr.crux.core.registries.CruxRegistries;
@@ -282,7 +283,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     }
 
     public void registerWorldData(CruxWorldManager worldManager){
-        worldManager.getModuleCreatorRegistry().register(Key.key("world"), new CruxWorldModuleCreator() {
+        worldManager.getModuleCreatorRegistry().register(Key.key("overworld"), new CruxWorldModuleCreator() {
             @Override
             public @NotNull WorldModule create(@NotNull CruxWorld world) {
                 return new USurviveOverworld(world);
@@ -294,7 +295,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
                 return new USurviveNether(world);
             }
         };
-        worldManager.getModuleCreatorRegistry().register(Key.key("world_nether"), customNether);
+        worldManager.getModuleCreatorRegistry().register(Key.key("the_nether"), customNether);
 
         Key resourceOverworld = Key.key("world_resource_overworld");
         Key resourceNether = Key.key("world_resource_nether");
@@ -318,7 +319,9 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
                 @NotNull
                 @Override
                 public WorldModule create(@NotNull CruxWorld world) {
-                    return new ResourceWorldModule(world, USurvivePlugin.this, resourceNether, null);
+                    return new ResourceWorldModule(world, USurvivePlugin.this,
+                        new Pair<>(resourceNether, USurviveWorldTypes.RESOURCE_NETHER),
+                        null);
                 }
             }
         );
@@ -330,7 +333,9 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
                 @NotNull
                 @Override
                 public WorldModule create(@NotNull CruxWorld world) {
-                    return new ResourceWorldModule(world, USurvivePlugin.this, resourceOverworld, null);
+                    return new ResourceWorldModule(world, USurvivePlugin.this,
+                        new Pair<>(resourceOverworld, USurviveWorldTypes.RESOURCE_OVERWORLD),
+                        null);
                 }
             }
         );
