@@ -279,6 +279,9 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new ItemStackTags(),
             new WorldTags()
         ));
+        if(getServer().getPluginManager().getPlugin("CruxClaims") != null){
+            Crux.tags().register(new ClaimProfileTags());
+        }
         Crux.format().globalStringResolvers().register(new USurviveTag());
     }
 

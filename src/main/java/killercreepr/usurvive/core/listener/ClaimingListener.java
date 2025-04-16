@@ -29,7 +29,7 @@ public class ClaimingListener implements Listener {
         .put(StandardClaimSettings.FIRE_SPREAD, StandardClaimSettingSelections.ENABLED)
         .build();
 
-    public boolean isSetSettingWorld(Key key){
+    public static boolean isSetSettingWorld(Key key){
         return !key.equals(Key.key("overworld"));
     }
 
