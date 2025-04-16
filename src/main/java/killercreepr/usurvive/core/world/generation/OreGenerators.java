@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class OreGenerators {
     public static final OreGenerator ORBIT_ORE = new OreGenerator(
         NumberProvider.uniform(1, 3), NumberProvider.uniform(1, 6),
-        NumberProvider.constant(30), NumberProvider.constant(40), //was 50%
+        NumberProvider.constant(30), NumberProvider.constant(45), //was 50%
 
         CruxNoise.fast().frequency(.09f)
             .noiseType(CruxNoise.NoiseType.OpenSimplex2)

@@ -5,6 +5,7 @@ import io.papermc.paper.plugin.bootstrap.PluginBootstrap;
 import io.papermc.paper.registry.event.RegistryEvents;
 import killercreepr.cruxenchants.core.registries.CruxEnchantRegistries;
 import killercreepr.usurvive.core.enchant.USurviveEnchantRegisterer;
+import org.bukkit.Registry;
 
 public class USurviveBootstrapper implements PluginBootstrap {
     @Override

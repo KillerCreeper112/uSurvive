@@ -285,6 +285,12 @@ public class Lang {
             .sound(CreateSound.sound(Sound.ENTITY_VILLAGER_NO))
             .build()
     );
+    public static final Msg CLAIM_SETTINGS_CHANGED_SET = create(
+        Communicator.builder()
+            .chat("<gold>Note! <yellow>Your claim settings have been changed because you claimed a chunk in this world.")
+            .sound(CreateSound.sound(Sound.BLOCK_SNIFFER_EGG_PLOP, 2f))
+            .build()
+    );
 
     public static Msg create(@NotNull String id, @Nullable Communicator communicator){
         return new Msg(id, communicator, Lang::lang);

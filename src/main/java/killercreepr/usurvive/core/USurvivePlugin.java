@@ -389,6 +389,12 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             );
         }
 
+        if(getServer().getPluginManager().getPlugin("CruxClaims") != null){
+            registerListeners(
+                new ClaimingListener()
+            );
+        }
+
         super.enabled();
 
         //deathManager.load();
