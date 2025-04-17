@@ -18,12 +18,14 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-public class AnimalEnhancedGoal extends CruxMobGoal {
+public class AnimalEnhancedGoal extends CruxMobGoal implements Listener {
     public static final GoalKey<Mob> KEY = GoalKey.of(Mob.class, Crux.key("animal_enhanced"));
     public AnimalEnhancedGoal(@NotNull Mob mob) {
         super(KEY, mob);
@@ -111,7 +113,7 @@ public class AnimalEnhancedGoal extends CruxMobGoal {
             if(!killer.equals(g.getTarget())) continue;
             if(g.testPersistentAnger(killer)) continue;
             g.setTarget(null);
-            g.panic(DynamicLocation.from(killer));
+            g.panic(DynamicLocation.createEntity(killer));
         }
     }
     protected long lastHit;
@@ -122,7 +124,7 @@ public class AnimalEnhancedGoal extends CruxMobGoal {
 
         if((mob.getHealth() - event.getFinalDamage()) <= 0D){
             onDeath(dmger);
-            return;
+            //return;
         }
 
         if(CruxMath.hasOccurredWithin(lastHit, 100)) return;
@@ -137,7 +139,7 @@ public class AnimalEnhancedGoal extends CruxMobGoal {
                     continue;
                 }
             }
-            g.panic(DynamicLocation.from(dmger));
+            g.panic(DynamicLocation.createEntity(dmger));
         }
     }
 }
