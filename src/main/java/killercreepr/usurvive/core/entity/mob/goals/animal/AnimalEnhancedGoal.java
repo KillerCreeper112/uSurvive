@@ -57,7 +57,7 @@ public class AnimalEnhancedGoal extends CruxMobGoal implements Listener {
         ));
 
         CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(
-            CruxMath.random(1D, 5D)
+            CruxMath.random(2D, 8D)
         ));
 
         CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.baseModifier(
