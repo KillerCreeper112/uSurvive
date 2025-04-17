@@ -18,8 +18,11 @@ import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
 import killercreepr.cruxconfig.config.common.element.FileArray;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.usurvive.core.USurvivePlugin;
+import killercreepr.usurvive.core.listener.MaintenanceListener;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -53,6 +56,31 @@ public class DevCommands {
             commands.register(
                 Commands.literal("udev")
                     .requires(source -> getExecutor(source).hasPermission("usurvive.cmds.udev.use"))
+                    .then(
+                        Commands.literal("maintenance")
+                            .executes(ctx ->{
+                                var sender = getExecutor(ctx.getSource());
+                                MaintenanceListener.maintenance = !MaintenanceListener.maintenance;
+                                sender.sendMessage("Maintenance: " + MaintenanceListener.maintenance);
+                                return 1;
+                            })
+                    )
+                    .then(
+                        Commands.literal("kickothers")
+                            .then(
+                                Commands.argument("reason", StringArgumentType.greedyString())
+                                    .executes(ctx ->{
+                                        var sender = getExecutor(ctx.getSource());
+                                        String reason = ctx.getArgument("reason", String.class);
+                                        Component c = Crux.format().deserialize(reason);
+                                        for(Player p : plugin.getServer().getOnlinePlayers()){
+                                            if(p.equals(sender)) continue;
+                                            p.kick(c);
+                                        }
+                                        return 1;
+                                    })
+                            )
+                    )
                     .then(
                         Commands.literal("advancement")
                             .then(

@@ -383,7 +383,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new MiscListener(),
             new BedListener(),
             new ArmorTrimListener(),
-            new CustomObjectivesListener()
+            new CustomObjectivesListener(),
+            new MaintenanceListener()
         );
 
         if(getServer().getPluginManager().getPlugin("CruxWarps") != null){
