@@ -5,13 +5,16 @@ import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.PlayerTickedDataHolder;
+import killercreepr.cruxstats.api.bukkit.BukkitStatHolder;
 import killercreepr.usurvive.api.death.DeathManager;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.data.DeathGuide;
 import killercreepr.usurvive.core.death.PlayerDeath;
+import killercreepr.usurvive.core.stat.USurviveStats;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +35,11 @@ public class DeathHolder extends PlayerTickedDataHolder {
     }
 
     public int getDeathExpiryTime(){
-        return USurvivePlugin.inst().values().DEATH_EXPIRY_TIME().value().intValue();
+        Entity e = getParent().value();
+        return (int) (e instanceof Player p ? BukkitStatHolder.holder(p)
+            .getStatValue(USurviveStats.GRAVESTONE_EXPIRY_TIME) :
+            BukkitStatHolder.holder(parent.getUUID())
+            .getStatValue(USurviveStats.GRAVESTONE_EXPIRY_TIME));
     }
 
     public void tabTick(Player p){
