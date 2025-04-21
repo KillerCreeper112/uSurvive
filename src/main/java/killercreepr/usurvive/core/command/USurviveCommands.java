@@ -72,7 +72,7 @@ public class USurviveCommands {
                         .teleportTo(world::getSpawnLocation);
 
                     String modules = cfg.SPAWN_TELEPORT_COMPONENTS().value();
-                    if(modules != null){
+                    if(modules != null && !p.getWorld().equals(world)){
                         DataComponentDecoder.componentDecoder().parseComponents(modules).forEach(tp::set);
                         //tp.addModules(TeleportModules.parseFromString(modules, p.getUniqueId()));
                     }
