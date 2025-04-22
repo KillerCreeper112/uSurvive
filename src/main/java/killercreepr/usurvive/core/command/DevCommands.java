@@ -12,6 +12,7 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.component.parser.TextDataComponentDecoder;
 import killercreepr.crux.core.data.util.MapBuilder;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
@@ -19,10 +20,12 @@ import killercreepr.cruxconfig.config.common.element.FileArray;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.listener.MaintenanceListener;
+import killercreepr.usurvive.core.vanish.VanishHandler;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -56,6 +59,15 @@ public class DevCommands {
             commands.register(
                 Commands.literal("udev")
                     .requires(source -> getExecutor(source).hasPermission("usurvive.cmds.udev.use"))
+                    .then(
+                        Commands.literal("vanish")
+                            .requires(source -> getExecutor(source).hasPermission("usurvive.cmds.udev.vanish"))
+                            .executes(ctx ->{
+                                if(!(getExecutor(ctx.getSource()) instanceof Player p)) return -1;
+                                p.sendMessage("Vanish set to: " + VanishHandler.toggleVanish(p));
+                                return 1;
+                            })
+                    )
                     .then(
                         Commands.literal("maintenance")
                             .executes(ctx ->{
