@@ -29,6 +29,7 @@ import killercreepr.usurvive.core.menu.DeathMenu;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -237,6 +238,7 @@ public class EchoGoal extends CruxMobModeledGoal implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event) {
         if(!event.getEntity().equals(mob)) return;
+        if(event.getDamageSource().getDamageType() == DamageType.GENERIC_KILL) return;
         if(isInGraveTransformation()){
             event.setCancelled(true);
             transformToEcho();
