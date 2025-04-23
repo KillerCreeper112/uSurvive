@@ -4,12 +4,16 @@ import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.text.format.FormatPrefix;
 import killercreepr.crux.api.text.hook.HookedObjectContainer;
 import killercreepr.crux.api.text.hook.ObjectTag;
+import killercreepr.crux.api.text.resolver.StringResolver;
 import killercreepr.crux.api.text.tags.TagParser;
+import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.text.hook.StringHookedObjectTag;
 import killercreepr.crux.core.text.hook.StringListHookedObjectTag;
+import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
 import killercreepr.usurvive.core.data.entity.MemoryPlayerSettingsHolder;
 import killercreepr.usurvive.core.entity.memory.SleeperHolder;
+import killercreepr.usurvive.core.vanish.VanishHandler;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,6 +28,13 @@ public class PlayerTags implements ObjectTag<Player> {
     @Override
     public @NotNull FormatPrefix defaultPrefix() {
         return FormatPrefix.simple("player_");
+    }
+
+    @Override
+    public @Nullable TagContainer<StringResolver> requestStrings(@NotNull Player object, @NotNull TagParser tags) {
+        return TagContainer.string(tags)
+            .add(Tag.string("is_vanished",(args, ctx) -> VanishHandler.isVanished(object) + ""))
+            ;
     }
 
     @Nullable
