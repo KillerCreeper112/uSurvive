@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.listener;
 
+import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
 import com.destroystokyo.paper.event.server.PaperServerListPingEvent;
 import killercreepr.crux.core.Crux;
 import killercreepr.usurvive.core.vanish.VanishHandler;
@@ -30,6 +31,16 @@ public class VanishListener implements Listener {
         if(removed.get() == 0) return;
         event.setNumPlayers(event.getNumPlayers() - removed.get());
     }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onAsyncTabComplete(AsyncTabCompleteEvent event) {
+        event.getCompletions().removeIf(s ->{
+            Player p = Crux.getServer().getPlayer(s);
+            if(p == null) return false;
+            return VanishHandler.isVanished(p);
+        });
+    }
+
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerLogin(PlayerLoginEvent event) {
