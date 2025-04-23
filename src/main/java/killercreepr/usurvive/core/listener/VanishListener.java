@@ -34,16 +34,6 @@ public class VanishListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onAsyncTabComplete(AsyncTabCompleteEvent event) {
-        /*event.getCompletions().removeIf(s ->{
-            Player p = Crux.getServer().getPlayer(s);
-            if(p == null) return false;
-            return VanishHandler.isVanished(p);
-        });*/
-        event.setHandled(true);
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onAsyncPlayerSendSuggestions(AsyncPlayerSendSuggestionsEvent event) {
         event.getSuggestions().getList().removeIf(s ->{
             Player p = Crux.getServer().getPlayer(s.getText());
