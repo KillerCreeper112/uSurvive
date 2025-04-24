@@ -8,18 +8,19 @@ import io.papermc.paper.registry.event.WritableRegistry;
 import io.papermc.paper.registry.keys.tags.ItemTypeTagKeys;
 import io.papermc.paper.registry.set.RegistrySet;
 import killercreepr.crux.api.registry.KeyedRegistry;
-import killercreepr.cruxenchants.api.enchant.CruxEnchantWrapper;
+import killercreepr.cruxenchants.api.enchant.ApplicableItemGroup;
+import killercreepr.cruxenchants.api.enchant.ApplicableItemType;
+import killercreepr.cruxenchants.api.enchant.CruxEnchant;
 import killercreepr.cruxenchants.core.util.EnchantRegistererUtil;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlotGroup;
-import org.bukkit.inventory.ItemType;
 import org.jetbrains.annotations.Nullable;
 
 public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
     public USurviveEnchantRegisterer(WritableRegistry<Enchantment, EnchantmentRegistryEntry.Builder> registry,
-                                     @Nullable KeyedRegistry<CruxEnchantWrapper> wrapperRegistry,
+                                     @Nullable KeyedRegistry<CruxEnchant> wrapperRegistry,
                                      RegistryFreezeEvent<Enchantment, EnchantmentRegistryEntry.Builder> event) {
         super(registry, wrapperRegistry, event);
     }
@@ -35,7 +36,10 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
                 .activeSlots(EquipmentSlotGroup.FEET)
-                .exclusiveWith(RegistrySet.keySet(RegistryKey.ENCHANTMENT, TypedKey.create(RegistryKey.ENCHANTMENT, Key.key("feather_falling"))))
+                .exclusiveWith(RegistrySet.keySet(RegistryKey.ENCHANTMENT, TypedKey.create(RegistryKey.ENCHANTMENT, Key.key("feather_falling")))),
+
+            crux -> crux.description("Take less fall damage when landing on an entity and damage them in the process")
+                .applicableItemGroup(ApplicableItemGroup.itemGroup(ApplicableItemType.BOOTS))
         );
         register(
             "joy_whirl", b -> b.description(Component.text("Joy Whirl"))
@@ -45,7 +49,10 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .weight(3)
                 .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
-                .activeSlots(EquipmentSlotGroup.MAINHAND)
+                .activeSlots(EquipmentSlotGroup.MAINHAND),
+
+            crux -> crux.description("Launches hit targets in the air and spins them around")
+                .applicableItemGroup(ApplicableItemGroup.itemGroup(ApplicableItemType.SWORD))
                 //.exclusiveWith(RegistrySet.keySet(RegistryKey.ENCHANTMENT, TypedKey.create(RegistryKey.ENCHANTMENT, Key.key("feather_falling"))))
         );
         register(
@@ -57,7 +64,10 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
                 .activeSlots(EquipmentSlotGroup.ARMOR)
-                .exclusiveWith(RegistrySet.keySet(RegistryKey.ENCHANTMENT, TypedKey.create(RegistryKey.ENCHANTMENT, Key.key("thorns"))))
+                .exclusiveWith(RegistrySet.keySet(RegistryKey.ENCHANTMENT, TypedKey.create(RegistryKey.ENCHANTMENT, Key.key("thorns")))),
+
+            crux -> crux.description("Chance to damage and set entities who hit the wearer on fire")
+                .applicableItemGroup(ApplicableItemGroup.ARMOR)
         );
         register(
             "backstab", b -> b.description(Component.text("Backstab"))
@@ -67,7 +77,10 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .weight(4)
                 .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
-                .activeSlots(EquipmentSlotGroup.MAINHAND)
+                .activeSlots(EquipmentSlotGroup.MAINHAND),
+
+            crux -> crux.description("Deal more damage when striking a target from behind")
+                .applicableItemGroup(ApplicableItemGroup.WEAPONS)
         );
         register(
             "withstand", b -> b.description(Component.text("Withstand"))
@@ -77,7 +90,10 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .weight(4)
                 .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
-                .activeSlots(EquipmentSlotGroup.CHEST)
+                .activeSlots(EquipmentSlotGroup.CHEST),
+
+            crux -> crux.description("Briefly gain Resistance after taking a big hit")
+                .applicableItemGroup(ApplicableItemGroup.itemGroup(ApplicableItemType.CHESTPLATE))
         );
         register(
             "second_wind", b -> b.description(Component.text("Second Wind"))
@@ -87,7 +103,10 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .weight(3)
                 .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
-                .activeSlots(EquipmentSlotGroup.FEET)
+                .activeSlots(EquipmentSlotGroup.FEET),
+
+            crux -> crux.description("Sprint faster when on low health")
+                .applicableItemGroup(ApplicableItemGroup.itemGroup(ApplicableItemType.BOOTS))
         );
         register(
             "boomshot", b -> b.description(Component.text("Boomshot"))
@@ -100,7 +119,10 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .weight(1)
                 .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
-                .activeSlots(EquipmentSlotGroup.HAND)
+                .activeSlots(EquipmentSlotGroup.HAND),
+
+            crux -> crux.description("Chance to launch an arrow that explodes upon impact")
+                .applicableItemGroup(ApplicableItemGroup.BOWS_N_CROSSBOWS)
         );
         register(
             "velocity", b -> b.description(Component.text("Velocity"))
@@ -113,7 +135,10 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .weight(1)
                 .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
-                .activeSlots(EquipmentSlotGroup.HAND)
+                .activeSlots(EquipmentSlotGroup.HAND),
+
+            crux -> crux.description("Increases projectile speed")
+                .applicableItemGroup(ApplicableItemGroup.BOWS_N_CROSSBOWS)
         );
         register(
             "frostbite", b -> b.description(Component.text("Frostbite"))
@@ -124,7 +149,10 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
                 .activeSlots(EquipmentSlotGroup.HAND)
-                .exclusiveWith(RegistrySet.keySet(RegistryKey.ENCHANTMENT, TypedKey.create(RegistryKey.ENCHANTMENT, Key.key("fire_aspect"))))
+                .exclusiveWith(RegistrySet.keySet(RegistryKey.ENCHANTMENT, TypedKey.create(RegistryKey.ENCHANTMENT, Key.key("fire_aspect")))),
+
+            crux -> crux.description("Chance to freeze and slow down the target upon hit")
+                .applicableItemGroup(ApplicableItemGroup.WEAPONS)
         );
     }
 }

@@ -11,7 +11,7 @@ public class USurviveBootstrapper implements PluginBootstrap {
     @Override
     public void bootstrap(BootstrapContext context) {
         context.getLifecycleManager().registerEventHandler(RegistryEvents.ENCHANTMENT.freeze().newHandler(event -> {
-            new USurviveEnchantRegisterer(event.registry(), CruxEnchantRegistries.ENCHANT_WRAPPER, event).register();
+            new USurviveEnchantRegisterer(event.registry(), CruxEnchantRegistries.CRUX_ENCHANT, event).register();
         }));
     }
 }

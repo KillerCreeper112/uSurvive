@@ -31,7 +31,7 @@ public class VanishListener implements Listener {
             return true;
         });
         if(removed.get() == 0) return;
-        event.setNumPlayers(event.getNumPlayers() - removed.get());
+        event.setNumPlayers(Math.max(event.getNumPlayers() - removed.get(), 0));
     }
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPlayerAdvancementDone(PlayerAdvancementDoneEvent event) {
