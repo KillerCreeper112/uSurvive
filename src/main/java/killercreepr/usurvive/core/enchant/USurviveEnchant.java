@@ -9,6 +9,10 @@ public class USurviveEnchant {
     public static final Enchantment TRAMPLE = get("trample");
     public static final Enchantment JOY_WHIRL = get("joy_whirl");
     public static final Enchantment BURNING_THORNS = get("burning_thorns");
+    public static final Enchantment BACKSTAB = get("backstab");
+    public static final Enchantment WITHSTAND = get("withstand");
+    public static final Enchantment SECOND_WIND = get("second_wind");
+    public static final Enchantment BOOMSHOT = get("boomshot");
 
     private static Enchantment get(String id){
         return RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT).get(Crux.key(id));

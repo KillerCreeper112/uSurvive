@@ -1,11 +1,16 @@
 package killercreepr.usurvive.core.listener;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.item.CruxItem;
+import killercreepr.crux.core.persistence.PersistTag;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.CruxTag;
+import killercreepr.crux.core.util.GetEntityNear;
 import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
+import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.usurvive.api.event.EntityTrampleEnchantEvent;
 import killercreepr.usurvive.core.data.entity.TrampleHolder;
 import killercreepr.usurvive.core.enchant.USurviveEnchant;
@@ -14,6 +19,7 @@ import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -22,11 +28,17 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
@@ -43,6 +55,10 @@ public class EnchantsListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onPlayerMove(PlayerMoveEvent event) {
         Player p = event.getPlayer();
+        if(event.hasExplicitlyChangedBlock()){
+            secondWindTick(p);
+        }
+
         if(p.getFallDistance() < 1f) return;
         ItemStack boots = p.getInventory().getBoots();
         if(CruxItem.isEmpty(boots)) return;
@@ -101,6 +117,73 @@ public class EnchantsListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onProjectileHit(ProjectileHitEvent event) {
+        Entity e = event.getEntity();
+        int level = CruxTag.get(e, "enchant/boomshot", PersistentDataType.INTEGER, 0);
+        if(level > 0){
+            explodeBoomshot(e, level);
+        }
+    }
+
+    public void explodeBoomshot(Entity e, int level){
+        double range = 1.6D + (level-1);
+        double dmg = 1D + ((level-1) * 1.5D);
+        double kb = 2D + ((level-1) * 1.5D);
+
+        new GetEntityNear<>(LivingEntity.class)
+            .center(e)
+            .range(range)
+            .find().forEach(hit ->{
+                EntityDamager.entityDamager(hit, e).attack(dmg, kb);
+            });
+
+        new ParticleBuilder(Particle.EXPLOSION)
+            .location(e.getLocation())
+            .offset(.6, .6, .6)
+            .count(CruxMath.random(2, 4))
+            .extra(.1)
+            .spawn()
+        ;
+        CreateSound.sound(Sound.ENTITY_GENERIC_EXPLODE, 1.6f).playAt(e);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onEntityShootBow(EntityShootBowEvent event) {
+        ItemStack item = event.getBow();
+        if(CruxItem.isEmpty(item)) return;
+        int level = item.getEnchantmentLevel(USurviveEnchant.BOOMSHOT);
+        if(level > 0){
+            float chance = 10f + ((level-1) * 4);
+            if(CruxMath.testChance(chance)){
+                CruxTag.set(event.getProjectile(), "enchant/boomshot", PersistentDataType.INTEGER, level);
+            }
+        }
+    }
+
+
+    public void secondWindTick(Player p){
+        if(!p.isSprinting()) return;
+
+        ItemStack item = p.getInventory().getItem(EquipmentSlot.FEET);
+        if(!CruxItem.isEmpty(item)){
+            int level = item.getEnchantmentLevel(USurviveEnchant.SECOND_WIND);
+            if(level > 0){
+                if(!p.hasPotionEffect(PotionEffectType.SPEED) && isLowSecondWind(p, level)){
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 40, level > 2 ? 1 : 0, false, false, true));
+                }
+            }
+        }
+    }
+
+    public boolean isLowSecondWind(Player p, int level){
+        double hp = p.getHealth();
+        double max = p.getAttribute(Attribute.MAX_HEALTH).getValue();
+        double multiplier = 0.2 + ((level-1) * 0.05);
+        double check = max * multiplier;
+        return hp < check;
+    }
+
     public void burningThorns(EntityDamageByEntityEvent event,
                               LivingEntity victim, EntityEquipment victimEquip){
         int fireTicks = 0;
@@ -122,20 +205,63 @@ public class EnchantsListener implements Listener {
         dmger.setFireTicks(fireTicks);
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onEntityDamage(EntityDamageEvent event) {
+        if(!(event.getEntity() instanceof LivingEntity e)) return;
+        EntityEquipment equip = e.getEquipment();
+        if(equip == null) return;
+
+        if(!e.hasPotionEffect(PotionEffectType.RESISTANCE)){
+            int withstandLevel = 0;
+            for(EquipmentSlot slot : AttributeBukkitAdaptor.ARMOR_SLOTS){
+                ItemStack item = equip.getItem(slot);
+                if(CruxItem.isEmpty(item)) continue;
+                withstandLevel += item.getEnchantmentLevel(USurviveEnchant.WITHSTAND);
+            }
+
+            if(withstandLevel > 0 && tookLargeDamage(e, withstandLevel, event.getFinalDamage())){
+                onWithstand(e, withstandLevel);
+            }
+        }
+    }
+
+    public void onWithstand(LivingEntity e, int withstandLevel){
+        int amplifier = Math.min(withstandLevel / 3, 2);
+        int duration = 60 + ((withstandLevel-1) * 30);
+        e.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, duration, amplifier));
+    }
+
+    public boolean tookLargeDamage(LivingEntity e, int withstandLevel, double damage){
+        var instance = e.getAttribute(Attribute.MAX_HEALTH);
+        if(instance == null) return false;
+        double x = 0.75 - ((withstandLevel-1) * 0.03);
+        double check = instance.getValue() * x;
+        return damage >= check;
+    }
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        Entity vic = event.getEntity();
+        Entity attacker = event.getDamager();
+
         if(event.getEntity() instanceof LivingEntity victim){
             EntityEquipment victimEquip = victim.getEquipment();
             if(victimEquip != null){
                 burningThorns(event, victim, victimEquip);
             }
         }
+        LivingEntity damager;
+        if(event.getDamager() instanceof LivingEntity dd && dd.getEquipment() != null) damager = dd;
+        else damager = null;
+        LivingEntity victim;
+        if(event.getEntity() instanceof LivingEntity dd && dd.getEquipment() != null) victim = dd;
+        else victim = null;
 
-        if(event.getDamager() instanceof LivingEntity damager && event.getEntity() instanceof LivingEntity victim){
+        if(damager != null){
             EntityEquipment dmgerEquip = damager.getEquipment();
-            if(dmgerEquip != null && !CruxItem.isEmpty(dmgerEquip.getItemInMainHand())){
-                ItemStack mainHand = dmgerEquip.getItemInMainHand();
-                Map<Enchantment, Integer> enchants = mainHand.getEnchantments();
+            ItemStack mainHand = dmgerEquip.getItemInMainHand();
+            Map<Enchantment, Integer> enchants = mainHand.getEnchantments();
+            if(victim != null){
                 if(enchants.containsKey(USurviveEnchant.JOY_WHIRL)){
                     new BukkitRunnable(){
                         @Override
@@ -165,6 +291,22 @@ public class EnchantsListener implements Listener {
                     }.runTaskTimer(Core.instance, 0L, 1L);
                 }*/
             }
+            if(enchants.containsKey(USurviveEnchant.BACKSTAB) && isBehind(vic, attacker)){
+                int level = enchants.getOrDefault(USurviveEnchant.BACKSTAB, 0);
+                double multiplier = 1D + (level * 0.08);
+                event.setDamage(event.getDamage() * multiplier);
+            }
         }
+    }
+
+    public boolean isBehind(Entity victim, Entity attacker) {
+        Vector victimFacing = victim.getLocation().getDirection().normalize(); // Direction victim is looking
+        Vector toAttacker = attacker.getLocation().toVector().subtract(victim.getLocation().toVector()).normalize();
+
+        double dot = victimFacing.dot(toAttacker); // Cosine of angle between vectors
+
+        // dot == -1 means 180° (directly behind)
+        // dot == 1 means 0° (directly in front)
+        return dot < -0.7; // About 135°-180° cone behind
     }
 }
