@@ -102,5 +102,29 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
                 .activeSlots(EquipmentSlotGroup.HAND)
         );
+        register(
+            "velocity", b -> b.description(Component.text("Velocity"))
+                .supportedItems(RegistrySet.keySet(RegistryKey.ITEM,
+                    TypedKey.create(RegistryKey.ITEM, Key.key("bow")),
+                    TypedKey.create(RegistryKey.ITEM, Key.key("crossbow"))
+                ))
+                .anvilCost(1)
+                .maxLevel(2)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.HAND)
+        );
+        register(
+            "frostbite", b -> b.description(Component.text("Frostbite"))
+                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_WEAPON))
+                .anvilCost(1)
+                .maxLevel(2)
+                .weight(2)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.HAND)
+                .exclusiveWith(RegistrySet.keySet(RegistryKey.ENCHANTMENT, TypedKey.create(RegistryKey.ENCHANTMENT, Key.key("fire_aspect"))))
+        );
     }
 }

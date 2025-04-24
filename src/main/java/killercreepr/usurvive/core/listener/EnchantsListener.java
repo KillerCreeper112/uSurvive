@@ -5,6 +5,7 @@ import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.item.CruxItem;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.persistence.PersistTag;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
@@ -150,6 +151,7 @@ public class EnchantsListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEntityShootBow(EntityShootBowEvent event) {
+        Entity e = event.getProjectile();
         ItemStack item = event.getBow();
         if(CruxItem.isEmpty(item)) return;
         int level = item.getEnchantmentLevel(USurviveEnchant.BOOMSHOT);
@@ -158,6 +160,12 @@ public class EnchantsListener implements Listener {
             if(CruxMath.testChance(chance)){
                 CruxTag.set(event.getProjectile(), "enchant/boomshot", PersistentDataType.INTEGER, level);
             }
+        }
+        level = item.getEnchantmentLevel(USurviveEnchant.VELOCITY);
+        if(level > 0){
+            double multiplier = 1D + (level * 0.09D);
+            Vector vec = e.getVelocity();
+            e.setVelocity(vec.multiply(multiplier));
         }
     }
 
@@ -169,7 +177,7 @@ public class EnchantsListener implements Listener {
         if(!CruxItem.isEmpty(item)){
             int level = item.getEnchantmentLevel(USurviveEnchant.SECOND_WIND);
             if(level > 0){
-                if(!p.hasPotionEffect(PotionEffectType.SPEED) && isLowSecondWind(p, level)){
+                if(isLowSecondWind(p, level)){
                     p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 40, level > 2 ? 1 : 0, false, false, true));
                 }
             }
@@ -195,7 +203,7 @@ public class EnchantsListener implements Listener {
             int level = item.getEnchantmentLevel(USurviveEnchant.BURNING_THORNS);
             if(level == 0) continue;
             fireTicks += 80 * level;
-            chance += 12 * level;
+            chance += 3 * level;
         }
         if(fireTicks < 1) return;
         if(!CruxMath.testChance(chance)) return;
@@ -234,7 +242,7 @@ public class EnchantsListener implements Listener {
     public boolean tookLargeDamage(LivingEntity e, int withstandLevel, double damage){
         var instance = e.getAttribute(Attribute.MAX_HEALTH);
         if(instance == null) return false;
-        double x = 0.75 - ((withstandLevel-1) * 0.03);
+        double x = 0.75 - ((withstandLevel-1) * 0.07);
         double check = instance.getValue() * x;
         return damage >= check;
     }
@@ -270,10 +278,11 @@ public class EnchantsListener implements Listener {
                         }
                     }.runTaskLater(plugin, 1L);
                 }
-                /*if(mainHand.getEnchantments().containsKey(CustomEnchants.FROSTBITE)){
-                    int level = mainHand.getEnchantments().getOrDefault(CustomEnchants.FROSTBITE, 0);
+                //todo make into own potion
+                if(mainHand.getEnchantments().containsKey(USurviveEnchant.FROSTBITE)){
+                    int level = mainHand.getEnchantments().getOrDefault(USurviveEnchant.FROSTBITE, 0);
                     victim.setFreezeTicks(140 + ((6 * level) * 20));
-                    victim.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, (40 + ((level - 1) * 80)), level));
+                    victim.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, (40 + ((level - 1) * 80)), level));
                     new BukkitRunnable(){
                         int tick = 0;
                         @Override
@@ -288,12 +297,12 @@ public class EnchantsListener implements Listener {
                                 victim.damage(1D);
                             }
                         }
-                    }.runTaskTimer(Core.instance, 0L, 1L);
-                }*/
+                    }.runTaskTimer(plugin, 0L, 1L);
+                }
             }
             if(enchants.containsKey(USurviveEnchant.BACKSTAB) && isBehind(vic, attacker)){
                 int level = enchants.getOrDefault(USurviveEnchant.BACKSTAB, 0);
-                double multiplier = 1D + (level * 0.08);
+                double multiplier = 1D + (level * 0.2);
                 event.setDamage(event.getDamage() * multiplier);
             }
         }
