@@ -311,6 +311,7 @@ public class SleeperHolder extends EntityTickedDataHolder implements Loadable {
         if(e==null) return;
         Lang.START_SLEEP.use(e, TagContainer.merged().hook(e));
         if(!(parent.value() instanceof Player p)) return;
+        p.setStatistic(Statistic.TIME_SINCE_REST, 0);
         if(to instanceof BedSlumberData data){
             p.incrementStatistic(Statistic.SLEEP_IN_BED);
             if(data.shouldSetBedLocation()){
