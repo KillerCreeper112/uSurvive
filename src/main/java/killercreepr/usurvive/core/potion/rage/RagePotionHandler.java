@@ -18,6 +18,7 @@ import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class RagePotionHandler {
@@ -69,7 +70,9 @@ public abstract class RagePotionHandler {
             x.setJohnny(true);
             EntityEquipment equipment = entity.getEquipment();
             if(equipment != null){
-                for(EquipmentSlot slot : CruxEntityUtil.getGeneralEntitySlots()){
+                for(EquipmentSlot slot : EquipmentSlot.values()){
+                    if(!entity.canUseEquipmentSlot(slot)) continue;
+                    if(!x.canUseEquipmentSlot(slot)) continue;
                     ItemStack i = equipment.getItem(slot);
                     x.getEquipment().setItem(slot, i);
                 }
@@ -81,6 +84,9 @@ public abstract class RagePotionHandler {
                 AttributeInstance pIn = entity.getAttribute(a);
                 if(pIn == null) continue;
                 in.setBaseValue(pIn.getBaseValue());
+            }
+            for(PotionEffect pot : entity.getActivePotionEffects()){
+                x.addPotionEffect(pot);
             }
             x.setHealth(entity.getHealth());
         });

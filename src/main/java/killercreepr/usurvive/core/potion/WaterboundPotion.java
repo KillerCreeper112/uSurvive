@@ -42,17 +42,19 @@ public class WaterboundPotion extends ActiveEntityPotion<LivingEntity> {
             }
         }
         inWater = e.getEyeLocation().getBlock().getType() == Material.WATER;
-        if(inWater){
-            if(e.getRemainingAir() < 0) e.setRemainingAir(0);
-            e.setRemainingAir(Math.min(e.getRemainingAir()+4, e.getMaximumAir()));
-        }else{
-            e.setRemainingAir(Math.min(e.getRemainingAir()-subtractAir, e.getMaximumAir()));
-            if(e.getRemainingAir() < 0 && e.getRemainingAir() % 20 == 0){
-                if(e.getHealth()-2D <= 0D) died = true;
-                e.damage(2D);
-                e.getWorld().playSound(e.getLocation(), Sound.ENTITY_PLAYER_HURT_DROWN, 1f, 1f);
+        Crux.scheduler().runTask(() ->{
+            if(inWater){
+                if(e.getRemainingAir() < 0) e.setRemainingAir(0);
+                e.setRemainingAir(Math.min(e.getRemainingAir()+4, e.getMaximumAir()));
+            }else{
+                e.setRemainingAir(Math.min(e.getRemainingAir()-subtractAir, e.getMaximumAir()));
+                if(e.getRemainingAir() < 0 && e.getRemainingAir() % 20 == 0){
+                    if(e.getHealth()-2D <= 0D) died = true;
+                    e.damage(2D);
+                    e.getWorld().playSound(e.getLocation(), Sound.ENTITY_PLAYER_HURT_DROWN, 1f, 1f);
+                }
             }
-        }
+        });
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)

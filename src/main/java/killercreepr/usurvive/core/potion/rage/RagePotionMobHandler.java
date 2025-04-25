@@ -27,14 +27,14 @@ public class RagePotionMobHandler extends RagePotionHandler {
 
     @Override
     public void started() {
-        MobDisguise disguise = new MobDisguise(DisguiseType.valueOf(entity.getType().toString()));
+        /*MobDisguise disguise = new MobDisguise(DisguiseType.valueOf(entity.getType().toString()));
         if(entity.hasPotionEffect(PotionEffectType.GLOWING)) disguise.getWatcher().setGlowing(true);
-        if(entity.hasPotionEffect(PotionEffectType.INVISIBILITY)) disguise.getWatcher().setInvisible(true);
+        if(entity.hasPotionEffect(PotionEffectType.INVISIBILITY)) disguise.getWatcher().setInvisible(true);*/
         /*for(PotionEffect e : entity.getActivePotionEffects()){
             if(!e.hasParticles()) continue;
             disguise.getWatcher().addPotionEffect(e.getType());
         }*/
-        DisguiseAPI.disguiseEntity(mob, disguise);
+        //DisguiseAPI.disguiseEntity(mob, disguise);
 
         Bukkit.getMobGoals().addGoal(mob, 0, new RageGoal(mob));
     }
@@ -42,8 +42,7 @@ public class RagePotionMobHandler extends RagePotionHandler {
     @Override
     public void stopped() {
         super.stopped();
-        DisguiseAPI.undisguiseToAll(entity);
-
+        //DisguiseAPI.undisguiseToAll(entity);
         Bukkit.getMobGoals().removeGoal(mob, RageGoal.KEY);
     }
 }

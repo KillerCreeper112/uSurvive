@@ -4,6 +4,8 @@ import com.destroystokyo.paper.event.player.PlayerStartSpectatingEntityEvent;
 import com.destroystokyo.paper.event.player.PlayerStopSpectatingEntityEvent;
 import killercreepr.crux.core.Crux;
 import killercreepr.usurvive.core.potion.RagePotion;
+import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
@@ -11,6 +13,7 @@ import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 public class RagePotionPlayerHandler extends RagePotionHandler {
@@ -64,14 +67,14 @@ public class RagePotionPlayerHandler extends RagePotionHandler {
     @Override
     public void started() {
         johnny = spawnJohnny();
-        /*todo PlayerDisguise playerDisguise = new PlayerDisguise(p);
+        PlayerDisguise playerDisguise = new PlayerDisguise(p);
         if(p.hasPotionEffect(PotionEffectType.GLOWING)) playerDisguise.getWatcher().setGlowing(true);
         if(p.hasPotionEffect(PotionEffectType.INVISIBILITY)) playerDisguise.getWatcher().setInvisible(true);
-        for(PotionEffect e : p.getActivePotionEffects()){
+        /*for(PotionEffect e : p.getActivePotionEffects()){
             if(!e.hasParticles()) continue;
             playerDisguise.getWatcher().addPotionEffect(e.getType());
-        }
-        DisguiseAPI.disguiseEntity(johnny, playerDisguise);*/
+        }*/
+        DisguiseAPI.disguiseEntity(johnny, playerDisguise);
 
         lastGameMode = p.getGameMode();
         p.setGameMode(GameMode.SPECTATOR);
@@ -89,7 +92,9 @@ public class RagePotionPlayerHandler extends RagePotionHandler {
     @Override
     public void stopped() {
         super.stopped();
-        if(johnny != null) johnny.remove();
-        if(lastGameMode != null) p.setGameMode(lastGameMode);
+        Crux.scheduler().runTask(() ->{
+            if(johnny != null) johnny.remove();
+            if(lastGameMode != null) p.setGameMode(lastGameMode);
+        });
     }
 }

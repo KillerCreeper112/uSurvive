@@ -48,6 +48,18 @@ public class USurvivePotions {
             return Color.fromRGB(0xF43930);
         }
     });
+    public static final CruxPotion GOOF = register(new GenericPotion(Crux.key("goof")) {
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new GoofPotion(this, e, duration, amplifier);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            //new java.awt.Color(0x76C934);
+            return Color.fromRGB(0x76C934);
+        }
+    });
 
     private static CruxPotion register(CruxPotion pot){
         return CruxPotionRegistries.POTION.register(pot);
