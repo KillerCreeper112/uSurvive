@@ -16,14 +16,12 @@ public class RageGoal extends CruxMobGoal {
         super(KEY, mob);
     }
 
+    protected boolean addedCustomAttributes = false;
     @Override
     public void start() {
         super.start();
         if(CruxAttribute.hasAttributeData(mob)) return;
         //if the mob can already attack normally, don't use the custom system.
-        mob.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(
-            mob.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 2D//todo fix this
-        );
         if(mob.getAttribute(Attribute.ATTACK_DAMAGE) != null) return;
         double width = mob.getWidth();
         CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
@@ -45,5 +43,22 @@ public class RageGoal extends CruxMobGoal {
         CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(
             CruxMath.random(1D, 5D)
         ));
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
+        if(addedCustomAttributes){
+            CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_RANGE, Crux.key("base"));
+            CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_AOE, Crux.key("base"));
+            CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_SPEED, Crux.key("base"));
+            CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_KNOCKBACK, Crux.key("base"));
+            CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_DAMAGE, Crux.key("base"));
+        }
+    }
+
+    @Override
+    public double getDefaultMoveSpeedMultiplier() {
+        return 1.6D;
     }
 }

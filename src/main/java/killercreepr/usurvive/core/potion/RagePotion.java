@@ -3,7 +3,6 @@ package killercreepr.usurvive.core.potion;
 import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import com.destroystokyo.paper.event.player.PlayerStartSpectatingEntityEvent;
 import com.destroystokyo.paper.event.player.PlayerStopSpectatingEntityEvent;
-import killercreepr.cruxpotions.api.potion.ActivePotion;
 import killercreepr.cruxpotions.api.potion.CruxPotion;
 import killercreepr.cruxpotions.core.potions.SimpleActivePotion;
 import killercreepr.usurvive.core.potion.rage.RagePotionHandler;
@@ -19,8 +18,6 @@ import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 public class RagePotion extends SimpleActivePotion {
     protected final RagePotionHandler handler;

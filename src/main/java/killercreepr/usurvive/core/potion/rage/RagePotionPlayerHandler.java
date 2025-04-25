@@ -3,11 +3,13 @@ package killercreepr.usurvive.core.potion.rage;
 import com.destroystokyo.paper.event.player.PlayerStartSpectatingEntityEvent;
 import com.destroystokyo.paper.event.player.PlayerStopSpectatingEntityEvent;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.usurvive.core.potion.RagePotion;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -93,7 +95,14 @@ public class RagePotionPlayerHandler extends RagePotionHandler {
     public void stopped() {
         super.stopped();
         Crux.scheduler().runTask(() ->{
-            if(johnny != null) johnny.remove();
+            if(johnny != null){
+                double hp = johnny.getHealth();
+                p.setHealth(
+                    CruxMath.clamp(hp, 0D, p.getAttribute(Attribute.MAX_HEALTH).getValue())
+                );
+
+                johnny.remove();
+            }
             if(lastGameMode != null) p.setGameMode(lastGameMode);
         });
     }
