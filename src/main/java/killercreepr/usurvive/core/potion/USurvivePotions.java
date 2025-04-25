@@ -56,8 +56,29 @@ public class USurvivePotions {
 
         @Override
         public @NotNull Color getColor() {
-            //new java.awt.Color(0x76C934);
             return Color.fromRGB(0x76C934);
+        }
+    });
+    public static final CruxPotion ELUDING = register(new GenericPotion(Crux.key("eluding")) {
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new EludingPotion(this, e, duration, amplifier);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0x89D7D2);
+        }
+    });
+    public static final CruxPotion ARCHITECT = register(new GenericPotion(Crux.key("architect")) {
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new ArchitectPotion(this, e, duration, amplifier);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0xFF7B1C);
         }
     });
 
