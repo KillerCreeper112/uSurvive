@@ -31,6 +31,7 @@ import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.command.argument.TargetPlayerDeathResolver;
 import killercreepr.usurvive.core.command.argument.USurviveArgs;
+import killercreepr.usurvive.core.config.Config;
 import killercreepr.usurvive.core.death.PlayerDeath;
 import killercreepr.usurvive.core.lang.Lang;
 import org.bukkit.Location;
@@ -42,15 +43,49 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class USurviveCommands {
     protected final @NotNull USurvivePlugin plugin;
     public USurviveCommands(@NotNull USurvivePlugin plugin) {
         this.plugin = plugin;
+    }
+
+    public void registerHelp(){
+        plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event ->{
+            final Commands commands = event.registrar();
+
+            var cmd = Commands.literal("help")
+                .executes(ctx ->{
+                    if(!(getExecutor(ctx.getSource()) instanceof Player p)) return -1;
+                    CruxCore.inst().cruxMenus().menuRegistry().menuHolders().get(Crux.key("guide"))
+                        .open(p);
+                    return 1;
+                });
+
+            if(plugin.values() instanceof Config cfg){
+                cfg.HELP_CMDS.valueOr(Map.of()).keySet().forEach(id ->{
+                    cmd.then(
+                        Commands.literal(id)
+                            .executes(ctx ->{
+                                if(!(getExecutor(ctx.getSource()) instanceof Player p)) return -1;
+                                var cmds = cfg.HELP_CMDS.valueOr(Map.of()).get(id);
+                                if(cmds != null){
+                                    cmds.forEach(s ->{
+                                        s = Crux.format().deserializeString(s, TagContainer.merged().hook(p));
+                                        plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), s);
+                                    });
+                                }
+                                return 1;
+                            })
+                    );
+                });
+            }
+
+            commands.register(
+                cmd.build(), List.of("guide", "wiki", "faq", "support", "info", "tips", "hints")
+            );
+        });
     }
 
     public void register(){
@@ -113,17 +148,6 @@ public class USurviveCommands {
                     )
                     .build(),
                 List.of("menu", "usurvive", "quickmenu", "fastaccess")
-            );
-
-            commands.register(
-                Commands.literal("help")
-                    .executes(ctx ->{
-                        if(!(getExecutor(ctx.getSource()) instanceof Player p)) return -1;
-                        CruxCore.inst().cruxMenus().menuRegistry().menuHolders().get(Crux.key("guide"))
-                            .open(p);
-                        return 1;
-                    })
-                    .build(), List.of("guide", "wiki", "faq", "support", "info", "tips", "hints")
             );
 
             commands.register(

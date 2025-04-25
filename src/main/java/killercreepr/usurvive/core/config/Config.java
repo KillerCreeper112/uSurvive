@@ -99,6 +99,7 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     public final CfgValue<String> PLAYER_NAME_TAG = new CommonValue<>(){};
     public final CfgValue<Collection<CfgLootData>> CHESTS_LOOT_DATA = new CommonValue<>(){};
     public final CfgValue<Collection<CfgLootData>> BLOCK_DISPENSE_LOOT_DATA = new CommonValue<>(){};
+    public final CfgValue<Map<String, List<String>>> HELP_CMDS = new CommonValue<>(){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }

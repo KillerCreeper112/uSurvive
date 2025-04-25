@@ -407,6 +407,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
         super.enabled();
 
+        new USurviveCommands(this).registerHelp();
+
         //deathManager.load();
 
         cfgManagerLoader.load();
