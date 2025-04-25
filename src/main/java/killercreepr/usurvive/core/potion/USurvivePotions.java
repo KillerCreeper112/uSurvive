@@ -81,6 +81,28 @@ public class USurvivePotions {
             return Color.fromRGB(0xFF7B1C);
         }
     });
+    public static final CruxPotion SHRINKAGE = register(new GenericPotion(Crux.key("shrinkage")) {
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new ShrinkagePotion(this, e, duration, amplifier);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0xFF5EFC);
+        }
+    });
+    public static final CruxPotion ENLARGEMENT = register(new GenericPotion(Crux.key("enlargement")) {
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new EnlargementPotion(this, e, duration, amplifier);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0xF59101);
+        }
+    });
 
     private static CruxPotion register(CruxPotion pot){
         return CruxPotionRegistries.POTION.register(pot);
