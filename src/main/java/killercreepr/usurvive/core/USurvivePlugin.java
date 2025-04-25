@@ -108,6 +108,7 @@ import killercreepr.usurvive.core.menu.action.ConfirmTPAAction;
 import killercreepr.usurvive.core.menu.action.PlayerSettingAction;
 import killercreepr.usurvive.core.menu.action.PlayerSettingCacheAction;
 import killercreepr.usurvive.core.menu.module.CurrencyDepositModule;
+import killercreepr.usurvive.core.potion.USurvivePotions;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
 import killercreepr.usurvive.core.stat.USurviveStats;
 import killercreepr.usurvive.core.tags.USurviveTag;
@@ -204,6 +205,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         new StoreCommands(this).register();
         new TPACommands(this).register();
         new DevCommands(this).register();
+        USurvivePotions.register();
 
         CfgHook.load();
         CfgRegistries.FILE.forEach(this::registerCfgHandlers);
