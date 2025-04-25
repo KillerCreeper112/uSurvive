@@ -103,6 +103,17 @@ public class USurvivePotions {
             return Color.fromRGB(0xF59101);
         }
     });
+    public static final CruxPotion MAGNETISM = register(new GenericPotion(Crux.key("magnetism")) {
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new MagnetismPotion(this, e, duration, amplifier);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0x17226B);
+        }
+    });
 
     private static CruxPotion register(CruxPotion pot){
         return CruxPotionRegistries.POTION.register(pot);
