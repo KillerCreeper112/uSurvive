@@ -1,7 +1,9 @@
 package killercreepr.usurvive.core.entity.mob.goals;
 
+import com.destroystokyo.paper.MaterialTags;
 import com.destroystokyo.paper.entity.ai.GoalKey;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
+import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
@@ -11,6 +13,7 @@ import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -18,6 +21,9 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Campfire;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class StickBugGoal extends CruxMobModeledGoal {
@@ -91,7 +97,7 @@ public class StickBugGoal extends CruxMobModeledGoal {
 
     public int getHitAtTime(int attackID){
         return switch(attackID){
-            default -> 9;
+            default -> 5;
         };
     }
 
@@ -103,7 +109,7 @@ public class StickBugGoal extends CruxMobModeledGoal {
                 CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
                     CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .2D, CruxAttribute.Operation.MULTIPLY));
                 CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
-                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .1D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .15D, CruxAttribute.Operation.MULTIPLY));
                 CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
                     CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .4D, CruxAttribute.Operation.MULTIPLY));
             }
@@ -171,6 +177,21 @@ public class StickBugGoal extends CruxMobModeledGoal {
     public void movementTick(){
         double moveSpeed = CruxAttribute.get(mob, CruxAttribute.MOVEMENT_SPEED);
         mob.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(moveSpeed);
+    }
+
+    @Override
+    @EventHandler
+    public void entityDamageMob(EntityDamageByEntityEvent event) {
+        super.entityDamageMob(event);
+        if(!event.getEntity().equals(mob)) return;
+        if(!(event.getDamager() instanceof LivingEntity dmger)) return;
+        var equip = dmger.getEquipment();
+        if(equip == null) return;
+        ItemStack item = equip.getItemInMainHand();
+        if(CruxItem.isEmpty(item)) return;
+        if(MaterialTags.AXES.isTagged(item)){
+            event.setDamage(event.getDamage()*1.25D);
+        }
     }
 
     protected int tick = 0;

@@ -119,6 +119,7 @@ import killercreepr.usurvive.core.world.USurviveOverworld;
 import killercreepr.usurvive.core.world.USurviveWorldTypes;
 import killercreepr.usurvive.core.world.entity.StandardOverworldGroups;
 import killercreepr.usurvive.core.world.module.GenericOverworldModule;
+import killercreepr.usurvive.core.world.module.OverworldMobSpawnsModule;
 import killercreepr.usurvive.core.world.module.ResetWorldModule;
 import killercreepr.usurvive.core.world.module.ResourceWorldModule;
 import killercreepr.usurvive.external.quickshop.UQuickShop;
@@ -320,6 +321,12 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
                 @Override
                 public @NotNull WorldModule create(@NotNull CruxWorld world) {
                     return new GenericOverworldModule(world);
+                }
+            },
+            new CruxWorldModuleCreator() {
+                @Override
+                public @NotNull WorldModule create(@NotNull CruxWorld world) {
+                    return new OverworldMobSpawnsModule(world);
                 }
             },
             new CruxWorldModuleCreator(){

@@ -38,8 +38,12 @@ public class StickBug extends SimpleCruxMob {
             e.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(
                 e.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * .7
             );
+
+            e.getAttribute(Attribute.MAX_HEALTH).setBaseValue(32D);
+            e.setHealth(32D);
+
             double width = e.getWidth();
-            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(width + .8));
+            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(width + 1.2D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(5D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(11D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-10));
