@@ -42,7 +42,7 @@ public class StandardOverworldGroups {
             if(!CruxMath.testChance(12)) return false;
             Block b = ctx.getBlock();
             World world = ctx.getWorld();
-            if(world.isDayTime() && CruxMath.testChance(35)) return false;
+            if(world.isDayTime() && CruxMath.testChance(60)) return false;
             if(b.getBiome() != Biome.FOREST && b.getBiome() != Biome.WINDSWEPT_FOREST) return false;
             if(b.getLightFromBlocks() > 0) return false;
             return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 4, e -> CruxMob.is(e, USurviveMobs.STICK_BUG)) < 6;
