@@ -50,7 +50,7 @@ public class PlayerTags implements ObjectTag<Player> {
                     long timeSeconds = holder.getStatistic(USurviveStatistics.IDLE_TIME);
                     playTime -= (timeSeconds * 1000L);
                 }
-                return playTime + "";
+                return Math.max(playTime, 0) + "";
             }))
             ;
     }

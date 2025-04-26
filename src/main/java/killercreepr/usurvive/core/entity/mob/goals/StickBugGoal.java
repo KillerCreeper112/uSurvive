@@ -48,7 +48,7 @@ public class StickBugGoal extends CruxMobModeledGoal {
 
             @Override
             public @Nullable CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_CREAKING_STEP, 1.8f);
+                return CreateSound.sound(Sound.ENTITY_CREAKING_STEP, .3f, 1.8f);
             }
 
             @Override
