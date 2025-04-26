@@ -2,7 +2,6 @@ package killercreepr.usurvive.core.world.module;
 
 import io.papermc.paper.event.entity.EntityPortalReadyEvent;
 import killercreepr.crux.core.data.util.Pair;
-import killercreepr.crux.core.util.CruxWorldUtil;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.type.CruxWorldType;

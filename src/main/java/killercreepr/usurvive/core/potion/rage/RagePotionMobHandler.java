@@ -2,13 +2,9 @@ package killercreepr.usurvive.core.potion.rage;
 
 import killercreepr.usurvive.core.entity.mob.goals.RageGoal;
 import killercreepr.usurvive.core.potion.RagePotion;
-import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.entity.EntityDismountEvent;
-import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 public class RagePotionMobHandler extends RagePotionHandler {

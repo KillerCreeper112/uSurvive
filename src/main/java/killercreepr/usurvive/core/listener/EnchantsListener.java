@@ -5,8 +5,6 @@ import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.item.CruxItem;
-import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.persistence.PersistTag;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
 import killercreepr.crux.core.util.GetEntityNear;
@@ -23,15 +21,14 @@ import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
@@ -148,6 +145,49 @@ public class EnchantsListener implements Listener {
         ;
         CreateSound.sound(Sound.ENTITY_GENERIC_EXPLODE, 1.6f).playAt(e);
     }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockBreak(BlockBreakEvent event) {
+        int droppedExp = event.getExpToDrop();
+        if(droppedExp < 1) return;
+
+        Player p = event.getPlayer();
+        ItemStack item = p.getInventory().getItemInMainHand();
+        if(CruxItem.isEmpty(item)) return;
+
+        int level = item.getEnchantmentLevel(USurviveEnchant.INSIGHT);
+        if(level < 1) return;
+        float chance = level * 11.5f;
+        if(!CruxMath.testChance(chance)) return;
+
+        float multiplier = 1f + (level * .15f);
+        droppedExp = (int) ((float) droppedExp * multiplier);
+        event.setExpToDrop(droppedExp);
+    }
+
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityDeath(EntityDeathEvent event) {
+        LivingEntity victim = event.getEntity();
+        int droppedExp = event.getDroppedExp();
+        if(droppedExp < 1) return;
+
+        if(victim instanceof HumanEntity) return;
+        Player killer = victim.getKiller();
+        if(killer == null) return;
+        ItemStack item = killer.getInventory().getItemInMainHand();
+        if(CruxItem.isEmpty(item)) return;
+
+        int level = item.getEnchantmentLevel(USurviveEnchant.INSIGHT);
+        if(level < 1) return;
+        float chance = level * 11.5f;
+        if(!CruxMath.testChance(chance)) return;
+
+        float multiplier = 1f + (level * .15f);
+        droppedExp = (int) ((float) droppedExp * multiplier);
+        event.setDroppedExp(droppedExp);
+    }
+
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEntityShootBow(EntityShootBowEvent event) {

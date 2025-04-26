@@ -15,6 +15,7 @@ public class USurviveEnchant {
     public static final Enchantment BOOMSHOT = get("boomshot");
     public static final Enchantment VELOCITY = get("velocity");
     public static final Enchantment FROSTBITE = get("frostbite");
+    public static final Enchantment INSIGHT = get("insight");
 
     private static Enchantment get(String id){
         return RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT).get(Crux.key(id));

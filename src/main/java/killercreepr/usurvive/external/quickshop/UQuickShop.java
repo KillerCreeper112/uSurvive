@@ -6,7 +6,6 @@ import com.ghostchu.quickshop.api.obj.QUser;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.crux.core.util.CruxMath;
-import killercreepr.cruxcurrency.api.currency.CruxCurrency;
 import killercreepr.cruxcurrency.core.CruxCurrencyPlugin;
 import net.kyori.adventure.key.Key;
 import org.bukkit.OfflinePlayer;

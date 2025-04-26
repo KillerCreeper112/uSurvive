@@ -8,6 +8,7 @@ import io.papermc.paper.registry.event.WritableRegistry;
 import io.papermc.paper.registry.keys.tags.ItemTypeTagKeys;
 import io.papermc.paper.registry.set.RegistrySet;
 import killercreepr.crux.api.registry.KeyedRegistry;
+import killercreepr.crux.core.data.util.CollectionBuilder;
 import killercreepr.cruxenchants.api.enchant.ApplicableItemGroup;
 import killercreepr.cruxenchants.api.enchant.ApplicableItemType;
 import killercreepr.cruxenchants.api.enchant.CruxEnchant;
@@ -16,6 +17,7 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlotGroup;
+import org.bukkit.inventory.ItemType;
 import org.jetbrains.annotations.Nullable;
 
 public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
@@ -153,6 +155,27 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
 
             crux -> crux.description("Chance to freeze and slow down the target upon hit")
                 .applicableItemGroup(ApplicableItemGroup.WEAPONS)
+        );
+        register(
+            "insight", b -> b.description(Component.text("Insight"))
+                .supportedItems(RegistrySet.keySet(RegistryKey.ITEM,
+                    new CollectionBuilder<TypedKey<ItemType>>()
+                        .addAll(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_SHARP_WEAPON).values())
+                        .addAll(event.getOrCreateTag(ItemTypeTagKeys.PICKAXES).values())
+                        .build()
+                ))
+                .anvilCost(1)
+                .maxLevel(3)
+                .weight(2)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.MAINHAND),
+
+            crux -> crux.description("Chance to receive more exp from mining or killing mobs")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemType.PICKAXE)
+                    .add(ApplicableItemGroup.SHARP_WEAPONS)
+                    .build())
         );
     }
 }

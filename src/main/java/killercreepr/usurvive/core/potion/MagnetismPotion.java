@@ -5,7 +5,6 @@ import killercreepr.crux.core.util.GetEntityNear;
 import killercreepr.crux.core.util.GetNear;
 import killercreepr.cruxpotions.api.potion.CruxPotion;
 import killercreepr.cruxpotions.core.potions.SimpleActivePotion;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;

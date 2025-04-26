@@ -1,7 +1,6 @@
 package killercreepr.usurvive.core.listener;
 
 import com.destroystokyo.paper.event.brigadier.AsyncPlayerSendSuggestionsEvent;
-import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent;
 import com.destroystokyo.paper.event.server.PaperServerListPingEvent;
 import killercreepr.crux.core.Crux;
 import killercreepr.usurvive.core.vanish.VanishHandler;
