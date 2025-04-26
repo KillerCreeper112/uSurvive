@@ -10,13 +10,19 @@ import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.text.hook.StringHookedObjectTag;
 import killercreepr.crux.core.text.hook.StringListHookedObjectTag;
 import killercreepr.crux.core.text.resolver.Tag;
+import killercreepr.cruxstatistics.api.bukkit.BukkitStatisticHolder;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
+import killercreepr.usurvive.core.data.entity.DeathHolder;
 import killercreepr.usurvive.core.data.entity.MemoryPlayerSettingsHolder;
 import killercreepr.usurvive.core.entity.memory.SleeperHolder;
+import killercreepr.usurvive.core.statistic.USurviveStatistics;
 import killercreepr.usurvive.core.vanish.VanishHandler;
+import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.time.Duration;
 
 public class PlayerTags implements ObjectTag<Player> {
     @NotNull
@@ -34,6 +40,18 @@ public class PlayerTags implements ObjectTag<Player> {
     public @Nullable TagContainer<StringResolver> requestStrings(@NotNull Player object, @NotNull TagParser tags) {
         return TagContainer.string(tags)
             .add(Tag.string("is_vanished",(args, ctx) -> VanishHandler.isVanished(object) + ""))
+            .add(Tag.string("is_afk",(args, ctx) ->{
+                return (object.getIdleDuration().compareTo(Duration.ofMinutes(3)) >= 0) + "";
+            }))
+            .add(Tag.string("utotal_play_time", (args, ctx) ->{
+                long playTime = object.getStatistic(Statistic.PLAY_ONE_MINUTE);
+                var holder = BukkitStatisticHolder.statisticHolder(object);
+                if(holder != null){
+                    long timeSeconds = holder.getStatistic(USurviveStatistics.IDLE_TIME);
+                    playTime -= (timeSeconds * 1000L);
+                }
+                return playTime + "";
+            }))
             ;
     }
 

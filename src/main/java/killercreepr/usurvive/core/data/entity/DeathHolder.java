@@ -5,18 +5,23 @@ import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.PlayerTickedDataHolder;
+import killercreepr.cruxstatistics.api.bukkit.BukkitStatisticHolder;
+import killercreepr.cruxstatistics.api.statistic.CruxStatisticHolder;
 import killercreepr.cruxstats.api.bukkit.BukkitStatHolder;
 import killercreepr.usurvive.api.death.DeathManager;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.data.DeathGuide;
 import killercreepr.usurvive.core.death.PlayerDeath;
 import killercreepr.usurvive.core.stat.USurviveStats;
+import killercreepr.usurvive.core.statistic.USurviveStatistics;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
 import java.util.Collection;
 
 public class DeathHolder extends PlayerTickedDataHolder {
@@ -53,6 +58,11 @@ public class DeathHolder extends PlayerTickedDataHolder {
         cfg.PLAYER_TAB_NAME().ifPresent(name ->{
             p.playerListName(Crux.format().deserialize(name, tags));
         });
+
+        if (p.getIdleDuration().compareTo(Duration.ofMinutes(3)) >= 0) {
+            var holder = BukkitStatisticHolder.statisticHolder(p);
+            if(holder != null) holder.incrementStatistic(USurviveStatistics.IDLE_TIME, 1);
+        }
     }
 
     //merged tab updater here for optimization.

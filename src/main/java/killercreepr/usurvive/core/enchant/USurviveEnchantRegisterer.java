@@ -69,7 +69,6 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
 
     @Override
     public void register() {
-
         register(
             "trample", b -> b.description(Component.text("Trample"))
                 .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_FOOT_ARMOR))
