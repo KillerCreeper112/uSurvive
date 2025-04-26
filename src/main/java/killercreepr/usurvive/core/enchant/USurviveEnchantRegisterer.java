@@ -1,14 +1,22 @@
 package killercreepr.usurvive.core.enchant;
 
+import io.papermc.paper.plugin.bootstrap.BootstrapContext;
+import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.TypedKey;
 import io.papermc.paper.registry.data.EnchantmentRegistryEntry;
 import io.papermc.paper.registry.event.RegistryFreezeEvent;
 import io.papermc.paper.registry.event.WritableRegistry;
+import io.papermc.paper.registry.keys.tags.EnchantmentTagKeys;
 import io.papermc.paper.registry.keys.tags.ItemTypeTagKeys;
 import io.papermc.paper.registry.set.RegistrySet;
+import io.papermc.paper.registry.tag.TagKey;
+import io.papermc.paper.tag.PostFlattenTagRegistrar;
+import io.papermc.paper.tag.PreFlattenTagRegistrar;
+import io.papermc.paper.tag.TagEntry;
 import killercreepr.crux.api.registry.KeyedRegistry;
-import killercreepr.crux.core.data.util.CollectionBuilder;
+import killercreepr.crux.core.Crux;
 import killercreepr.cruxenchants.api.enchant.ApplicableItemGroup;
 import killercreepr.cruxenchants.api.enchant.ApplicableItemType;
 import killercreepr.cruxenchants.api.enchant.CruxEnchant;
@@ -20,15 +28,48 @@ import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemType;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
+
 public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
     public USurviveEnchantRegisterer(WritableRegistry<Enchantment, EnchantmentRegistryEntry.Builder> registry,
                                      @Nullable KeyedRegistry<CruxEnchant> wrapperRegistry,
                                      RegistryFreezeEvent<Enchantment, EnchantmentRegistryEntry.Builder> event) {
         super(registry, wrapperRegistry, event);
     }
+    public static final TagKey<ItemType> SHARP_WEAPON_PICKAXE = TagKey.create(RegistryKey.ITEM, Key.key("crux", "sharp_weapon_pickaxe"));
+
+    public static void register(LifecycleEventManager<BootstrapContext> manager){
+        manager.registerEventHandler(LifecycleEvents.TAGS.preFlatten(RegistryKey.ITEM), event -> {
+            final PreFlattenTagRegistrar<ItemType> registrar = event.registrar();
+            registrar.setTag(SHARP_WEAPON_PICKAXE, Set.of(
+                TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_SHARP_WEAPON, true),
+                TagEntry.tagEntry(ItemTypeTagKeys.PICKAXES, true)
+            ));
+        });
+
+        manager.registerEventHandler(LifecycleEvents.TAGS.postFlatten(RegistryKey.ENCHANTMENT), event -> {
+            final PostFlattenTagRegistrar<Enchantment> registrar = event.registrar();
+            registrar.addToTag(
+                EnchantmentTagKeys.IN_ENCHANTING_TABLE,
+                Set.of(
+                    TypedKey.create(RegistryKey.ENCHANTMENT, Crux.key("trample")),
+                    TypedKey.create(RegistryKey.ENCHANTMENT, Crux.key("joy_whirl")),
+                    TypedKey.create(RegistryKey.ENCHANTMENT, Crux.key("burning_thorns")),
+                    TypedKey.create(RegistryKey.ENCHANTMENT, Crux.key("backstab")),
+                    TypedKey.create(RegistryKey.ENCHANTMENT, Crux.key("withstand")),
+                    TypedKey.create(RegistryKey.ENCHANTMENT, Crux.key("second_wind")),
+                    TypedKey.create(RegistryKey.ENCHANTMENT, Crux.key("boomshot")),
+                    TypedKey.create(RegistryKey.ENCHANTMENT, Crux.key("velocity")),
+                    TypedKey.create(RegistryKey.ENCHANTMENT, Crux.key("frostbite")),
+                    TypedKey.create(RegistryKey.ENCHANTMENT, Crux.key("insight"))
+                )
+            );
+        });
+    }
 
     @Override
     public void register() {
+
         register(
             "trample", b -> b.description(Component.text("Trample"))
                 .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_FOOT_ARMOR))
@@ -158,12 +199,7 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
         );
         register(
             "insight", b -> b.description(Component.text("Insight"))
-                .supportedItems(RegistrySet.keySet(RegistryKey.ITEM,
-                    new CollectionBuilder<TypedKey<ItemType>>()
-                        .addAll(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_SHARP_WEAPON).values())
-                        .addAll(event.getOrCreateTag(ItemTypeTagKeys.PICKAXES).values())
-                        .build()
-                ))
+                .supportedItems(event.getOrCreateTag(SHARP_WEAPON_PICKAXE))
                 .anvilCost(1)
                 .maxLevel(3)
                 .weight(2)

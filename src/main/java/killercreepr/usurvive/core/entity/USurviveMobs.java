@@ -12,6 +12,7 @@ public class USurviveMobs {
     public static final GrappleHookMob GRAPPLE_HOOK = CruxEntityRegistries.ENTITIES.register(new GrappleHookMob(Crux.key("grapple_hook")));
     public static final CruxMob DOWNMAN = CruxEntityRegistries.ENTITIES.register(new Downman(Crux.key("downman")));
     public static final CruxMob ORBIT_CONDUIT = CruxEntityRegistries.ENTITIES.register(new OrbitConduit(Crux.key("orbit_conduit")));
+    public static final CruxMob STICK_BUG = CruxEntityRegistries.ENTITIES.register(new StickBug(Crux.key("stick_bug")));
 
     public static final CruxMob SLEEPER_OBJECT = CruxEntityRegistries.ENTITIES.register(new SleeperObjectEntity(Crux.key("sleeper_object")));
     public static final CruxMob SLEEPER_DISPLAY = CruxEntityRegistries.ENTITIES.register(new SleeperDisplayEntity(Crux.key("sleeper_display")));
