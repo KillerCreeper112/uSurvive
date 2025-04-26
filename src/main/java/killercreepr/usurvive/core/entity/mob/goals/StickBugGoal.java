@@ -2,6 +2,7 @@ package killercreepr.usurvive.core.entity.mob.goals;
 
 import com.destroystokyo.paper.MaterialTags;
 import com.destroystokyo.paper.entity.ai.GoalKey;
+import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.Crux;
@@ -11,10 +12,12 @@ import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
+import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
@@ -25,6 +28,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class StickBugGoal extends CruxMobModeledGoal {
     public static final Key STRONG_ATTACK_KEY = Crux.key("strong_attack");
@@ -36,6 +40,32 @@ public class StickBugGoal extends CruxMobModeledGoal {
 
     public StickBugGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob) {
         super(key, mob);
+        sounds(new CruxGoalSounds(mob) {
+            @Override
+            public @Nullable CreateSound death() {
+                return CreateSound.sound(Sound.ENTITY_CREAKING_DEATH, 2f);
+            }
+
+            @Override
+            public @Nullable CreateSound hurt() {
+                return CreateSound.sound(Sound.ENTITY_CREAKING_STEP, 1.8f);
+            }
+
+            @Override
+            public @Nullable CreateSound step() {
+                return CreateSound.sound(Sound.ENTITY_CREAKING_STEP, 2f);
+            }
+
+            @Override
+            public @Nullable CreateSound attack() {
+                return CreateSound.sound(Sound.ENTITY_CREAKING_ATTACK, 2f);
+            }
+
+            @Override
+            public @Nullable CreateSound ambient() {
+                return CreateSound.sound(Sound.ENTITY_CREAKING_AMBIENT, 2f);
+            }
+        });
     }
 
     protected int strongAttackCooldown;
