@@ -110,7 +110,7 @@ public class StandardOverworldSpawns {
 
         @Override
         public int getGroupSize(@NotNull SpawnContext ctx) {
-            return CruxMath.random(2, 5);
+            return CruxMath.random(1, 3);
         }
     };
 }

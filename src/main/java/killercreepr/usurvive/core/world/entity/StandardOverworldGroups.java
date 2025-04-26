@@ -39,7 +39,7 @@ public class StandardOverworldGroups {
 
         @Override
         public boolean canSpawn(@NotNull SpawnContext ctx) {
-            if(!CruxMath.testChance(12)) return false;
+            if(!CruxMath.testChance(6)) return false;
             Block b = ctx.getBlock();
             World world = ctx.getWorld();
             if(world.isDayTime() && CruxMath.testChance(60)) return false;
