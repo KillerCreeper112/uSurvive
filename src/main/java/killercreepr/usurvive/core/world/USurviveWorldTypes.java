@@ -8,6 +8,7 @@ import killercreepr.cruxworlds.api.world.type.CruxWorldType;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.USurvivePlugin;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Difficulty;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +21,7 @@ public class USurviveWorldTypes {
         public @NotNull CruxWorld generate(@NotNull Key name) {
             World world = new WorldCreator(name.value()).createWorld();
             if(world==null) throw new IllegalStateException("Cannot generate world! " + key());
+            world.setDifficulty(Difficulty.HARD);
 
             ValuesProvider cfg = USurvivePlugin.inst().values();
 
@@ -49,6 +51,7 @@ public class USurviveWorldTypes {
         public @NotNull CruxWorld generate(@NotNull Key name) {
             World world = new WorldCreator(name.value()).environment(World.Environment.NETHER).createWorld();
             if(world==null) throw new IllegalStateException("Cannot generate world! " + key());
+            world.setDifficulty(Difficulty.HARD);
 
             ValuesProvider cfg = USurvivePlugin.inst().values();
 
