@@ -14,7 +14,7 @@ public class SimpleUPlayerManager implements UPlayerManager {
     protected final Cache<UUID, UPlayer> cache = CacheBuilder.newBuilder()
         .expireAfterAccess(60, TimeUnit.MINUTES)
         .maximumSize(1_000)
-        .softValues()
+        //.softValues()
         .build();
 
     @Override

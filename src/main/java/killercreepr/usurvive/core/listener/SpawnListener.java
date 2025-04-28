@@ -66,9 +66,9 @@ public class SpawnListener implements Listener {
         UPlayer uPlay = playerManager.getPlayer(p);
         if(uPlay == null) return;
 
-        Key worldKey = uPlay.getLastKnownWorld();
+        Key worldKey = uPlay.getSavedLastKnownWorld();
         if(worldKey == null) return;
-        CruxLocation pos = uPlay.getLastKnownPosition();
+        CruxLocation pos = uPlay.getSavedLastKnownPosition();
         if(pos == null) return;
         World world = CruxWorldUtil.getOrLoadWorld(worldKey);
         if(world == null){

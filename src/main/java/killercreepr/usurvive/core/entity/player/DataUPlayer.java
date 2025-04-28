@@ -102,6 +102,24 @@ public class DataUPlayer implements UPlayer, ShopSpender {
 
     @Nullable
     @Override
+    public CruxLocation getSavedLastKnownPosition() {
+        return lastKnownPosition;
+    }
+
+    @Nullable
+    @Override
+    public Key getSavedLastKnownWorld() {
+        return lastKnownWorld;
+    }
+
+    @Nullable
+    @Override
+    public String getSavedLastKnownName() {
+        return lastKnownName;
+    }
+
+    @Nullable
+    @Override
     public CruxLocation getLastKnownPosition() {
         return lastKnownPosition;
     }

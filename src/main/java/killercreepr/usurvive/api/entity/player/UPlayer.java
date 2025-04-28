@@ -7,6 +7,7 @@ import killercreepr.usurvive.core.USurvivePlugin;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,6 +24,11 @@ public interface UPlayer extends Loadable, PluginLoadable {
     }
     @NotNull UUID getUUID();
     long getLastLogout();
+
+    @Nullable CruxLocation getSavedLastKnownPosition();
+    @Nullable Key getSavedLastKnownWorld();
+    @Nullable String getSavedLastKnownName();
+
     @Nullable CruxLocation getLastKnownPosition();
     @Nullable Key getLastKnownWorld();
     @Nullable String getLastKnownName();
