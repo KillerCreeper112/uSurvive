@@ -422,6 +422,9 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         cfgManagerLoader.load();
 
         setupQuickShop();
+
+        reloadConfig();
+        MaintenanceListener.maintenance = getConfig().getBoolean("maintenance");
     }
 
     public void setupQuickShop(){

@@ -25,9 +25,7 @@ import killercreepr.usurvive.core.util.ItemUtil;
 import net.kyori.adventure.key.Key;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -239,6 +237,8 @@ public class AnimalsAndPotionInfusionListener implements Listener {
 
     public void loadAnimal(@NotNull Animals a){
         if(CruxMob.is(a)) return;
+        if(a instanceof Bee) return;
+        if(a instanceof Wolf) return;
         /*CruxMob mob = NotOkayMobs.getVanilla(a.getClass());
         if(mob != null){
             mob.load(a);
