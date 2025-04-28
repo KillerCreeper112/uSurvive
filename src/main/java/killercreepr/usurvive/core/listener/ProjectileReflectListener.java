@@ -126,7 +126,7 @@ public class ProjectileReflectListener implements Listener {
                 newSpawn.setItemStack(old.getItemStack());
                 newSpawn.setLifetimeTicks(old.getLifetimeTicks());
                 newSpawn.setPickupStatus(old.getPickupStatus());
-                newSpawn.setWeapon(old.getWeapon());
+                if(old.getWeapon() != null) newSpawn.setWeapon(old.getWeapon());
                 newSpawn.setPierceLevel(old.getPierceLevel());
             }
             tag.set(x, reflected+1);

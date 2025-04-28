@@ -16,6 +16,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
+import org.bukkit.entity.Tameable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -100,7 +101,11 @@ public class AnimalEnhancedGoal extends CruxMobGoal implements Listener {
     }
 
     public @NotNull Collection<Animals> getNearbyAnimals(){
-        return new GetEntityNear<>(DynamicLocation.from(mob), Animals.class)
+        return new GetEntityNear<>(DynamicLocation.createEntity(mob), Animals.class)
+            .filter(e ->{
+                if(e instanceof Tameable t && t.isTamed()) return false;
+                return true;
+            })
             .range(16D)
             .find();
         //return CruxEntityUtil.getEntitiesNear(Animals.class, mob.getLocation(), 16D, null);
