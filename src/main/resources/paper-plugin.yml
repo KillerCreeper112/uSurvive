@@ -31,3 +31,5 @@ dependencies:
     CruxWarps:
       load: AFTER
       required: false
+    CruxRewards:
+      required: false

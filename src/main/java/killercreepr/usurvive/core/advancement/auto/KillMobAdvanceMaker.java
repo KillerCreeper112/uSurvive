@@ -2,6 +2,7 @@ package killercreepr.usurvive.core.advancement.auto;
 
 import killercreepr.crux.api.entity.predicate.EntityPredicate;
 import killercreepr.crux.api.item.dynamic.DynamicItem;
+import killercreepr.crux.core.item.dynamic.component.DynamicItemName;
 import killercreepr.crux.core.loot.conditions.entity.EntityCondition;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxadvancements.api.advancement.CruxAdvancement;
@@ -16,9 +17,14 @@ import killercreepr.cruxadvancements.api.crazy.advancement.AdvancementVisibility
 import killercreepr.cruxadvancements.core.advancement.criteria.NumberCriteria;
 import killercreepr.cruxadvancements.core.advancement.objective.ObjectiveCommonData;
 import killercreepr.cruxadvancements.core.advancement.objective.standard.KillEntityObjective;
+import killercreepr.cruxadvancements.core.config.handler.FileCruxAdvanceReward;
+import killercreepr.cruxadvancements.core.config.handler.crazy.FileCrazyAdvancement;
 import killercreepr.cruxadvancements.core.registries.AdvancementRegistries;
 import killercreepr.cruxadvancements.crazy.advancement.CrazyAdvancement;
 import killercreepr.cruxadvancements.crazy.advancement.CrazyAdvancementDisplay;
+import killercreepr.cruxrewards.core.cruxadvancements.AdvanceRewardPackage;
+import killercreepr.cruxrewards.core.reward.SimpleRewardDisplay;
+import killercreepr.cruxrewards.core.reward.container.SimpleRewardPackage;
 import killercreepr.usurvive.core.USurvivePlugin;
 import net.kyori.adventure.key.Key;
 
@@ -140,6 +146,16 @@ public class KillMobAdvanceMaker {
         CruxAdvanceReward reward = null;
         if(monsterAdvance instanceof CruxRewardAdvancement s){
             reward = s.getReward();
+            if(s.getReward() instanceof AdvanceRewardPackage pack){
+                if(pack.getRewards() instanceof SimpleRewardPackage simple && simple.getDisplay() instanceof SimpleRewardDisplay d){
+                    reward = new AdvanceRewardPackage(new SimpleRewardPackage(
+                        new SimpleRewardDisplay(DynamicItem.builder().material(material).addComponent(
+                            new DynamicItemName(title + " " + CruxMath.numeral(level))
+                        ).build()), simple.getRewards()
+                    ));
+                }
+            }
+
         }
 
         int parentLevel = level - 1;
