@@ -239,6 +239,8 @@ public class AnimalsAndPotionInfusionListener implements Listener {
         if(CruxMob.is(a)) return;
         if(a instanceof Bee) return;
         if(a instanceof Wolf) return;
+        if(a instanceof PolarBear) return;
+        if(a instanceof Llama) return;
         /*CruxMob mob = NotOkayMobs.getVanilla(a.getClass());
         if(mob != null){
             mob.load(a);
