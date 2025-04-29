@@ -54,7 +54,7 @@ public class SculkBlightGoal extends CruxMobModeledGoal {
     protected Entity drag;
     //protected final double dragDownSpeed = .2;
     @Override
-    protected void attacked(@NotNull CruxEntityDamageEvent event) {
+    public void attacked(@NotNull CruxEntityDamageEvent event) {
         super.attacked(event);
         if(event.getEntity() instanceof Player) return;
         if(event.getEntity().getVehicle() != null) return;
