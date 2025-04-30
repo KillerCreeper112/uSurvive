@@ -139,10 +139,10 @@ public class EntityInfusedPotionsHolder extends EntityTickedDataHolder {
                         newGroupPotions.add(groupPotion);
                         continue;
                     }
-                    int duration = entityCurrent.getDuration() - 2;
+                    int duration = Math.max(entityCurrent.getDuration() - 2, 0);
                     PotionEffect updatedPotion = entityCurrent.withDuration(duration);
                     current.updatePotion(updatedPotion);
-                    if(duration > 0) newGroupPotions.add(updatedPotion);
+                    if(duration > 1) newGroupPotions.add(updatedPotion);
                     changed = true;
                     continue;
                 }
@@ -161,10 +161,10 @@ public class EntityInfusedPotionsHolder extends EntityTickedDataHolder {
                     newGroupPotions.add(groupPotion);
                     continue;
                 }
-                PotionEffect updatedPotion = groupPotion.isInfinite() ? groupPotion : groupPotion.withDuration(groupPotion.getDuration() - 2);
+                PotionEffect updatedPotion = groupPotion.isInfinite() ? groupPotion : groupPotion.withDuration(Math.max(groupPotion.getDuration() - 2, 0));
                 activeInfusion = activeInfusion == null ? new ActiveInfusion(activeInfusions, new HashMap<>(), slot, item).add() : activeInfusion;
                 activeInfusion.addPotion(updatedPotion);
-                if(updatedPotion.getDuration() > 0 || updatedPotion.isInfinite()) newGroupPotions.add(updatedPotion);
+                if(updatedPotion.getDuration() > 1 || updatedPotion.isInfinite()) newGroupPotions.add(updatedPotion);
                 changed = !groupPotion.isInfinite();
             }
             if(newGroupPotions.isEmpty()) continue;
@@ -249,7 +249,7 @@ public class EntityInfusedPotionsHolder extends EntityTickedDataHolder {
         }
 
         public void addPotion(PotionEffect effect){
-            if(effect.getDuration() < 1 && !effect.isInfinite()){
+            if(effect.getDuration() < 2 && !effect.isInfinite()){
                 removePotion(effect.getType().key());
                 return;
             }
@@ -275,7 +275,7 @@ public class EntityInfusedPotionsHolder extends EntityTickedDataHolder {
         }
 
         public void updatePotion(PotionEffect effect){
-            if(effect.getDuration() < 1 && !effect.isInfinite()){
+            if(effect.getDuration() < 2 && !effect.isInfinite()){
                 removePotion(effect.getType().key());
             } else addPotion(effect);
         }
