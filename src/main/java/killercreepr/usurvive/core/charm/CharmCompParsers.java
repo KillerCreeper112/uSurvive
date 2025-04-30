@@ -16,7 +16,8 @@ public class CharmCompParsers {
         .field("item", TextInputField.field(ComponentInputParsers.ITEM_HOLDER, Charm::getItem))
         .field("use_slot", TextInputField.field(PersistTextParser.BOOLEAN, Charm::usesCharmSlot))
         .field("chance", TextInputField.field(PersistTextParser.FLOAT, MineBonusCharm::getChance))
-        .field("drop_amount", TextInputField.field(ComponentInputParsers.NUMBER_PROVIDER, MineBonusCharm::getDropAmount))
+        .field("drop_amount_min", TextInputField.field(PersistTextParser.INTEGER, e -> e.getDropAmount().getMinValue().intValue()))
+        .field("drop_amount_max", TextInputField.field(PersistTextParser.INTEGER, e -> e.getDropAmount().getMaxValue().intValue()))
         .field("effect_item_amount", TextInputField.field(ComponentInputParsers.NUMBER_PROVIDER, MineBonusCharm::getItemEffectAmount))
         .field("block", TextInputField.field(ComponentInputParsers.BLOCK_PREDICATE, MineBonusCharm::getPredicate))
         .field("include_player_placed", TextInputField.field(PersistTextParser.BOOLEAN, MineBonusCharm::isIncludePlayerPlaced))
@@ -25,10 +26,11 @@ public class CharmCompParsers {
             ItemHolder item = ctx.getOptional("item");
             String name = ctx.getOptional("name");
             boolean useSlot = ctx.getOptional("use_slot", true);
+            Number dropMin = ctx.get("drop_amount_min");
             return new MineBonusCharm(type, name, item, useSlot,
                 ctx.getOptional("chance", 100f),
                 ctx.getOptional("effect_item_amount", NumberProvider.constant(1)),
-                ctx.get("drop_amount"),
+                NumberProvider.uniform(dropMin, ctx.getOptional("drop_amount_max", dropMin)),
                 ctx.getOptional("block"),
                 ctx.getOptional("include_player_placed", false)
             );
