@@ -86,6 +86,29 @@ public class USurviveTickables {
         }
     });
 
+    public static final EntityTickable ROSE_GOLD = register(new SimpleDataEntityTickable(Crux.key("rose_gold")) {
+        public static final PersistParser<?> DATA_PARSER = PersistTextParser.mapBuilder(Map.class)
+            .field("speed_multiplier", TextInputField.field(PersistTextParser.FLOAT, e -> (Float) e.get("speed_multiplier")))
+            .field("safe_fall_distance", TextInputField.field(PersistTextParser.FLOAT, e -> (Float) e.get("safe_fall_distance")))
+            .apply(InputDecodeContext::get)
+            .createInput(Crux.key("data"));
+
+        @Override
+        public PersistParser<?> getDataParser() {
+            return DATA_PARSER;
+        }
+
+        @Override
+        public @Nullable ActiveEntityTickable buildActive(@NotNull Entity entity, @Nullable CruxSlot slot, @NotNull EntityTickableModifier mod) {
+            Map data = (Map) mod.getData();
+            return new RoseGoldTickable(
+                entity, this, slot,
+                (float) data.getOrDefault("speed_multiplier", .1f),
+                (float) data.getOrDefault("safe_fall_distance", 2.5f)
+            );
+        }
+    });
+
     private static EntityTickable register(EntityTickable tickable){
         return CruxTickableRegistries.ENTITY_TICKABLE.register(tickable);
     }
