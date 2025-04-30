@@ -107,7 +107,7 @@ public class MineBonusCharm extends SimpleCharm implements BlockDropItemCharm, C
                 amount -= give;
 
                 i = i.clone();
-                i.setAmount(amount);
+                i.setAmount(give);
                 event.getItems().add(spawn.getWorld().dropItem(spawn, i));
             }
 
@@ -153,7 +153,7 @@ public class MineBonusCharm extends SimpleCharm implements BlockDropItemCharm, C
                 amount -= give;
 
                 i = i.clone();
-                i.setAmount(amount);
+                i.setAmount(give);
                 dropList.add(i);
             }
 
