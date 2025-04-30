@@ -8,6 +8,7 @@ import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.paper.ItemHolder;
 import killercreepr.cruxblocks.api.event.CruxBlockBreakEvent;
+import killercreepr.cruxblocks.core.mining.user.EntityMiner;
 import killercreepr.cruxcharms.api.charm.Charm;
 import killercreepr.cruxcharms.api.charm.type.BlockDropItemCharm;
 import killercreepr.cruxcharms.api.charm.type.CruxBlockBreakCharm;
@@ -18,7 +19,9 @@ import org.bukkit.Location;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -73,6 +76,9 @@ public class MineBonusCharm extends SimpleCharm implements BlockDropItemCharm, C
 
     @Override
     public void onBlockDropItem(@NotNull BlockDropItemEvent event) {
+        ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
+        if(item.containsEnchantment(Enchantment.SILK_TOUCH)) return;
+
         if(event.getItems().isEmpty()) return;
         if(!CruxMath.testChance(chance)) return;
         BlockState state = event.getBlockState();
@@ -124,6 +130,14 @@ public class MineBonusCharm extends SimpleCharm implements BlockDropItemCharm, C
         if(!CruxMath.testChance(chance)) return;
         var ctx = event.getContext();
         if(predicate != null && !predicate.test(Crux.handlers().block().getBlock(ctx.getBlock()))) return;
+
+        if(ctx.getMiner() instanceof EntityMiner m && m.getEntity() instanceof LivingEntity l){
+            var equip = l.getEquipment();
+            if(equip != null){
+                ItemStack item = equip.getItemInMainHand();
+                if(item.containsEnchantment(Enchantment.SILK_TOUCH)) return;
+            }
+        }
 
         BlockData data = ctx.getBlock().getBlockData();
         if(data instanceof Ageable a){
