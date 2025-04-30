@@ -69,6 +69,7 @@ import killercreepr.usurvive.core.advancement.auto.KillMobAdvanceMaker;
 import killercreepr.usurvive.core.attribute.USurviveAttribute;
 import killercreepr.usurvive.core.block.USurviveBlocks;
 import killercreepr.usurvive.core.block.component.USurviveBlockComponents;
+import killercreepr.usurvive.core.charm.CharmTypes;
 import killercreepr.usurvive.core.command.DevCommands;
 import killercreepr.usurvive.core.command.StoreCommands;
 import killercreepr.usurvive.core.command.TPACommands;
@@ -215,6 +216,10 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         CfgUSurviveComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());
 
         USurviveBlockComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());
+
+        if(getServer().getPluginManager().getPlugin("CruxCharms") != null){
+            CharmTypes.register();
+        }
 
         CruxItemsConfigHook.filePluginItem().registerTypeHandler(new FilePluginItemHandler(){
             @Override

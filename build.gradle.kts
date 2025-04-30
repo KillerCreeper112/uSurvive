@@ -26,6 +26,8 @@ dependencies {
         "E:\\Plugins\\YO\\CruxParty\\build\\libs\\CruxParty-1.0-all.jar",
         "E:\\Plugins\\YO\\CruxWarps\\build\\libs\\CruxWarps-1.0-all.jar",
         "E:\\Plugins\\YO\\CruxRewards\\build\\libs\\CruxRewards-1.0-all.jar",
+        "E:\\Plugins\\YO\\CruxPlayerBlocks\\build\\libs\\CruxEntityBlocks-1.0-all.jar",
+        "E:\\Plugins\\YO\\CruxCharms\\build\\libs\\CruxCharms-1.0-all.jar",
 
         "E:\\Plugins\\YO\\CruxCore\\run\\plugins\\QuickShop-Hikari-6.2.0.8.jar",
 

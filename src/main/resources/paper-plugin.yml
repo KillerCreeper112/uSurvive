@@ -33,3 +33,7 @@ dependencies:
       required: false
     CruxRewards:
       required: false
+    CruxEntityBlocks:
+      required: false
+    CruxCharms:
+      required: false
