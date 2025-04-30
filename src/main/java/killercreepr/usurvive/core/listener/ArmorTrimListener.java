@@ -7,25 +7,98 @@ import io.papermc.paper.registry.RegistryKey;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.item.predicate.ItemPredicate;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.data.util.MapBuilder;
+import killercreepr.cruxitems.api.item.plugin.PluginItem;
+import killercreepr.cruxitems.core.registries.CruxItemRegistries;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.PrepareSmithingEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.SmithingInventory;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
 
+import java.util.Map;
+
 public class ArmorTrimListener implements Listener {
-    protected final ItemPredicate trim = ItemPredicate.fromType(Crux.key("abyssal_relic"));
+    protected final ItemPredicate abyssalRelic =  ItemPredicate.fromType(Crux.key("abyssal_relic"));
+    protected final ItemPredicate ironIngot =  ItemPredicate.fromType(Key.key("iron_ingot"));
+    protected final ItemPredicate inputTrim = ItemPredicate.fromAnyOf(
+        abyssalRelic,
+        ironIngot
+    );
     protected final ItemPredicate material = ItemPredicate.fromType(Crux.key("rose_gold_ingot"));
+
+    protected final Map<Key, Key> roseGolds = new MapBuilder<Key, Key>()
+        .put(Key.key("golden_helmet"), Crux.key("rose_gold_helmet"))
+        .put(Key.key("golden_chestplate"), Crux.key("rose_gold_chestplate"))
+        .put(Key.key("golden_leggings"), Crux.key("rose_gold_leggings"))
+        .put(Key.key("golden_boots"), Crux.key("rose_gold_boots"))
+        .put(Key.key("golden_sword"), Crux.key("rose_gold_sword"))
+        .put(Key.key("golden_pickaxe"), Crux.key("rose_gold_pickaxe"))
+        .put(Key.key("golden_axe"), Crux.key("rose_gold_axe"))
+        .put(Key.key("golden_shovel"), Crux.key("rose_gold_shovel"))
+        .put(Key.key("golden_hoe"), Crux.key("rose_gold_hoe"))
+        .buildUnmodifiable()
+        ;
+
     @EventHandler(ignoreCancelled = true)
     public void onPrepareSmithing(PrepareSmithingEvent event) {
         editMaterial(event);
         editTrim(event);
+        roseGold(event);
+    }
+
+    public void roseGold(PrepareSmithingEvent event){
+        SmithingInventory inv = event.getInventory();
+        ItemStack gem = inv.getInputMineral();
+        if(CruxItem.isEmpty(gem)) return;
+        ItemStack armor = inv.getInputEquipment();
+        if(CruxItem.isEmpty(armor)) return;
+        ItemStack template = inv.getInputTemplate();
+        if(CruxItem.isEmpty(template)) return;
+
+        if(!ironIngot.test(template)) return;
+
+        Key inputKey = Crux.handlers().item().getType(armor);
+        Key newItemKey = roseGolds.get(inputKey);
+        if(newItemKey == null) return;
+
+        PluginItem newItemPlugin = CruxItemRegistries.ITEMS.get(newItemKey);
+        if(newItemPlugin == null) return;
+
+        ItemStack newItem = newItemPlugin.buildItem();
+        CruxItem inputCrux = CruxItem.wrap(armor);
+        CruxItem newCrux = CruxItem.wrap(newItem);
+
+        inputCrux.forEach(newCrux::set);
+
+        armor.editMeta(meta ->{
+            ItemMeta newMeta = newItem.getItemMeta();
+            if(newMeta == null) return;
+            meta.getEnchants().forEach((e, i) -> newMeta.addEnchant(e, i, true));
+            newItem.setItemMeta(newMeta);
+        });
+
+        var trim = armor.getData(DataComponentTypes.TRIM);
+        if(trim != null) newItem.setData(DataComponentTypes.TRIM, trim);
+
+        armor.editMeta(Damageable.class, meta ->{
+            newItem.editMeta(Damageable.class, newMeta ->{
+                float percent = (float) meta.getDamage() / (float) CruxItem.getMaxDurability(armor);
+                int difference = (int) (CruxItem.getMaxDurability(newItem) * percent);
+                if(difference < 1) return;
+                newMeta.setDamage(difference);
+            });
+        });
+
+        Crux.handlers().item().update(newItem);
+        event.setResult(newItem);
     }
 
     public void editMaterial(PrepareSmithingEvent event){
@@ -56,7 +129,7 @@ public class ArmorTrimListener implements Listener {
     public void editTrim(PrepareSmithingEvent event){
         SmithingInventory inv = event.getInventory();
         ItemStack template = inv.getInputTemplate();
-        if(CruxItem.isEmpty(template) || !trim.test(template)) return;
+        if(CruxItem.isEmpty(template) || !abyssalRelic.test(template)) return;
         ItemStack armor = inv.getInputEquipment();
         if(CruxItem.isEmpty(armor)) return;
         ItemStack gem = inv.getInputMineral();
@@ -84,7 +157,7 @@ public class ArmorTrimListener implements Listener {
 
         if(event.getClickedInventory() instanceof SmithingInventory clickedInv){
             if(CruxItem.isEmpty(cursor)) return;
-            if(trim.test(cursor)){
+            if(inputTrim.test(cursor)){
                 int slot = event.getSlot();
                 if(slot != 0) return;
                 if(!CruxItem.isEmpty(item)) return;
@@ -110,7 +183,7 @@ public class ArmorTrimListener implements Listener {
 
         if(!event.isShiftClick()) return;
         if(CruxItem.isEmpty(item)) return;
-        if(trim.test(item)){
+        if(inputTrim.test(item)){
             ItemStack invInput = inv.getInputTemplate();
             if(!CruxItem.isEmpty(invInput)) return;
             event.setCancelled(true);
