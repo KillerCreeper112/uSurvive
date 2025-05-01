@@ -37,6 +37,7 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
         super(registry, wrapperRegistry, event);
     }
     public static final TagKey<ItemType> SHARP_WEAPON_PICKAXE = TagKey.create(RegistryKey.ITEM, Key.key("crux", "sharp_weapon_pickaxe"));
+    public static final TagKey<ItemType> SHARP_WEAPON_PICKAXE_HOE = TagKey.create(RegistryKey.ITEM, Key.key("crux", "sharp_weapon_pickaxe_hoe"));
 
     public static void register(LifecycleEventManager<BootstrapContext> manager){
         manager.registerEventHandler(LifecycleEvents.TAGS.preFlatten(RegistryKey.ITEM), event -> {
@@ -44,6 +45,12 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
             registrar.setTag(SHARP_WEAPON_PICKAXE, Set.of(
                 TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_SHARP_WEAPON, true),
                 TagEntry.tagEntry(ItemTypeTagKeys.PICKAXES, true)
+            ));
+
+            registrar.setTag(SHARP_WEAPON_PICKAXE_HOE, Set.of(
+                TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_SHARP_WEAPON, true),
+                TagEntry.tagEntry(ItemTypeTagKeys.PICKAXES, true),
+                TagEntry.tagEntry(ItemTypeTagKeys.HOES, true)
             ));
         });
 
@@ -210,6 +217,7 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .applicableItemGroup(ApplicableItemGroup.builder()
                     .add(ApplicableItemType.PICKAXE)
                     .add(ApplicableItemGroup.SHARP_WEAPONS)
+                    .add(ApplicableItemType.HOE)
                     .build())
         );
     }
