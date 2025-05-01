@@ -289,7 +289,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new PlayerSettingSelectionTags(),
             new PlayerSettingTags(),
             new ItemStackTags(),
-            new WorldTags()
+            new WorldTags(),
+            new SleeperHolderTags()
         ));
         if(getServer().getPluginManager().getPlugin("CruxClaims") != null){
             Crux.tags().register(new ClaimProfileTags());

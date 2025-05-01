@@ -237,6 +237,12 @@ public class SleeperHolder extends EntityTickedDataHolder implements Loadable {
         }
     }
 
+    public long getTimePassed(){
+        var e = parent.value();
+        if(e == null) return 0L;
+        return getTimeBetweenDeepSleep(e.getWorld().getFullTime());
+    }
+
     public void sleepMsgTick(Entity e){
         if(isDeepSleeping()){
             Lang.DEEP_SLEEPING_TICK.use(e, TagContainer.merged().hook(e));

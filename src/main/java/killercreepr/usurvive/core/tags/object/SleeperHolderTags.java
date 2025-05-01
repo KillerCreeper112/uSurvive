@@ -25,6 +25,7 @@ public class SleeperHolderTags implements ObjectTag<SleeperHolder> {
     public @Nullable TagContainer<StringResolver> requestStrings(@NotNull SleeperHolder object, @NotNull TagParser tags) {
         return TagContainer.string(tags)
             .add(Tag.string("sleeping_ticks", (args, ctx) -> object.getTicksSleeping() + ""))
+            .add(Tag.string("time_passed", (args, ctx) -> object.getTimePassed() + ""))
             ;
     }
 }
