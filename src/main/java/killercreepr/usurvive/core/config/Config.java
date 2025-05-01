@@ -10,6 +10,7 @@ import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
 import killercreepr.cruxconfig.config.bukkit.value.CfgValue;
 import killercreepr.cruxconfig.config.bukkit.value.CommonValue;
 import killercreepr.cruxconfig.config.bukkit.value.NumCfgValue;
+import killercreepr.usurvive.api.values.GravestoneCfg;
 import killercreepr.usurvive.api.values.SleeperCfg;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.data.CfgLootData;
@@ -32,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 @killercreepr.cruxconfig.config.common.annotations.Config(autoUpdate = true)
-public class Config extends Cfg implements ValuesProvider, SleeperCfg {
+public class Config extends Cfg implements ValuesProvider, SleeperCfg, GravestoneCfg {
     public final CfgValue<List<PremiumRank>> PREMIUM_RANKS = new CommonValue<>(){};
     public final CfgValue<String> SPAWN_WORLD = new CommonValue<>(DefaultValues.SPAWN_WORLD.value()){};
     public final CfgValue<String> RESPAWN_WORLD = new CommonValue<>(DefaultValues.SPAWN_WORLD.value()){};
@@ -100,6 +101,9 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     public final CfgValue<Collection<CfgLootData>> CHESTS_LOOT_DATA = new CommonValue<>(){};
     public final CfgValue<Collection<CfgLootData>> BLOCK_DISPENSE_LOOT_DATA = new CommonValue<>(){};
     public final CfgValue<Map<String, List<String>>> HELP_CMDS = new CommonValue<>(){};
+    public final CfgValue<Map<Key, String>> GRAVESTONE_COSTS = new CommonValue<>(){};
+    public final NumCfgValue REDUCE_RECENT_DEATHS_TIME = new NumCfgValue(288000);
+    public final NumCfgValue MAX_RECENT_DEATHS = new NumCfgValue(3);
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -412,5 +416,20 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg {
     @Override
     public Holder<Collection<CfgLootData>> BLOCK_DISPENSE_LOOT_DATA() {
         return BLOCK_DISPENSE_LOOT_DATA;
+    }
+
+    @Override
+    public CfgValue<Map<Key, String>> GRAVESTONE_COSTS() {
+        return GRAVESTONE_COSTS;
+    }
+
+    @Override
+    public NumberProvider REDUCE_RECENT_DEATHS_TIME() {
+        return REDUCE_RECENT_DEATHS_TIME.value();
+    }
+
+    @Override
+    public NumberProvider MAX_RECENT_DEATHS() {
+        return MAX_RECENT_DEATHS.value();
     }
 }

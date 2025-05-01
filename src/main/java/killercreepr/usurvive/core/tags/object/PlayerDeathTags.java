@@ -6,13 +6,19 @@ import killercreepr.crux.api.text.hook.ObjectTag;
 import killercreepr.crux.api.text.resolver.StringResolver;
 import killercreepr.crux.api.text.tags.TagParser;
 import killercreepr.crux.api.text.tags.container.TagContainer;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.text.hook.StringHookedObjectTag;
 import killercreepr.crux.core.text.hook.StringListHookedObjectTag;
 import killercreepr.crux.core.text.resolver.Tag;
+import killercreepr.crux.core.util.CruxMath;
+import killercreepr.usurvive.api.values.GravestoneCfg;
+import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.death.PlayerDeath;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 public class PlayerDeathTags implements ObjectTag<PlayerDeath> {
     @Override
@@ -36,6 +42,19 @@ public class PlayerDeathTags implements ObjectTag<PlayerDeath> {
             .add(Tag.string("world_key", (args, ctx) -> death.getWorldKey() + ""))
             .add(Tag.string("time_until_expire", (args, ctx) -> death.getTimeUntilExpire() + ""))
             .add(Tag.string("expiry_time", (args, ctx) -> death.getExpiryTime() + ""))
+            .add(Tag.string("tp_cost", (args, ctx) ->{
+                var cfg = ((GravestoneCfg) USurvivePlugin.inst().values());
+                String equation = cfg.GRAVESTONE_COSTS().valueOr(Map.of())
+                    .getOrDefault(
+                        death.getWorldKey(),
+                        cfg.GRAVESTONE_COSTS().valueOr(Map.of()).get(Crux.key("default"))
+                    );
+                if(equation == null) return "50";
+
+                var p = Crux.getServer().getPlayer(death.getPlayerUUID());
+                var tag = TagContainer.merged(tags).hook(p).hook(death);
+                return CruxMath.evaluate(ctx.deserializeString(equation, tag)) + "";
+            }))
             ;
     }
 

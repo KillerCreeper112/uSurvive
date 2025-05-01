@@ -3,6 +3,8 @@ package killercreepr.usurvive.api.entity.player;
 import killercreepr.crux.api.data.Loadable;
 import killercreepr.crux.api.data.PluginLoadable;
 import killercreepr.crux.api.math.CruxLocation;
+import killercreepr.crux.core.util.CruxMath;
+import killercreepr.usurvive.api.values.GravestoneCfg;
 import killercreepr.usurvive.core.USurvivePlugin;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Entity;
@@ -43,6 +45,11 @@ public interface UPlayer extends Loadable, PluginLoadable {
     boolean hasFriend(@NotNull UUID uuid);
     boolean isApartOfParty(@NotNull UUID uuid);
     boolean isOnline();
+
+    int updateAndGetRecentDeaths();
+    void addRecentDeaths(int amount);
+    int getRecentDeaths();
+    long getLastReducedDeath();
 
     void load();
 }

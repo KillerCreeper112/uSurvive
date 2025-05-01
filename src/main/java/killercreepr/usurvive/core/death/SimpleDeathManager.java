@@ -12,6 +12,7 @@ import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.creator.CruxWorldModuleCreator;
 import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
 import killercreepr.usurvive.api.death.DeathManager;
+import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.api.event.PlayerEchoDeathEvent;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.api.world.module.DeathWorldModule;
@@ -242,6 +243,10 @@ public class SimpleDeathManager implements DeathManager, Listener {
         event.setDroppedExp(0);
 
         DeathHolder deathHolder = EntityMemory.getOrCreateDataHolder(p, DeathHolder.class);
+        UPlayer uPlayer = UPlayer.getPlayer(p);
+        if(uPlayer != null){
+            uPlayer.addRecentDeaths(1);
+        }
 
         findGravePositionAsync(deathLocation.getBlock(), module).whenComplete((graveBlock, throwable) ->{
             if(throwable != null) Crux.log(Level.SEVERE, throwable.getMessage());

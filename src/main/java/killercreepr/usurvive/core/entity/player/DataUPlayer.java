@@ -4,6 +4,7 @@ import killercreepr.crux.api.math.CruxLocation;
 import killercreepr.crux.api.text.provider.StringTagProvider;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
@@ -15,6 +16,7 @@ import killercreepr.cruxparty.api.party.PartyHolder;
 import killercreepr.cruxparty.core.CruxPartyPlugin;
 import killercreepr.usurvive.api.entity.player.ShopSpender;
 import killercreepr.usurvive.api.entity.player.UPlayer;
+import killercreepr.usurvive.api.values.GravestoneCfg;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.data.PremiumRank;
 import net.kyori.adventure.key.Key;
@@ -33,9 +35,35 @@ public class DataUPlayer implements UPlayer, ShopSpender {
     protected Key lastKnownWorld;
     protected String lastKnownName;
     protected double totalPaid;
+    protected int recentDeaths;
+    protected long lastReducedDeath;
 
     public DataUPlayer(@NotNull UUID uuid) {
         this.uuid = uuid;
+    }
+
+    public int updateAndGetRecentDeaths(){
+        if(recentDeaths < 1) return recentDeaths;
+        int ticks = ((GravestoneCfg)USurvivePlugin.inst().values()).REDUCE_RECENT_DEATHS_TIME().value().intValue();
+        if(CruxMath.hasOccurredWithin(lastReducedDeath, ticks)) return recentDeaths;
+        recentDeaths--;
+        lastReducedDeath = System.currentTimeMillis();
+        return recentDeaths;
+    }
+
+    public void addRecentDeaths(int amount){
+        updateAndGetRecentDeaths();
+        lastReducedDeath = System.currentTimeMillis();
+        int max = ((GravestoneCfg)USurvivePlugin.inst().values()).MAX_RECENT_DEATHS().value().intValue();
+        this.recentDeaths = Math.min(max, recentDeaths + amount);
+    }
+
+    public int getRecentDeaths(){
+        return recentDeaths;
+    }
+
+    public long getLastReducedDeath(){
+        return lastReducedDeath;
     }
 
     @Override
@@ -164,6 +192,8 @@ public class DataUPlayer implements UPlayer, ShopSpender {
         file.serialize("last_known_location_world", lastKnownWorld);
         file.serialize("last_logout", lastLogout);
         file.serialize("total_premium_paid", totalPaid);
+        file.serialize("recent_deaths", recentDeaths);
+        file.serialize("last_reduced_death", lastReducedDeath);
         file.save();
     }
 
@@ -178,6 +208,13 @@ public class DataUPlayer implements UPlayer, ShopSpender {
         if(n != null) lastLogout = n;
         Double totalPaid = file.deserialize("total_premium_paid", Double.class);
         if(totalPaid != null) this.totalPaid = totalPaid;
+
+
+        Integer recentDeaths = file.deserialize("recent_deaths", Integer.class);
+        if(recentDeaths != null) this.recentDeaths = recentDeaths;
+
+        Long lastReducedDeath = file.deserialize("last_reduced_death", Long.class);
+        if(lastReducedDeath != null) this.lastReducedDeath = lastReducedDeath;
         file.close();
     }
 

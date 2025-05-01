@@ -11,6 +11,7 @@ import killercreepr.crux.core.text.hook.StringHookedObjectTag;
 import killercreepr.crux.core.text.hook.StringListHookedObjectTag;
 import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.cruxstatistics.api.bukkit.BukkitStatisticHolder;
+import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
 import killercreepr.usurvive.core.data.entity.DeathHolder;
 import killercreepr.usurvive.core.data.entity.MemoryPlayerSettingsHolder;
@@ -51,6 +52,11 @@ public class PlayerTags implements ObjectTag<Player> {
                     playTime -= (timeSeconds * 1000L);
                 }
                 return Math.max(playTime, 0) + "";
+            }))
+            .add(Tag.string("urecent_deaths", (args, ctx) ->{
+                UPlayer u = UPlayer.getPlayer(object);
+                if(u == null) return "0";
+                return u.updateAndGetRecentDeaths() + "";
             }))
             ;
     }
