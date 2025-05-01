@@ -12,10 +12,8 @@ import killercreepr.cruxadvancements.api.event.objective.PostNumberObjectiveProg
 import killercreepr.cruxadvancements.core.advancement.objective.NumberObjective;
 import killercreepr.cruxadvancements.core.entity.memory.AdvancementHolder;
 import killercreepr.cruxentities.api.combat.EntityDamager;
-import killercreepr.usurvive.api.event.PostItemInfusePotionsEvent;
-import killercreepr.usurvive.api.event.ProjectileRicochetEvent;
-import killercreepr.usurvive.core.advancement.objective.ItemInfusePotionObjective;
-import killercreepr.usurvive.core.advancement.objective.ReflectProjectileObjective;
+import killercreepr.usurvive.api.event.*;
+import killercreepr.usurvive.core.advancement.objective.*;
 import killercreepr.usurvive.core.lang.Lang;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -92,6 +90,37 @@ public class ObjectiveProgressListener implements Listener {
             objective.trigger(p.getUniqueId(), manager, advancement, event);
         });
     }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityLeaveSlumber(EntityLeaveSlumberEvent event) {
+        if(!(event.getEntity() instanceof Player p)) return;
+        AdvancementHolder holder = holder(p);
+        if(holder==null) return;
+        holder.getAdvancementTracker().apply(SlumberLeaveObjective.class, (manager, advancement, objective) -> {
+            objective.trigger(p.getUniqueId(), manager, advancement, event);
+        });
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityDeepSlumber(EntityDeepSlumberEvent event) {
+        if(!(event.getEntity() instanceof Player p)) return;
+        AdvancementHolder holder = holder(p);
+        if(holder==null) return;
+        holder.getAdvancementTracker().apply(SlumberDeepObjective.class, (manager, advancement, objective) -> {
+            objective.trigger(p.getUniqueId(), manager, advancement, event);
+        });
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntitySlumber(EntitySlumberEvent event) {
+        if(!(event.getEntity() instanceof Player p)) return;
+        AdvancementHolder holder = holder(p);
+        if(holder==null) return;
+        holder.getAdvancementTracker().apply(SlumberObjective.class, (manager, advancement, objective) -> {
+            objective.trigger(p.getUniqueId(), manager, advancement, event);
+        });
+    }
+
 
     private AdvancementHolder holder(@NotNull Entity p){
         return EntityMemory.getDataHolder(p, AdvancementHolder.class);
