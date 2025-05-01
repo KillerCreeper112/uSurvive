@@ -196,8 +196,10 @@ public class SleeperHolder extends EntityTickedDataHolder implements Loadable {
         }
     }
 
+    protected int previousTicksSleeping;
     public void scheduleForAwaken(){
         if(!isSleeping()) return;
+        previousTicksSleeping = ticksSleeping;
         ticksSleeping = -1;
         Crux.scheduler().runTask(() ->{
             sleep(null);
@@ -240,7 +242,10 @@ public class SleeperHolder extends EntityTickedDataHolder implements Loadable {
     public long getTimePassed(){
         var e = parent.value();
         if(e == null) return 0L;
-        return getTimeBetweenDeepSleep(e.getWorld().getFullTime());
+        if(isDeepSleeping() || previousTicksSleeping >= cfg().DEEP_SLEEP_START_TIME().value().intValue()){
+            return getTimeBetweenDeepSleep(e.getWorld().getFullTime());
+        }
+        return 0L;
     }
 
     public void sleepMsgTick(Entity e){
