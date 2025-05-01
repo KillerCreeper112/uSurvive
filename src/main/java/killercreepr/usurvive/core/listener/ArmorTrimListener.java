@@ -33,12 +33,20 @@ public class ArmorTrimListener implements Listener {
         ironIngot
     );
     protected final ItemPredicate material = ItemPredicate.fromType(Crux.key("rose_gold_ingot"));
+    protected final ItemPredicate inputEquipment = ItemPredicate.fromAnyOf(
+        ItemPredicate.fromType(Key.key("golden_sword")),
+        ItemPredicate.fromType(Key.key("golden_pickaxe")),
+        ItemPredicate.fromType(Key.key("golden_axe")),
+        ItemPredicate.fromType(Key.key("golden_shovel")),
+        ItemPredicate.fromType(Key.key("golden_hoe"))
+    );
 
     protected final Map<Key, Key> roseGolds = new MapBuilder<Key, Key>()
         .put(Key.key("golden_helmet"), Crux.key("rose_gold_helmet"))
         .put(Key.key("golden_chestplate"), Crux.key("rose_gold_chestplate"))
         .put(Key.key("golden_leggings"), Crux.key("rose_gold_leggings"))
         .put(Key.key("golden_boots"), Crux.key("rose_gold_boots"))
+
         .put(Key.key("golden_sword"), Crux.key("rose_gold_sword"))
         .put(Key.key("golden_pickaxe"), Crux.key("rose_gold_pickaxe"))
         .put(Key.key("golden_axe"), Crux.key("rose_gold_axe"))
@@ -64,6 +72,7 @@ public class ArmorTrimListener implements Listener {
         if(CruxItem.isEmpty(template)) return;
 
         if(!ironIngot.test(template)) return;
+        if(!material.test(gem)) return;
 
         Key inputKey = Crux.handlers().item().getType(armor);
         Key newItemKey = roseGolds.get(inputKey);
@@ -177,6 +186,18 @@ public class ArmorTrimListener implements Listener {
                 putIn.setAmount(1);
                 cursor.setAmount(cursor.getAmount()-1);
                 clickedInv.setItem(slot, putIn);
+                return;
+            }
+
+            if(inputEquipment.test(cursor)){
+                int slot = event.getSlot();
+                if(slot != 1) return;
+                if(!CruxItem.isEmpty(item)) return;
+                event.setCancelled(true);
+                ItemStack putIn = cursor.clone();
+                putIn.setAmount(1);
+                cursor.setAmount(cursor.getAmount()-1);
+                clickedInv.setItem(slot, putIn);
             }
             return;
         }
@@ -201,6 +222,17 @@ public class ArmorTrimListener implements Listener {
             putIn.setAmount(1);
             item.setAmount(item.getAmount()-1);
             inv.setInputMineral(putIn);
+            return;
+        }
+
+        if(inputEquipment.test(item)){
+            ItemStack invInput = inv.getInputEquipment();
+            if(!CruxItem.isEmpty(invInput)) return;
+            event.setCancelled(true);
+            ItemStack putIn = item.clone();
+            putIn.setAmount(1);
+            item.setAmount(item.getAmount()-1);
+            inv.setInputEquipment(putIn);
         }
     }
 
