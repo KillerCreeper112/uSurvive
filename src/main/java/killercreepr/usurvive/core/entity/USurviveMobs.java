@@ -18,6 +18,6 @@ public class USurviveMobs {
     public static final CruxMob SLEEPER_DISPLAY = CruxEntityRegistries.ENTITIES.register(new SleeperDisplayEntity(Crux.key("sleeper_display")));
     public static final CruxMob SLEEP_TARGET = CruxEntityRegistries.ENTITIES.register(new SleeperTargetEntity(Crux.key("sleeper_target")));
 
-
     public static final CruxMob VANE = CruxEntityRegistries.ENTITIES.register(new Vane(Crux.key("vane")));
+    public static final CruxMob STARE = CruxEntityRegistries.ENTITIES.register(new Stare(Crux.key("stare")));
 }
