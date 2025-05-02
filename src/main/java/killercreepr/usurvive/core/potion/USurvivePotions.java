@@ -17,8 +17,8 @@ public class USurvivePotions {
     }
     public static final CruxPotion RECALL = register(new DescribedPotion(Crux.key("recall"),
         "Teleports you back to the location where you first drank it after it wears off." +
-            "Recall I cannot teleport across worlds- doing so cancels the effect." +
-            "Recall II allows cross-world teleportation.") {
+            " Recall I cannot teleport across worlds- doing so cancels the effect." +
+            " Recall II allows cross-world teleportation.") {
         @Override
         public @NotNull ActivePotion create(@NotNull Entity entity, int duration, int amplifier, @Nullable PotionInflictor potionInflictor) {
             return new RecallPotion(this, entity, duration, amplifier);
