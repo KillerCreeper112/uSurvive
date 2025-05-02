@@ -33,6 +33,7 @@ import killercreepr.cruxconfig.config.common.handler.AutoFileOptions;
 import killercreepr.cruxconfig.config.common.handler.FileConvertHandler;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxcore.recipes.BrewingRecipeLoader;
 import killercreepr.cruxenchants.api.enchant.CruxEnchant;
 import killercreepr.cruxenchants.core.registries.CruxEnchantRegistries;
 import killercreepr.cruxfriends.api.friend.FriendsHolder;
@@ -513,6 +514,27 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
                         return () -> {
                             List<CruxEnchant> list = new ArrayList<>(CruxEnchantRegistries.CRUX_ENCHANT.values());
                             list.sort(Comparator.comparing(e -> e.key().value()));
+                            return list;
+                        };
+                    }
+                };
+            }
+        });
+
+        registry.register(new SimpleFilePagedCfg(fileMenuHolder, Crux.key("paged/custom_potions")) {
+            @NotNull
+            @Override
+            public MenuModule parsePaged(@NotNull String id,
+                                         @NotNull NumberProvider indexes,
+                                         @Nullable String valuesFilter,
+                                         @Nullable MenuItems valueItems,
+                                         @Nullable MenuItems emptyItems) {
+                return new SimplePagedMenuModule<BrewingRecipeLoader.DisplayMix>(id, indexes, valuesFilter, valueItems, emptyItems, this) {
+                    @Override
+                    public @NotNull Holder<List<BrewingRecipeLoader.DisplayMix>> getValues(@NotNull CfgMenu cfgMenu) {
+                        return () -> {
+                            List<BrewingRecipeLoader.DisplayMix> list = new ArrayList<>(BrewingRecipeLoader.DISPLAY_POTION_MIXES.values());
+                            list.sort(Comparator.comparing(mix -> mix.getCruxPotion().getName()));
                             return list;
                         };
                     }
