@@ -10,7 +10,9 @@ import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -81,6 +83,11 @@ public class VaneGoal extends CruxMobModeledGoal {
             .count(CruxMath.random(15, 20))
             .extra(0.2)
             .spawn();
+    }
+
+    @Override
+    public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
+        return target instanceof Player && super.isValidNaturalTarget(target);
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)

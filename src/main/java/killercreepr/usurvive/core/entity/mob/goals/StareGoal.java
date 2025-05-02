@@ -4,10 +4,14 @@ import com.destroystokyo.paper.entity.ai.GoalKey;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import org.bukkit.Sound;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -66,6 +70,11 @@ public class StareGoal extends CruxMobModeledGoal {
             nextBlink = CruxMath.random(60, 120) / 2;
             playAnimation("blink", true);
         }
+    }
+
+    @Override
+    public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
+        return target instanceof Player && super.isValidNaturalTarget(target);
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
