@@ -39,6 +39,9 @@ public class Vane extends SimpleCruxMob {
             e.getAttribute(Attribute.FLYING_SPEED).setBaseValue(
                 0D
             );
+            e.getAttribute(Attribute.FOLLOW_RANGE).setBaseValue(
+                64D
+            );
 
             e.getAttribute(Attribute.MAX_HEALTH).setBaseValue(70D);
             e.setHealth(70D);
