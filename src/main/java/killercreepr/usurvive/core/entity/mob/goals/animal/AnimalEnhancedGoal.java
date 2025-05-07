@@ -97,6 +97,7 @@ public class AnimalEnhancedGoal extends CruxMobGoal implements Listener {
 
     public void panic(@NotNull LocationHolder from){
         AnimalEnhancedPanicGoal goal = CruxGoalUtil.getOrAddGoal(mob, AnimalEnhancedPanicGoal.class, 1);
+        if(goal == null) return;
         goal.panic(from, CruxMath.random(50, 160));
     }
 

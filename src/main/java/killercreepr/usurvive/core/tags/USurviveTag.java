@@ -2,9 +2,11 @@ package killercreepr.usurvive.core.tags;
 
 import killercreepr.crux.api.text.context.TextParserContext;
 import killercreepr.crux.api.text.resolver.StringResolver;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.text.format.FormatArgs;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxworlds.api.world.CruxWorld;
+import killercreepr.usurvive.core.vanish.VanishHandler;
 import killercreepr.usurvive.core.world.module.ResetWorldModule;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +34,14 @@ public class USurviveTag implements StringResolver {
                         return module.getResettingIn() + "";
                     }
                 }
+            }
+            case "players" ->{
+                int amount = 0;
+                for(var p : Crux.getServer().getOnlinePlayers()){
+                    if(VanishHandler.isVanished(p)) continue;
+                    amount++;
+                }
+                return amount+ "";
             }
         }
         return null;
