@@ -1,11 +1,13 @@
 package killercreepr.usurvive.core.command;
 
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
+import io.papermc.paper.command.brigadier.argument.resolvers.selector.EntitySelectorArgumentResolver;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -28,6 +30,8 @@ import killercreepr.cruxcurrency.core.entity.memory.CurrencyHolder;
 import killercreepr.cruxteleport.api.teleport.CruxTeleport;
 import killercreepr.cruxteleport.api.teleport.CruxTeleporter;
 import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;
+import killercreepr.cruxteleport.core.component.TPMsgComponent;
+import killercreepr.cruxteleport.core.component.TeleporterComponents;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.USurvivePlugin;
@@ -41,6 +45,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
@@ -318,6 +323,49 @@ public class USurviveCommands {
                     ).then(
                         Commands.literal("rtp")
                             .then(
+                                Commands.literal("or")
+                                    .then(
+                                        Commands.argument("targets", ArgumentTypes.entities())
+                                            .then(
+                                                Commands.argument("world", ArgumentTypes.world())
+                                                    .executes(ctx -> randomTPOr(
+                                                        ctx.getSource(),
+                                                        ctx.getArgument("targets", EntitySelectorArgumentResolver.class)
+                                                            .resolve(ctx.getSource()),
+                                                        ctx.getArgument("world", World.class)
+                                                    )).then(
+                                                        Commands.argument("waiting_time", IntegerArgumentType.integer(0))
+                                                            .executes(ctx -> randomTPOr(ctx.getSource(),
+                                                                ctx.getArgument("targets", EntitySelectorArgumentResolver.class)
+                                                                    .resolve(ctx.getSource()),
+                                                                ctx.getArgument("world", World.class),
+                                                                ctx.getArgument("waiting_time", Integer.class), 0,
+                                                                ""))
+                                                            .then(
+                                                                Commands.argument("msg_interval", IntegerArgumentType.integer())
+                                                                    .executes(ctx -> randomTPOr(ctx.getSource(),
+                                                                        ctx.getArgument("targets", EntitySelectorArgumentResolver.class)
+                                                                            .resolve(ctx.getSource()),
+                                                                        ctx.getArgument("world", World.class),
+                                                                        ctx.getArgument("waiting_time", Integer.class),
+                                                                        ctx.getArgument("msg_interval", Integer.class),
+                                                                        ""))
+                                                                    .then(
+                                                                        Commands.argument("components", StringArgumentType.greedyString())
+                                                                            .executes(ctx -> randomTPOr(ctx.getSource(),
+                                                                                ctx.getArgument("targets", EntitySelectorArgumentResolver.class)
+                                                                                    .resolve(ctx.getSource()),
+                                                                                ctx.getArgument("world", World.class),
+                                                                                ctx.getArgument("waiting_time", Integer.class),
+                                                                                ctx.getArgument("msg_interval", Integer.class),
+                                                                                ctx.getArgument("components", String.class)))
+                                                                    )
+                                                            )
+                                                    )
+                                            )
+                                    )
+                            )
+                            .then(
                                 Commands.literal("last_loc")
                                     .then(
                                         Commands.literal("tp")
@@ -464,6 +512,66 @@ public class USurviveCommands {
 
     public static @NotNull CommandSender getExecutor(@NotNull CommandSourceStack source){
         return Objects.requireNonNullElse(source.getExecutor(), source.getSender());
+    }
+
+
+
+    public static int randomTPOr(@NotNull CommandSourceStack source, @NotNull Collection<Entity> targets, @NotNull World world){
+        //RandomWorldTP tp = RandomWorldTP.tp(world);
+        targets.forEach(e ->{
+            UPlayer u = UPlayer.getPlayer(e);
+            if(u == null || u.getRandomTPData() == null || !u.getRandomTPData().hasLastTeleported(world.key())){
+                CruxTeleport tp = CruxTeleport.builder().teleportTo(RandomWorldTP.worldRandom(world)).build();
+                CruxTeleporter.teleporter().scheduleTeleport(e, tp);
+                return;
+            }
+            Crux.getServer().dispatchCommand(Crux.getServer().getConsoleSender(),
+                Crux.format()
+                    .deserializeString(
+                        "usu rtp last_loc tp <player_name> <world> <player_name>",
+                        TagContainer.merged().add(Tag.parsed("player_name", e.getName()))
+                            .add(Tag.parsed("world", world.key().asString()))
+                    )
+            );
+        });
+        getExecutor(source).sendMessage("Randomly teleported " + targets.size() + " to world, " + world.getName() + ".");
+        return 1;
+    }
+
+    public static int randomTPOr(@NotNull CommandSourceStack source, @NotNull Collection<Entity> targets, @NotNull World world,
+                                 int waitingTime, int msgInterval, @NotNull String components){
+        //RandomWorldTP randomTP = RandomWorldTP.tp(world);
+        for(Entity e : targets){
+            UPlayer u = UPlayer.getPlayer(e);
+            if(u == null || u.getRandomTPData() == null || !u.getRandomTPData().hasLastTeleported(world.key())){
+                CruxTeleport.Builder builder = CruxTeleport.builder()
+                    .waitingTime(waitingTime);
+                if(msgInterval != -1){
+                    builder.set(TeleporterComponents.TELEPORT_MSG, new TPMsgComponent(msgInterval));
+                /*builder.addModule(TeleportModules.msgBuilder()
+                    .tickMsg(TeleportMsg.DEFAULT_TELEPORT_TICK_MSG)
+                    .successMsg(TeleportMsg.DEFAULT_TELEPORT_SUCCESS_MSG)
+                    .failedMsg(TeleportMsg.DEFAULT_TELEPORT_FAIL_MSG)
+                    .msgInterval(msgInterval)
+                    .build());*/
+                }
+                DataComponentDecoder.componentDecoder().parseComponents(components).forEach(builder::set);
+                builder.teleportTo(RandomWorldTP.worldRandom(world, builder));
+
+                CruxTeleport tp = CruxTeleport.builder().teleportTo(RandomWorldTP.worldRandom(world)).build();
+                CruxTeleporter.teleporter().scheduleTeleport(e, tp);
+                continue;
+            }
+            Crux.getServer().dispatchCommand(Crux.getServer().getConsoleSender(),
+                Crux.format()
+                    .deserializeString(
+                        "usu rtp last_loc tp <player_name> <world> <player_name>",
+                        TagContainer.merged().add(Tag.parsed("player_name", e.getName()))
+                            .add(Tag.parsed("world", world.key().asString()))
+                    )
+            );
+        }
+        return 1;
     }
 
     public int tpToDeath(CommandSourceStack source, Player target, PlayerDeath death, Collection<Player> toTp){
