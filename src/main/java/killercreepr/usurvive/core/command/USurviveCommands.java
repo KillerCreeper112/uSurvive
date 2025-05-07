@@ -558,7 +558,7 @@ public class USurviveCommands {
                 DataComponentDecoder.componentDecoder().parseComponents(components).forEach(builder::set);
                 builder.teleportTo(RandomWorldTP.worldRandom(world, builder));
 
-                CruxTeleport tp = CruxTeleport.builder().teleportTo(RandomWorldTP.worldRandom(world)).build();
+                CruxTeleport tp = builder.build();
                 CruxTeleporter.teleporter().scheduleTeleport(e, tp);
                 continue;
             }
