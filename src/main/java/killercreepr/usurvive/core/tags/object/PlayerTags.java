@@ -7,6 +7,7 @@ import killercreepr.crux.api.text.hook.ObjectTag;
 import killercreepr.crux.api.text.resolver.StringResolver;
 import killercreepr.crux.api.text.tags.TagParser;
 import killercreepr.crux.api.text.tags.container.TagContainer;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.text.hook.StringHookedObjectTag;
 import killercreepr.crux.core.text.hook.StringListHookedObjectTag;
 import killercreepr.crux.core.text.resolver.Tag;
@@ -17,6 +18,7 @@ import killercreepr.usurvive.core.data.entity.MemoryPlayerSettingsHolder;
 import killercreepr.usurvive.core.entity.memory.SleeperHolder;
 import killercreepr.usurvive.core.statistic.USurviveStatistics;
 import killercreepr.usurvive.core.vanish.VanishHandler;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -56,6 +58,40 @@ public class PlayerTags implements ObjectTag<Player> {
                 UPlayer u = UPlayer.getPlayer(object);
                 if(u == null) return "0";
                 return u.updateAndGetRecentDeaths() + "";
+            }))
+            .add(Tag.string("uhas_set_rtp", (args, ctx) ->{
+                var u = UPlayer.getPlayer(object);
+                if(u == null) return "false";
+                if(u.getRandomTPData() == null) return "false";
+                Key world = Crux.key(ctx.deserializeString(args.get(0)));
+                return u.getRandomTPData().hasLastTeleported(world) + "";
+            }))
+            .add(Tag.string("u_last_rtp_x", (args, ctx) ->{
+                var u = UPlayer.getPlayer(object);
+                if(u == null) return "0";
+                if(u.getRandomTPData() == null) return "0";
+                Key world = Crux.key(ctx.deserializeString(args.get(0)));
+                var pos = u.getRandomTPData().getLastTeleported(world);
+                if(pos==null) return "0";
+                return pos.getLocation().x() + "";
+            }))
+            .add(Tag.string("u_last_rtp_y", (args, ctx) ->{
+                var u = UPlayer.getPlayer(object);
+                if(u == null) return "0";
+                if(u.getRandomTPData() == null) return "0";
+                Key world = Crux.key(ctx.deserializeString(args.get(0)));
+                var pos = u.getRandomTPData().getLastTeleported(world);
+                if(pos==null) return "0";
+                return pos.getLocation().y() + "";
+            }))
+            .add(Tag.string("u_last_rtp_z", (args, ctx) ->{
+                var u = UPlayer.getPlayer(object);
+                if(u == null) return "0";
+                if(u.getRandomTPData() == null) return "0";
+                Key world = Crux.key(ctx.deserializeString(args.get(0)));
+                var pos = u.getRandomTPData().getLastTeleported(world);
+                if(pos==null) return "0";
+                return pos.getLocation().z() + "";
             }))
             ;
     }
