@@ -22,7 +22,6 @@ public class VanishListener implements Listener {
         event.getListedPlayers().removeIf(info ->{
             Player p = Crux.getServer().getPlayer(info.id());
             if(p == null){
-                removed.addAndGet(1);
                 return true;
             }
             if(!VanishHandler.isVanished(p)) return false;
@@ -30,7 +29,7 @@ public class VanishListener implements Listener {
             return true;
         });
         if(removed.get() == 0) return;
-        //event.setNumPlayers(Math.max(event.getNumPlayers() - removed.get(), 0));
+        event.setNumPlayers(Math.max(event.getNumPlayers() - removed.get(), 0));
     }
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPlayerAdvancementDone(PlayerAdvancementDoneEvent event) {

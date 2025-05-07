@@ -50,7 +50,7 @@ public class PlayerTags implements ObjectTag<Player> {
                 var holder = BukkitStatisticHolder.statisticHolder(object);
                 if(holder != null){
                     long timeSeconds = holder.getStatistic(USurviveStatistics.IDLE_TIME);
-                    playTime -= (timeSeconds * 1000L);
+                    playTime -= (timeSeconds * 20L);
                 }
                 return Math.max(playTime, 0) + "";
             }))
