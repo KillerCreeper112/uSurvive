@@ -1,7 +1,6 @@
 package killercreepr.usurvive.core.config.handler;
 
 import com.google.common.reflect.TypeToken;
-import killercreepr.crux.api.math.CruxLocation;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
@@ -23,7 +22,7 @@ public class FileRandomTPData implements FileObjectHandler<RandomTPData> {
     @Override
     public RandomTPData deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement e) {
         Map<Key, RandomTPData.Pos> map = ctx.getRegistry().deserializeFromFile(
-            new TypeToken<Map<Key, CruxLocation>>(){}.getType(), e
+            new TypeToken<Map<Key, RandomTPData.Pos>>(){}.getType(), e
         );
         if(map == null) return null;
         RandomTPData data = new SimpleRandomTPData();
