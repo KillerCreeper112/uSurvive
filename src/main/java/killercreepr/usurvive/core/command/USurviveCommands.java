@@ -12,6 +12,7 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import killercreepr.crux.api.communication.Communicator;
 import killercreepr.crux.api.component.parser.DataComponentDecoder;
 import killercreepr.crux.api.data.DataExchange;
+import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.item.dynamic.DynamicItem;
 import killercreepr.crux.api.text.context.TextParserContext;
@@ -318,6 +319,107 @@ public class USurviveCommands {
                         Commands.literal("rtp")
                             .then(
                                 Commands.literal("last_loc")
+                                    .then(
+                                        Commands.literal("tp")
+                                            .then(
+                                                Commands.argument("target", ArgumentTypes.player())
+                                                    .then(
+                                                        Commands.argument("world", ArgumentTypes.key())
+                                                            .suggests((ctx, b) ->{
+                                                                for(var world : plugin.getServer().getWorlds()){
+                                                                    b.suggest(world.key().asString());
+                                                                }
+                                                                return b.buildFuture();
+                                                            })
+                                                            .executes(ctx ->{
+                                                                var sender = getExecutor(ctx.getSource());
+                                                                Player target = ctx.getArgument("targets",
+                                                                    PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
+                                                                UPlayer uP = UPlayer.getPlayer(target);
+                                                                if(uP == null) return -1;
+                                                                var data = uP.getRandomTPData();
+                                                                if(data == null) return 0;
+                                                                Key world = ctx.getArgument("world", Key.class);
+                                                                if(!data.hasLastTeleported(world)){
+                                                                    return 0;
+                                                                }
+                                                                World foundWorld = plugin.getServer().getWorld(world);
+                                                                if(foundWorld == null){
+                                                                    return 0;
+                                                                }
+                                                                var pos = data.getLastTeleported(world);
+
+                                                                var tpBuild = CruxTeleport.builder()
+                                                                    .teleportTo(Holder.direct(pos.getLocation().toLocation(foundWorld)));
+
+                                                                CruxTeleporter.teleporter().scheduleTeleport(target, tpBuild.build());
+                                                                return 1;
+                                                            })
+                                                            .then(
+                                                                Commands.argument("tp_targets", ArgumentTypes.players())
+                                                                    .executes(ctx ->{
+                                                                        var sender = getExecutor(ctx.getSource());
+                                                                        Player target = ctx.getArgument("targets",
+                                                                            PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
+                                                                        UPlayer uP = UPlayer.getPlayer(target);
+                                                                        if(uP == null) return -1;
+                                                                        var data = uP.getRandomTPData();
+                                                                        if(data == null) return 0;
+                                                                        Key world = ctx.getArgument("world", Key.class);
+                                                                        if(!data.hasLastTeleported(world)){
+                                                                            return 0;
+                                                                        }
+                                                                        World foundWorld = plugin.getServer().getWorld(world);
+                                                                        if(foundWorld == null){
+                                                                            return 0;
+                                                                        }
+                                                                        var pos = data.getLastTeleported(world);
+
+                                                                        var tpBuild = CruxTeleport.builder()
+                                                                            .teleportTo(Holder.direct(pos.getLocation().toLocation(foundWorld)));
+
+                                                                        for(var p : ctx.getArgument("tp_targets", PlayerSelectorArgumentResolver.class)
+                                                                            .resolve(ctx.getSource())){
+                                                                            CruxTeleporter.teleporter().scheduleTeleport(p, tpBuild.build());
+                                                                        }
+                                                                        return 1;
+                                                                    }).then(
+                                                                        Commands.argument("components", StringArgumentType.greedyString())
+                                                                            .executes(ctx ->{
+                                                                                var sender = getExecutor(ctx.getSource());
+                                                                                Player target = ctx.getArgument("targets",
+                                                                                    PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
+                                                                                UPlayer uP = UPlayer.getPlayer(target);
+                                                                                if(uP == null) return -1;
+                                                                                var data = uP.getRandomTPData();
+                                                                                if(data == null) return 0;
+                                                                                Key world = ctx.getArgument("world", Key.class);
+                                                                                if(!data.hasLastTeleported(world)){
+                                                                                    return 0;
+                                                                                }
+                                                                                World foundWorld = plugin.getServer().getWorld(world);
+                                                                                if(foundWorld == null){
+                                                                                    return 0;
+                                                                                }
+                                                                                var pos = data.getLastTeleported(world);
+
+                                                                                var tpBuild = CruxTeleport.builder()
+                                                                                    .teleportTo(Holder.direct(pos.getLocation().toLocation(foundWorld)));
+
+                                                                                String stringC = ctx.getArgument("components", String.class);
+                                                                                DataComponentDecoder.componentDecoder().parseComponents(stringC).forEach(tpBuild::set);
+
+                                                                                for(var p : ctx.getArgument("tp_targets", PlayerSelectorArgumentResolver.class)
+                                                                                    .resolve(ctx.getSource())){
+                                                                                    CruxTeleporter.teleporter().scheduleTeleport(p, tpBuild.build());
+                                                                                }
+                                                                                return 1;
+                                                                            })
+                                                                    )
+                                                            )
+                                                    )
+                                            )
+                                    )
                                     .then(
                                         Commands.literal("remove")
                                             .then(

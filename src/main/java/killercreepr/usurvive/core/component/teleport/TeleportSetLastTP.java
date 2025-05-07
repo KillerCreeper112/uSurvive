@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 public class TeleportSetLastTP implements TeleporterComponent, TeleportModule {
     @Nullable
     @Override
-    public TeleportModule buildTeleportModule(@NotNull TeleportBuildContext teleportBuildContext) {
+    public TeleportModule buildTeleportModule(@NotNull TeleportBuildContext ctx) {
         return this;
     }
 
@@ -54,7 +54,6 @@ public class TeleportSetLastTP implements TeleporterComponent, TeleportModule {
 
     @Override
     public void load(@NotNull EntityTeleportHolder entityTeleportHolder, @NotNull Entity entity) {
-
     }
 
     @Override
