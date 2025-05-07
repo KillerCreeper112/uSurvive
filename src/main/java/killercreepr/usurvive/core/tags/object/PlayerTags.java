@@ -93,6 +93,15 @@ public class PlayerTags implements ObjectTag<Player> {
                 if(pos==null) return "0";
                 return pos.getLocation().z() + "";
             }))
+            .add(Tag.string("u_last_rtp_time", (args, ctx) ->{
+                var u = UPlayer.getPlayer(object);
+                if(u == null) return "0";
+                if(u.getRandomTPData() == null) return "0";
+                Key world = Crux.key(ctx.deserializeString(args.get(0)));
+                var pos = u.getRandomTPData().getLastTeleported(world);
+                if(pos==null) return "0";
+                return pos.getTime() + "";
+            }))
             ;
     }
 

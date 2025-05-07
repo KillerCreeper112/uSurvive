@@ -333,7 +333,7 @@ public class USurviveCommands {
                                                             })
                                                             .executes(ctx ->{
                                                                 var sender = getExecutor(ctx.getSource());
-                                                                Player target = ctx.getArgument("targets",
+                                                                Player target = ctx.getArgument("target",
                                                                     PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
                                                                 UPlayer uP = UPlayer.getPlayer(target);
                                                                 if(uP == null) return -1;
@@ -359,7 +359,7 @@ public class USurviveCommands {
                                                                 Commands.argument("tp_targets", ArgumentTypes.players())
                                                                     .executes(ctx ->{
                                                                         var sender = getExecutor(ctx.getSource());
-                                                                        Player target = ctx.getArgument("targets",
+                                                                        Player target = ctx.getArgument("target",
                                                                             PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
                                                                         UPlayer uP = UPlayer.getPlayer(target);
                                                                         if(uP == null) return -1;
@@ -387,7 +387,7 @@ public class USurviveCommands {
                                                                         Commands.argument("components", StringArgumentType.greedyString())
                                                                             .executes(ctx ->{
                                                                                 var sender = getExecutor(ctx.getSource());
-                                                                                Player target = ctx.getArgument("targets",
+                                                                                Player target = ctx.getArgument("target",
                                                                                     PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
                                                                                 UPlayer uP = UPlayer.getPlayer(target);
                                                                                 if(uP == null) return -1;
