@@ -27,6 +27,7 @@ import killercreepr.cruxcurrency.core.entity.memory.CurrencyHolder;
 import killercreepr.cruxteleport.api.teleport.CruxTeleport;
 import killercreepr.cruxteleport.api.teleport.CruxTeleporter;
 import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;
+import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.command.argument.TargetPlayerDeathResolver;
@@ -34,6 +35,7 @@ import killercreepr.usurvive.core.command.argument.USurviveArgs;
 import killercreepr.usurvive.core.config.Config;
 import killercreepr.usurvive.core.death.PlayerDeath;
 import killercreepr.usurvive.core.lang.Lang;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -307,6 +309,41 @@ public class USurviveCommands {
                                                                     ctx.getArgument("to_teleport", PlayerSelectorArgumentResolver.class)
                                                                         .resolve(ctx.getSource())
                                                                 );
+                                                            })
+                                                    )
+                                            )
+                                    )
+                            )
+                    ).then(
+                        Commands.literal("rtp")
+                            .then(
+                                Commands.literal("last_loc")
+                                    .then(
+                                        Commands.literal("remove")
+                                            .then(
+                                                Commands.argument("targets", ArgumentTypes.players())
+                                                    .then(
+                                                        Commands.argument("world", ArgumentTypes.key())
+                                                            .suggests((ctx, b) ->{
+                                                                for(var world : plugin.getServer().getWorlds()){
+                                                                    b.suggest(world.key().asString());
+                                                                }
+                                                                return b.buildFuture();
+                                                            })
+                                                            .executes(ctx ->{
+                                                                var sender = getExecutor(ctx.getSource());
+                                                                Key key = ctx.getArgument("world", Key.class);
+                                                                for(var p : ctx.getArgument("targets",
+                                                                    PlayerSelectorArgumentResolver.class).resolve(ctx.getSource())){
+                                                                    UPlayer uP = UPlayer.getPlayer(p);
+                                                                    if(uP == null) continue;
+                                                                    var data = uP.getRandomTPData();
+                                                                    if(data == null) continue;
+                                                                    data.setLastTeleported(key, null);
+
+                                                                    sender.sendMessage("Removed last rtp location from " + p.getName() + " at " + key);
+                                                                }
+                                                                return 1;
                                                             })
                                                     )
                                             )
