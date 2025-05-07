@@ -177,6 +177,12 @@ public class DefaultValues implements ValuesProvider {
 
     @NotNull
     @Override
+    public NumberProvider RESET_SET_RANDOM_TP_TIME() {
+        return null;
+    }
+
+    @NotNull
+    @Override
     public NumberProvider TPA_EXPIRE_TICKS() {
         return null;
     }

@@ -1,6 +1,8 @@
 package killercreepr.usurvive.api.entity.player.data;
 
 import killercreepr.crux.api.math.CruxLocation;
+import killercreepr.crux.core.util.CruxMath;
+import killercreepr.usurvive.core.USurvivePlugin;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,14 +18,18 @@ public interface RandomTPData {
 
     interface Pos{
         @NotNull CruxLocation getLocation();
+        long getWorldTime();
         long getTime();
+        boolean hasExpired();
 
         class Simple implements Pos{
             protected final CruxLocation location;
+            protected final long worldTime;
             protected final long time;
 
-            public Simple(CruxLocation location, long time) {
+            public Simple(CruxLocation location, long worldTime, long time) {
                 this.location = location;
+                this.worldTime = worldTime;
                 this.time = time;
             }
 
@@ -32,8 +38,18 @@ public interface RandomTPData {
                 return location;
             }
 
+            public long getWorldTime() {
+                return worldTime;
+            }
+
+            @Override
             public long getTime() {
                 return time;
+            }
+
+            @Override
+            public boolean hasExpired() {
+                return !CruxMath.hasOccurredWithin(time, USurvivePlugin.inst().values().RESET_SET_RANDOM_TP_TIME().value().intValue());
             }
         }
     }

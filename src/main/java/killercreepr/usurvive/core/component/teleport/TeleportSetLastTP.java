@@ -1,8 +1,6 @@
 package killercreepr.usurvive.core.component.teleport;
 
 import killercreepr.crux.api.math.CruxLocation;
-import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.util.CruxColor;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxteleport.api.component.TeleporterComponent;
 import killercreepr.cruxteleport.api.teleport.TeleportBuildContext;
@@ -36,7 +34,7 @@ public class TeleportSetLastTP implements TeleporterComponent, TeleportModule {
         if(crux == null) return true;
 
         if(tpData.hasLastTeleported(spawn.getWorld().key())){
-            long time = tpData.getLastTeleported(spawn.getWorld().key()).getTime();
+            long time = tpData.getLastTeleported(spawn.getWorld().key()).getWorldTime();
             Long worldTime = crux.get(USurviveComponents.WORLD_RANDOM_TELEPORT_TIME);
             if(worldTime != null && time == worldTime) return true;
         }
@@ -47,7 +45,7 @@ public class TeleportSetLastTP implements TeleporterComponent, TeleportModule {
             crux.set(USurviveComponents.WORLD_RANDOM_TELEPORT_TIME, worldTime);
         }
 
-        RandomTPData.Pos pos = new RandomTPData.Pos.Simple(CruxLocation.location(spawn), worldTime);
+        RandomTPData.Pos pos = new RandomTPData.Pos.Simple(CruxLocation.location(spawn), worldTime, System.currentTimeMillis());
         tpData.setLastTeleported(spawn.getWorld().key(), pos);
         return true;
     }

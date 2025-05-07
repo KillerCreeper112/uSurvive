@@ -1,6 +1,5 @@
 package killercreepr.usurvive.core.entity.player.data;
 
-import killercreepr.crux.api.math.CruxLocation;
 import killercreepr.usurvive.api.entity.player.data.RandomTPData;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +14,13 @@ public class SimpleRandomTPData implements RandomTPData {
     @Nullable
     @Override
     public Pos getLastTeleported(@NotNull Key world) {
-        return map.get(world);
+        Pos pos = map.get(world);
+        if(pos == null) return null;
+        if(pos.hasExpired()){
+            map.remove(world);
+            return null;
+        }
+        return pos;
     }
 
     @Override
@@ -27,7 +32,7 @@ public class SimpleRandomTPData implements RandomTPData {
 
     @Override
     public boolean hasLastTeleported(@NotNull Key world) {
-        return map.containsKey(world);
+        return getLastTeleported(world) != null;
     }
 
     @Override
@@ -39,6 +44,9 @@ public class SimpleRandomTPData implements RandomTPData {
     public void setAllLastTeleported(Map<Key, Pos> map) {
         this.map.clear();
         if(map==null) return;
-        this.map.putAll(map);
+        map.forEach((world, pos) ->{
+            if(pos.hasExpired()) return;
+            this.map.put(world, pos);
+        });
     }
 }

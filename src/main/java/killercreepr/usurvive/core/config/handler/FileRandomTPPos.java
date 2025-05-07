@@ -14,6 +14,7 @@ public class FileRandomTPPos implements FileObjectHandler<RandomTPData.Pos> {
     public @NotNull FileElement serializeToFile(@NotNull FileContext<?> ctx, @NotNull RandomTPData.Pos data) {
         return new FileObject()
             .add("location", ctx.getRegistry().serializeToFile(data.getLocation()))
+            .add("world_time", ctx.getRegistry().serializeToFile(data.getWorldTime()))
             .add("time", ctx.getRegistry().serializeToFile(data.getTime()))
             ;
     }
@@ -24,7 +25,8 @@ public class FileRandomTPPos implements FileObjectHandler<RandomTPData.Pos> {
         if(!(e instanceof FileObject o)) return null;
         CruxLocation loc = ctx.getRegistry().deserializeFromFile(CruxLocation.class, o.get("location"));
         Long time = ctx.getRegistry().deserializeFromFile(Long.class, o.get("time"));
-        if(time == null || loc == null) return null;
-        return new RandomTPData.Pos.Simple(loc, time);
+        Long worldTime = ctx.getRegistry().deserializeFromFile(Long.class, o.get("world_time"));
+        if(time == null || loc == null || worldTime == null) return null;
+        return new RandomTPData.Pos.Simple(loc, worldTime, time);
     }
 }

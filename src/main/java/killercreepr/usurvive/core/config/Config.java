@@ -104,6 +104,7 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg, Graveston
     public final CfgValue<Map<Key, String>> GRAVESTONE_COSTS = new CommonValue<>(){};
     public final NumCfgValue REDUCE_RECENT_DEATHS_TIME = new NumCfgValue(288000);
     public final NumCfgValue MAX_RECENT_DEATHS = new NumCfgValue(3);
+    public final NumCfgValue RESET_SET_RANDOM_TP_TIME = new NumCfgValue(12096000);
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -329,6 +330,12 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg, Graveston
     @Override
     public NumberProvider RESOURCE_OVERWORLD_RESET_TIME() {
         return RESOURCE_OVERWORLD_RESET_TIME.value();
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider RESET_SET_RANDOM_TP_TIME() {
+        return RESET_SET_RANDOM_TP_TIME.value();
     }
 
     @NotNull

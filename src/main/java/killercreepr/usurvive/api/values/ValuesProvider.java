@@ -59,6 +59,7 @@ public interface ValuesProvider extends Reloadable {
     @NotNull NumberProvider RESOURCE_OVERWORLD_BORDER();
     @NotNull NumberProvider RESOURCE_NETHER_BORDER();
     @NotNull NumberProvider RESOURCE_OVERWORLD_RESET_TIME();
+    @NotNull NumberProvider RESET_SET_RANDOM_TP_TIME();
 
     @NotNull NumberProvider TPA_EXPIRE_TICKS();
     @NotNull NumberProvider TPA_CONFIRM_EXPIRE_TICKS();
