@@ -42,6 +42,7 @@ public class Echo extends SimpleCruxMob {
             e.getEquipment().clear();
             e.setPersistent(true);
             e.setRemoveWhenFarAway(false);
+            e.setCanPickupItems(false);
 
             CruxAttribute.addModifier(e, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.baseModifier(
                 e.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue()

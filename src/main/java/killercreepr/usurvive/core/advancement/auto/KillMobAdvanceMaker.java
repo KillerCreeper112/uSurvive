@@ -17,8 +17,6 @@ import killercreepr.cruxadvancements.api.crazy.advancement.AdvancementVisibility
 import killercreepr.cruxadvancements.core.advancement.criteria.NumberCriteria;
 import killercreepr.cruxadvancements.core.advancement.objective.ObjectiveCommonData;
 import killercreepr.cruxadvancements.core.advancement.objective.standard.KillEntityObjective;
-import killercreepr.cruxadvancements.core.config.handler.FileCruxAdvanceReward;
-import killercreepr.cruxadvancements.core.config.handler.crazy.FileCrazyAdvancement;
 import killercreepr.cruxadvancements.core.registries.AdvancementRegistries;
 import killercreepr.cruxadvancements.crazy.advancement.CrazyAdvancement;
 import killercreepr.cruxadvancements.crazy.advancement.CrazyAdvancementDisplay;

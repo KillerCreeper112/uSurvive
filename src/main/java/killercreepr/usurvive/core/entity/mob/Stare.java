@@ -8,7 +8,6 @@ import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.usurvive.core.entity.mob.goals.StareGoal;
-import killercreepr.usurvive.core.entity.mob.goals.VaneGoal;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;

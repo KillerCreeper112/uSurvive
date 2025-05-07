@@ -9,8 +9,6 @@ import killercreepr.cruxworlds.core.world.entity.SimpleNaturalEntityWorldSpawner
 import killercreepr.cruxworlds.core.world.module.SimpleWorldModule;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
-import killercreepr.usurvive.core.world.generation.OreGenerators;
-import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
 public class OverworldMobSpawnsModule extends SimpleWorldModule implements Ticked {

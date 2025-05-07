@@ -12,7 +12,6 @@ import killercreepr.usurvive.core.entity.USurviveMobs;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.CraftWorld;
 import org.jetbrains.annotations.NotNull;
 
 public class StandardOverworldGroups {

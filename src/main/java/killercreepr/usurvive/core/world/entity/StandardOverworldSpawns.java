@@ -2,10 +2,8 @@ package killercreepr.usurvive.core.world.entity;
 
 import com.destroystokyo.paper.MaterialSetTag;
 import killercreepr.crux.core.data.util.CollectionBuilder;
-import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
-import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.world.entity.NaturalCruxMobSpawn;
 import killercreepr.cruxworlds.api.world.entity.NaturalEntitySpawn;
 import killercreepr.cruxworlds.api.world.entity.SpawnContext;
@@ -15,7 +13,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -13,6 +13,7 @@ import killercreepr.usurvive.api.mechanics.grapple.Grapple;
 import killercreepr.usurvive.api.mechanics.whip.Whip;
 import killercreepr.usurvive.core.component.impl.*;
 import killercreepr.usurvive.core.component.teleport.TeleportCheckInStructure;
+import killercreepr.usurvive.core.component.teleport.TeleportSetLastTP;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleDisplayGrapple;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleGrapple;
 import killercreepr.usurvive.core.mechanics.whip.SimpleDisplayWhip;
@@ -148,4 +149,7 @@ public class USurviveCompParsers {
         .apply(ctx -> new TeleportCheckInStructure(
             ctx.getOptional("blacklist")
         ));
+
+    public static final PersistTextParser<TeleportSetLastTP> TELEPORT_SET_LAST_TP = PersistTextParser.mapBuilder(TeleportSetLastTP.class)
+        .apply(ctx -> new TeleportSetLastTP());
 }

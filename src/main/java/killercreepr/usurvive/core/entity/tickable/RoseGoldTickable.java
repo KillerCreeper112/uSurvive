@@ -1,7 +1,6 @@
 package killercreepr.usurvive.core.entity.tickable;
 
 import killercreepr.crux.core.Crux;
-import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.equipment.CruxSlot;
 import killercreepr.cruxtickables.api.entity.tickable.EntityTickable;
 import killercreepr.cruxtickables.core.entity.tickable.ListenerActiveEntityTickable;

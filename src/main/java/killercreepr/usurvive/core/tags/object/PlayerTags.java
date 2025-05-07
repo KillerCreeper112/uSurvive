@@ -13,7 +13,6 @@ import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.cruxstatistics.api.bukkit.BukkitStatisticHolder;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
-import killercreepr.usurvive.core.data.entity.DeathHolder;
 import killercreepr.usurvive.core.data.entity.MemoryPlayerSettingsHolder;
 import killercreepr.usurvive.core.entity.memory.SleeperHolder;
 import killercreepr.usurvive.core.statistic.USurviveStatistics;

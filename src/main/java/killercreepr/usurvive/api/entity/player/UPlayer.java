@@ -3,13 +3,11 @@ package killercreepr.usurvive.api.entity.player;
 import killercreepr.crux.api.data.Loadable;
 import killercreepr.crux.api.data.PluginLoadable;
 import killercreepr.crux.api.math.CruxLocation;
-import killercreepr.crux.core.util.CruxMath;
-import killercreepr.usurvive.api.values.GravestoneCfg;
+import killercreepr.usurvive.api.entity.player.data.RandomTPData;
 import killercreepr.usurvive.core.USurvivePlugin;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +24,8 @@ public interface UPlayer extends Loadable, PluginLoadable {
     }
     @NotNull UUID getUUID();
     long getLastLogout();
+
+    @Nullable RandomTPData getRandomTPData();
 
     @Nullable CruxLocation getSavedLastKnownPosition();
     @Nullable Key getSavedLastKnownWorld();

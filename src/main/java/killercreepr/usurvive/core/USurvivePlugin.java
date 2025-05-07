@@ -60,6 +60,7 @@ import killercreepr.cruxworlds.api.world.module.WorldModule;
 import killercreepr.cruxworlds.core.registries.WorldsRegistries;
 import killercreepr.usurvive.api.death.DeathManager;
 import killercreepr.usurvive.api.entity.player.UPlayerManager;
+import killercreepr.usurvive.api.entity.player.data.RandomTPData;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsManager;
@@ -589,6 +590,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         registry.registerFileHandler(SleepWeakness.class, new FileSleepWeakness());
         registry.registerFileHandler(SleepWeaknessCalculator.class, new FileSleepWeaknessCalculator());
         registry.registerFileHandler(SleepWeaknessWarning.class, new FileSleepWeaknessWarning());
+        registry.registerFileHandler(RandomTPData.class, new FileRandomTPData());
+        registry.registerFileHandler(RandomTPData.Pos.class, new FileRandomTPPos());
         registry.registerFileHandler(
             new AutoFileHandler<>(PremiumRank.class),
             new AutoFileHandler<>(CfgLootData.class)

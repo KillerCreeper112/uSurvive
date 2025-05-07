@@ -4,8 +4,6 @@ import com.destroystokyo.paper.entity.ai.GoalKey;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
-import killercreepr.cruxentities.entity.CruxMob;
-import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import org.bukkit.Sound;

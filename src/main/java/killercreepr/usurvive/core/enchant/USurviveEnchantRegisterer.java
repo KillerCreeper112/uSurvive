@@ -205,7 +205,7 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
         );
         register(
             "insight", b -> b.description(Component.text("Insight"))
-                .supportedItems(event.getOrCreateTag(SHARP_WEAPON_PICKAXE))
+                .supportedItems(event.getOrCreateTag(SHARP_WEAPON_PICKAXE_HOE))
                 .anvilCost(1)
                 .maxLevel(3)
                 .weight(2)

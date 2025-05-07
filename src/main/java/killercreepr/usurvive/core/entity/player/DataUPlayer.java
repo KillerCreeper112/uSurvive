@@ -16,9 +16,11 @@ import killercreepr.cruxparty.api.party.PartyHolder;
 import killercreepr.cruxparty.core.CruxPartyPlugin;
 import killercreepr.usurvive.api.entity.player.ShopSpender;
 import killercreepr.usurvive.api.entity.player.UPlayer;
+import killercreepr.usurvive.api.entity.player.data.RandomTPData;
 import killercreepr.usurvive.api.values.GravestoneCfg;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.data.PremiumRank;
+import killercreepr.usurvive.core.entity.player.data.SimpleRandomTPData;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -37,6 +39,7 @@ public class DataUPlayer implements UPlayer, ShopSpender {
     protected double totalPaid;
     protected int recentDeaths;
     protected long lastReducedDeath;
+    protected RandomTPData randomTPData;
 
     public DataUPlayer(@NotNull UUID uuid) {
         this.uuid = uuid;
@@ -130,6 +133,12 @@ public class DataUPlayer implements UPlayer, ShopSpender {
 
     @Nullable
     @Override
+    public RandomTPData getRandomTPData() {
+        return randomTPData;
+    }
+
+    @Nullable
+    @Override
     public CruxLocation getSavedLastKnownPosition() {
         return lastKnownPosition;
     }
@@ -194,6 +203,7 @@ public class DataUPlayer implements UPlayer, ShopSpender {
         file.serialize("total_premium_paid", totalPaid);
         file.serialize("recent_deaths", recentDeaths);
         file.serialize("last_reduced_death", lastReducedDeath);
+        file.serialize("random_tp_data", randomTPData);
         file.save();
     }
 
@@ -215,7 +225,10 @@ public class DataUPlayer implements UPlayer, ShopSpender {
 
         Long lastReducedDeath = file.deserialize("last_reduced_death", Long.class);
         if(lastReducedDeath != null) this.lastReducedDeath = lastReducedDeath;
+        randomTPData = file.deserialize("random_tp_data", RandomTPData.class);
         file.close();
+
+        if(randomTPData == null) randomTPData = new SimpleRandomTPData();
     }
 
     public DataFile getDataFile(Plugin plugin, UUID p){

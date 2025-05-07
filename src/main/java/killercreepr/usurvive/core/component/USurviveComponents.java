@@ -16,6 +16,7 @@ import killercreepr.usurvive.core.component.impl.OrbitConduitComponent;
 import killercreepr.usurvive.core.component.impl.SmokeParticleBlockComponent;
 import killercreepr.usurvive.core.component.impl.SoulParticleBlockComponent;
 import killercreepr.usurvive.core.component.teleport.TeleportCheckInStructure;
+import killercreepr.usurvive.core.component.teleport.TeleportSetLastTP;
 
 import java.util.function.UnaryOperator;
 
@@ -53,6 +54,12 @@ public class USurviveComponents {
 
     public static final DataComponentType<TeleportCheckInStructure> TELEPORT_STRUCTURE_CHECK = register("teleport/structure_check", builder ->
         builder.persistTextParser(USurviveCompParsers.TELEPORT_STRUCTURE_CHECK.createInput(Crux.key("teleport/structure_check"))));
+
+    public static final DataComponentType<TeleportSetLastTP> TELEPORT_SET_LAST_TP = register("teleport/set_last_tp", builder ->
+        builder.persistTextParser(USurviveCompParsers.TELEPORT_SET_LAST_TP.createInput(Crux.key("teleport/set_last_tp"))));
+
+    public static final DataComponentType<Long> WORLD_RANDOM_TELEPORT_TIME = register("world/random_teleport_time", builder ->
+        builder.persistTextParser(PersistTextParser.LONG.createInput(Crux.key("world/random_teleport_time"))));
 
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());

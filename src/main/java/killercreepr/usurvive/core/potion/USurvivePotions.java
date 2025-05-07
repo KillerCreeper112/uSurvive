@@ -5,7 +5,6 @@ import killercreepr.cruxpotions.api.potion.ActivePotion;
 import killercreepr.cruxpotions.api.potion.CruxPotion;
 import killercreepr.cruxpotions.api.potion.inflictor.PotionInflictor;
 import killercreepr.cruxpotions.core.potions.DescribedPotion;
-import killercreepr.cruxpotions.core.potions.GenericPotion;
 import killercreepr.cruxpotions.core.registries.CruxPotionRegistries;
 import org.bukkit.Color;
 import org.bukkit.entity.Entity;
