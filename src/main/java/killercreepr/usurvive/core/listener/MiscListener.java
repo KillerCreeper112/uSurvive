@@ -4,10 +4,13 @@ import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxitems.api.item.CruxedItem;
+import killercreepr.cruxitems.api.item.plugin.PluginItem;
 import killercreepr.usurvive.api.component.WaterProjectile;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.component.USurviveComponents;
 import killercreepr.usurvive.core.entity.memory.WaterProjectileHolder;
+import killercreepr.usurvive.core.item.QuickAccessItem;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.EventHandler;
@@ -16,12 +19,39 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDispenseLootEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.world.LootGenerateEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Random;
 
 public class MiscListener implements Listener {
+    @EventHandler(ignoreCancelled = true)
+    public void onInventoryClick(InventoryClickEvent event) {
+        if(event.getHotbarButton() >= 0){
+            ItemStack got = event.getWhoClicked().getInventory().getItem(event.getHotbarButton());
+            if(!CruxItem.isEmpty(got)){
+                var crux = CruxedItem.cruxed(got);
+                if(crux.getPluginItem() instanceof QuickAccessItem){
+                    if(event.getSlot() == 40){
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+        }
+
+        if(CruxItem.isEmpty(event.getCursor())) return;
+        var crux = CruxedItem.cruxed(event.getCursor());
+        if(crux.getPluginItem() instanceof QuickAccessItem){
+            if(event.getSlot() == 40){
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
+
+
     @EventHandler(ignoreCancelled = true)
     public void onEntityPlace(EntityPlaceEvent event) {
         if(event.getEntity() instanceof ArmorStand s){

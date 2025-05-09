@@ -3,9 +3,7 @@ package killercreepr.usurvive.core.item;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.item.dynamic.DynamicItem;
 import killercreepr.crux.core.Crux;
-import killercreepr.cruxitems.api.item.interaction.InteractableItem;
-import killercreepr.cruxitems.api.item.interaction.ItemUseContext;
-import killercreepr.cruxitems.api.item.interaction.ItemUseResult;
+import killercreepr.cruxitems.api.item.interaction.*;
 import killercreepr.cruxitems.api.item.inventory.InventoryItem;
 import killercreepr.cruxitems.api.item.inventory.ItemClickContext;
 import killercreepr.cruxitems.core.item.plugin.CfgPluginItem;
@@ -15,9 +13,11 @@ import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayer
 import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettings;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryType;
 import org.jetbrains.annotations.NotNull;
 
-public class QuickAccessItem extends CfgPluginItem implements InteractableItem, InventoryItem {
+public class QuickAccessItem extends CfgPluginItem implements InteractableItem, InventoryItem, SwapHandsItem {
     public QuickAccessItem(@NotNull Key key, @NotNull DynamicItem item) {
         super(key, item);
     }
@@ -45,13 +45,24 @@ public class QuickAccessItem extends CfgPluginItem implements InteractableItem, 
                 }
             }
             PlayerSettingsHolder settings = EntityMemory.getOrCreateDataHolder(p, MemoryPlayerSettingsHolder.class);
-            if(settings != null){
+            if(ctx.getClick() != ClickType.SWAP_OFFHAND && settings != null){
                 if(!settings.hasSetting(StandardPlayerSettings.QUICK_ACCESS_ITEM, StandardPlayerSettingSelections.LOCKED)){
-                    if(!ctx.getClick().isRightClick()) return ItemUseResult.empty();
+                    if(!ctx.getClick().isRightClick()){
+                        var type = ctx.getView().getTopInventory().getType();
+                        if(type == InventoryType.PLAYER || type == InventoryType.CRAFTING){
+                            return ItemUseResult.empty();
+                        }
+                        return ItemUseResult.cancelled();
+                    }
                 }
             }
             Crux.scheduler().runTask(() -> p.performCommand("menu"));
         }
         return ItemUseResult.cancelled();
+    }
+
+    @Override
+    public @NotNull SwapHandsResult onSwapHands(@NotNull SwapHandsContext ctx) {
+        return SwapHandsResult.cancelled();
     }
 }
