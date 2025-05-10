@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public class USurviveEntitySpawns {
@@ -119,6 +120,34 @@ public class USurviveEntitySpawns {
         }
     };
     public static final NaturalEntitySpawn VANE = new NaturalCruxMobSpawn(2, 0, USurviveMobs.VANE) {
+        @NotNull
+        @Override
+        public Entity spawn(@NotNull SpawnContext ctx, @Nullable Consumer<Entity> consumer) {
+            return mob.spawn(ctx.getBlock().getLocation().toCenterLocation(), consumer);
+        }
+
+        @Override
+        public boolean canSpawn(@NotNull SpawnContext ctx) {
+            if(CruxMath.random(1, 100) <= 4) return false;
+            Block b = ctx.getBlock();
+            if(!b.isEmpty()) return false;
+            for(int x = 0; x < 4; x++){
+                for(int z = 0;z < 4; z++){
+                    for(int y = 0;y < 4; y++){
+                        Block check = b.getRelative(x, y, z);
+                        if(!check.isEmpty()) return false;
+                    }
+                }
+            }
+            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 2;
+        }
+
+        @Override
+        public int getGroupSize(@NotNull SpawnContext ctx) {
+            return 1;
+        }
+    };
+    public static final NaturalEntitySpawn WHISPERSHADE = new NaturalCruxMobSpawn(4, 0, USurviveMobs.WHISPERSHADE) {
         @NotNull
         @Override
         public Entity spawn(@NotNull SpawnContext ctx, @Nullable Consumer<Entity> consumer) {
@@ -312,6 +341,70 @@ public class USurviveEntitySpawns {
             }
             return false;
             //return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 6;
+        }
+
+        @Override
+        public int getGroupSize(@NotNull SpawnContext ctx) {
+            return 1;
+        }
+    };
+    public static final NaturalEntitySpawn WHIMLET = new NaturalCruxMobSpawn(1, 0, USurviveMobs.WHIMLET) {
+        @NotNull
+        @Override
+        public Entity spawn(@NotNull SpawnContext ctx, @Nullable Consumer<Entity> consumer) {
+            return mob.spawn(ctx.getBlock().getLocation().toCenterLocation(), consumer);
+        }
+
+        @Override
+        public boolean canSpawn(@NotNull SpawnContext ctx) {
+            if(!CruxMath.testChance(10)) return false;
+            Block b = ctx.getBlock();
+
+            if(isPassableAndNotLiquid(b) && isPassableAndNotLiquid(b.getRelative(BlockFace.UP))){
+                Block down = b.getRelative(BlockFace.DOWN);
+                if(!down.isSolid() || SPAWNABLE_ON_NOT.contains(down.getType())) return false;
+                for(BlockFace f : BlockFace.values()){
+                    if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                    if(!down.getRelative(f).isSolid()) return false;
+                }
+                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 8, e -> CruxMob.is(e, mob)) < 2;
+            }
+            return false;
+            //return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 6;
+        }
+
+        @Override
+        public int getGroupSize(@NotNull SpawnContext ctx) {
+            return 1;
+        }
+    };
+    public static final Collection<Material> WATER = Set.of(
+        Material.WATER,
+        Material.KELP,
+        Material.KELP_PLANT,
+        Material.SEAGRASS,
+        Material.TALL_SEAGRASS
+    );
+    public static boolean isWater(Block b){
+        return WATER.contains(b.getType());
+    }
+    public static final NaturalEntitySpawn LURKSCALE = new NaturalCruxMobSpawn(9, 0, USurviveMobs.LURKSCALE) {
+        @NotNull
+        @Override
+        public Entity spawn(@NotNull SpawnContext ctx, @Nullable Consumer<Entity> consumer) {
+            return mob.spawn(ctx.getBlock().getLocation().toCenterLocation(), consumer);
+        }
+
+        @Override
+        public boolean canSpawn(@NotNull SpawnContext ctx) {
+            Block b = ctx.getBlock();
+            if(!isWater(b)) return false;
+
+            for(Block check : CruxLoc.getNearbyBlocks(b, 3)){
+                if(!isWater(check)) return false;
+            }
+            return b.getWorld().getNearbyEntities(b.getLocation(), 28D, 28D, 28D,
+                x -> CruxMob.is(x, mob)).isEmpty();
         }
 
         @Override

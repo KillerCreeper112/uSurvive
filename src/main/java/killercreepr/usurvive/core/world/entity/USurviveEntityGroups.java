@@ -64,7 +64,20 @@ public class USurviveEntityGroups {
     };
     public static final NaturalEntitySpawnGroup ELDRITCH_WASTES_HOSTILE = new NaturalSpawnPartGroup(6, 0f,
         USurviveEntitySpawns.SPETTLE, USurviveEntitySpawns.SKELETON_WOLF, USurviveEntitySpawns.SKELETON_CHICKEN,
-        USurviveEntitySpawns.SHADE_STAG){
+        USurviveEntitySpawns.SHADE_STAG, USurviveEntitySpawns.LURKSCALE, USurviveEntitySpawns.VOID_LURKER,
+        USurviveEntitySpawns.WHISPERSHADE){
+
+        @Override
+        public boolean canSpawn(@NotNull SpawnContext ctx) {
+            if(!CruxMath.testChance(6)) return false;
+            Block b = ctx.getBlock();
+            if(!BiomeUtil.isEldritchWastes(b.getBiome().key())) return false;
+            if(b.getLightFromBlocks() > 0) return false;
+            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 4, e -> CruxMob.is(e)) < 6;
+        }
+    };
+    public static final NaturalEntitySpawnGroup ELDRITCH_WASTES_PASSIVE = new NaturalSpawnPartGroup(6, 0f,
+        USurviveEntitySpawns.WHIMLET){
 
         @Override
         public boolean canSpawn(@NotNull SpawnContext ctx) {
@@ -82,5 +95,6 @@ public class USurviveEntityGroups {
         registry.register(STICK_BUG);
         registry.register(ELDRITCH_WASTES_HOSTILE_NIGHT);
         registry.register(ELDRITCH_WASTES_HOSTILE);
+        registry.register(ELDRITCH_WASTES_PASSIVE);
     }
 }
