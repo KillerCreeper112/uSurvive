@@ -7,7 +7,6 @@ import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
-import killercreepr.usurvive.core.entity.mob.goals.BuzzrotGoal;
 import killercreepr.usurvive.core.entity.mob.goals.LurkscaleGoal;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -16,7 +15,6 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Cod;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
-import org.bukkit.entity.Pig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

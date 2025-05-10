@@ -5,18 +5,17 @@ import com.ticxo.modelengine.api.animation.handler.AnimationHandler;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
-import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
-import killercreepr.cruxattributes.api.attribute.CruxAttribute;
-import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import killercreepr.usurvive.core.entity.mob.goals.data.MobAttackHandler;
-import net.kyori.adventure.key.Key;
+import killercreepr.usurvive.core.util.UKey;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
@@ -119,22 +118,22 @@ public class ShadeStagGoal extends CruxMobModeledGoal implements Listener {
         return !CruxMob.isInCategory(target, MobCategory.ENEMY) && super.isValidNaturalTarget(target);
     }
 
-    protected static final Key targetSpeed = Crux.key("target_speed");
+    protected static final NamespacedKey targetSpeed = UKey.TARGET_SPEED;
     protected boolean hadTargetLastTick = false;
     public void movementTick(){
-        double moveSpeed = CruxAttribute.get(mob, CruxAttribute.MOVEMENT_SPEED);
-        mob.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(moveSpeed);
         boolean hasTarget = target != null;
 
         if(target == null){
             if(hadTargetLastTick){
-                CruxAttribute.removeModifier(mob, CruxAttribute.MOVEMENT_SPEED, targetSpeed);
+                mob.getAttribute(Attribute.MOVEMENT_SPEED).removeModifier(targetSpeed);
+                stopAnimation("target_pose");
             }
         }else{
             if(!hadTargetLastTick){
-                CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.modifier(
-                    targetSpeed, .1, CruxAttribute.Operation.MULTIPLY
-                ));
+                mob.getAttribute(Attribute.MOVEMENT_SPEED).addTransientModifier(
+                    new AttributeModifier(targetSpeed, .1, AttributeModifier.Operation.MULTIPLY_SCALAR_1)
+                );
+                playAnimation("target_pose", true);
             }
         }
         if(hasTarget == hadTargetLastTick) return;
@@ -142,8 +141,8 @@ public class ShadeStagGoal extends CruxMobModeledGoal implements Listener {
     }
 
 
-    protected final AnimationHandler.DefaultProperty WALK_VICIOUS_RUN = new AnimationHandler.DefaultProperty(
-        ModelState.WALK, "vicious_run", .2D, .2D, 1D
+    protected final AnimationHandler.DefaultProperty WALK_TARGET_RUN = new AnimationHandler.DefaultProperty(
+        ModelState.WALK, "target_walk", .2D, .2D, 1D
     );
     /*protected final AnimationHandler.DefaultProperty WALK_SWIM = new AnimationHandler.DefaultProperty(
         ModelState.WALK, "swim", .2D, .2D, 1D
@@ -155,7 +154,7 @@ public class ShadeStagGoal extends CruxMobModeledGoal implements Listener {
     public AnimationHandler.DefaultProperty getDefaultWalk(){
         //if(swimmer.isSwimming()) return WALK_SWIM;
         if(target == null) return WALK_NORMAL;
-        return WALK_VICIOUS_RUN;
+        return WALK_TARGET_RUN;
     }
 
     public void animationPropertyTick(){
@@ -172,9 +171,9 @@ public class ShadeStagGoal extends CruxMobModeledGoal implements Listener {
 
     @Override
     public void tick() {
-        //animationPropertyTick();
+        animationPropertyTick();
         super.tick();
-        attackHandler.tick();
+        //attackHandler.tick();
         movementTick();
     }
 }

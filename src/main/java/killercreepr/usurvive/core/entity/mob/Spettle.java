@@ -7,7 +7,6 @@ import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
-import killercreepr.usurvive.core.entity.mob.goals.ShadeStagGoal;
 import killercreepr.usurvive.core.entity.mob.goals.SpettleGoal;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -35,7 +34,7 @@ public class Spettle extends SimpleCruxMob {
             e.setSilent(true);
             load(e);
             e.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(
-                e.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * .7
+                e.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 1.1
             );
 
             e.getAttribute(Attribute.MAX_HEALTH).setBaseValue(

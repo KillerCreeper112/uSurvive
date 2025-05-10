@@ -5,7 +5,6 @@ import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxitems.api.item.CruxedItem;
-import killercreepr.cruxitems.api.item.plugin.PluginItem;
 import killercreepr.usurvive.api.component.WaterProjectile;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.component.USurviveComponents;

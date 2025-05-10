@@ -34,7 +34,7 @@ public class SkeletonChicken extends SimpleCruxMob {
             e.setSilent(true);
             load(e);
             e.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(
-                e.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * .7
+                e.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 1.15
             );
 
             e.getAttribute(Attribute.MAX_HEALTH).setBaseValue(

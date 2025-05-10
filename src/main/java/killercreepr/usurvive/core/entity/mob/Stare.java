@@ -37,7 +37,7 @@ public class Stare extends SimpleCruxMob {
                 0D
             );
             e.getAttribute(Attribute.FLYING_SPEED).setBaseValue(
-                0D
+                0.0001D
             );
             e.getAttribute(Attribute.FOLLOW_RANGE).setBaseValue(
                 64D

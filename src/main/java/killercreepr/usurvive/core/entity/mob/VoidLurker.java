@@ -8,7 +8,6 @@ import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.usurvive.core.entity.mob.goals.VoidLurkerGoal;
-import killercreepr.usurvive.core.entity.mob.goals.WhimletGoal;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -35,11 +34,11 @@ public class VoidLurker extends SimpleCruxMob {
             e.setSilent(true);
             load(e);
             e.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(
-                e.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * .7
+                e.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 1
             );
 
             e.getAttribute(Attribute.MAX_HEALTH).setBaseValue(
-                e.getAttribute(Attribute.MAX_HEALTH).getBaseValue() * 1.5D
+                60D
             );
             e.setHealth(e.getAttribute(Attribute.MAX_HEALTH).getBaseValue());
 

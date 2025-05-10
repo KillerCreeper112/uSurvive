@@ -8,14 +8,12 @@ import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.usurvive.core.entity.mob.goals.SkeletonWolfGoal;
-import killercreepr.usurvive.core.entity.mob.goals.StickBugGoal;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
-import org.bukkit.entity.Pig;
 import org.bukkit.entity.Wolf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,6 +38,9 @@ public class SkeletonWolf extends SimpleCruxMob {
                 e.getAttribute(Attribute.MAX_HEALTH).getBaseValue() * 1.5D
             );
             e.setHealth(e.getAttribute(Attribute.MAX_HEALTH).getBaseValue());
+            e.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(
+                e.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 1.15
+            );
 
             double width = e.getWidth();
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(width + 1.2D));
