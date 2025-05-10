@@ -139,6 +139,15 @@ public class USurviveEntitySpawns {
                     }
                 }
             }
+            boolean solid = false;
+            for(int y = 1; y < 24; y++){
+                Block check = b.getRelative(0, -y, 0);
+                if(check.isSolid()){
+                    solid = true;
+                    break;
+                }
+            }
+            if(!solid) return false;
             return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 2;
         }
 
@@ -167,6 +176,15 @@ public class USurviveEntitySpawns {
                     }
                 }
             }
+            boolean solid = false;
+            for(int y = 1; y < 16; y++){
+                Block check = b.getRelative(0, -y, 0);
+                if(check.isSolid()){
+                    solid = true;
+                    break;
+                }
+            }
+            if(!solid) return false;
             return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 2;
         }
 
@@ -195,6 +213,15 @@ public class USurviveEntitySpawns {
                     }
                 }
             }
+            boolean solid = false;
+            for(int y = 1; y < 24; y++){
+                Block check = b.getRelative(0, -y, 0);
+                if(check.isSolid()){
+                    solid = true;
+                    break;
+                }
+            }
+            if(!solid) return false;
             return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 2;
         }
 

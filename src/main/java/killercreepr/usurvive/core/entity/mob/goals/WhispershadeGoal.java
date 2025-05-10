@@ -178,4 +178,11 @@ public class WhispershadeGoal extends CruxMobModeledGoal implements Listener {
         attackHandler.tick();
         movementTick();
     }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        if(event.getRightClicked().equals(mob) || isModelPart(event.getRightClicked())){
+            event.setCancelled(true);
+        }
+    }
 }
