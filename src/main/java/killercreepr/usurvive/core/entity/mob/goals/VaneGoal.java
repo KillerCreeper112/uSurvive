@@ -7,7 +7,6 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
-import net.kyori.adventure.key.Key;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
@@ -20,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class VaneGoal extends CruxMobModeledGoal {
-    public static final Key STRONG_ATTACK_KEY = Crux.key("strong_attack");
     public static final GoalKey<Mob> KEY = GoalKey.of(Mob.class, Crux.key("vane"));
 
     public VaneGoal(@NotNull Mob mob) {

@@ -20,4 +20,6 @@ public class USurviveMobs {
 
     public static final CruxMob VANE = CruxEntityRegistries.ENTITIES.register(new Vane(Crux.key("vane")));
     public static final CruxMob STARE = CruxEntityRegistries.ENTITIES.register(new Stare(Crux.key("stare")));
+    public static final CruxMob SKELETON_WOLF = CruxEntityRegistries.ENTITIES.register(new SkeletonWolf(Crux.key("skeleton_wolf")));
+    public static final CruxMob SKELETON_CHICKEN = CruxEntityRegistries.ENTITIES.register(new SkeletonChicken(Crux.key("skeleton_chicken")));
 }
