@@ -22,4 +22,13 @@ public class USurviveMobs {
     public static final CruxMob STARE = CruxEntityRegistries.ENTITIES.register(new Stare(Crux.key("stare")));
     public static final CruxMob SKELETON_WOLF = CruxEntityRegistries.ENTITIES.register(new SkeletonWolf(Crux.key("skeleton_wolf")));
     public static final CruxMob SKELETON_CHICKEN = CruxEntityRegistries.ENTITIES.register(new SkeletonChicken(Crux.key("skeleton_chicken")));
+
+
+    public static final CruxMob WHISPERSHADE = CruxEntityRegistries.ENTITIES.register(new Whispershade(Crux.key("whispershade")));
+    public static final CruxMob WHIMLET = CruxEntityRegistries.ENTITIES.register(new Whimlet(Crux.key("whimlet")));
+    public static final CruxMob VOID_LURKER = CruxEntityRegistries.ENTITIES.register(new VoidLurker(Crux.key("void_lurker")));
+    public static final CruxMob SPETTLE = CruxEntityRegistries.ENTITIES.register(new Spettle(Crux.key("spettle")));
+    public static final CruxMob SHADE_STAG = CruxEntityRegistries.ENTITIES.register(new ShadeStag(Crux.key("shade_stag")));
+    public static final CruxMob LURKSCALE = CruxEntityRegistries.ENTITIES.register(new Lurkscale(Crux.key("lurkscale")));
+    public static final CruxMob BUZZROT = CruxEntityRegistries.ENTITIES.register(new Buzzrot(Crux.key("buzzrot")));
 }
