@@ -9,12 +9,13 @@ import killercreepr.cruxworlds.api.world.entity.SpawnContext;
 import killercreepr.cruxworlds.core.world.entity.NaturalSpawnPartGroup;
 import killercreepr.cruxworlds.core.world.entity.SimpleNaturalEntitySpawnGroup;
 import killercreepr.usurvive.core.entity.USurviveMobs;
+import killercreepr.usurvive.core.world.BiomeUtil;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 
-public class StandardOverworldGroups {
+public class USurviveEntityGroups {
     public static final NaturalEntitySpawnGroup EMPTY = new SimpleNaturalEntitySpawnGroup(50, 0f) {
         @Override
         public boolean canSpawn(@NotNull SpawnContext ctx) {
@@ -22,7 +23,7 @@ public class StandardOverworldGroups {
         }
     };
     public static final NaturalEntitySpawnGroup SCULK_BLIGHT = new NaturalSpawnPartGroup(10, 0f,
-        StandardOverworldSpawns.SCULK_BLIGHT){
+        USurviveEntitySpawns.SCULK_BLIGHT){
 
         @Override
         public boolean canSpawn(@NotNull SpawnContext ctx) {
@@ -34,7 +35,7 @@ public class StandardOverworldGroups {
         }
     };
     public static final NaturalEntitySpawnGroup STICK_BUG = new NaturalSpawnPartGroup(10, 0f,
-        StandardOverworldSpawns.STICK_BUG){
+        USurviveEntitySpawns.STICK_BUG){
 
         @Override
         public boolean canSpawn(@NotNull SpawnContext ctx) {
@@ -47,10 +48,39 @@ public class StandardOverworldGroups {
             return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 4, e -> CruxMob.is(e, USurviveMobs.STICK_BUG)) < 6;
         }
     };
+    public static final NaturalEntitySpawnGroup ELDRITCH_WASTES_HOSTILE_NIGHT = new NaturalSpawnPartGroup(6, 0f,
+        USurviveEntitySpawns.VANE, USurviveEntitySpawns.STARE){
+
+        @Override
+        public boolean canSpawn(@NotNull SpawnContext ctx) {
+            if(!CruxMath.testChance(5)) return false;
+            Block b = ctx.getBlock();
+            if(!BiomeUtil.isEldritchWastes(b.getBiome().key())) return false;
+            World world = ctx.getWorld();
+            if(world.isDayTime()) return false;
+            if(b.getLightFromBlocks() > 0) return false;
+            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 4, e -> CruxMob.is(e)) < 6;
+        }
+    };
+    public static final NaturalEntitySpawnGroup ELDRITCH_WASTES_HOSTILE = new NaturalSpawnPartGroup(6, 0f,
+        USurviveEntitySpawns.SPETTLE, USurviveEntitySpawns.SKELETON_WOLF, USurviveEntitySpawns.SKELETON_CHICKEN,
+        USurviveEntitySpawns.SHADE_STAG){
+
+        @Override
+        public boolean canSpawn(@NotNull SpawnContext ctx) {
+            if(!CruxMath.testChance(6)) return false;
+            Block b = ctx.getBlock();
+            if(!BiomeUtil.isEldritchWastes(b.getBiome().key())) return false;
+            if(b.getLightFromBlocks() > 0) return false;
+            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 4, e -> CruxMob.is(e)) < 6;
+        }
+    };
 
     public static void register(@NotNull Registry<NaturalEntitySpawnGroup> registry){
         registry.register(EMPTY);
         registry.register(SCULK_BLIGHT);
         registry.register(STICK_BUG);
+        registry.register(ELDRITCH_WASTES_HOSTILE_NIGHT);
+        registry.register(ELDRITCH_WASTES_HOSTILE);
     }
 }

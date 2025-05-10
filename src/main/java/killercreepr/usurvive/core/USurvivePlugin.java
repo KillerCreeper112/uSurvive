@@ -121,7 +121,7 @@ import killercreepr.usurvive.core.values.DefaultValues;
 import killercreepr.usurvive.core.world.USurviveNether;
 import killercreepr.usurvive.core.world.USurviveOverworld;
 import killercreepr.usurvive.core.world.USurviveWorldTypes;
-import killercreepr.usurvive.core.world.entity.StandardOverworldGroups;
+import killercreepr.usurvive.core.world.entity.USurviveEntityGroups;
 import killercreepr.usurvive.core.world.module.GenericOverworldModule;
 import killercreepr.usurvive.core.world.module.OverworldMobSpawnsModule;
 import killercreepr.usurvive.core.world.module.ResetWorldModule;
@@ -274,7 +274,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         });
         StandardGrappleHooks.register(USurviveRegistries.GRAPPLE_HOOK);
         StandardWhipHooks.register(USurviveRegistries.WHIP_HOOK);
-        StandardOverworldGroups.register(USurviveRegistries.OVERWORLD_NATURAL_ENTITY_SPAWN_GROUP);
+        USurviveEntityGroups.register(USurviveRegistries.OVERWORLD_NATURAL_ENTITY_SPAWN_GROUP);
 
         CruxWorldManager worldManager = CruxCore.inst().worldManager();
         registerWorldData(worldManager);
