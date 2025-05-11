@@ -95,6 +95,11 @@ public class WhispershadeGoal extends CruxMobModeledGoal implements Listener {
             if(!isPlayingAnimation("despawn")){
                 mob.remove();
                 CreateSound.sound(Sound.ENTITY_GHAST_SCREAM, CruxMath.random(0.7f, 1.4f)).playAt(mob);
+                new ParticleBuilder(Particle.PORTAL)
+                    .extra(.3)
+                    .offset(.4, .4, .4)
+                    .count(CruxMath.random(9, 13))
+                    .spawn();
             }
             return;
         }

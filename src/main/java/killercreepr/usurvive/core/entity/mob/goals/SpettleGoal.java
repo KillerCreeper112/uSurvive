@@ -6,6 +6,7 @@ import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.CruxedBoundingBox;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.CruxMob;
@@ -25,6 +26,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -82,6 +84,43 @@ public class SpettleGoal extends CruxMobModeledGoal implements Listener {
                 @Override
                 public int getHitTime() {
                     return 14;
+                }
+            },
+            new StrongMobAttack(2) {
+                @Override
+                public void onUse() {
+                    CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -0.4D, CruxAttribute.Operation.MULTIPLY));
+
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, 2D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .4D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .3D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .4D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK_UP,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, 12D, CruxAttribute.Operation.ADD));
+                }
+
+                @Override
+                public void onTick() {
+                    super.onTick();
+                    int time = getPlayingAnimationTimeTicks(getAnimationID());
+                    if(time >= 5 && time <= 20){
+                        BoundingBox box = mob.getBoundingBox().expand(18, 2, 18);
+                        mob.getWorld().getNearbyEntities(box, e -> e instanceof LivingEntity l && isValidNaturalTarget(l)).forEach(hit ->{
+                            if(attackHandler.wasHitWithin(hit, 8)) return;
+                            attackHandler.hit(hit);
+                            attack(hit);
+                        });
+                    }
+                }
+
+                @Override
+                public int getHitTime() {
+                    return 0;
                 }
             }
         ), List.of());
