@@ -1,9 +1,12 @@
 package killercreepr.usurvive.core.entity.mob.goals;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
@@ -91,6 +94,7 @@ public class WhispershadeGoal extends CruxMobModeledGoal implements Listener {
         if(despawn){
             if(!isPlayingAnimation("despawn")){
                 mob.remove();
+                CreateSound.sound(Sound.ENTITY_GHAST_SCREAM, CruxMath.random(0.7f, 1.4f)).playAt(mob);
             }
             return;
         }
@@ -104,6 +108,7 @@ public class WhispershadeGoal extends CruxMobModeledGoal implements Listener {
             mob.setRemoveWhenFarAway(true);
             mob.setPersistent(false);
             playAnimation("despawn", true);
+            despawn = true;
 
             target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 1));
             target.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 200, 1));
@@ -120,6 +125,12 @@ public class WhispershadeGoal extends CruxMobModeledGoal implements Listener {
         }
         scream = true;
         playAnimation("sceam", true);
+        CreateSound.sound(Sound.ENTITY_GHAST_HURT, 1.6f).playAt(mob);
+        new ParticleBuilder(Particle.SQUID_INK)
+            .extra(.3)
+            .offset(.6, .6, .6)
+            .count(CruxMath.random(9, 13))
+            .spawn();
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)

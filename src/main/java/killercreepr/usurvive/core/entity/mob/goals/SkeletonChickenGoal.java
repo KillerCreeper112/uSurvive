@@ -42,7 +42,7 @@ public class SkeletonChickenGoal extends CruxMobModeledGoal implements Listener 
             @Nullable
             @Override
             public CreateSound step() {
-                return CreateSound.sound(Sound.ENTITY_CHICKEN_STEP, .7f);
+                return CreateSound.sound(Sound.ENTITY_CHICKEN_STEP, 0.2f,.7f);
             }
 
             @Override

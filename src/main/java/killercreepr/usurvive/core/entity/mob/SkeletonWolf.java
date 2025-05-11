@@ -42,6 +42,10 @@ public class SkeletonWolf extends SimpleCruxMob {
                 e.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 1.15
             );
 
+            e.getAttribute(Attribute.ATTACK_DAMAGE).setBaseValue(
+                7.5D
+            );
+
             double width = e.getWidth();
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(width + 1.2D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(7.5D));

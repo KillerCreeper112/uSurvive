@@ -15,6 +15,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Husk;
 import org.bukkit.entity.Mob;
+import org.bukkit.entity.Pig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +29,7 @@ public class Downman extends SimpleCruxMob {
 
     @Override
     protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
-        return location.getWorld().spawn(location, Husk.class, e ->{
+        return location.getWorld().spawn(location, Pig.class, e ->{
             e.customName(Component.text("Downman"));
             e.setCustomNameVisible(false);
             load(e);
