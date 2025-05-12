@@ -34,7 +34,7 @@ public class LurkscaleGoal extends CruxMobModeledGoal implements Listener {
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound ambient() {
-                return CreateSound.sound(Sound.ENTITY_WOLF_AMBIENT, .7f);
+                return CreateSound.sound(Sound.ENTITY_WARDEN_AMBIENT, 1.5f);
             }
 
            /* @Override
@@ -42,20 +42,14 @@ public class LurkscaleGoal extends CruxMobModeledGoal implements Listener {
                 return CreateSound.sound(Sound.ENTITY_CHICKEN_HURT, .7f);
             }*/
 
-            @Nullable
-            @Override
-            public CreateSound step() {
-                return CreateSound.sound(Sound.ENTITY_WOLF_STEP, .7f);
-            }
-
             @Override
             public @NotNull CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_WOLF_HURT, .7f);
+                return CreateSound.sound(Sound.ENTITY_GUARDIAN_HURT, 1.5f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(Sound.ENTITY_WOLF_DEATH, .7f);
+                return CreateSound.sound(Sound.ENTITY_GUARDIAN_DEATH, 1.5f);
             }
         });
 

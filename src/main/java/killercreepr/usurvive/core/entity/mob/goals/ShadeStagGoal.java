@@ -34,28 +34,28 @@ public class ShadeStagGoal extends CruxMobModeledGoal implements Listener {
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound ambient() {
-                return CreateSound.sound(Sound.ENTITY_WOLF_AMBIENT, .7f);
+                return CreateSound.sound(Sound.ENTITY_WOLF_GROWL, 2f);
             }
 
-           /* @Override
+            @Override
             public @NotNull CreateSound attack() {
-                return CreateSound.sound(Sound.ENTITY_CHICKEN_HURT, .7f);
-            }*/
+                return CreateSound.sound(Sound.ENTITY_EVOKER_HURT, 2f);
+            }
 
             @Nullable
             @Override
             public CreateSound step() {
-                return CreateSound.sound(Sound.ENTITY_WOLF_STEP, .7f);
+                return CreateSound.sound(Sound.ENTITY_WOLF_STEP, .2f, 1.5f);
             }
 
             @Override
             public @NotNull CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_WOLF_HURT, .7f);
+                return CreateSound.sound(Sound.ENTITY_EVOKER_HURT, 1.7f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(Sound.ENTITY_WOLF_DEATH, .7f);
+                return CreateSound.sound(Sound.ENTITY_EVOKER_DEATH, 1.4f);
             }
         });
 

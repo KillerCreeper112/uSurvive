@@ -38,7 +38,7 @@ public class ShadeStag extends SimpleCruxMob {
             );
 
             e.getAttribute(Attribute.MAX_HEALTH).setBaseValue(
-                40D
+                26D
             );
             e.setHealth(e.getAttribute(Attribute.MAX_HEALTH).getBaseValue());
 

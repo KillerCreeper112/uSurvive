@@ -38,7 +38,7 @@ public class Spettle extends SimpleCruxMob {
             );
 
             e.getAttribute(Attribute.MAX_HEALTH).setBaseValue(
-                35D
+                32D
             );
             e.setHealth(e.getAttribute(Attribute.MAX_HEALTH).getBaseValue());
 

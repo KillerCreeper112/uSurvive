@@ -5,7 +5,9 @@ import com.ticxo.modelengine.api.animation.ModelState;
 import com.ticxo.modelengine.api.animation.handler.AnimationHandler;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
+import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
@@ -13,6 +15,9 @@ import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import killercreepr.usurvive.core.entity.memory.SpettleProjectileHolder;
+import killercreepr.usurvive.core.entity.memory.WaterProjectileHolder;
+import killercreepr.usurvive.core.entity.mob.goals.data.MobAttack;
 import killercreepr.usurvive.core.entity.mob.goals.data.MobAttackHandler;
 import killercreepr.usurvive.core.entity.mob.goals.data.StrongMobAttack;
 import killercreepr.usurvive.core.util.UKey;
@@ -22,13 +27,16 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
+import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,28 +49,22 @@ public class SpettleGoal extends CruxMobModeledGoal implements Listener {
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound ambient() {
-                return CreateSound.sound(Sound.ENTITY_WOLF_AMBIENT, .7f);
+                return CreateSound.sound(Sound.ENTITY_SLIME_JUMP, .5f);
             }
 
-           /* @Override
-            public @NotNull CreateSound attack() {
-                return CreateSound.sound(Sound.ENTITY_CHICKEN_HURT, .7f);
-            }*/
-
-            @Nullable
             @Override
-            public CreateSound step() {
-                return CreateSound.sound(Sound.ENTITY_WOLF_STEP, .7f);
+            public @NotNull CreateSound attack() {
+                return CreateSound.sound(Sound.ENTITY_SLIME_SQUISH, 1.5f);
             }
 
             @Override
             public @NotNull CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_WOLF_HURT, .7f);
+                return CreateSound.sound(Sound.ENTITY_MAGMA_CUBE_HURT, .5f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(Sound.ENTITY_WOLF_DEATH, .7f);
+                return CreateSound.sound(Sound.ENTITY_SLIME_DEATH, .6f);
             }
         });
 
@@ -156,7 +158,7 @@ public class SpettleGoal extends CruxMobModeledGoal implements Listener {
                     super.onTick();
                     int time = getPlayingAnimationTimeTicks(getAnimationID());
                     if(time >= 20){
-                        BoundingBox box = mob.getBoundingBox().expand(3, 2, 3);
+                        BoundingBox box = mob.getBoundingBox().expand(2, 2, 2);
                         mob.getWorld().getNearbyEntities(box, e -> e instanceof LivingEntity l && isValidNaturalTarget(l)).forEach(hit ->{
                             if(attackHandler.wasHitWithin(hit, 8)) return;
                             attackHandler.hit(hit);
@@ -241,7 +243,65 @@ public class SpettleGoal extends CruxMobModeledGoal implements Listener {
                     return 0;
                 }
             }
-        ), List.of());
+        ), List.of(
+            new MobAttack() {
+                @Override
+                public String getAnimationID() {
+                    return "attack_throw_1";
+                }
+
+                @Override
+                public int getHitTime() {
+                    return 0;
+                }
+
+                @Override
+                public int getCooldown() {
+                    return CruxMath.random(50, 90);
+                }
+
+                boolean shot = false;
+                @Override
+                public void onUse() {
+                    MobAttack.super.onUse();
+                    CreateSound.sound(Sound.ENTITY_SLIME_SQUISH, 1.5f).playAt(mob);
+                }
+
+                @Override
+                public void onFinish() {
+                    MobAttack.super.onFinish();
+                    shot = false;
+                }
+
+                @Override
+                public void onTick() {
+                    MobAttack.super.onTick();
+
+                    int time = getPlayingAnimationTimeTicks(getAnimationID());
+                    if(!shot && time >= 22 && time <= 25){
+                        shot = true;
+                        shoot();
+                    }
+                }
+
+                public void shoot(){
+                    Location spawn = mob.getEyeLocation();
+                    if(target != null){
+                        spawn = CruxLoc.lookAt(spawn, target.getLocation().add(0, target.getHeight()/2, 0));
+                    }
+                    Vector dir = spawn.getDirection();
+
+                    spawn.getWorld().spawn(spawn, Snowball.class, e ->{
+                        e.setItem(new ItemStack(Material.SLIME_BALL));
+                        CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(7D));
+                        CruxAttribute.addModifier(e, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(7D));
+                        e.setVelocity(dir);
+
+                        EntityMemory.getOrCreateDataHolder(e, SpettleProjectileHolder.class, SpettleProjectileHolder::new);
+                    });
+                }
+            }
+        ));
     }
 
     public Location getLeftHandPos(){

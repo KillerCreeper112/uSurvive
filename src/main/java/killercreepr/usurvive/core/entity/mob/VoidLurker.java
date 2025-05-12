@@ -38,7 +38,7 @@ public class VoidLurker extends SimpleCruxMob {
             );
 
             e.getAttribute(Attribute.MAX_HEALTH).setBaseValue(
-                60D
+                40D
             );
             e.setHealth(e.getAttribute(Attribute.MAX_HEALTH).getBaseValue());
 
