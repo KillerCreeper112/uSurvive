@@ -284,6 +284,20 @@ public class SpettleGoal extends CruxMobModeledGoal implements Listener {
                     }
                 }
 
+                @Override
+                public boolean canUseAttack() {
+                    if(target == null) return false;
+                    if(target.getWorld().equals(mob.getWorld())) return false;
+                    double distance = getSquaredDistanceFromTarget();
+                    double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE);
+
+                    double check = range * 2.5D;
+                    if(distance > (check*check)){
+                        return true;
+                    }
+                    return false;
+                }
+
                 public void shoot(){
                     Location spawn = mob.getEyeLocation();
                     if(target != null){
