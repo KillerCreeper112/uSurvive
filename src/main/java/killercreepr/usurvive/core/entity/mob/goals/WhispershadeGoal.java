@@ -42,7 +42,7 @@ public class WhispershadeGoal extends CruxMobModeledGoal implements Listener {
         });
     }
 
-    public boolean isMutualEyeContact(LivingEntity player, LivingEntity mob, double maxAngle) {
+    public boolean isMutualEyeContact(LivingEntity player, LivingEntity mob, double maxAngle, double mobMaxAngle) {
         if (!player.getWorld().equals(mob.getWorld())) return false;
         if (!player.hasLineOfSight(mob)) return false;
 
@@ -61,7 +61,7 @@ public class WhispershadeGoal extends CruxMobModeledGoal implements Listener {
         boolean playerLookingAtMob = playerLook.angle(toMob) < maxAngle;
 
         // Mob must be looking nearly directly at the player
-        boolean mobFacingPlayer = mobLook.angle(toPlayer) < maxAngle;
+        boolean mobFacingPlayer = mobLook.angle(toPlayer) < mobMaxAngle;
 
         return playerLookingAtMob && mobFacingPlayer;
     }
@@ -125,7 +125,7 @@ public class WhispershadeGoal extends CruxMobModeledGoal implements Listener {
         super.checkTargetLogic();
         if(target==null) return;
 
-        if(!isMutualEyeContact(target, mob, 0.1D)){
+        if(!isMutualEyeContact(target, mob, 0.2D, 0.4D)){
             setTarget(null);
             return;
         }
