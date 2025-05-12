@@ -139,7 +139,7 @@ public class MobAttackHandler {
     public boolean preAttemptAttack() {
         if(canUseStrongAttack()){
             currentAttack = useStrongAttack(attacks);
-            return false;
+            if(currentAttack != null) return false;
         }
         if(isUsingStrongAttack() && hitAt != attackTime) return false;
         return true;

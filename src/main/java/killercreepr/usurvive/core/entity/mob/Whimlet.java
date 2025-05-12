@@ -64,7 +64,7 @@ public class Whimlet extends SimpleCruxMob {
     @Override
     public MobCategory[] getCategories() {
         return new MobCategory[]{
-            MobCategory.NEUTRAL
+            MobCategory.NEUTRAL, USurviveMobCategory.ELDRITCH
         };
     }
 }

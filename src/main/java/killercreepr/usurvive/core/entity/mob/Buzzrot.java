@@ -33,20 +33,20 @@ public class Buzzrot extends SimpleCruxMob {
             e.setCustomNameVisible(false);
             e.setSilent(true);
             load(e);
-            e.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(
+            /*e.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(
                 e.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * .7
-            );
+            );*/
 
             e.getAttribute(Attribute.MAX_HEALTH).setBaseValue(
-                e.getAttribute(Attribute.MAX_HEALTH).getBaseValue() * 1.5D
+                80D
             );
             e.setHealth(e.getAttribute(Attribute.MAX_HEALTH).getBaseValue());
 
             double width = e.getWidth();
-            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(width + 1.2D));
-            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(5D));
+            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(width + 1.7D));
+            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(10D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(11D));
-            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-10));
+            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-16));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(0.15));
             CruxAttribute.addModifier(e, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.baseModifier(e.getAttribute(Attribute.MOVEMENT_SPEED).getValue()));
             if(consumer != null) consumer.accept(e);
@@ -64,7 +64,7 @@ public class Buzzrot extends SimpleCruxMob {
     @Override
     public MobCategory[] getCategories() {
         return new MobCategory[]{
-            MobCategory.ENEMY, MobCategory.MONSTER
+            MobCategory.ENEMY, MobCategory.MONSTER, USurviveMobCategory.ELDRITCH
         };
     }
 }

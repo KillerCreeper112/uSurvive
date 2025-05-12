@@ -1,12 +1,12 @@
 package killercreepr.usurvive.core.entity.mob.goals;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import com.ticxo.modelengine.api.animation.ModelState;
 import com.ticxo.modelengine.api.animation.handler.AnimationHandler;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.core.util.CruxMath;
-import killercreepr.crux.core.util.CruxedBoundingBox;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.CruxMob;
@@ -16,16 +16,18 @@ import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import killercreepr.usurvive.core.entity.mob.goals.data.MobAttackHandler;
 import killercreepr.usurvive.core.entity.mob.goals.data.StrongMobAttack;
 import killercreepr.usurvive.core.util.UKey;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -104,17 +106,133 @@ public class SpettleGoal extends CruxMobModeledGoal implements Listener {
                         CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, 12D, CruxAttribute.Operation.ADD));
                 }
 
+                long lastSound;
+                @Override
+                public void onFinish() {
+                    super.onFinish();
+                }
+
                 @Override
                 public void onTick() {
                     super.onTick();
                     int time = getPlayingAnimationTimeTicks(getAnimationID());
                     if(time >= 5 && time <= 20){
-                        BoundingBox box = mob.getBoundingBox().expand(18, 2, 18);
+                        BoundingBox box = mob.getBoundingBox().expand(2.5, 1, 2.5);
                         mob.getWorld().getNearbyEntities(box, e -> e instanceof LivingEntity l && isValidNaturalTarget(l)).forEach(hit ->{
                             if(attackHandler.wasHitWithin(hit, 8)) return;
                             attackHandler.hit(hit);
                             attack(hit);
                         });
+                        if(!CruxMath.hasOccurredWithin(lastSound, 5)){
+                            CreateSound.sound(Sound.ENTITY_SLIME_SQUISH, .5f).playAt(mob);
+                            lastSound = System.currentTimeMillis();
+                        }
+                    }
+                }
+
+                @Override
+                public int getHitTime() {
+                    return 0;
+                }
+            },
+            new StrongMobAttack(3) {
+                @Override
+                public void onUse() {
+                    CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -0.1D, CruxAttribute.Operation.MULTIPLY));
+
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, 1D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .4D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .3D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, 3D, CruxAttribute.Operation.MULTIPLY));
+                }
+
+                @Override
+                public void onTick() {
+                    super.onTick();
+                    int time = getPlayingAnimationTimeTicks(getAnimationID());
+                    if(time >= 20){
+                        BoundingBox box = mob.getBoundingBox().expand(3, 2, 3);
+                        mob.getWorld().getNearbyEntities(box, e -> e instanceof LivingEntity l && isValidNaturalTarget(l)).forEach(hit ->{
+                            if(attackHandler.wasHitWithin(hit, 8)) return;
+                            attackHandler.hit(hit);
+                            attack(hit);
+                        });
+                        new ParticleBuilder(Particle.SNEEZE)
+                            .location(getLeftHandPos())
+                            .spawn()
+                            .location(getRightHandPos())
+                            .spawn()
+                        ;
+                    }
+                }
+
+                @Override
+                public int getHitTime() {
+                    return 0;
+                }
+            },
+            new StrongMobAttack(4) {
+                @Override
+                public void onUse() {
+                    CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -5D, CruxAttribute.Operation.MULTIPLY));
+
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, 1D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .4D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .3D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, 3D, CruxAttribute.Operation.MULTIPLY));
+                }
+
+                @Override
+                public void onFinish() {
+                    super.onFinish();
+
+                    Location loc = mob.getLocation().add(0, mob.getHeight()/2, 0);
+                    new ParticleBuilder(Particle.EXPLOSION)
+                        .location(loc)
+                        .offset(.5, .5, .5)
+                        .spawn()
+
+                        .particle(Particle.FLASH)
+                        .spawn()
+                    ;
+                    CreateSound.sound(Sound.ENTITY_GENERIC_EXPLODE, 1.5f).playAt(mob);
+                    CreateSound.sound(Sound.ENTITY_SLIME_SQUISH, 1.5f).playAt(mob);
+                    mob.getWorld().spawn(mob.getLocation(), AreaEffectCloud.class, e ->{
+                        e.addCustomEffect(new PotionEffect(PotionEffectType.NAUSEA, 100, 0), true);
+                        e.addCustomEffect(new PotionEffect(PotionEffectType.SLOWNESS, 100, 0), true);
+                        e.addCustomEffect(new PotionEffect(PotionEffectType.HUNGER, 100, 0), true);
+                        e.setColor(Color.PURPLE);
+                        e.setRadius(4f);
+                        e.setDuration(200);
+                    });
+                }
+
+                @Override
+                public void onTick() {
+                    super.onTick();
+                    int time = getPlayingAnimationTimeTicks(getAnimationID());
+                    if(time >= 13 && time < 50){
+                        BoundingBox box = mob.getBoundingBox().expand(4, 1, 4);
+                        mob.getWorld().getNearbyEntities(box, e -> e instanceof LivingEntity l && isValidNaturalTarget(l)).forEach(hit ->{
+                            if(attackHandler.wasHitWithin(hit, 8)) return;
+                            attackHandler.hit(hit);
+                            attack(hit);
+                        });
+                        new ParticleBuilder(Particle.SNEEZE)
+                            .extra(.05)
+                            .location(getMouthPos())
+                            .spawn()
+                        ;
                     }
                 }
 
@@ -124,6 +242,18 @@ public class SpettleGoal extends CruxMobModeledGoal implements Listener {
                 }
             }
         ), List.of());
+    }
+
+    public Location getLeftHandPos(){
+        return getModel().getBone("left_hand_pos").get().getLocation();
+    }
+
+    public Location getRightHandPos(){
+        return getModel().getBone("right_hand_pos").get().getLocation();
+    }
+
+    public Location getMouthPos(){
+        return getModel().getBone("mouth_pos").get().getLocation();
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

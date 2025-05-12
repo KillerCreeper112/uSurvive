@@ -92,6 +92,7 @@ import killercreepr.usurvive.core.death.SimpleDeathManager;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.memory.EntityInfusedPotionsHolder;
 import killercreepr.usurvive.core.entity.memory.SleeperHolder;
+import killercreepr.usurvive.core.entity.mob.USurviveMobCategory;
 import killercreepr.usurvive.core.entity.player.SimpleUPlayerManager;
 import killercreepr.usurvive.core.entity.player.settings.SimplePlayerSettingsManager;
 import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettings;
@@ -200,6 +201,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         instance = this;
         super.onLoad();
         deathManager = new SimpleDeathManager(this, CruxCore.core().worldManager());
+        USurviveMobCategory.register();
         USurviveComponents.register();
         StandardPlayerSettings.register();
         USurviveStats.register();

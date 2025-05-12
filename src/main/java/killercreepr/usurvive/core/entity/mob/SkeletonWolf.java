@@ -68,7 +68,7 @@ public class SkeletonWolf extends SimpleCruxMob {
     @Override
     public MobCategory[] getCategories() {
         return new MobCategory[]{
-            MobCategory.MONSTER, MobCategory.ENEMY
+            MobCategory.MONSTER, MobCategory.ENEMY, USurviveMobCategory.ELDRITCH
         };
     }
 }

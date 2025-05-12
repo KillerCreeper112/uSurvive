@@ -31,4 +31,5 @@ public class USurviveMobs {
     public static final CruxMob SHADE_STAG = CruxEntityRegistries.ENTITIES.register(new ShadeStag(Crux.key("shade_stag")));
     public static final CruxMob LURKSCALE = CruxEntityRegistries.ENTITIES.register(new Lurkscale(Crux.key("lurkscale")));
     public static final CruxMob BUZZROT = CruxEntityRegistries.ENTITIES.register(new Buzzrot(Crux.key("buzzrot")));
+    public static final CruxMob BUZZROT_BEE = CruxEntityRegistries.ENTITIES.register(new BuzzrotBee(Crux.key("buzzrot_bee")));
 }
