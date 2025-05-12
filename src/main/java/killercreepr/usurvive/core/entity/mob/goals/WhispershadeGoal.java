@@ -99,6 +99,7 @@ public class WhispershadeGoal extends CruxMobModeledGoal implements Listener {
                     .extra(.3)
                     .offset(.4, .4, .4)
                     .count(CruxMath.random(9, 13))
+                    .location(mob.getLocation().add(0, mob.getHeight()/2, 0))
                     .spawn();
             }
             return;
@@ -135,6 +136,7 @@ public class WhispershadeGoal extends CruxMobModeledGoal implements Listener {
             .extra(.3)
             .offset(.6, .6, .6)
             .count(CruxMath.random(9, 13))
+            .location(mob.getLocation().add(0, mob.getHeight()/2, 0))
             .spawn();
     }
 

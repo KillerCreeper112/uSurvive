@@ -16,7 +16,6 @@ import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import killercreepr.usurvive.core.entity.memory.SpettleProjectileHolder;
-import killercreepr.usurvive.core.entity.memory.WaterProjectileHolder;
 import killercreepr.usurvive.core.entity.mob.goals.data.MobAttack;
 import killercreepr.usurvive.core.entity.mob.goals.data.MobAttackHandler;
 import killercreepr.usurvive.core.entity.mob.goals.data.StrongMobAttack;
@@ -38,9 +37,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Random;
 
 public class SpettleGoal extends CruxMobModeledGoal implements Listener {
     protected final MobAttackHandler attackHandler;
@@ -224,12 +223,20 @@ public class SpettleGoal extends CruxMobModeledGoal implements Listener {
                     super.onTick();
                     int time = getPlayingAnimationTimeTicks(getAnimationID());
                     if(time >= 13 && time < 50){
-                        BoundingBox box = mob.getBoundingBox().expand(4, 1, 4);
+                        BoundingBox box = mob.getBoundingBox().expand(2.5, 1, 2.5);
                         mob.getWorld().getNearbyEntities(box, e -> e instanceof LivingEntity l && isValidNaturalTarget(l)).forEach(hit ->{
                             if(attackHandler.wasHitWithin(hit, 8)) return;
                             attackHandler.hit(hit);
                             attack(hit);
                         });
+                        new ParticleBuilder(Particle.ENTITY_EFFECT)
+                            .extra(.05)
+                            .offset(box.getWidthX()/2, box.getHeight()/2,box.getWidthZ()/2)
+                            .count(CruxMath.random(3, 5))
+                            .color(Color.fromRGB(0x70818A))
+                            .location(getMouthPos())
+                            .spawn()
+                        ;
                         new ParticleBuilder(Particle.SNEEZE)
                             .extra(.05)
                             .location(getMouthPos())
@@ -281,13 +288,14 @@ public class SpettleGoal extends CruxMobModeledGoal implements Listener {
                     if(!shot && time >= 22 && time <= 25){
                         shot = true;
                         shoot();
+                        CreateSound.sound(Sound.ENTITY_LLAMA_SPIT, 1.8f).playAt(mob);
                     }
                 }
 
                 @Override
                 public boolean canUseAttack() {
                     if(target == null) return false;
-                    if(target.getWorld().equals(mob.getWorld())) return false;
+                    if(!target.getWorld().equals(mob.getWorld())) return false;
                     double distance = getSquaredDistanceFromTarget();
                     double range = CruxAttribute.get(mob, CruxAttribute.ATTACK_RANGE);
 
@@ -304,18 +312,49 @@ public class SpettleGoal extends CruxMobModeledGoal implements Listener {
                         spawn = CruxLoc.lookAt(spawn, target.getLocation().add(0, target.getHeight()/2, 0));
                     }
                     Vector dir = spawn.getDirection();
+                    dir.multiply(CruxMath.random(1.5f, 2f));
 
                     spawn.getWorld().spawn(spawn, Snowball.class, e ->{
-                        e.setItem(new ItemStack(Material.SLIME_BALL));
+                        e.setItem(new ItemStack(Material.PHANTOM_MEMBRANE));
                         CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(7D));
                         CruxAttribute.addModifier(e, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(7D));
                         e.setVelocity(dir);
 
                         EntityMemory.getOrCreateDataHolder(e, SpettleProjectileHolder.class, SpettleProjectileHolder::new);
                     });
+
+                    int amount = CruxMath.random(1, 3);
+                    while(amount > 0){
+                        amount--;
+                        Vector v = dir.clone();
+                        v.multiply(CruxMath.random(1.5f, 2f));
+                        applyInaccuracy(v, 5D, 3D);
+
+                        spawn.getWorld().spawn(spawn, Snowball.class, e ->{
+                            e.setItem(new ItemStack(Material.PHANTOM_MEMBRANE));
+                            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(7D));
+                            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(7D));
+                            e.setVelocity(v);
+
+                            EntityMemory.getOrCreateDataHolder(e, SpettleProjectileHolder.class, SpettleProjectileHolder::new);
+                        });
+                    }
                 }
             }
         ));
+    }
+
+    public Vector applyInaccuracy(Vector direction, double maxYawDegrees, double maxPitchDegrees) {
+        Random random = new Random();
+
+        // Convert degrees to radians
+        double yawRadians = Math.toRadians((random.nextDouble() - 0.5) * 2 * maxYawDegrees);
+        double pitchRadians = Math.toRadians((random.nextDouble() - 0.5) * 2 * maxPitchDegrees);
+
+        // Apply pitch (around X-axis)
+        direction.rotateAroundX(pitchRadians).rotateAroundY(yawRadians);
+
+        return direction.normalize();
     }
 
     public Location getLeftHandPos(){

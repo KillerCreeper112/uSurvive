@@ -13,7 +13,6 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Husk;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Pig;
 import org.jetbrains.annotations.NotNull;
