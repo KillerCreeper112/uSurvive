@@ -23,6 +23,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -83,6 +85,9 @@ public class VoidLurkerGoal extends CruxMobModeledGoal implements Listener {
                                 if(attackHandler.wasHitWithin(hit, 5)) return;
                                 attackHandler.hit(hit);
                                 attack(hit);
+                                if(hit instanceof LivingEntity lv){
+                                    lv.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 0));
+                                }
                             });
                         }
                     }

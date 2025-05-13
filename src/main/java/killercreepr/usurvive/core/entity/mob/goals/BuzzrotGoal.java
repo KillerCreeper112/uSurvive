@@ -1,18 +1,28 @@
 package killercreepr.usurvive.core.entity.mob.goals;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import com.ticxo.modelengine.api.animation.ModelState;
 import com.ticxo.modelengine.api.animation.handler.AnimationHandler;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.entity.CruxEntity;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
+import killercreepr.crux.core.component.CruxComponents;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.CruxedBoundingBox;
+import killercreepr.cruxattributes.api.attribute.CruxAttribute;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.mob.goals.data.MobAttackHandler;
+import killercreepr.usurvive.core.entity.mob.goals.data.StrongMobAttack;
 import killercreepr.usurvive.core.util.UKey;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -22,6 +32,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -52,11 +63,55 @@ public class BuzzrotGoal extends CruxMobModeledGoal implements Listener {
         });
 
         attackHandler = new MobAttackHandler(mob, this, List.of(
-            /*new StrongMobAttack(1) {
+            new StrongMobAttack(1) {
                 @Override
                 public void onUse() {
                     CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
                         CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -0.6D, CruxAttribute.Operation.MULTIPLY));
+
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, 1D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .2D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .2D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .1D, CruxAttribute.Operation.MULTIPLY));
+                }
+
+                public void atck(BoundingBox box){
+                    mob.getWorld().getNearbyEntities(box).forEach(hit ->{
+                        if(attackHandler.wasHitWithin(hit, 6)) return;
+                        attackHandler.hit(hit);
+                        attack(hit);
+                    });
+                }
+
+                @Override
+                public void onTick() {
+                    super.onTick();
+
+                    int time = getPlayingAnimationTimeTicks(getAnimationID());
+                    if(time >= 9 && time <= 14){
+                        atck(
+                            CruxedBoundingBox.boundingBox(getLeftHandPos(), 1.5)
+                        );
+                        atck(
+                            CruxedBoundingBox.boundingBox(getRightHandPos(), 1.5)
+                        );
+                    }
+                }
+
+                @Override
+                public int getHitTime() {
+                    return 0;
+                }
+            },
+            new StrongMobAttack(2) {
+                @Override
+                public void onUse() {
+                    CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -0.8D, CruxAttribute.Operation.MULTIPLY));
 
                     CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
                         CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .4D, CruxAttribute.Operation.MULTIPLY));
@@ -65,14 +120,88 @@ public class BuzzrotGoal extends CruxMobModeledGoal implements Listener {
                     CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
                         CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .2D, CruxAttribute.Operation.MULTIPLY));
                     CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
-                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .4D, CruxAttribute.Operation.MULTIPLY));
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, 1.5D, CruxAttribute.Operation.MULTIPLY));
+                }
+
+                public void atck(BoundingBox box){
+                    mob.getWorld().getNearbyEntities(box).forEach(hit ->{
+                        if(attackHandler.wasHitWithin(hit, 6)) return;
+                        attackHandler.hit(hit);
+                        attack(hit);
+                    });
+                }
+
+                @Override
+                public void onTick() {
+                    super.onTick();
+
+                    int time = getPlayingAnimationTimeTicks(getAnimationID());
+                    if(time >= 11 && time <= 18){
+                        atck(
+                            CruxedBoundingBox.boundingBox(getLeftHandPos(), 1.5)
+                        );
+                        atck(
+                            CruxedBoundingBox.boundingBox(getRightHandPos(), 1.5)
+                        );
+                    }
                 }
 
                 @Override
                 public int getHitTime() {
-                    return 10;
+                    return 0;
                 }
-            }*/
+            },
+            new StrongMobAttack(3) {
+                @Override
+                public void onUse() {
+                    CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -5D, CruxAttribute.Operation.MULTIPLY));
+                }
+
+                @Override
+                public boolean canUseAttack() {
+                    if(CruxMath.hasOccurredWithin(lastUsed, 2400)){
+                       return false;
+                    }
+                    double percent = mob.getHealth() / mob.getAttribute(Attribute.MAX_HEALTH).getValue();
+                    if(percent > 0.6f) return false;
+                    return super.canUseAttack();
+                }
+
+                long lastUsed;
+                @Override
+                public void onTick() {
+                    super.onTick();
+
+                    int time = getPlayingAnimationTimeTicks(getAnimationID());
+                    if(time >= 21 && !CruxMath.hasOccurredWithin(lastUsed, 60)){
+                        lastUsed = System.currentTimeMillis();
+                        spawnBees();
+                    }
+                }
+
+                public void spawnBees(){
+                    new ParticleBuilder(Particle.ELECTRIC_SPARK)
+                        .location(mob.getEyeLocation())
+                        .offset(.5, .5, .5)
+                        .count(CruxMath.random(8, 12))
+                        .spawn()
+                    ;
+                    int amount = CruxMath.random(4, 7);
+                    while(amount > 0){
+                        amount--;
+                        USurviveMobs.BUZZROT_BEE.spawn(mob.getEyeLocation(), e ->{
+                            CruxEntity.entity(e).set(CruxComponents.OWNER, mob.getUniqueId());
+                        });
+                    }
+                    CreateSound.sound(Sound.ENTITY_EVOKER_CAST_SPELL, 2f).playAt(mob);
+                }
+
+                @Override
+                public int getHitTime() {
+                    return 0;
+                }
+            }
         ), List.of());
     }
 
@@ -80,6 +209,14 @@ public class BuzzrotGoal extends CruxMobModeledGoal implements Listener {
     public void onEntityDamage(EntityDamageEvent event) {
         if(!event.getEntity().equals(mob)) return;
         playAnimation("hurt", false);
+    }
+
+    public Location getLeftHandPos(){
+        return getModel().getBone("left_hand_pos").get().getLocation();
+    }
+
+    public Location getRightHandPos(){
+        return getModel().getBone("right_hand_pos").get().getLocation();
     }
 
 
