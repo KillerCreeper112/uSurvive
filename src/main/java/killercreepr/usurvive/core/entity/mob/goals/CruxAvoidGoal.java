@@ -38,6 +38,7 @@ public class CruxAvoidGoal extends AnimalEnhancedPanicGoal {
 
     @Override
     public void tick() {
+        super.tick();
     }
 
     @Override
@@ -46,7 +47,7 @@ public class CruxAvoidGoal extends AnimalEnhancedPanicGoal {
         Entity nearby = checkNearby();
         if(nearby==null) return false;
         panic(new EntityLocation(nearby), CruxMath.random(50, 160));
-        CreateSound.sound(Sound.ENTITY_FOX_SCREECH, 1.5f).playAt(mob);
+        //CreateSound.sound(Sound.ENTITY_FOX_SCREECH, 1.5f).playAt(mob);
         return true;
     }
 

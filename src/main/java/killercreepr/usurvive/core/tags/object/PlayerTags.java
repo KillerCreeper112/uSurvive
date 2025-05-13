@@ -19,6 +19,7 @@ import killercreepr.usurvive.core.entity.memory.SleeperHolder;
 import killercreepr.usurvive.core.statistic.USurviveStatistics;
 import killercreepr.usurvive.core.vanish.VanishHandler;
 import net.kyori.adventure.key.Key;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -26,11 +27,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 
-public class PlayerTags implements ObjectTag<Player> {
+public class PlayerTags implements ObjectTag<OfflinePlayer> {
     @NotNull
     @Override
-    public Class<Player> getObjectType() {
-        return Player.class;
+    public Class<OfflinePlayer> getObjectType() {
+        return OfflinePlayer.class;
     }
 
     @Override
@@ -39,15 +40,20 @@ public class PlayerTags implements ObjectTag<Player> {
     }
 
     @Override
-    public @Nullable TagContainer<StringResolver> requestStrings(@NotNull Player object, @NotNull TagParser tags) {
+    public @Nullable TagContainer<StringResolver> requestStrings(@NotNull OfflinePlayer offline, @NotNull TagParser tags) {
         return TagContainer.string(tags)
-            .add(Tag.string("is_vanished",(args, ctx) -> VanishHandler.isVanished(object) + ""))
+            .add(Tag.string("is_vanished",(args, ctx) ->{
+                if(!offline.isOnline()) return "false";
+                return VanishHandler.isVanished(offline.getPlayer()) + "";
+            }))
             .add(Tag.string("is_afk",(args, ctx) ->{
+                if(!offline.isOnline()) return "false";
+                Player object = offline.getPlayer();
                 return (object.getIdleDuration().compareTo(Duration.ofMinutes(3)) >= 0) + "";
             }))
             .add(Tag.string("utotal_play_time", (args, ctx) ->{
-                long playTime = object.getStatistic(Statistic.PLAY_ONE_MINUTE);
-                var holder = BukkitStatisticHolder.statisticHolder(object);
+                long playTime = offline.getStatistic(Statistic.PLAY_ONE_MINUTE);
+                var holder = BukkitStatisticHolder.statisticHolder(offline.getUniqueId());
                 if(holder != null){
                     long timeSeconds = holder.getStatistic(USurviveStatistics.IDLE_TIME);
                     playTime -= (timeSeconds * 20L);
@@ -55,19 +61,19 @@ public class PlayerTags implements ObjectTag<Player> {
                 return Math.max(playTime, 0) + "";
             }))
             .add(Tag.string("urecent_deaths", (args, ctx) ->{
-                UPlayer u = UPlayer.getPlayer(object);
+                UPlayer u = UPlayer.getPlayer(offline.getUniqueId());
                 if(u == null) return "0";
                 return u.updateAndGetRecentDeaths() + "";
             }))
             .add(Tag.string("uhas_set_rtp", (args, ctx) ->{
-                var u = UPlayer.getPlayer(object);
+                var u = UPlayer.getPlayer(offline.getUniqueId());
                 if(u == null) return "false";
                 if(u.getRandomTPData() == null) return "false";
                 Key world = Crux.key(ctx.deserializeString(args.get(0)));
                 return u.getRandomTPData().hasLastTeleported(world) + "";
             }))
             .add(Tag.string("u_last_rtp_x", (args, ctx) ->{
-                var u = UPlayer.getPlayer(object);
+                var u = UPlayer.getPlayer(offline.getUniqueId());
                 if(u == null) return "0";
                 if(u.getRandomTPData() == null) return "0";
                 Key world = Crux.key(ctx.deserializeString(args.get(0)));
@@ -76,7 +82,7 @@ public class PlayerTags implements ObjectTag<Player> {
                 return pos.getLocation().x() + "";
             }))
             .add(Tag.string("u_last_rtp_y", (args, ctx) ->{
-                var u = UPlayer.getPlayer(object);
+                var u = UPlayer.getPlayer(offline.getUniqueId());
                 if(u == null) return "0";
                 if(u.getRandomTPData() == null) return "0";
                 Key world = Crux.key(ctx.deserializeString(args.get(0)));
@@ -85,7 +91,7 @@ public class PlayerTags implements ObjectTag<Player> {
                 return pos.getLocation().y() + "";
             }))
             .add(Tag.string("u_last_rtp_z", (args, ctx) ->{
-                var u = UPlayer.getPlayer(object);
+                var u = UPlayer.getPlayer(offline.getUniqueId());
                 if(u == null) return "0";
                 if(u.getRandomTPData() == null) return "0";
                 Key world = Crux.key(ctx.deserializeString(args.get(0)));
@@ -94,7 +100,7 @@ public class PlayerTags implements ObjectTag<Player> {
                 return pos.getLocation().z() + "";
             }))
             .add(Tag.string("u_last_rtp_time", (args, ctx) ->{
-                var u = UPlayer.getPlayer(object);
+                var u = UPlayer.getPlayer(offline.getUniqueId());
                 if(u == null) return "0";
                 if(u.getRandomTPData() == null) return "0";
                 Key world = Crux.key(ctx.deserializeString(args.get(0)));
@@ -107,8 +113,10 @@ public class PlayerTags implements ObjectTag<Player> {
 
     @Nullable
     @Override
-    public HookedObjectContainer<StringHookedObjectTag<?>> hookStrings(@NotNull Player object, Object base, Object parent, @NotNull TagParser tags) {
+    public HookedObjectContainer<StringHookedObjectTag<?>> hookStrings(@NotNull OfflinePlayer offline, Object base, Object parent, @NotNull TagParser tags) {
         var c = HookedObjectContainer.string();
+        if(!offline.isOnline()) return null;
+        Player object = offline.getPlayer();
         PlayerSettingsHolder holder = EntityMemory.getOrCreateDataHolder(object, MemoryPlayerSettingsHolder.class);
         if(holder != null){
             c.addAll(tags.hookStrings(holder, base, object, FormatPrefix.simple("settings/")));
@@ -122,8 +130,10 @@ public class PlayerTags implements ObjectTag<Player> {
 
     @Nullable
     @Override
-    public HookedObjectContainer<StringListHookedObjectTag<?>> hookStringLists(@NotNull Player object, Object base, Object parent, @NotNull TagParser tags) {
+    public HookedObjectContainer<StringListHookedObjectTag<?>> hookStringLists(@NotNull OfflinePlayer offline, Object base, Object parent, @NotNull TagParser tags) {
         var c = HookedObjectContainer.stringList();
+        if(!offline.isOnline()) return null;
+        Player object = offline.getPlayer();
         PlayerSettingsHolder holder = EntityMemory.getOrCreateDataHolder(object, MemoryPlayerSettingsHolder.class);
         if(holder != null){
             c.addAll(tags.hookStringLists(holder, base, object, FormatPrefix.simple("settings/")));

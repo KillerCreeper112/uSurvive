@@ -148,44 +148,7 @@ public class USurviveEntitySpawns {
                 }
             }
             if(!solid) return false;
-            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 2;
-        }
-
-        @Override
-        public int getGroupSize(@NotNull SpawnContext ctx) {
-            return 1;
-        }
-    };
-    public static final NaturalEntitySpawn WHISPERSHADE = new NaturalCruxMobSpawn(4, 0, USurviveMobs.WHISPERSHADE) {
-        @NotNull
-        @Override
-        public Entity spawn(@NotNull SpawnContext ctx, @Nullable Consumer<Entity> consumer) {
-            return mob.spawn(ctx.getBlock().getLocation().toCenterLocation(), consumer);
-        }
-
-        @Override
-        public boolean canSpawn(@NotNull SpawnContext ctx) {
-            if(CruxMath.random(1, 100) <= 4) return false;
-            Block b = ctx.getBlock();
-            if(!b.isEmpty()) return false;
-            for(int x = 0; x < 4; x++){
-                for(int z = 0;z < 4; z++){
-                    for(int y = 0;y < 4; y++){
-                        Block check = b.getRelative(x, y, z);
-                        if(!check.isEmpty()) return false;
-                    }
-                }
-            }
-            boolean solid = false;
-            for(int y = 1; y < 16; y++){
-                Block check = b.getRelative(0, -y, 0);
-                if(check.isSolid()){
-                    solid = true;
-                    break;
-                }
-            }
-            if(!solid) return false;
-            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 2;
+            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob, USurviveMobs.STARE)) < 2;
         }
 
         @Override
@@ -215,6 +178,43 @@ public class USurviveEntitySpawns {
             }
             boolean solid = false;
             for(int y = 1; y < 24; y++){
+                Block check = b.getRelative(0, -y, 0);
+                if(check.isSolid()){
+                    solid = true;
+                    break;
+                }
+            }
+            if(!solid) return false;
+            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob, USurviveMobs.VANE)) < 2;
+        }
+
+        @Override
+        public int getGroupSize(@NotNull SpawnContext ctx) {
+            return 1;
+        }
+    };
+    public static final NaturalEntitySpawn WHISPERSHADE = new NaturalCruxMobSpawn(4, 0, USurviveMobs.WHISPERSHADE) {
+        @NotNull
+        @Override
+        public Entity spawn(@NotNull SpawnContext ctx, @Nullable Consumer<Entity> consumer) {
+            return mob.spawn(ctx.getBlock().getLocation().toCenterLocation(), consumer);
+        }
+
+        @Override
+        public boolean canSpawn(@NotNull SpawnContext ctx) {
+            if(CruxMath.random(1, 100) <= 4) return false;
+            Block b = ctx.getBlock();
+            if(!b.isEmpty()) return false;
+            for(int x = 0; x < 4; x++){
+                for(int z = 0;z < 4; z++){
+                    for(int y = 0;y < 4; y++){
+                        Block check = b.getRelative(x, y, z);
+                        if(!check.isEmpty()) return false;
+                    }
+                }
+            }
+            boolean solid = false;
+            for(int y = 1; y < 16; y++){
                 Block check = b.getRelative(0, -y, 0);
                 if(check.isSolid()){
                     solid = true;
@@ -375,7 +375,7 @@ public class USurviveEntitySpawns {
             return 1;
         }
     };
-    public static final NaturalEntitySpawn WHIMLET = new NaturalCruxMobSpawn(1, 0, USurviveMobs.WHIMLET) {
+    public static final NaturalEntitySpawn WHIMLET = new NaturalCruxMobSpawn(2, 0, USurviveMobs.WHIMLET) {
         @NotNull
         @Override
         public Entity spawn(@NotNull SpawnContext ctx, @Nullable Consumer<Entity> consumer) {

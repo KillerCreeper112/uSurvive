@@ -57,7 +57,7 @@ public class AnimalEnhancedPanicGoal extends CruxMobGoal {
 
     protected LocationHolder hitFrom;
     public void panicTick(){
-        panicTicks--;
+        if(panicTicks > 0) panicTicks--;
         if(panicTicks < 1){
             return;
         }

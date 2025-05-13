@@ -5,10 +5,15 @@ import com.ticxo.modelengine.api.animation.handler.AnimationHandler;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
+import killercreepr.crux.core.location.DynamicLocation;
+import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import killercreepr.usurvive.core.entity.mob.goals.animal.AnimalEnhancedGoal;
+import killercreepr.usurvive.core.entity.mob.goals.animal.AnimalEnhancedPanicGoal;
 import killercreepr.usurvive.core.entity.mob.goals.data.MobAttackHandler;
 import killercreepr.usurvive.core.util.UKey;
 import org.bukkit.NamespacedKey;
@@ -21,6 +26,7 @@ import org.bukkit.entity.Pig;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +40,7 @@ public class WhimletGoal extends CruxMobModeledGoal implements Listener {
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound ambient() {
-                return CreateSound.sound(Sound.ENTITY_WOLF_AMBIENT, .7f);
+                return CreateSound.sound(Sound.ENTITY_FOX_AMBIENT, .2f,2f);
             }
 
            /* @Override
@@ -42,20 +48,14 @@ public class WhimletGoal extends CruxMobModeledGoal implements Listener {
                 return CreateSound.sound(Sound.ENTITY_CHICKEN_HURT, .7f);
             }*/
 
-            @Nullable
-            @Override
-            public CreateSound step() {
-                return CreateSound.sound(Sound.ENTITY_WOLF_STEP, .7f);
-            }
-
             @Override
             public @NotNull CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_WOLF_HURT, .7f);
+                return CreateSound.sound(Sound.ENTITY_FOX_HURT, 2f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(Sound.ENTITY_WOLF_DEATH, .7f);
+                return CreateSound.sound(Sound.ENTITY_FOX_DEATH, 2f);
             }
         });
 
@@ -88,6 +88,14 @@ public class WhimletGoal extends CruxMobModeledGoal implements Listener {
     public void onEntityDamage(EntityDamageEvent event) {
         if(!event.getEntity().equals(mob)) return;
         playAnimation("hurt", false);
+
+        /*if(event instanceof EntityDamageByEntityEvent ee && !ee.getDamager().equals(mob)){
+            CruxGoalUtil.addIfNotPresent(mob, AnimalEnhancedPanicGoal.class, 2, () ->{
+                var goal = new AnimalEnhancedGoal(mob);
+                goal.panic(DynamicLocation.createEntity(ee.getDamager()));
+                return goal;
+            });
+        }*/
     }
 
 
@@ -174,7 +182,7 @@ public class WhimletGoal extends CruxMobModeledGoal implements Listener {
     public void tick() {
         //animationPropertyTick();
         super.tick();
-        attackHandler.tick();
-        movementTick();
+        //attackHandler.tick();
+        //movementTick();
     }
 }

@@ -7,6 +7,7 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import org.bukkit.EntityEffect;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;

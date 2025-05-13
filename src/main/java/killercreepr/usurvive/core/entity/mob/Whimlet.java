@@ -1,18 +1,22 @@
 package killercreepr.usurvive.core.entity.mob;
 
 import com.ticxo.modelengine.api.model.ActiveModel;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
+import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
+import killercreepr.usurvive.core.entity.mob.goals.CruxAvoidGoal;
 import killercreepr.usurvive.core.entity.mob.goals.WhimletGoal;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Pig;
 import org.jetbrains.annotations.NotNull;
@@ -58,7 +62,19 @@ public class Whimlet extends SimpleCruxMob {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
         CompletableFuture<ActiveModel> model = new DesignEntity(mob).setBaseEntityVisible(false).getOrAddModelAsync(key.value());
-        CruxGoalUtil.addIfNotPresent(mob, WhimletGoal.class, 0, () -> new WhimletGoal(mob).model(model));
+        CruxGoalUtil.addIfNotPresent(mob, WhimletGoal.class, 1, () -> new WhimletGoal(mob).model(model));
+        CruxGoalUtil.addIfNotPresent(mob, CruxAvoidGoal.class, 0, () ->{
+            var goal = new CruxAvoidGoal(mob, ee -> (ee instanceof HumanEntity h && isValidHuman(h)) || CruxMob.isInCategory(ee, MobCategory.ENEMY));
+            goal.setSpeedMultiplier(NumberProvider.constant(1.3f));
+            return goal;
+        });
+    }
+
+    public boolean isValidHuman(HumanEntity e){
+        switch (e.getGameMode()){
+            case CREATIVE, SPECTATOR -> { return false; }
+        }
+        return true;
     }
 
     @Override
