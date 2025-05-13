@@ -1,6 +1,8 @@
 package killercreepr.usurvive.core.entity.mob.goals;
 
+import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
+import org.bukkit.GameMode;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
@@ -18,6 +20,6 @@ public class BuzzrotBeeGoal extends CruxMobGoal implements Listener {
 
     @Override
     public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
-        return target instanceof HumanEntity;
+        return target instanceof HumanEntity e && CruxEntityUtil.isValid(target) && e.getGameMode() != GameMode.CREATIVE && e.getGameMode() != GameMode.SPECTATOR;
     }
 }

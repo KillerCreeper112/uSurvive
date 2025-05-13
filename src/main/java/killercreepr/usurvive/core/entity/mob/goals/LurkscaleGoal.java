@@ -22,6 +22,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -111,12 +112,23 @@ public class LurkscaleGoal extends CruxMobModeledGoal implements Listener {
         return !CruxMob.isInCategory(target, MobCategory.ENEMY) && super.isValidNaturalTarget(target);
     }
 
-    protected static final NamespacedKey targetSpeed = UKey.TARGET_SPEED;
-    protected boolean hadTargetLastTick = false;
+    //protected static final NamespacedKey targetSpeed = UKey.TARGET_SPEED;
+    //protected boolean hadTargetLastTick = false;
+    protected long lastBoost;
     public void movementTick(){
         boolean hasTarget = target != null;
+        if(!hasTarget) return;
+        if(CruxMath.hasOccurredWithin(lastBoost, 45)) return;
+        lastBoost = System.currentTimeMillis();
 
-        if(target == null){
+        Vector dir = target.getLocation().add(0, target.getHeight()/2, 0)
+            .toVector().subtract(mob.getLocation().toVector())
+            .normalize();
+        dir.multiply(0.3f);
+
+        mob.setVelocity(mob.getVelocity().add(dir));
+
+        /*if(target == null){
             if(hadTargetLastTick){
                 mob.getAttribute(Attribute.WATER_MOVEMENT_EFFICIENCY).removeModifier(targetSpeed);
                 stopAnimation("target_pose");
@@ -124,15 +136,20 @@ public class LurkscaleGoal extends CruxMobModeledGoal implements Listener {
         }else{
             if(!hadTargetLastTick){
                 mob.getAttribute(Attribute.WATER_MOVEMENT_EFFICIENCY).addTransientModifier(
-                    new AttributeModifier(targetSpeed, .1, AttributeModifier.Operation.MULTIPLY_SCALAR_1)
+                    new AttributeModifier(targetSpeed, .3, AttributeModifier.Operation.ADD_NUMBER)
                 );
                 playAnimation("target_pose", true);
             }
         }
         if(hasTarget == hadTargetLastTick) return;
-        hadTargetLastTick = hasTarget;
+        hadTargetLastTick = hasTarget;*/
     }
 
+    @Override
+    public double getDefaultMoveSpeedMultiplier() {
+        if(target != null) return 3D;
+        return super.getDefaultMoveSpeedMultiplier();
+    }
 
     protected final AnimationHandler.DefaultProperty WALK_VICIOUS_RUN = new AnimationHandler.DefaultProperty(
         ModelState.WALK, "vicious_run", .2D, .2D, 1D
