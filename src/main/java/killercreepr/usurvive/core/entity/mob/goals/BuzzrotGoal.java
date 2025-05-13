@@ -80,7 +80,7 @@ public class BuzzrotGoal extends CruxMobModeledGoal implements Listener {
                 }
 
                 public void atck(BoundingBox box){
-                    mob.getWorld().getNearbyEntities(box).forEach(hit ->{
+                    mob.getWorld().getNearbyEntities(box, e -> e instanceof LivingEntity le && isValidNaturalTarget(le)).forEach(hit ->{
                         if(attackHandler.wasHitWithin(hit, 6)) return;
                         attackHandler.hit(hit);
                         attack(hit);
@@ -124,7 +124,7 @@ public class BuzzrotGoal extends CruxMobModeledGoal implements Listener {
                 }
 
                 public void atck(BoundingBox box){
-                    mob.getWorld().getNearbyEntities(box).forEach(hit ->{
+                    mob.getWorld().getNearbyEntities(box, e -> e instanceof LivingEntity le && isValidNaturalTarget(le)).forEach(hit ->{
                         if(attackHandler.wasHitWithin(hit, 6)) return;
                         attackHandler.hit(hit);
                         attack(hit);
@@ -156,6 +156,7 @@ public class BuzzrotGoal extends CruxMobModeledGoal implements Listener {
                 public void onUse() {
                     CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
                         CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -5D, CruxAttribute.Operation.MULTIPLY));
+                    CreateSound.sound(Sound.ENTITY_BEE_HURT, 2f).playAt(mob);
                 }
 
                 @Override

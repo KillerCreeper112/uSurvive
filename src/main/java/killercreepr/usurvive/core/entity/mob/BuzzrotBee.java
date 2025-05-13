@@ -28,10 +28,9 @@ public class BuzzrotBee extends SimpleCruxMob {
         return location.getWorld().spawn(location, Bee.class, e ->{
             e.customName(Component.text("Buzzrot Bee"));
             e.setCustomNameVisible(false);
-            e.setSilent(true);
             load(e);
-            e.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(
-                e.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * .7
+            e.getAttribute(Attribute.FLYING_SPEED).setBaseValue(
+                e.getAttribute(Attribute.FLYING_SPEED).getBaseValue() * 1.2
             );
 
             e.getAttribute(Attribute.MAX_HEALTH).setBaseValue(
@@ -45,7 +44,7 @@ public class BuzzrotBee extends SimpleCruxMob {
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(11D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-10));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(0.15));
-            CruxAttribute.addModifier(e, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.baseModifier(e.getAttribute(Attribute.MOVEMENT_SPEED).getValue()));
+            //CruxAttribute.addModifier(e, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.baseModifier(e.getAttribute(Attribute.MOVEMENT_SPEED).getValue()));
             if(consumer != null) consumer.accept(e);
         });
     }
