@@ -4,16 +4,18 @@ import com.destroystokyo.paper.ParticleBuilder;
 import com.destroystokyo.paper.entity.ai.GoalKey;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.entity.memory.EntityMemory;
+import killercreepr.crux.api.math.CruxLocation;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxattributes.api.attribute.CruxAttribute;
+import killercreepr.cruxentities.combat.EntityHit;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
-import killercreepr.cruxpotions.api.entity.PotionHolder;
-import killercreepr.cruxpotions.api.potion.inflictor.PotionInflictor;
+import killercreepr.cruxform.api.scheduler.ShapeScheduler;
+import killercreepr.cruxform.api.shape.CreateRay;
 import killercreepr.cruxpotions.core.entity.memory.SimplePotionHolder;
 import killercreepr.cruxpotions.core.potions.inflictor.EntityInflictor;
 import killercreepr.usurvive.core.potion.USurvivePotions;
-import org.bukkit.EntityEffect;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -77,12 +79,60 @@ public class VaneGoal extends CruxMobModeledGoal {
     public void tick() {
         super.tick();
 
+        if(wasStaringLastTick && !isStaring()){
+            stareAttack();
+            wasStaringLastTick = false;
+        }else{
+            wasStaringLastTick = isStaring();
+        }
+
         tick++;
         if(tick > nextParticles){
             tick = 0;
             nextParticles = CruxMath.random(60, 80) / 2;
             spawnParticles();
         }
+    }
+    public void stareAttack(){
+        CreateSound.sound(Sound.ENTITY_WITHER_SHOOT, 1.8f).playAt(mob);
+        new EntityHit(mob.getEyeLocation(), getFollowDistance(),
+            CruxAttribute.get(mob, CruxAttribute.ATTACK_AOE), (int) CruxAttribute.get(mob, CruxAttribute.ATTACK_PIERCE)+1)
+            .getHitEntities(e -> e instanceof LivingEntity le && isValidNaturalTarget(le)).getHit().forEach(hit ->{
+                LivingEntity target = (LivingEntity) hit;
+                target.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 400, 1));
+                target.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 400, 1));
+
+                var holder = EntityMemory.getDataHolder(target, SimplePotionHolder.class);
+                if(holder != null){
+                    holder.addPotion(
+                        USurvivePotions.DISORIENTATION.create(target, 200, 1, new EntityInflictor(mob))
+                    );
+                }
+                new ParticleBuilder(Particle.SQUID_INK)
+                    .location(hit.getLocation().add(0, hit.getHeight()/2, 0))
+                    .offset(.5, .5, .5)
+                    .count(CruxMath.random(8, 10))
+                    .spawn()
+                ;
+                CreateSound.sound(Sound.ENTITY_WITHER_BREAK_BLOCK, 2f).playAt(hit);
+            });
+
+        ShapeScheduler.builder()
+            .shape(CreateRay.builder()
+                .length(getFollowDistance())
+                .start(CruxLocation.location(mob.getEyeLocation()))
+                .spacing(0.5D)
+                .build())
+            .locationTick(ctx ->{
+                Location loc = ctx.getLocation().toLocation(mob.getWorld());
+                loc.getWorld().spawnParticle(Particle.SMOKE, loc, 0);
+            })
+            .build().scheduleAsync(0);
+    }
+
+    protected boolean wasStaringLastTick = false;
+    public boolean isStaring(){
+        return isPlayingAnimation("stare");
     }
 
     @Override
@@ -93,17 +143,18 @@ public class VaneGoal extends CruxMobModeledGoal {
         }
         if(target==null) return;
 
+        if(isStaring()) return;
         if(!isMutualEyeContact(target, mob, 0.2D, 0.3D)) return;
+        attackCooldown = CruxMath.random(15, 20);
+        playAnimation("stare", true);
 
-        target.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 400, 1));
-        target.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 400, 1));
-
-        var holder = EntityMemory.getDataHolder(target, SimplePotionHolder.class);
-        if(holder != null){
-            holder.addPotion(
-                USurvivePotions.DISORIENTATION.create(target, 200, 1, new EntityInflictor(mob))
-            );
-        }
+        new ParticleBuilder(Particle.SQUID_INK)
+            .location(mob.getLocation().add(0, mob.getHeight()/2, 0))
+            .offset(.5, .5, .5)
+            .count(CruxMath.random(9, 14))
+            .spawn()
+        ;
+        CreateSound.sound(Sound.ENTITY_ENDERMAN_SCREAM, 2f).playAt(mob);
     }
 
     public boolean isMutualEyeContact(LivingEntity player, LivingEntity mob, double maxAngle, double mobMaxAngle) {
