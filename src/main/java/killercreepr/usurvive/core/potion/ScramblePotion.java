@@ -21,7 +21,7 @@ public class ScramblePotion extends ActiveEntityPotion<LivingEntity> {
     }
     private int cachedEvery;
     private void updateCache(){
-        cachedEvery = 600 - (amplifier*60);
+        cachedEvery = Math.max(600 - (amplifier*60), 1);
     }
 
     @Override
