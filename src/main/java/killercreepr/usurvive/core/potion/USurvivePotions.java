@@ -134,7 +134,7 @@ public class USurvivePotions {
 
         @Override
         public @NotNull Color getColor() {
-            return Color.fromRGB(0x17226B);
+            return Color.fromRGB(0x7A00FF);
         }
     });
     public static final CruxPotion SCRAMBLE = register(new DescribedPotion(Crux.key("scramble"),
@@ -146,7 +146,7 @@ public class USurvivePotions {
 
         @Override
         public @NotNull Color getColor() {
-            return Color.fromRGB(0x17226B);
+            return Color.fromRGB(0xFFD700);
         }
     });
     public static final CruxPotion DEAFENED = register(new DescribedPotion(Crux.key("deafened"),
@@ -158,7 +158,7 @@ public class USurvivePotions {
 
         @Override
         public @NotNull Color getColor() {
-            return Color.fromRGB(0x17226B);
+            return Color.fromRGB(0x1F1F1F);
         }
     });
 
