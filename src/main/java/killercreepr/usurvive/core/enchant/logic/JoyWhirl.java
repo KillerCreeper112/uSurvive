@@ -63,7 +63,7 @@ public class JoyWhirl {
         }.runTaskTimer(plugin, 0L, 1L);
     }
 
-    private void setRotation(Player p, float yaw, float pitch){
+    public static void setRotation(Player p, float yaw, float pitch){
         /*Location loc = new Location(
             p.getWorld(), 0D, 0D, 0D, yaw, pitch
         );

@@ -3,11 +3,18 @@ package killercreepr.usurvive.core.entity.mob.goals;
 import com.destroystokyo.paper.ParticleBuilder;
 import com.destroystokyo.paper.entity.ai.GoalKey;
 import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import killercreepr.cruxpotions.api.entity.PotionHolder;
+import killercreepr.cruxpotions.api.potion.inflictor.PotionInflictor;
+import killercreepr.cruxpotions.core.entity.memory.SimplePotionHolder;
+import killercreepr.cruxpotions.core.potions.inflictor.EntityInflictor;
+import killercreepr.usurvive.core.potion.USurvivePotions;
 import org.bukkit.EntityEffect;
+import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
@@ -16,6 +23,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -73,6 +83,51 @@ public class VaneGoal extends CruxMobModeledGoal {
             nextParticles = CruxMath.random(60, 80) / 2;
             spawnParticles();
         }
+    }
+
+    @Override
+    protected void targetAttackLogic(double distance) {
+        if (this.attackCooldown > 0) {
+            this.attackCooldown--;
+            return;
+        }
+        if(target==null) return;
+
+        if(!isMutualEyeContact(target, mob, 0.2D, 0.3D)) return;
+
+        target.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 400, 1));
+        target.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 400, 1));
+
+        var holder = EntityMemory.getDataHolder(target, SimplePotionHolder.class);
+        if(holder != null){
+            holder.addPotion(
+                USurvivePotions.DISORIENTATION.create(target, 200, 1, new EntityInflictor(mob))
+            );
+        }
+    }
+
+    public boolean isMutualEyeContact(LivingEntity player, LivingEntity mob, double maxAngle, double mobMaxAngle) {
+        if (!player.getWorld().equals(mob.getWorld())) return false;
+        if (!player.hasLineOfSight(mob)) return false;
+
+        Location playerEyes = player.getEyeLocation();
+        Location mobEyes = mob.getEyeLocation();
+
+        Vector toMob = mobEyes.toVector().subtract(playerEyes.toVector()).normalize();
+        Vector toPlayer = playerEyes.toVector().subtract(mobEyes.toVector()).normalize();
+
+        Vector playerLook = playerEyes.getDirection().normalize();
+        Vector mobLook = mobEyes.getDirection().normalize();
+
+        //double maxAngle = 0.1; // ~5.7 degrees
+
+        // Player must be looking nearly directly at the mob's face
+        boolean playerLookingAtMob = playerLook.angle(toMob) < maxAngle;
+
+        // Mob must be looking nearly directly at the player
+        boolean mobFacingPlayer = mobLook.angle(toPlayer) < mobMaxAngle;
+
+        return playerLookingAtMob && mobFacingPlayer;
     }
 
     public void spawnParticles(){

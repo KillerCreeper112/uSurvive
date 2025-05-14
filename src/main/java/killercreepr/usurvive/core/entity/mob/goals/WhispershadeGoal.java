@@ -2,10 +2,13 @@ package killercreepr.usurvive.core.entity.mob.goals;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeInstance;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
@@ -16,6 +19,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -89,6 +93,15 @@ public class WhispershadeGoal extends CruxMobModeledGoal implements Listener {
     }
 
     protected boolean despawn = false;
+
+    public boolean isWearingHeadGear(LivingEntity e){
+        var equip = e.getEquipment();
+        if(equip == null) return false;
+        ItemStack item = equip.getHelmet();
+        if(CruxItem.isEmpty(item)) return false;
+        return item.getType() == Material.CARVED_PUMPKIN;
+    }
+
     @Override
     public void tick() {
         if(despawn){
@@ -125,7 +138,7 @@ public class WhispershadeGoal extends CruxMobModeledGoal implements Listener {
         super.checkTargetLogic();
         if(target==null) return;
 
-        if(!isMutualEyeContact(target, mob, 0.2D, 0.4D)){
+        if(!isWearingHeadGear(target) && !isMutualEyeContact(target, mob, 0.2D, 0.4D)){
             setTarget(null);
             return;
         }
