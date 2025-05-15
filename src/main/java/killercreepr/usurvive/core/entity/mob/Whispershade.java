@@ -1,6 +1,7 @@
 package killercreepr.usurvive.core.entity.mob;
 
 import com.ticxo.modelengine.api.model.ActiveModel;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
@@ -13,6 +14,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Allay;
+import org.bukkit.entity.Bee;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.jetbrains.annotations.NotNull;
@@ -28,13 +30,16 @@ public class Whispershade extends SimpleCruxMob {
 
     @Override
     protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
-        return location.getWorld().spawn(location, Allay.class, e ->{
+        return location.getWorld().spawn(location, Bee.class, e ->{
             e.customName(Component.text("Whispershade"));
             e.setCustomNameVisible(false);
             e.setSilent(true);
             load(e);
             e.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(
                 e.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * .7
+            );
+            e.getAttribute(Attribute.FLYING_SPEED).setBaseValue(
+                e.getAttribute(Attribute.FLYING_SPEED).getBaseValue() * 1.2
             );
 
             e.getAttribute(Attribute.MAX_HEALTH).setBaseValue(
@@ -57,6 +62,16 @@ public class Whispershade extends SimpleCruxMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
+        Crux.getServer().getMobGoals().getAllGoals(mob).forEach(goal ->{
+            String id = goal.getKey().getNamespacedKey().asString();
+            if(id.equalsIgnoreCase("minecraft:bee_wander")) return;
+            if(id.contains("bee_") || id.contains("hive") || id.contains("parent") || id.contains("tempt") ||
+                id.contains("breed") || id.contains("flower")){
+                Crux.getServer().getMobGoals().removeGoal(mob, goal.getKey());
+                return;
+            }
+        });
+
         CompletableFuture<ActiveModel> model = new DesignEntity(mob).setBaseEntityVisible(false).getOrAddModelAsync(key.value());
         CruxGoalUtil.addIfNotPresent(mob, WhispershadeGoal.class, 0, () -> new WhispershadeGoal(mob).model(model));
     }
