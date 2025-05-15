@@ -4,7 +4,9 @@ import killercreepr.crux.api.component.parser.InputDecodeContext;
 import killercreepr.crux.api.component.parser.hybrid.PersistParser;
 import killercreepr.crux.api.component.parser.hybrid.PersistTextParser;
 import killercreepr.crux.api.component.parser.hybrid.TextInputField;
+import killercreepr.crux.api.data.ParticleBuilderSupplier;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.component.parser.type.ComponentInputParsers;
 import killercreepr.cruxattributes.api.equipment.CruxSlot;
 import killercreepr.cruxtickables.api.entity.tickable.ActiveEntityTickable;
 import killercreepr.cruxtickables.api.entity.tickable.EntityTickable;
@@ -12,6 +14,8 @@ import killercreepr.cruxtickables.api.entity.tickable.EntityTickableModifier;
 import killercreepr.cruxtickables.core.entity.tickable.SimpleDataEntityTickable;
 import killercreepr.cruxtickables.core.registries.CruxTickableRegistries;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Color;
+import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -105,6 +109,35 @@ public class USurviveTickables {
                 entity, this, slot,
                 (float) data.getOrDefault("speed_multiplier", .1f),
                 (float) data.getOrDefault("safe_fall_distance", 2.5f)
+            );
+        }
+    });
+
+    public static final EntityTickable NO_MOVE_NO_TARGET = register(new SimpleDataEntityTickable(Crux.key("no_move_no_target")) {
+        public static final PersistParser<?> DATA_PARSER = PersistTextParser.mapBuilder(Map.class)
+            .field("dont_move_ticks", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("dont_move_ticks")))
+            .field("particle_rate", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("particle_rate")))
+            .field("active_particle", TextInputField.field(ComponentInputParsers.PARTICLE_BUILDER_SUPPLIER, e -> (ParticleBuilderSupplier) e.get("active_particle")))
+            .apply(InputDecodeContext::get)
+            .createInput(Crux.key("data"));
+
+        @Override
+        public PersistParser<?> getDataParser() {
+            return DATA_PARSER;
+        }
+
+        @Override
+        public @Nullable ActiveEntityTickable buildActive(@NotNull Entity entity, @Nullable CruxSlot slot, @NotNull EntityTickableModifier mod) {
+            Map data = (Map) mod.getData();
+
+            ParticleBuilderSupplier particleSupplier = (ParticleBuilderSupplier) data.get("active_particle");
+            int particleRate = (int) data.getOrDefault("particle_rate", 20);
+
+            return new ActiveNoMoveNoTargetTickable(
+                entity, this, slot,
+                (int) data.getOrDefault("dont_move_ticks", 60),
+                particleSupplier,
+                particleRate
             );
         }
     });
