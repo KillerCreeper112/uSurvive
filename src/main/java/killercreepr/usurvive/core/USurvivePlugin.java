@@ -72,10 +72,7 @@ import killercreepr.usurvive.core.attribute.USurviveAttribute;
 import killercreepr.usurvive.core.block.USurviveBlocks;
 import killercreepr.usurvive.core.block.component.USurviveBlockComponents;
 import killercreepr.usurvive.core.charm.CharmTypes;
-import killercreepr.usurvive.core.command.DevCommands;
-import killercreepr.usurvive.core.command.StoreCommands;
-import killercreepr.usurvive.core.command.TPACommands;
-import killercreepr.usurvive.core.command.USurviveCommands;
+import killercreepr.usurvive.core.command.*;
 import killercreepr.usurvive.core.component.USurviveComponents;
 import killercreepr.usurvive.core.config.CfgHook;
 import killercreepr.usurvive.core.config.Config;
@@ -212,6 +209,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         new StoreCommands(this).register();
         new TPACommands(this).register();
         new DevCommands(this).register();
+        new AdminCommands(this).register();
         USurvivePotions.register();
 
         CfgHook.load();
