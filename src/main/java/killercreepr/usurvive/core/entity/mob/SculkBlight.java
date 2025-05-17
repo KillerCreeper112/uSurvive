@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class SculkBlight extends SimpleCruxMob {
+public class SculkBlight extends UCruxMob {
     public SculkBlight(@NotNull Key key) {
         super(key);
     }
@@ -35,7 +35,6 @@ public class SculkBlight extends SimpleCruxMob {
             e.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(
                 e.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 1.5
             );
-            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(2.5D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(4D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(.25D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-6D));
@@ -54,10 +53,20 @@ public class SculkBlight extends SimpleCruxMob {
     }
 
     @Override
+    public void onModelApplied(Mob mob) {
+        super.onModelApplied(mob);
+        if(CruxAttribute.hasAttributeData(mob)) return;
+        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
+            mob.getWidth() + .75D
+        ));
+    }
+
+    @Override
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob m)) return;
         CompletableFuture<ActiveModel> model = new DesignEntity(m).getOrAddModelAsync(key.value());
+        applyWhenCompleteModel(m, model);
         CruxGoalUtil.addIfNotPresent(m, SculkBlightGoal.class, 0, () -> new SculkBlightGoal(m).model(model));
     }
 }

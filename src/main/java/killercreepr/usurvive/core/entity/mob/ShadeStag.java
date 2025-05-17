@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class ShadeStag extends SimpleCruxMob {
+public class ShadeStag extends UCruxMob {
     public ShadeStag(@NotNull Key key) {
         super(key);
     }
@@ -42,8 +42,6 @@ public class ShadeStag extends SimpleCruxMob {
             );
             e.setHealth(e.getAttribute(Attribute.MAX_HEALTH).getBaseValue());
 
-            double width = e.getWidth();
-            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(width + 1.5D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(4D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(6D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-5));
@@ -54,10 +52,20 @@ public class ShadeStag extends SimpleCruxMob {
     }
 
     @Override
+    public void onModelApplied(Mob mob) {
+        super.onModelApplied(mob);
+        if(CruxAttribute.hasAttributeData(mob)) return;
+        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
+            mob.getWidth() + 0.8D
+        ));
+    }
+
+    @Override
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
         CompletableFuture<ActiveModel> model = new DesignEntity(mob).setBaseEntityVisible(false).getOrAddModelAsync(key.value());
+        applyWhenCompleteModel(mob, model);
         CruxGoalUtil.addIfNotPresent(mob, ShadeStagGoal.class, 0, () -> new ShadeStagGoal(mob).model(model));
     }
 

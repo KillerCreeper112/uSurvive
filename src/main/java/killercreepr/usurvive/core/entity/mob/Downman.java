@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class Downman extends SimpleCruxMob {
+public class Downman extends UCruxMob {
     public Downman(@NotNull Key key) {
         super(key);
     }
@@ -35,11 +35,6 @@ public class Downman extends SimpleCruxMob {
             e.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(
                 e.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 1.2
             );
-            double width = e.getWidth();
-            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
-                2D + width
-            ));
-
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(
                 .3D
             ));
@@ -64,10 +59,20 @@ public class Downman extends SimpleCruxMob {
     }
 
     @Override
+    public void onModelApplied(Mob mob) {
+        super.onModelApplied(mob);
+        if(CruxAttribute.hasAttributeData(mob)) return;
+        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
+            mob.getWidth() + 1D
+        ));
+    }
+
+    @Override
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
         CompletableFuture<ActiveModel> model = new DesignEntity(mob).setBaseEntityVisible(false).getOrAddModelAsync(key.value());
+        applyWhenCompleteModel(mob, model);
         CruxGoalUtil.addIfNotPresent(mob, DownmanGoal.class, 0, () -> new DownmanGoal(mob).model(model));
     }
 

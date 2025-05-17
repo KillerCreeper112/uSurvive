@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class Spettle extends SimpleCruxMob {
+public class Spettle extends UCruxMob {
     public Spettle(@NotNull Key key) {
         super(key);
     }
@@ -43,7 +43,6 @@ public class Spettle extends SimpleCruxMob {
             e.setHealth(e.getAttribute(Attribute.MAX_HEALTH).getBaseValue());
 
             double width = e.getWidth();
-            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(width + 2D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(5D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(11D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-10));
@@ -54,10 +53,20 @@ public class Spettle extends SimpleCruxMob {
     }
 
     @Override
+    public void onModelApplied(Mob mob) {
+        super.onModelApplied(mob);
+        if(CruxAttribute.hasAttributeData(mob)) return;
+        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
+            mob.getWidth() + .8D
+        ));
+    }
+
+    @Override
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
         CompletableFuture<ActiveModel> model = new DesignEntity(mob).setBaseEntityVisible(false).getOrAddModelAsync(key.value());
+        applyWhenCompleteModel(mob, model);
         CruxGoalUtil.addIfNotPresent(mob, SpettleGoal.class, 0, () -> new SpettleGoal(mob).model(model));
     }
 

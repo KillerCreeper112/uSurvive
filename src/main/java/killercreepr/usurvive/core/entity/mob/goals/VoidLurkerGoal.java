@@ -36,22 +36,22 @@ public class VoidLurkerGoal extends CruxMobModeledGoal implements Listener {
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound ambient() {
-                return CreateSound.sound(Sound.ENTITY_WITHER_AMBIENT, 0.7f,1.7f);
+                return CreateSound.sound(Sound.ENTITY_WITHER_AMBIENT, 0.4f,1.7f);
             }
 
             @Override
             public @NotNull CreateSound attack() {
-                return CreateSound.sound(Sound.ENTITY_WITHER_SHOOT, 1.7f);
+                return CreateSound.sound(Sound.ENTITY_WITHER_SHOOT, 0.4f,1.7f);
             }
 
             @Override
             public @NotNull CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_WITHER_HURT, 1.7f);
+                return CreateSound.sound(Sound.ENTITY_WITHER_HURT, 0.4f,1.7f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(Sound.ENTITY_WITHER_DEATH, 1.7f);
+                return CreateSound.sound(Sound.ENTITY_WITHER_DEATH, 0.4f,1.7f);
             }
         });
 

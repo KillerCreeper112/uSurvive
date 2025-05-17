@@ -42,7 +42,7 @@ public class StickBugGoal extends CruxMobModeledGoal {
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @Nullable CreateSound death() {
-                return CreateSound.sound(Sound.ENTITY_CREAKING_DEATH, 2f);
+                return CreateSound.sound(Sound.ENTITY_CREAKING_DEATH, 0.4f,2f);
             }
 
             @Override
@@ -52,17 +52,17 @@ public class StickBugGoal extends CruxMobModeledGoal {
 
             @Override
             public @Nullable CreateSound step() {
-                return CreateSound.sound(Sound.ENTITY_CREAKING_STEP, 2f);
+                return CreateSound.sound(Sound.ENTITY_CREAKING_STEP, 0.4f,2f);
             }
 
             @Override
             public @Nullable CreateSound attack() {
-                return CreateSound.sound(Sound.ENTITY_CREAKING_ATTACK, 2f);
+                return CreateSound.sound(Sound.ENTITY_CREAKING_ATTACK, 0.4f,2f);
             }
 
             @Override
             public @Nullable CreateSound ambient() {
-                return CreateSound.sound(Sound.ENTITY_CREAKING_AMBIENT, 2f);
+                return CreateSound.sound(Sound.ENTITY_CREAKING_AMBIENT, 0.4f,2f);
             }
         });
     }

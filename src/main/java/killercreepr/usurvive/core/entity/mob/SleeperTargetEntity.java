@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class SleeperTargetEntity extends SimpleCruxMob {
+public class SleeperTargetEntity extends UCruxMob {
     public SleeperTargetEntity(@NotNull Key key) {
         super(key);
     }

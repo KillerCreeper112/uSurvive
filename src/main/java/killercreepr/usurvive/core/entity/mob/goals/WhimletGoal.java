@@ -50,12 +50,12 @@ public class WhimletGoal extends CruxMobModeledGoal implements Listener {
 
             @Override
             public @NotNull CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_FOX_HURT, 2f);
+                return CreateSound.sound(Sound.ENTITY_FOX_HURT, 0.2f,2f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(Sound.ENTITY_FOX_DEATH, 2f);
+                return CreateSound.sound(Sound.ENTITY_FOX_DEATH, 0.2f,2f);
             }
         });
 

@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class Vane extends SimpleCruxMob {
+public class Vane extends UCruxMob {
     public Vane(@NotNull Key key) {
         super(key);
     }
@@ -65,6 +65,7 @@ public class Vane extends SimpleCruxMob {
         model.whenComplete((m, throwable) ->{
             m.getAnimationHandler().playAnimation("hover", 0, 0, 1, true);
         });
+        applyWhenCompleteModel(mob, model);
         CruxGoalUtil.addIfNotPresent(mob, VaneGoal.class, 0, () -> new VaneGoal(mob).model(model));
     }
 

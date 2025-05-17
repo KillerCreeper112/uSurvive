@@ -24,7 +24,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
-public class Echo extends SimpleCruxMob {
+public class Echo extends UCruxMob {
     public static final Key KEY = Crux.key("echo");
     public Echo(@NotNull Key key) {
         super(key);
@@ -62,6 +62,7 @@ public class Echo extends SimpleCruxMob {
             if(throwable != null) Crux.log(Level.WARNING, throwable.getMessage());
             new ModelEntity(e, m).setLockPitch(true).setLockYaw(true);
         });
+        applyWhenCompleteModel(mob, model);
         CruxGoalUtil.addIfNotPresent(mob, EchoGoal.class, 0, () -> new EchoGoal(mob).model(model));
     }
 

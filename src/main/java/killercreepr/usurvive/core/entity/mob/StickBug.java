@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class StickBug extends SimpleCruxMob {
+public class StickBug extends UCruxMob {
     public StickBug(@NotNull Key key) {
         super(key);
     }
@@ -40,8 +40,6 @@ public class StickBug extends SimpleCruxMob {
             e.getAttribute(Attribute.MAX_HEALTH).setBaseValue(32D);
             e.setHealth(32D);
 
-            double width = e.getWidth();
-            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(width + 1.2D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(5D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(11D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-10));
@@ -52,10 +50,20 @@ public class StickBug extends SimpleCruxMob {
     }
 
     @Override
+    public void onModelApplied(Mob mob) {
+        super.onModelApplied(mob);
+        if(CruxAttribute.hasAttributeData(mob)) return;
+        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
+            mob.getWidth() + 1.2D
+        ));
+    }
+
+    @Override
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
         CompletableFuture<ActiveModel> model = new DesignEntity(mob).setBaseEntityVisible(false).getOrAddModelAsync(key.value());
+        applyWhenCompleteModel(mob, model);
         CruxGoalUtil.addIfNotPresent(mob, StickBugGoal.class, 0, () -> new StickBugGoal(mob).model(model));
     }
 

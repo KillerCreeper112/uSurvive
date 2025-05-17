@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class Stare extends SimpleCruxMob {
+public class Stare extends UCruxMob {
     public Stare(@NotNull Key key) {
         super(key);
     }
@@ -65,6 +65,7 @@ public class Stare extends SimpleCruxMob {
         model.whenComplete((m, throwable) ->{
             m.getAnimationHandler().playAnimation("hover", 0, 0, 1, true);
         });
+        applyWhenCompleteModel(mob, model);
         CruxGoalUtil.addIfNotPresent(mob, StareGoal.class, 0, () -> new StareGoal(mob).model(model));
     }
 

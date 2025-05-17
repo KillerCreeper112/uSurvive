@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class SleeperDisplayEntity extends SimpleCruxMob {
+public class SleeperDisplayEntity extends UCruxMob {
     public SleeperDisplayEntity(@NotNull Key key) {
         super(key);
     }

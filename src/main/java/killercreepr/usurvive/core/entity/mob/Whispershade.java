@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class Whispershade extends SimpleCruxMob {
+public class Whispershade extends UCruxMob {
     public Whispershade(@NotNull Key key) {
         super(key);
     }
@@ -47,8 +47,6 @@ public class Whispershade extends SimpleCruxMob {
             );
             e.setHealth(e.getAttribute(Attribute.MAX_HEALTH).getBaseValue());
 
-            double width = e.getWidth();
-            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(width + 1.4D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(5D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(11D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-10));
@@ -56,6 +54,15 @@ public class Whispershade extends SimpleCruxMob {
             CruxAttribute.addModifier(e, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.baseModifier(e.getAttribute(Attribute.MOVEMENT_SPEED).getValue()));
             if(consumer != null) consumer.accept(e);
         });
+    }
+
+    @Override
+    public void onModelApplied(Mob mob) {
+        super.onModelApplied(mob);
+        if(CruxAttribute.hasAttributeData(mob)) return;
+        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
+            mob.getWidth() + 1D
+        ));
     }
 
     @Override
@@ -73,6 +80,7 @@ public class Whispershade extends SimpleCruxMob {
         });
 
         CompletableFuture<ActiveModel> model = new DesignEntity(mob).setBaseEntityVisible(false).getOrAddModelAsync(key.value());
+        applyWhenCompleteModel(mob, model);
         CruxGoalUtil.addIfNotPresent(mob, WhispershadeGoal.class, 0, () -> new WhispershadeGoal(mob).model(model));
     }
 

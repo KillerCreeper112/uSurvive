@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class BuzzrotBee extends SimpleCruxMob {
+public class BuzzrotBee extends UCruxMob {
     public BuzzrotBee(@NotNull Key key) {
         super(key);
     }
