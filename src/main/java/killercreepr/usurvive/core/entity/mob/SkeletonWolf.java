@@ -43,10 +43,10 @@ public class SkeletonWolf extends UCruxMob {
             );
 
             e.getAttribute(Attribute.ATTACK_DAMAGE).setBaseValue(
-                7.5D
+                6.5D
             );
 
-            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(7.5D));
+            //CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(7D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(11D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-10));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(0.15));
@@ -58,10 +58,12 @@ public class SkeletonWolf extends UCruxMob {
     @Override
     public void onModelApplied(Mob mob) {
         super.onModelApplied(mob);
-        if(CruxAttribute.hasAttributeData(mob)) return;
-        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
-            mob.getWidth() + 0.4D
-        ));
+
+        if(!CruxAttribute.hasAttributeData(mob, CruxAttribute.ATTACK_RANGE)){
+            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
+                mob.getWidth() + .4D
+            ));
+        }
     }
 
     @Override

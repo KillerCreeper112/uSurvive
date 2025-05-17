@@ -72,10 +72,12 @@ public class Whimlet extends UCruxMob {
     @Override
     public void onModelApplied(Mob mob) {
         super.onModelApplied(mob);
-        if(CruxAttribute.hasAttributeData(mob)) return;
-        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
-            mob.getWidth() + .5D
-        ));
+
+        if(!CruxAttribute.hasAttributeData(mob, CruxAttribute.ATTACK_RANGE)){
+            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
+                mob.getWidth() + .5D
+            ));
+        }
     }
 
     public boolean isValidHuman(HumanEntity e){

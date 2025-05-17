@@ -42,7 +42,6 @@ public class SkeletonChicken extends UCruxMob {
             );
             e.setHealth(e.getAttribute(Attribute.MAX_HEALTH).getBaseValue());
 
-            double width = e.getWidth();
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(5D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(11D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(-10));
@@ -55,10 +54,12 @@ public class SkeletonChicken extends UCruxMob {
     @Override
     public void onModelApplied(Mob mob) {
         super.onModelApplied(mob);
-        if(CruxAttribute.hasAttributeData(mob)) return;
-        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
-            mob.getWidth() + 0.4D
-        ));
+
+        if(!CruxAttribute.hasAttributeData(mob, CruxAttribute.ATTACK_RANGE)){
+            CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
+                mob.getWidth() + .4D
+            ));
+        }
     }
 
     @Override
