@@ -48,22 +48,22 @@ public class VaneGoal extends CruxMobModeledGoal {
 
             @Override
             public @Nullable CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_ENDERMAN_HURT, .3f, 0.5f);
+                return CreateSound.sound(Sound.ENTITY_ENDERMAN_HURT, net.kyori.adventure.sound.Sound.Source.HOSTILE,.3f, 0.5f);
             }
 
             @Override
             public @Nullable CreateSound step() {
-                return CreateSound.sound(Sound.ENTITY_CREAKING_STEP, 2f);
+                return CreateSound.sound(Sound.ENTITY_CREAKING_STEP, net.kyori.adventure.sound.Sound.Source.HOSTILE,1f,2f);
             }
 
             @Override
             public @Nullable CreateSound attack() {
-                return CreateSound.sound(Sound.ENTITY_CREAKING_ATTACK, 2f);
+                return CreateSound.sound(Sound.ENTITY_CREAKING_ATTACK, net.kyori.adventure.sound.Sound.Source.HOSTILE,1f,2f);
             }
 
             @Override
             public @Nullable CreateSound ambient() {
-                return CreateSound.sound(Sound.ENTITY_ENDERMAN_AMBIENT, 0.5f);
+                return CreateSound.sound(Sound.ENTITY_ENDERMAN_AMBIENT, net.kyori.adventure.sound.Sound.Source.HOSTILE,1f,0.5f);
             }
         });
     }

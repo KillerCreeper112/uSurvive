@@ -60,17 +60,17 @@ public class EchoGoal extends CruxMobModeledGoal implements Listener {
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @Nullable CreateSound attack() {
-                return CreateSound.sound(Sound.ENTITY_VEX_CHARGE, 0.4f,2f);
+                return CreateSound.sound(Sound.ENTITY_VEX_CHARGE, net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f,2f);
             }
 
             @Override
             public @Nullable CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_VEX_HURT, 0.4f,2f);
+                return CreateSound.sound(Sound.ENTITY_VEX_HURT, net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f,2f);
             }
 
             @Override
             public @Nullable CreateSound ambient() {
-                return CreateSound.sound(Sound.ENTITY_VEX_AMBIENT, 0.4f,2f);
+                return CreateSound.sound(Sound.ENTITY_VEX_AMBIENT, net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f,2f);
             }
         });
 

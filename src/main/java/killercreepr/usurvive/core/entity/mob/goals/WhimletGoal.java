@@ -40,7 +40,7 @@ public class WhimletGoal extends CruxMobModeledGoal implements Listener {
         sounds(new CruxGoalSounds(mob) {
             @Override
             public @NotNull CreateSound ambient() {
-                return CreateSound.sound(Sound.ENTITY_FOX_AMBIENT, .2f,2f);
+                return CreateSound.sound(Sound.ENTITY_FOX_AMBIENT,  net.kyori.adventure.sound.Sound.Source.NEUTRAL,.2f,2f);
             }
 
            /* @Override
@@ -50,12 +50,12 @@ public class WhimletGoal extends CruxMobModeledGoal implements Listener {
 
             @Override
             public @NotNull CreateSound hurt() {
-                return CreateSound.sound(Sound.ENTITY_FOX_HURT, 0.2f,2f);
+                return CreateSound.sound(Sound.ENTITY_FOX_HURT, net.kyori.adventure.sound.Sound.Source.NEUTRAL,0.2f,2f);
             }
 
             @Override
             public @NotNull CreateSound death() {
-                return CreateSound.sound(Sound.ENTITY_FOX_DEATH, 0.2f,2f);
+                return CreateSound.sound(Sound.ENTITY_FOX_DEATH, net.kyori.adventure.sound.Sound.Source.NEUTRAL,0.2f,2f);
             }
         });
 
