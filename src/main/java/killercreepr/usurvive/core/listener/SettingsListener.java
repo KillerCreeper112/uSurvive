@@ -21,8 +21,8 @@ import org.bukkit.inventory.CraftingInventory;
 public class SettingsListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onMenuClose(MenuCloseEvent event) {
-        HumanEntity p = event.getPlayer();
-        MemoryPlayerSettingsHolder holder = EntityMemory.getOrCreateDataHolder(p, MemoryPlayerSettingsHolder.class);
+        var p = event.getEntity();
+        MemoryPlayerSettingsHolder holder = EntityMemory.getDataHolder(p, MemoryPlayerSettingsHolder.class);
         if(holder == null) return;
         holder.setCache(null);
     }
