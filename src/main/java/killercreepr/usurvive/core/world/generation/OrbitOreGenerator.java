@@ -1,6 +1,7 @@
 package killercreepr.usurvive.core.world.generation;
 
 import com.destroystokyo.paper.MaterialSetTag;
+import com.destroystokyo.paper.MaterialTags;
 import killercreepr.crux.api.block.tag.BlockTag;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
@@ -11,6 +12,7 @@ import killercreepr.cruxgeneration.util.CruxNoise;
 import killercreepr.usurvive.core.block.USurviveBlocks;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.generator.LimitedRegion;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +32,16 @@ public class OrbitOreGenerator extends OreGenerator{
 
     @Override
     public boolean canSpawnClumpedOre(@NotNull LimitedRegion limitedRegion, int x, int y, int z) {
+        if(!isReplaceable(limitedRegion.getBlockState(x,y,z).getBlock())) return false;
         return hasSolidNear(limitedRegion, x,y,z);
+    }
+
+    public boolean isReplaceable(Block b){
+        Material m = b.getType();
+        if(m == Material.BEDROCK) return false;
+        if(MaterialTags.ORES.isTagged(m)) return false;
+        if(b.isEmpty()) return true;
+        return !b.isPassable() && testBlock(b.getState());
     }
 
     public boolean canSpawnOre(@NotNull LimitedRegion limitedRegion, int x, int y, int z) {

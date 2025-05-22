@@ -22,12 +22,12 @@ public class OreGenerators {
         NumberProvider.uniform(16, 32)
     );
     public static final OreGenerator ORBIT_ORE_NETHER = new OrbitOreGenerator(
-        NumberProvider.uniform(0.9, 1.6),
-        NumberProvider.uniform(4, 10),
-        NumberProvider.constant(60),
-        NumberProvider.constant(60),
+        NumberProvider.uniform(0.9, 1.5),
+        NumberProvider.uniform(4, 9),
+        NumberProvider.constant(35),
+        NumberProvider.constant(40),
 
-        CruxNoise.fast().frequency(.12f)
+        CruxNoise.fast().frequency(.09f)
             .noiseType(CruxNoise.NoiseType.OpenSimplex2)
             .fractalType(CruxNoise.FractalType.FBm)
             .fractalOctaves(3),
