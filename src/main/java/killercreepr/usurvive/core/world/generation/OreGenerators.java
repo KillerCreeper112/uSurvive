@@ -2,14 +2,19 @@ package killercreepr.usurvive.core.world.generation;
 
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.cruxgeneration.util.CruxNoise;
+import killercreepr.usurvive.core.block.USurviveBlocks;
+import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
+import org.jetbrains.annotations.NotNull;
 
 public class OreGenerators {
     public static final OreGenerator ORBIT_ORE = new OrbitOreGenerator(
-        NumberProvider.uniform(1, 5), NumberProvider.uniform(2, 8),
-        NumberProvider.constant(55), NumberProvider.constant(58), //was 50%
+        NumberProvider.uniform(0.9, 1.6),
+        NumberProvider.uniform(4, 10),
+        NumberProvider.constant(60),
+        NumberProvider.constant(60),
 
-        CruxNoise.fast().frequency(.09f)
+        CruxNoise.fast().frequency(.12f)//.09f
             .noiseType(CruxNoise.NoiseType.OpenSimplex2)
             .fractalType(CruxNoise.FractalType.FBm)
             .fractalOctaves(3),
@@ -17,16 +22,24 @@ public class OreGenerators {
         NumberProvider.uniform(16, 32)
     );
     public static final OreGenerator ORBIT_ORE_NETHER = new OrbitOreGenerator(
-        NumberProvider.uniform(1, 5), NumberProvider.uniform(2, 8),
-        NumberProvider.constant(55), NumberProvider.constant(58), //was 50%
+        NumberProvider.uniform(0.9, 1.6),
+        NumberProvider.uniform(4, 10),
+        NumberProvider.constant(60),
+        NumberProvider.constant(60),
 
-        CruxNoise.fast().frequency(.09f)
+        CruxNoise.fast().frequency(.12f)
             .noiseType(CruxNoise.NoiseType.OpenSimplex2)
             .fractalType(CruxNoise.FractalType.FBm)
             .fractalOctaves(3),
         null,
         NumberProvider.uniform(16, 32)
     ){
+
+        @Override
+        public void place(@NotNull LimitedRegion limitedRegion, int x, int y, int z) {
+            USurviveBlocks.NETHER_ORBIT_ORE.getBaseBlock().setBlock(limitedRegion, x, y, z);
+        }
+
         @Override
         public NumberProvider generateBetweenYValues(WorldInfo worldInfo) {
             return NumberProvider.uniform(worldInfo.getMinHeight(), 116);

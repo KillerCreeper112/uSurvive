@@ -5,15 +5,10 @@ import com.ticxo.modelengine.api.animation.handler.AnimationHandler;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
-import killercreepr.crux.core.location.DynamicLocation;
-import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxentities.entity.CruxMob;
-import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
-import killercreepr.usurvive.core.entity.mob.goals.animal.AnimalEnhancedGoal;
-import killercreepr.usurvive.core.entity.mob.goals.animal.AnimalEnhancedPanicGoal;
 import killercreepr.usurvive.core.entity.mob.goals.data.MobAttackHandler;
 import killercreepr.usurvive.core.util.UKey;
 import org.bukkit.NamespacedKey;
@@ -26,10 +21,8 @@ import org.bukkit.entity.Pig;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 

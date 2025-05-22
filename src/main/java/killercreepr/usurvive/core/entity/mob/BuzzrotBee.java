@@ -4,7 +4,6 @@ import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
-import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.usurvive.core.entity.mob.goals.BuzzrotBeeGoal;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;

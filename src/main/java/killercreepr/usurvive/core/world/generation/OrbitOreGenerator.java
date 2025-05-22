@@ -16,6 +16,8 @@ import org.bukkit.generator.LimitedRegion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Random;
+
 public class OrbitOreGenerator extends OreGenerator{
     public OrbitOreGenerator(@NotNull Holder<Number> clumpSize, @NotNull Holder<Number> clumpDensity, @NotNull Holder<Number> clumpChance, @NotNull Holder<Number> oreSpawnChance, @NotNull CruxNoise oreSpawnNoise, @Nullable Holder<NumberProvider> betweenYValues, @NotNull Holder<Number> maxSpawnTries) {
         super(clumpSize, clumpDensity, clumpChance, oreSpawnChance, oreSpawnNoise, betweenYValues, maxSpawnTries);
@@ -28,11 +30,36 @@ public class OrbitOreGenerator extends OreGenerator{
 
     @Override
     public boolean canSpawnClumpedOre(@NotNull LimitedRegion limitedRegion, int x, int y, int z) {
-        return true;
+        return hasSolidNear(limitedRegion, x,y,z);
+    }
+
+    public boolean canSpawnOre(@NotNull LimitedRegion limitedRegion, int x, int y, int z) {
+        BlockState b = limitedRegion.getBlockState(x, y, z);
+        if(!testBlock(b)) return false;
+
+        int airAdjacent = 0;
+        for (int xAddon = -1; xAddon <= 1; xAddon++) {
+            for (int yAddon = -1; yAddon <= 1; yAddon++) {
+                for (int zAddon = -1; zAddon <= 1; zAddon++) {
+                    if (xAddon == 0 && yAddon == 0 && zAddon == 0) continue;
+                    if (!limitedRegion.isInRegion(x + xAddon, y + yAddon, z + zAddon)) continue;
+                    var block = limitedRegion.getBlockState(x + xAddon, y + yAddon, z + zAddon).getBlock();
+                    if (block.isEmpty() || block.isLiquid() || block.isPassable()) {
+                        airAdjacent++;
+                    }
+                }
+            }
+        }
+        return airAdjacent >= 1 || (CruxMath.testChance(25) && canSpawnOreNonAir(limitedRegion, x, y, z)); // or >= 2 for stronger air bias
     }
 
     @Override
-    public boolean canSpawnOre(@NotNull LimitedRegion limitedRegion, int x, int y, int z) {
+    public void generateClump(LimitedRegion region, Random random, int centerX, int centerY, int centerZ) {
+        super.generateClump(region, random, centerX, centerY, centerZ);
+    }
+
+    public boolean canSpawnOreNonAir(@NotNull LimitedRegion limitedRegion, int x, int y, int z) {
+        //if(!canPlaceOre(limitedRegion, x, y, z)) return false;
         //if(!testBlock(limitedRegion.getBlockData(x, y, z))) return false;
         int amount = 0;
         int max = CruxMath.random(4, 17);

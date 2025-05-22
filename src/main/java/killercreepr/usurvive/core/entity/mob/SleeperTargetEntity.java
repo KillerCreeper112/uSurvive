@@ -1,7 +1,6 @@
 package killercreepr.usurvive.core.entity.mob;
 
 import killercreepr.crux.core.util.CruxGoalUtil;
-import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.usurvive.core.entity.mob.goals.SleeperTargetGoal;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;

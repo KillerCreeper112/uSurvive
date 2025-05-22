@@ -14,8 +14,6 @@ import killercreepr.cruxtickables.api.entity.tickable.EntityTickableModifier;
 import killercreepr.cruxtickables.core.entity.tickable.SimpleDataEntityTickable;
 import killercreepr.cruxtickables.core.registries.CruxTickableRegistries;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Color;
-import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

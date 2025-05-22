@@ -2,7 +2,6 @@ package killercreepr.usurvive.core.potion;
 
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
-import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementManager;
 import killercreepr.cruxpotions.api.potion.CruxPotion;
 import killercreepr.cruxpotions.core.potions.ActiveEntityPotion;
 import killercreepr.usurvive.core.enchant.logic.JoyWhirl;

@@ -1,14 +1,12 @@
 package killercreepr.usurvive.core.entity.mob.goals;
 
 import com.destroystokyo.paper.entity.ai.GoalKey;
-import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.location.EntityLocation;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.GetEntityNear;
 import killercreepr.crux.core.util.GetNear;
 import killercreepr.usurvive.core.entity.mob.goals.animal.AnimalEnhancedPanicGoal;
-import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.jetbrains.annotations.NotNull;

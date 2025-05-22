@@ -5,7 +5,6 @@ import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
-import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.usurvive.core.entity.mob.goals.VoidLurkerGoal;
 import net.kyori.adventure.key.Key;

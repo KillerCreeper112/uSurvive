@@ -11,7 +11,6 @@ import killercreepr.crux.core.Crux;
 import killercreepr.usurvive.core.USurvivePlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
