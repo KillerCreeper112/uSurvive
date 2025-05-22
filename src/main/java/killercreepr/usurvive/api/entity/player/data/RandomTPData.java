@@ -16,6 +16,9 @@ public interface RandomTPData {
     Map<Key, Pos> asMap();
     void setAllLastTeleported(Map<Key, Pos> map);
 
+    boolean update(Key key);
+    void update();
+
     interface Pos{
         @NotNull CruxLocation getLocation();
         long getWorldTime();

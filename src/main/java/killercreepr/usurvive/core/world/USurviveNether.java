@@ -10,6 +10,7 @@ import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.block.USurviveBlocks;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
 import killercreepr.usurvive.core.world.generation.OreGenerator;
+import killercreepr.usurvive.core.world.generation.OreGenerators;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
@@ -91,6 +92,7 @@ public class USurviveNether extends SimpleWorldModule {
         super.onInitiate();
         World world = parent.toBukkitWorld();
         world.getPopulators().add(SPECTRAL_SOIL);
+        world.getPopulators().add(OreGenerators.ORBIT_ORE);
     }
 
     public int tickInterval(){
