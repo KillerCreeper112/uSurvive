@@ -39,6 +39,10 @@ public abstract class OreGenerator extends BlockPopulator {
         this.maxSpawnTries = maxSpawnTries;
     }
 
+    public NumberProvider generateBetweenYValues(WorldInfo worldInfo){
+        return NumberProvider.uniform(worldInfo.getMinHeight(), worldInfo.getMaxHeight()-1);
+    }
+
     @Override
     public void populate(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion) {
         if(!CruxMath.testChance(random, oreSpawnChance.value().doubleValue())) return;
@@ -50,11 +54,11 @@ public abstract class OreGenerator extends BlockPopulator {
                 int xx = x + (chunkX * 16);
                 int zz = z + (chunkZ * 16);
                 if(spawned > 0){
-                    if(CruxMath.random(1, 100) <= 70) continue;
+                    if(CruxMath.random(1, 100) <= 40) continue;
                     float noise = oreSpawnNoise.noise(xx, zz);
                     if(noise < .6) continue;
                 }
-                NumberProvider betweenY = betweenYValues == null ? NumberProvider.uniform(worldInfo.getMinHeight(), worldInfo.getMaxHeight()-1) : betweenYValues.value();
+                NumberProvider betweenY = betweenYValues == null ? generateBetweenYValues(worldInfo) : betweenYValues.value();
                 int tries = maxSpawnTries.value().intValue();
                 while(tries > 0){
                     tries--;

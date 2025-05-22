@@ -92,7 +92,7 @@ public class USurviveNether extends SimpleWorldModule {
         super.onInitiate();
         World world = parent.toBukkitWorld();
         world.getPopulators().add(SPECTRAL_SOIL);
-        world.getPopulators().add(OreGenerators.ORBIT_ORE);
+        world.getPopulators().add(OreGenerators.ORBIT_ORE_NETHER);
     }
 
     public int tickInterval(){
