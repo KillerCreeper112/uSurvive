@@ -1,6 +1,7 @@
 package killercreepr.usurvive.core.enchant.logic;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import killercreepr.crux.core.util.CruxEntityUtil;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.world.entity.PositionMoveRotation;
 import net.minecraft.world.entity.Relative;
@@ -15,19 +16,23 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class JoyWhirl {
+    public static final Map<UUID, JoyWhirl> ACTIVE = new HashMap<>();
+
     protected final Plugin plugin;
+    protected final UUID uuid;
     protected final Entity target;
     public JoyWhirl(Plugin plugin, Entity target){
         this.plugin = plugin;
+        this.uuid = target.getUniqueId();
         this.target = target;
     }
 
     public void start(int level) {
-        target.setVelocity(new Vector(0, (level * .6), 0));
+        ACTIVE.put(uuid, this);
+        target.setVelocity(new Vector(0, (level * .45), 0));
         final float speed = (level * 10);
 
         target.getWorld().playSound(target, Sound.ENTITY_ENDER_DRAGON_FLAP, 1f, 1.7f);
@@ -35,14 +40,22 @@ public class JoyWhirl {
             p.playSound(p, Sound.ITEM_ELYTRA_FLYING, 1f, 1f);
         }
 
+        final int maxTicks = 20 + ((level-1) * 20);
+
         new BukkitRunnable() {
             int tick = 0;
             @Override
             public void run() {
                 tick++;
+                if(tick >= maxTicks){
+                    cancel();
+                    stop();
+                    return;
+                }
                 if(tick > 5){
-                    if(!target.isValid() || target.getLocation().subtract(0, .5, 0).getBlock().isSolid()){
+                    if(!target.isValid() || CruxEntityUtil.getBlockStandingOn(target) != null){
                         cancel();
+                        stop();
                         if(target instanceof Player p) p.stopSound(Sound.ITEM_ELYTRA_FLYING);
                         return;
                     }
@@ -61,6 +74,10 @@ public class JoyWhirl {
                 ;
             }
         }.runTaskTimer(plugin, 0L, 1L);
+    }
+
+    public void stop(){
+        ACTIVE.remove(uuid);
     }
 
     public static void setRotation(Player p, float yaw, float pitch){

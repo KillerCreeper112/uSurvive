@@ -5,6 +5,7 @@ import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.item.CruxItem;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
 import killercreepr.crux.core.util.GetEntityNear;
@@ -287,7 +288,7 @@ public class EnchantsListener implements Listener {
         return damage >= check;
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         Entity vic = event.getEntity();
         Entity attacker = event.getDamager();
@@ -310,13 +311,16 @@ public class EnchantsListener implements Listener {
             ItemStack mainHand = dmgerEquip.getItemInMainHand();
             Map<Enchantment, Integer> enchants = mainHand.getEnchantments();
             if(victim != null){
-                if(enchants.containsKey(USurviveEnchant.JOY_WHIRL)){
-                    new BukkitRunnable(){
-                        @Override
-                        public void run() {
-                            new JoyWhirl(plugin, victim).start(enchants.getOrDefault(USurviveEnchant.JOY_WHIRL, 0));
+                if(event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK && enchants.containsKey(USurviveEnchant.JOY_WHIRL)){
+                    if(!JoyWhirl.ACTIVE.containsKey(victim.getUniqueId())){
+                        int level = enchants.getOrDefault(USurviveEnchant.JOY_WHIRL, 0);
+                        float chance = 15f + ((level-1) * 10f);
+                        if(CruxMath.testChance(chance)){
+                            Crux.scheduler().runTask(() ->{
+                                new JoyWhirl(plugin, victim).start(level);
+                            });
                         }
-                    }.runTaskLater(plugin, 1L);
+                    }
                 }
                 //todo make into own potion
                 if(mainHand.getEnchantments().containsKey(USurviveEnchant.FROSTBITE)){
