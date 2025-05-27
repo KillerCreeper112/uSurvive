@@ -4,12 +4,14 @@ import com.google.common.reflect.TypeToken;
 import killercreepr.crux.api.communication.Communicator;
 import killercreepr.crux.api.communication.lang.CreateLang;
 import killercreepr.crux.api.communication.lang.LangProvider;
+import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.item.dynamic.DynamicItem;
 import killercreepr.crux.api.registry.KeyedRegistry;
 import killercreepr.crux.api.registry.Registry;
+import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.communication.MsgContainer;
@@ -48,6 +50,7 @@ import killercreepr.cruxmenus.api.menu.config.handler.FileMenuHolder;
 import killercreepr.cruxmenus.api.menu.holder.MenuItems;
 import killercreepr.cruxmenus.api.menu.module.MenuModule;
 import killercreepr.cruxmenus.api.menu.module.config.MenuModuleBuilder;
+import killercreepr.cruxmenus.core.menu.holder.SimpleMenuHolder;
 import killercreepr.cruxmenus.core.menu.module.standard.SimpleFilePagedCfg;
 import killercreepr.cruxmenus.core.menu.module.standard.SimplePagedMenuModule;
 import killercreepr.cruxparty.api.party.Party;
@@ -103,6 +106,7 @@ import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.listener.*;
 import killercreepr.usurvive.core.mechanics.grapple.standard.StandardGrappleHooks;
 import killercreepr.usurvive.core.mechanics.whip.standard.StandardWhipHooks;
+import killercreepr.usurvive.core.menu.ItemPackMenu;
 import killercreepr.usurvive.core.menu.action.CancelTPAAction;
 import killercreepr.usurvive.core.menu.action.ConfirmTPAAction;
 import killercreepr.usurvive.core.menu.action.PlayerSettingAction;
@@ -259,6 +263,24 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         });
         CruxMenusModule menusModule = CruxCore.inst().cruxMenus();
         registerMenuModules(menusModule.menuRegistry().menuModule(), menusModule.menuModuleRegistry());
+
+        menusModule.menuRegistry().menuHolders().register(new SimpleMenuHolder(
+            Crux.key("items_pack"), "Items Pack", NumberProvider.zero(), MenuItems.items(new TreeMap<>()),
+            DataExchange.empty(), Set.of()
+        ){
+            @NotNull
+            @Override
+            public CfgMenu createMenu(@NotNull DataExchange data) {
+                return new ItemPackMenu(this, data);
+            }
+
+            @NotNull
+            @Override
+            public CfgMenu createMenu(@NotNull DataExchange data, @Nullable MergedTagContainer tags) {
+                return new ItemPackMenu(this, data, tags);
+            }
+        });
+
         Registry<MenuAction> menuActions = menusModule.menuRegistry().menuActions();
         menuActions.register(new PlayerSettingCacheAction(Crux.key("player_settings_cache")));
         menuActions.register(new PlayerSettingAction(Crux.key("player_settings")));
