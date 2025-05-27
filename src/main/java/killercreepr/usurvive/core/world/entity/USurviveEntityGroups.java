@@ -16,7 +16,7 @@ import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 public class USurviveEntityGroups {
-    public static final NaturalEntitySpawnGroup EMPTY = new SimpleNaturalEntitySpawnGroup(50, 0f) {
+    public static final NaturalEntitySpawnGroup EMPTY = new SimpleNaturalEntitySpawnGroup(80, 0f) {
         @Override
         public boolean canSpawn(@NotNull SpawnContext ctx) {
             return true;
