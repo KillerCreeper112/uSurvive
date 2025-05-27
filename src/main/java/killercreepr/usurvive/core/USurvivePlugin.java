@@ -407,6 +407,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new CustomObjectivesListener(),
             new MaintenanceListener(),
             new VanishListener()
+            //new WaxPaintingListener()
         );
 
         if(getServer().getPluginManager().getPlugin("CruxWarps") != null){

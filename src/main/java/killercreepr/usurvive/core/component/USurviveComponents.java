@@ -24,6 +24,8 @@ public class USurviveComponents {
     public static void register(){};
     public static final DataComponentType<Grapple> GRAPPLE = register("grapple", builder -> builder
         .persistTextParser(USurviveCompParsers.GRAPPLE.createInput(Crux.key("grapple"))));
+    public static final DataComponentType<Boolean> WAXED = register("waxed", builder -> builder
+        .persistTextParser(PersistTextParser.BOOLEAN.createInput(Crux.key("waxed"))));
     public static final DataComponentType<Grapple> GRAPPLE_DISPLAY = register("grapple_display", builder -> builder
         .persistTextParser(USurviveCompParsers.GRAPPLE_DISPLAY.createInput(Crux.key("grapple_display"))));
     public static final DataComponentType<Whip> WHIP_DISPLAY = register("whip_display", builder -> builder
