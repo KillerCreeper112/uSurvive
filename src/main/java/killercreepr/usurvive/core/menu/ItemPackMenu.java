@@ -115,6 +115,7 @@ public class ItemPackMenu extends ConfigMenu {
         var p = info.getOrThrow("viewer", Player.class);
 
         this.size = getSize(p);
+
         page = CruxMath.clamp(page, 0, getMaxPages(size)); // ⬅ Clamp first
 
         ItemPackHolder pack = itemPack();
@@ -144,6 +145,26 @@ public class ItemPackMenu extends ConfigMenu {
 
     public void openPage(@NotNull Player p, int page){
         if(page < 0) return;
+        if(size < 1){
+            for(int i = 0; i < inventory.getSize(); i++){
+                setItem(i, CruxItem.create(Material.RED_STAINED_GLASS_PANE)
+                    .itemName("<white>Rank up to unlock")
+                    .addLoreFromString(
+                        "<white>extra space in your",
+                        "<white>item pack!"
+                    )
+                    .item(), new SimpleFixedSlot(this, i){
+                    @Override
+                    public void onClick(@NotNull HumanEntity p, @NotNull InventoryClickEvent event) {
+                        super.onClick(p, event);
+                        p.closeInventory();
+                        CreateSound.sound(Sound.UI_BUTTON_CLICK, 0.2f, 1f).playFor(p);
+                    }
+                });
+            }
+            return;
+        }
+
         Inventory menu = inventory;
         registered.forEach((slot, item) ->{
             if(slot >= menu.getSize()) return;
@@ -159,13 +180,14 @@ public class ItemPackMenu extends ConfigMenu {
             locked++;
         }
         for(int i = size; i < maxSize; i++){
-            menu.setItem(i, CruxItem.create(Material.BLACK_STAINED_GLASS_PANE).itemName("")
+            menu.setItem(i, CruxItem.create(Material.BLACK_STAINED_GLASS_PANE)
+                .itemName("")
                 .editMeta(meta -> CruxTag.set(meta, "fixed", PersistentDataType.BOOLEAN, true))
                 .item());
         }
 
         setItem(maxSize-5, CruxItem.create(Material.BARRIER)
-            .itemName("Close")
+            .itemName("<white>Close")
                 .editMeta(meta -> CruxTag.set(meta, "fixed", PersistentDataType.BOOLEAN, true))
                 .item(),
             new SimpleFixedSlot(this, maxSize-3){
