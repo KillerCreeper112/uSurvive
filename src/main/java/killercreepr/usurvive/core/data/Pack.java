@@ -20,6 +20,10 @@ public class Pack {
         return this;
     }
 
+    public boolean isEmpty(){
+        return stored.isEmpty();
+    }
+
     public @Nullable Page get(int index){
         return stored.getOrDefault(index, null);
     }

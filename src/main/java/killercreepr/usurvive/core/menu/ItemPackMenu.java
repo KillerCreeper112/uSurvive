@@ -10,11 +10,11 @@ import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
 import killercreepr.crux.core.util.InvUtil;
 import killercreepr.cruxmenus.api.menu.holder.MenuHolder;
-import killercreepr.cruxmenus.core.listener.MenuListener;
 import killercreepr.cruxmenus.core.menu.ConfigMenu;
 import killercreepr.cruxmenus.core.menu.slot.SimpleFixedSlot;
 import killercreepr.usurvive.core.data.Pack;
 import killercreepr.usurvive.core.entity.memory.ItemPackHolder;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -58,8 +58,7 @@ public class ItemPackMenu extends ConfigMenu {
 
     public ItemPackHolder itemPack(){
         var p = info.getOrThrow("viewer", Entity.class);
-        if(true) return new ItemPackHolder(null);
-        return EntityMemory.getDataHolder(p, ItemPackHolder.class);
+        return ItemPackHolder.itemPackHolder(p);
     }
 
     public static int getSize(@NotNull Player p){
@@ -86,9 +85,11 @@ public class ItemPackMenu extends ConfigMenu {
 
     protected int maxContent;
 
-    public int getMaxPages(int size){
-        return (int) Math.ceil((double) size / (double) maxContent)-1;
+    public int getMaxPages(int size) {
+        if (size <= 0) return 0;
+        return (int) Math.ceil((double) size / (double) MAX_MENU_SLOTS) - 1;
     }
+
 
     public static final int MAX_MENU_SLOTS = 45;
     public int calculateMaxContentInPage(int size) {
@@ -103,7 +104,9 @@ public class ItemPackMenu extends ConfigMenu {
 
     @Override
     protected void refreshReconstruct() {
-        this.reconstruct(InvUtil.getInventorySize(maxContent+9), this.buildTitle(), true, true);
+        this.reconstruct(InvUtil.getInventorySize(maxContent+9), Component.text(
+            "Item Pack " + (page+1) + "/" + (getMaxPages(size)+1)
+        ), true, true);
     }
 
     protected boolean loaded = false;
@@ -112,12 +115,13 @@ public class ItemPackMenu extends ConfigMenu {
         var p = info.getOrThrow("viewer", Player.class);
 
         this.size = getSize(p);
+        page = CruxMath.clamp(page, 0, getMaxPages(size)); // ⬅ Clamp first
+
         ItemPackHolder pack = itemPack();
         Pack.Page packPack = pack.getPack().get(page);
         if(packPack != null) this.registered.putAll(packPack.get());
 
-        maxContent = calculateMaxContentInPage(size);
-        page = CruxMath.clamp(page, 0, getMaxPages(size));
+        maxContent = calculateMaxContentInPage(size); // ⬅ Then calculate content safely
 
         super.load();
         openPage(p, page);
@@ -160,7 +164,7 @@ public class ItemPackMenu extends ConfigMenu {
                 .item());
         }
 
-        setItem(maxSize-3, CruxItem.create(Material.BARRIER)
+        setItem(maxSize-5, CruxItem.create(Material.BARRIER)
             .itemName("Close")
                 .editMeta(meta -> CruxTag.set(meta, "fixed", PersistentDataType.BOOLEAN, true))
                 .item(),
@@ -173,10 +177,12 @@ public class ItemPackMenu extends ConfigMenu {
                 }
             });
 
-        if(page < getMaxPages(size)){
-            int index = maxSize-2;
+        if(page < getMaxPages(this.size)){
+            int index = maxSize-4;
             setItem(index, CruxItem.create(Material.ARROW)
-                .itemName("Next Page").item(), new SimpleFixedSlot(this, index){
+                .itemName("Next Page")
+                .editMeta(meta -> CruxTag.set(meta, "fixed", PersistentDataType.BOOLEAN, true))
+                .item(), new SimpleFixedSlot(this, index){
                 @Override
                 public void onClick(@NotNull HumanEntity p, @NotNull InventoryClickEvent event) {
                     super.onClick(p, event);
@@ -190,9 +196,11 @@ public class ItemPackMenu extends ConfigMenu {
         }
 
         if(page > 0){
-            int index = maxSize-4;
+            int index = maxSize-6;
             setItem(index, CruxItem.create(Material.ARROW)
-                .itemName("Previous Page").item(), new SimpleFixedSlot(this, index){
+                .itemName("Previous Page")
+                .editMeta(meta -> CruxTag.set(meta, "fixed", PersistentDataType.BOOLEAN, true))
+                .item(), new SimpleFixedSlot(this, index){
                 @Override
                 public void onClick(@NotNull HumanEntity p, @NotNull InventoryClickEvent event) {
                     super.onClick(p, event);
@@ -212,6 +220,10 @@ public class ItemPackMenu extends ConfigMenu {
 
     @Override
     public void onMenuClick(@NotNull InventoryClickEvent event) {
+        if(!loaded){
+            event.setCancelled(true);
+            return;
+        }
         if(isContentSlot(event.getSlot())){
             event.setCancelled(false);
             return;
@@ -221,6 +233,10 @@ public class ItemPackMenu extends ConfigMenu {
 
     @Override
     public void onInvClick(@NotNull InventoryClickEvent event) {
+        if(!loaded){
+            event.setCancelled(true);
+            return;
+        }
         if(event.isShiftClick()){
             event.setCancelled(false);
             return;
@@ -230,6 +246,10 @@ public class ItemPackMenu extends ConfigMenu {
 
     @Override
     public void onDrag(@NotNull InventoryDragEvent event) {
+        if(!loaded){
+            event.setCancelled(true);
+            return;
+        }
         event.setCancelled(false);
     }
 }
