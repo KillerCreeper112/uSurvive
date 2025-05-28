@@ -90,8 +90,7 @@ import killercreepr.usurvive.core.data.entity.MemoryPlayerSettingsHolder;
 import killercreepr.usurvive.core.death.PlayerDeath;
 import killercreepr.usurvive.core.death.SimpleDeathManager;
 import killercreepr.usurvive.core.entity.USurviveMobs;
-import killercreepr.usurvive.core.entity.memory.EntityInfusedPotionsHolder;
-import killercreepr.usurvive.core.entity.memory.SleeperHolder;
+import killercreepr.usurvive.core.entity.memory.*;
 import killercreepr.usurvive.core.entity.mob.USurviveMobCategory;
 import killercreepr.usurvive.core.entity.player.SimpleUPlayerManager;
 import killercreepr.usurvive.core.entity.player.settings.SimplePlayerSettingsManager;
@@ -133,8 +132,8 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -293,6 +292,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             m.getDataHolders().register(new MemoryPlayerSettingsHolder(m));
             m.getDataHolders().register(new EntityInfusedPotionsHolder(m));
             m.getDataHolders().register(new SleeperHolder(m, () -> (SleeperCfg) values()));
+            m.getDataHolders().register(new AdvancementLoaderHolder(m, cfgManagerLoader));
+            m.getDataHolders().register(new AdvancementAutoSaveHolder(m, cfgManagerLoader));
         });
         StandardGrappleHooks.register(USurviveRegistries.GRAPPLE_HOOK);
         StandardWhipHooks.register(USurviveRegistries.WHIP_HOOK);
@@ -567,21 +568,28 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         });
     }
 
-    @EventHandler(ignoreCancelled = true)
+    /*@EventHandler(ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         getServer().getScheduler().runTaskLater(this, task ->{
             if(!p.isOnline()) return;
             cfgManagerLoader.load(p);
         }, 20L);
-    }
+    }*/
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player p = event.getPlayer();
-        getServer().getScheduler().runTask(this, task ->{
+        AdvancementLoaderHolder holder = EntityMemory.getOrCreateDataHolder(p, AdvancementLoaderHolder.class);
+        if(holder != null && !holder.isLoaded()){
+            return;
+        }
+        var mem = PlayerMemory.get(p);
+        if(mem == null) return;
+        mem.getPlayerDataHolderOrCompute(AdvancementSaverHolder.class, m -> new AdvancementSaverHolder(m, cfgManagerLoader, p));
+        /*getServer().getScheduler().runTask(this, task ->{
             cfgManagerLoader.saveAndUnload(p);
-        });
+        });*/
     }
 
     @Override
