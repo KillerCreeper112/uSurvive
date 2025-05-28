@@ -1,11 +1,13 @@
 package killercreepr.usurvive.core.menu;
 
+import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.CruxTag;
 import killercreepr.crux.core.util.InvUtil;
 import killercreepr.cruxmenus.api.menu.holder.MenuHolder;
 import killercreepr.cruxmenus.core.listener.MenuListener;
@@ -14,6 +16,7 @@ import killercreepr.cruxmenus.core.menu.slot.SimpleFixedSlot;
 import killercreepr.usurvive.core.data.Pack;
 import killercreepr.usurvive.core.entity.memory.ItemPackHolder;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -22,6 +25,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,6 +40,21 @@ public class ItemPackMenu extends ConfigMenu {
     public ItemPackMenu(@NotNull MenuHolder holder, @NotNull DataExchange info, @Nullable MergedTagContainer tags) {
         super(holder, info, tags);
     }
+
+    public void savePage(){
+        ItemPackHolder pack = itemPack();
+        pack.getPack().setPage(page, buildPage());
+    }
+
+    public Pack.Page buildPage(){
+        var page = new Pack.Page();
+        for(int i = 0; i < maxContent; i++){
+            ItemStack item = inventory.getItem(i);
+            page.set(i, item);
+        }
+        return page;
+    }
+
 
     public ItemPackHolder itemPack(){
         var p = info.getOrThrow("viewer", Entity.class);
@@ -87,6 +106,7 @@ public class ItemPackMenu extends ConfigMenu {
         this.reconstruct(InvUtil.getInventorySize(maxContent+9), this.buildTitle(), true, true);
     }
 
+    protected boolean loaded = false;
     @Override
     public void load() {
         var p = info.getOrThrow("viewer", Player.class);
@@ -101,11 +121,20 @@ public class ItemPackMenu extends ConfigMenu {
 
         super.load();
         openPage(p, page);
+        loaded = true;
+    }
+
+    @Override
+    public void onClose(@NotNull HumanEntity p) {
+        super.onClose(p);
+        if(!loaded) return;
+        savePage();
     }
 
     public ItemStack lockItem(){
         return CruxItem.create(Material.RED_STAINED_GLASS_PANE)
             .itemName("<red>Locked Slot")
+            .editMeta(meta -> CruxTag.set(meta, "fixed", PersistentDataType.BOOLEAN, true))
             .item();
     }
 
@@ -126,11 +155,26 @@ public class ItemPackMenu extends ConfigMenu {
             locked++;
         }
         for(int i = size; i < maxSize; i++){
-            menu.setItem(i, CruxItem.create(Material.BLACK_STAINED_GLASS_PANE).itemName("").item());
+            menu.setItem(i, CruxItem.create(Material.BLACK_STAINED_GLASS_PANE).itemName("")
+                .editMeta(meta -> CruxTag.set(meta, "fixed", PersistentDataType.BOOLEAN, true))
+                .item());
         }
 
+        setItem(maxSize-3, CruxItem.create(Material.BARRIER)
+            .itemName("Close")
+                .editMeta(meta -> CruxTag.set(meta, "fixed", PersistentDataType.BOOLEAN, true))
+                .item(),
+            new SimpleFixedSlot(this, maxSize-3){
+                @Override
+                public void onClick(@NotNull HumanEntity p, @NotNull InventoryClickEvent event) {
+                    super.onClick(p, event);
+                    p.closeInventory();
+                    CreateSound.sound(Sound.UI_BUTTON_CLICK, 0.2f, 1f).playFor(p);
+                }
+            });
+
         if(page < getMaxPages(size)){
-            int index = maxSize-4;
+            int index = maxSize-2;
             setItem(index, CruxItem.create(Material.ARROW)
                 .itemName("Next Page").item(), new SimpleFixedSlot(this, index){
                 @Override
@@ -140,12 +184,13 @@ public class ItemPackMenu extends ConfigMenu {
                     menu.page = page+1;
                     menu.load();
                     menu.open(p);
+                    CreateSound.sound(Sound.UI_BUTTON_CLICK, 0.2f, 1f).playFor(p);
                 }
             });
         }
 
         if(page > 0){
-            int index = maxSize-2;
+            int index = maxSize-4;
             setItem(index, CruxItem.create(Material.ARROW)
                 .itemName("Previous Page").item(), new SimpleFixedSlot(this, index){
                 @Override
@@ -155,6 +200,7 @@ public class ItemPackMenu extends ConfigMenu {
                     menu.page = page-1;
                     menu.load();
                     menu.open(p);
+                    CreateSound.sound(Sound.UI_BUTTON_CLICK, 0.2f, 1f).playFor(p);
                 }
             });
         }

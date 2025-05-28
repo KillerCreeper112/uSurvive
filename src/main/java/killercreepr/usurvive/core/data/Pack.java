@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.data;
 
+import killercreepr.crux.api.item.CruxItem;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -19,10 +20,6 @@ public class Pack {
         return this;
     }
 
-    public Pack() {
-        stored.put(0, new Page());
-    }
-
     public @Nullable Page get(int index){
         return stored.getOrDefault(index, null);
     }
@@ -36,8 +33,10 @@ public class Pack {
     public static class Page{
         protected final Map<Integer, ItemStack> stored = new HashMap<>();
 
-        public Page() {
-            stored.put(0, new ItemStack(Material.PORKCHOP));
+        public Page set(int index, ItemStack item){
+            if(CruxItem.isEmpty(item)) stored.remove(index);
+            else stored.put(index, item);
+            return this;
         }
 
         public @NotNull Map<Integer, ItemStack> get() {
