@@ -38,6 +38,12 @@ public class ItemPackHolder extends EntityDataHolder implements Loadable {
         this(KEY, parent);
     }
 
+    @Override
+    protected void removingFromMemory(@Nullable Entity e) {
+        super.removingFromMemory(e);
+        save();
+    }
+
     protected final Pack pack = new Pack();
 
     public ItemPackHolder setPack(@Nullable Pack map){

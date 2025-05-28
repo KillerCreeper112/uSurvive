@@ -29,13 +29,17 @@ public class Pack {
     }
 
     public Pack setPage(int index, @Nullable Page page){
-        if(page == null) stored.remove(index);
+        if(page == null || page.isEmpty()) stored.remove(index);
         else stored.put(index, page);
         return this;
     }
 
     public static class Page{
         protected final Map<Integer, ItemStack> stored = new HashMap<>();
+
+        public boolean isEmpty(){
+            return stored.isEmpty();
+        }
 
         public Page set(int index, ItemStack item){
             if(CruxItem.isEmpty(item)) stored.remove(index);
