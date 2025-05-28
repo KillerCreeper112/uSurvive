@@ -7,11 +7,19 @@ import com.google.gson.JsonParser;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
+import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.component.parser.TextDataComponentDecoder;
 import killercreepr.crux.core.data.util.MapBuilder;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementManager;
+import killercreepr.cruxadvancements.api.event.CruxAdvancementRewardEvent;
+import killercreepr.cruxadvancements.core.data.AdvancementPair;
+import killercreepr.cruxadvancements.core.entity.memory.AdvancementHolder;
+import killercreepr.cruxadvancements.core.registries.AdvancementRegistries;
 import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
@@ -24,18 +32,19 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.time.Instant;
+import java.util.*;
 
-public class DevCommands {
+public class DevCommands implements Listener {
     protected final @NotNull USurvivePlugin plugin;
     public DevCommands(@NotNull USurvivePlugin plugin) {
         this.plugin = plugin;
@@ -48,6 +57,31 @@ public class DevCommands {
         .put("breakBlock", new BreakBlock())
         .put("menuModule", new MenuModule())
         .build();
+
+    protected final Collection<UUID> fix = new HashSet<>();
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onCruxAdvancementReward(CruxAdvancementRewardEvent event) {
+        if(fix.contains(event.getWho())){
+            event.setCancelled(true);
+        }
+    }
+
+    public static List<Key> getTrackTime(UUID uuid){
+        CruxJson file = AdvancementHolder.getDefaultSaveFile(uuid);
+        if(!(file.getElement("time_started") instanceof FileObject a)){
+            file.close();
+            return List.of();
+        }
+        file.close();
+
+        List<Key> list = new ArrayList<>();
+        a.keySet().forEach(id ->{
+            var key = Crux.key(id);
+            list.add(key);
+        });
+        return list;
+    }
+
     public void register() {
         plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             final Commands commands = event.registrar();
@@ -65,6 +99,38 @@ public class DevCommands {
                                 p.sendMessage("Vanish set to: " + VanishHandler.toggleVanish(p));
                                 return 1;
                             })
+                    ).then(
+                        Commands.literal("advancelostfix")
+                            .then(
+                                Commands.argument("target", ArgumentTypes.player())
+                                    .executes(ctx ->{
+                                        var sender = getExecutor(ctx.getSource());
+                                        var p = ctx.getArgument("target", PlayerSelectorArgumentResolver.class)
+                                                .resolve(ctx.getSource()).getFirst();
+
+                                        List<Key> list = getTrackTime(p.getUniqueId());
+
+                                        fix.add(p.getUniqueId());
+                                        list.forEach(key ->{
+                                            String value = key.value();
+                                            Key managerKey = Crux.key(
+                                                key.namespace() + ":" + value.split("/", 2)[0]
+                                            );
+                                            CruxAdvancementManager manager = AdvancementRegistries.ADVANCEMENT_MANAGERS.get(managerKey);
+                                            if(manager == null){
+                                                sender.sendMessage("Manager " + managerKey + " not found");
+                                                return;
+                                            }
+                                            var advance = manager.getAdvancement(key);
+                                            manager.grantAdvancement(p, advance);
+
+                                        });
+                                        fix.remove(p.getUniqueId());
+
+                                        sender.sendMessage("Fixed advance " + p.getName() + " " + list.size());
+                                        return 1;
+                                    })
+                            )
                     )
                     .then(
                         Commands.literal("maintenance")

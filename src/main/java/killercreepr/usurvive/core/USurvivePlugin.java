@@ -196,6 +196,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     }
 
     protected final CfgCrazyAdvancementManagerCfgLoader cfgManagerLoader = new CfgCrazyAdvancementManagerCfgLoader(this);
+    protected DevCommands devCommands;
     @Override
     public void onLoad() {
         instance = this;
@@ -211,7 +212,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         new USurviveCommands(this).register();
         new StoreCommands(this).register();
         new TPACommands(this).register();
-        new DevCommands(this).register();
+        devCommands = new DevCommands(this);
+        devCommands.register();
         new AdminCommands(this).register();
         USurvivePotions.register();
 
@@ -429,7 +431,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new ArmorTrimListener(),
             new CustomObjectivesListener(),
             new MaintenanceListener(),
-            new VanishListener()
+            new VanishListener(),
+            devCommands
             //new WaxPaintingListener()
         );
 
