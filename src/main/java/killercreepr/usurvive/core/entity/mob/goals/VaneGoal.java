@@ -194,11 +194,4 @@ public class VaneGoal extends CruxMobModeledGoal {
     public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
         return target instanceof Player && super.isValidNaturalTarget(target);
     }
-
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if(event.getRightClicked().equals(mob) || isModelPart(event.getRightClicked())){
-            event.setCancelled(true);
-        }
-    }
 }

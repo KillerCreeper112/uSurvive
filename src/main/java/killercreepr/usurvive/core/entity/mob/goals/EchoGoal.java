@@ -185,9 +185,9 @@ public class EchoGoal extends CruxMobModeledGoal implements Listener {
     }
 
     protected Menu inventory;
-    @EventHandler
-    public void onPlayerInteract(PlayerInteractEntityEvent event) {
-        if(!event.getRightClicked().equals(mob)) return;
+
+    @Override
+    public void onPlayerInteractLow(PlayerInteractEntityEvent event) {
         if(target != null) return;
         Player p = event.getPlayer();
         if(inventory == null) inventory = buildInventory();
