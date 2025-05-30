@@ -2,9 +2,12 @@ package killercreepr.usurvive.core.mechanics.grapple.impl;
 
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.usurvive.core.lang.Lang;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -62,6 +65,23 @@ public class ActiveEntityGrappleHook extends BasicGrappleHook implements Holder<
         if(wasCollidingLastTick) return;
 
         mob.setAI(true);
+    }
+
+    public void pullTowardsTarget(Entity owner, Location target){
+        // Calculate how long the grapple has been attached
+        long timeAttached = (System.currentTimeMillis() - grappleAttachTime)/50L;
+
+        // Calculate the decay rate based on time spent on the block
+        double pullForceMultiplier = Math.max(1.0 - (timeAttached / (float) decayDuration) * pullForceDecayRate, minPullForceMultiplier);
+
+        // Adjust velocity based on the calculated pull force
+        Vector vel = target.toVector().subtract(CruxEntityUtil.getEyeOrLocation(owner).toVector())
+            .multiply(pullForce * pullForceMultiplier); // Apply the multiplier to the pull force
+        double velDistance = vel.length();
+        double scaledForce = Math.min(velDistance * 0.1, pullForce * 2);
+
+        vel.normalize().multiply(scaledForce);
+        owner.setVelocity(owner.getVelocity().add(vel));
     }
 
     public boolean checkCollisionTick(@NotNull Entity owner, @NotNull LivingEntity entity){

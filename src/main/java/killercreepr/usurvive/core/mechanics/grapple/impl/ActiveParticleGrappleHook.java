@@ -156,10 +156,6 @@ public class ActiveParticleGrappleHook extends BasicGrappleHook implements Holde
         return throwSpeed;
     }
 
-    public double getPullForce() {
-        return pullForce;
-    }
-
     @NotNull
     public Location getLocation() {
         return location;

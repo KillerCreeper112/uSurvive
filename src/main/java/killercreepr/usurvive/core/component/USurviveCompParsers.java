@@ -36,13 +36,15 @@ public class USurviveCompParsers {
             Key grappleType = ctx.get("grapple_type");
             int maxHooks = ctx.getOptional("max_hooks", 1);
             int cooldown = ctx.getOptional("cooldown", 2);
-            float pullForce = ctx.getOptional("pull_force", .4f);
+            float pullForce = ctx.getOptional("pull_force", ctx.getOptional("swing_force", .4f));//temp change?
             float throwForce = ctx.getOptional("throw_force", 1f);
+
+
             return new SimpleGrapple(
                 grappleType, maxHooks, cooldown, pullForce, throwForce,
 
-                ctx.getOptional("pull_decay_rate", 1f),
-                ctx.getOptional("min_pull_multiplier", .2f),
+                ctx.getOptional("pull_decay_rate", ctx.getOptional("tension_strength",1f)), //temp change?
+                ctx.getOptional("min_pull_multiplier", ctx.getOptional("max_rope_length", .2f)), //temp change?
                 ctx.getOptional("decay_duration", 20)
             );
         });
@@ -53,6 +55,7 @@ public class USurviveCompParsers {
         .field("cooldown", TextInputField.field(PersistTextParser.INTEGER, Grapple::getCooldown))
         .field("throw_force", TextInputField.field(PersistTextParser.FLOAT, Grapple::getThrowForce))
         .field("pull_force", TextInputField.field(PersistTextParser.FLOAT, Grapple::getPullForce))
+        .field("swing_force", TextInputField.field(PersistTextParser.FLOAT, Grapple::getPullForce))
         .field("pull_decay_rate", TextInputField.field(PersistTextParser.FLOAT, Grapple::getPullForceDecayRate))
         .field("min_pull_multiplier", TextInputField.field(PersistTextParser.FLOAT, Grapple::getMinPullForceMultiplier))
         .field("decay_duration", TextInputField.field(PersistTextParser.INTEGER, Grapple::getDecayDuration))
@@ -65,14 +68,14 @@ public class USurviveCompParsers {
             Key grappleType = ctx.get("grapple_type");
             int maxHooks = ctx.getOptional("max_hooks", 1);
             int cooldown = ctx.getOptional("cooldown", 2);
-            float pullForce = ctx.getOptional("pull_force", .4f);
+            float pullForce = ctx.getOptional("pull_force", ctx.getOptional("swing_force", .4f));//temp change?
             float throwForce = ctx.getOptional("throw_force", .8f);
 
             return new SimpleDisplayGrapple(
                 grappleType, maxHooks, cooldown, pullForce, throwForce,
 
-                ctx.getOptional("pull_decay_rate", 1f),
-                ctx.getOptional("min_pull_multiplier", .2f),
+                ctx.getOptional("pull_decay_rate", ctx.getOptional("tension_strength",1f)), //temp change?
+                ctx.getOptional("min_pull_multiplier", ctx.getOptional("max_rope_length", .2f)), //temp change?
                 ctx.getOptional("decay_duration", 20),
 
                 ctx.get("type_key"),

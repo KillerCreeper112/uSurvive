@@ -15,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -120,7 +121,7 @@ public class ActiveDisplayGrappleHook extends BasicGrappleHook implements Holder
     public void onEntityHit(Entity owner, Entity hit) {
     }
 
-    public void pullTowardsTarget(Entity owner, Location target){
+    /*public void pullTowardsTarget(Entity owner, Location target){
         // Calculate how long the grapple has been attached
         long timeAttached = (System.currentTimeMillis() - grappleAttachTime)/50L;
 
@@ -135,7 +136,7 @@ public class ActiveDisplayGrappleHook extends BasicGrappleHook implements Holder
 
         vel.normalize().multiply(scaledForce);
         owner.setVelocity(owner.getVelocity().add(vel));
-    }
+    }*/
 
 
     public static @NotNull Matrix4f centerPivot(@NotNull Matrix4f addon, @NotNull Vector pivot){
@@ -266,10 +267,6 @@ public class ActiveDisplayGrappleHook extends BasicGrappleHook implements Holder
 
     public double getThrowSpeed() {
         return throwSpeed;
-    }
-
-    public double getPullForce() {
-        return pullForce;
     }
 
     @NotNull
