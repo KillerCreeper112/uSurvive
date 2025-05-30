@@ -8,15 +8,19 @@ import org.jetbrains.annotations.NotNull;
 public interface GrappleContext {
     static GrappleContext context(@NotNull Location location, @NotNull Entity owner, int id, double pullForce,
                                   double throwForce,
-                                  double pullForceDecayRate, double minPullForceMultiplier, int decayDuration){
+                                  double pullForceDecayRate, double minPullForceMultiplier, int decayDuration,
+                                  double swingBoostSpeed, double ropeBoostSpeed){
         return new SimpleGrappleContext(
             location, owner, id, pullForce, throwForce,
-            pullForceDecayRate, minPullForceMultiplier, decayDuration
+            pullForceDecayRate, minPullForceMultiplier, decayDuration,
+            swingBoostSpeed, ropeBoostSpeed
         );
     }
 
     double getPullForce();
     double getThrowForce();
+    double getRopeBoostSpeed();
+    double getSwingBoostSpeed();
 
     @NotNull
     Location getLocation();

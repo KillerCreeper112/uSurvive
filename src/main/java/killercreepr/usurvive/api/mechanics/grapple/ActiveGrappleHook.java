@@ -1,8 +1,11 @@
 package killercreepr.usurvive.api.mechanics.grapple;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 public interface ActiveGrappleHook {
     int getId();
@@ -10,7 +13,20 @@ public interface ActiveGrappleHook {
     default void remove(@Nullable Entity owner){
         scheduleForRemoval();
     }
-    void tick(@NotNull Entity owner);
+    default void onRemoving(@Nullable Entity owner){
+    }
+
+    /**
+     * Called when the owner manually removes the hook
+     */
+    default void forceRemove(@NotNull Entity owner){
+        remove(owner);
+    }
+
+    void tick(@NotNull Entity owner, @NotNull Collection<ActiveGrappleHook> activeHooks);
     boolean isScheduledForRemoval();
     void scheduleForRemoval();
+
+    Location getHookLocation();
+    boolean canUseAsAnchor();
 }

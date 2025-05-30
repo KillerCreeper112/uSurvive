@@ -14,7 +14,9 @@ public class DisplayReferenceGrappleContext extends SimpleGrappleContext impleme
     protected final SimpleDisplayGrapple grapple;
     public DisplayReferenceGrappleContext(@NotNull Location location, @NotNull Entity owner, int id,
                                           SimpleDisplayGrapple grapple) {
-        super(location, owner, id, grapple.getPullForce(), grapple.getThrowForce(), grapple.getPullForceDecayRate(), grapple.getMinPullForceMultiplier(), grapple.getDecayDuration());
+        super(location, owner, id, grapple.getPullForce(),
+            grapple.getThrowForce(), grapple.getPullForceDecayRate(), grapple.getMinPullForceMultiplier(), grapple.getDecayDuration(),
+            grapple.getSwingBoostSpeed(), grapple.getRopeBoostSpeed());
         this.grapple = grapple;
     }
 

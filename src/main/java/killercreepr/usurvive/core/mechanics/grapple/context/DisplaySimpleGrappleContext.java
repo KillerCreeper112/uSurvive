@@ -1,14 +1,7 @@
 package killercreepr.usurvive.core.mechanics.grapple.context;
 
-import killercreepr.usurvive.api.mechanics.grapple.context.DisplayGrappleContext;
-import net.kyori.adventure.key.Key;
-import org.bukkit.Location;
-import org.bukkit.entity.Display;
-import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.NotNull;
-
-public class DisplaySimpleGrappleContext extends SimpleGrappleContext implements DisplayGrappleContext {
-    protected final Key typeKey;
+public class DisplaySimpleGrappleContext /*extends SimpleGrappleContext implements DisplayGrappleContext*/ {
+    /*protected final Key typeKey;
     protected final Class<? extends Display> displayType;
     protected final double pullForce;
     protected final int maxDistance;
@@ -47,6 +40,6 @@ public class DisplaySimpleGrappleContext extends SimpleGrappleContext implements
 
     public double getRetractSpeed() {
         return retractSpeed;
-    }
+    }*/
 
 }

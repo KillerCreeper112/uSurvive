@@ -4,28 +4,42 @@ import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.usurvive.api.mechanics.grapple.ActiveGrappleHook;
+import killercreepr.usurvive.api.mechanics.grapple.context.GrappleContext;
 import killercreepr.usurvive.core.attribute.USurviveAttribute;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public abstract class BasicGrappleHook implements ActiveGrappleHook {
     protected final double pullForce; //.04
     protected final double pullForceDecayRate;// = 1.0; // Rate at which the pull force decays, higher means faster decay
     protected final double minPullForceMultiplier;// = 0.2; // Minimum value for the pull force multiplier
     protected final int decayDuration;// = 20; // Duration in ticks over which the pull force decays to its minimum value
+    protected final GrappleContext ctx;
 
-    public BasicGrappleHook(double pullForce, double pullForceDecayRate, double minPullForceMultiplier, int decayDuration) {
-        this.pullForce = pullForce;
-        this.pullForceDecayRate = pullForceDecayRate;
-        this.minPullForceMultiplier = minPullForceMultiplier;
-        this.decayDuration = decayDuration;
+    public BasicGrappleHook(GrappleContext ctx) {
+        this.ctx = ctx;
+        this.pullForce = ctx.getPullForce();
+        this.pullForceDecayRate = ctx.getPullForceDecayRate();
+        this.minPullForceMultiplier = ctx.getMinPullForceMultiplier();
+        this.decayDuration = ctx.getDecayDuration();
     }
 
     public void onGrappleAttach(){
         if(grappleAttachTime == -1) grappleAttachTime = System.currentTimeMillis();
+    }
+
+    @Override
+    public boolean canUseAsAnchor() {
+        return grappleAttachTime != -1;
     }
 
     public void onEntityHit(Entity owner, Entity hit){
@@ -57,7 +71,114 @@ public abstract class BasicGrappleHook implements ActiveGrappleHook {
     }
 */
 
-    public void pullTowardsTarget(Entity owner, Location anchor) {
+    public List<Location> buildAnchorList(@NotNull Collection<ActiveGrappleHook> activeHooks){
+        List<Location> list = new ArrayList<>();
+        for (ActiveGrappleHook hook : activeHooks) {
+            if(!hook.canUseAsAnchor()) continue;
+            list.add(hook.getHookLocation());
+        }
+        return list;
+    }
+
+    protected boolean forceRemoved = false;
+    @Override
+    public void forceRemove(@NotNull Entity owner) {
+        ActiveGrappleHook.super.forceRemove(owner);
+        forceRemoved = true;
+    }
+
+
+    @Override
+    public void onRemoving(@Nullable Entity owner) {
+        ActiveGrappleHook.super.onRemoving(owner);
+        if(owner == null) return;
+        if(!forceRemoved) return;
+        if(owner instanceof HumanEntity h && h.isSneaking()) return;
+
+        Vector velocity = owner.getVelocity();
+
+        // Momentum boost from swing
+        double swingSpeed = owner.getVelocity().dot(lastSwingTangent); // how fast along the swing path
+        if (swingSpeed > 0) {
+            Vector swingBoost = lastSwingTangent.clone().multiply(swingSpeed * ctx.getSwingBoostSpeed());
+            velocity.add(swingBoost);
+        }
+
+        Vector ropeBoost = lastTotalPull.clone().multiply(ctx.getRopeBoostSpeed());
+        velocity.add(ropeBoost);
+
+        double maxLaunchSpeed = 3.5; // or whatever feels right
+        if (velocity.length() > maxLaunchSpeed) {
+            velocity = velocity.normalize().multiply(maxLaunchSpeed);
+        }
+
+        owner.setVelocity(velocity);
+    }
+
+    private Vector lastTotalPull = new Vector(0, 0, 0);
+    private Vector lastSwingTangent = new Vector(0, 0, 0);
+
+    public void pullTowardsTargets(Entity owner, List<Location> anchors) {
+        if (anchors.isEmpty()) return;
+
+        Location eyeLoc = CruxEntityUtil.getEyeOrLocation(owner);
+        Vector velocity = owner.getVelocity();
+
+        // Gravity simulation
+        velocity.setY(velocity.getY() - 0.08);
+
+        double maxRopeLength = minPullForceMultiplier;
+        double tensionStrength = pullForceDecayRate;
+
+        Vector totalPull = new Vector(0, 0, 0);
+
+        for (Location anchor : anchors) {
+            Vector toAnchor = anchor.toVector().subtract(eyeLoc.toVector());
+            double distance = toAnchor.length();
+
+            if (distance > maxRopeLength) {
+                Vector ropeDir = toAnchor.normalize();
+                double excess = distance - maxRopeLength;
+
+                // Remove outward velocity along the rope direction
+                double outwardVel = velocity.dot(ropeDir);
+                if (outwardVel > 0) {
+                    velocity.subtract(ropeDir.multiply(outwardVel));
+                }
+
+                // Apply pull from this rope
+                double clampedExcess = Math.min(excess, maxRopeLength);
+                Vector pullBack = ropeDir.multiply(clampedExcess * tensionStrength);
+
+                totalPull.add(pullBack);
+            }
+        }
+        lastTotalPull = totalPull;
+
+        velocity.add(totalPull);
+
+        // Optional: Simulated swing force from input
+        Vector swingInput = getPlayerInputDirection(owner);
+        if (swingInput != null && !swingInput.isZero()) {
+            Vector averagedAnchor = anchors.stream()
+                .map(Location::toVector)
+                .reduce(new Vector(0, 0, 0), Vector::add)
+                .multiply(1.0 / anchors.size());
+
+            Vector toAvgAnchor = averagedAnchor.clone().subtract(eyeLoc.toVector());
+            Vector tangent = swingInput.clone().subtract(toAvgAnchor.clone().normalize().multiply(swingInput.dot(toAvgAnchor.normalize())));
+            if (!tangent.isZero()) {
+                tangent.normalize();
+                velocity.add(tangent.multiply(pullForce));
+                lastSwingTangent = tangent;
+            }
+        }
+
+        owner.setVelocity(velocity);
+    }
+
+
+    /*public void pullTowardsTarget(Entity owner, Location anchor) { //VAR GOOD
         Location eyeLoc = CruxEntityUtil.getEyeOrLocation(owner);
         Vector toAnchor = anchor.toVector().subtract(eyeLoc.toVector());
         double distance = toAnchor.length();
@@ -100,7 +221,7 @@ public abstract class BasicGrappleHook implements ActiveGrappleHook {
         }
 
         owner.setVelocity(velocity);
-    }
+    }*/
 
     protected Vector getPlayerInputDirection(Entity entity) {
         if (!(entity instanceof Player player)) return null;

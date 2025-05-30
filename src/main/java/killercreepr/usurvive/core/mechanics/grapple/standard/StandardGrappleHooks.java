@@ -26,9 +26,8 @@ public class StandardGrappleHooks {
         @Override
         public ActiveGrappleHook throwNew(@NotNull GrappleContext ctx) {
             return new ActiveParticleGrappleHook(
-                ctx.getLocation(), ctx.getId(), ctx.getPullForce(),
+                ctx.getLocation(), ctx,
                 12, ctx.getThrowForce(), .3D, .5D,
-                ctx.getPullForceDecayRate(), ctx.getMinPullForceMultiplier(), ctx.getDecayDuration(),
                 new ParticleBuilder(Particle.CRIT).extra(0D)
             );
         }
@@ -40,13 +39,9 @@ public class StandardGrappleHooks {
             Class<? extends Display> displayType;
             Key typeKey;
 
-            double pullForce = ctx.getPullForce();
             int maxDistance;
             double throwSpeed = ctx.getThrowForce();
             double retractSpeed;
-            double pullForceDecayRate = ctx.getPullForceDecayRate();
-            double minPullForceMultiplier = ctx.getMinPullForceMultiplier();
-            int decayDuration = ctx.getDecayDuration();
 
             if(ctx instanceof DisplayGrappleContext ct){
                 displayType = ct.getDisplayType();
@@ -73,9 +68,8 @@ public class StandardGrappleHooks {
                 }
             );
             return new ActiveDisplayGrappleHook(
-                ctx.getLocation(), ctx.getId(), pullForce,
+                ctx.getLocation(), ctx,
                 maxDistance, throwSpeed, retractSpeed,
-                pullForceDecayRate, minPullForceMultiplier, decayDuration,
                 display
             );
         }

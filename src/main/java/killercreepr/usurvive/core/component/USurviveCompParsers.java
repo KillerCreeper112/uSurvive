@@ -32,6 +32,12 @@ public class USurviveCompParsers {
         .field("min_pull_multiplier", TextInputField.field(PersistTextParser.FLOAT, Grapple::getMinPullForceMultiplier))
         .field("decay_duration", TextInputField.field(PersistTextParser.INTEGER, Grapple::getDecayDuration))
         .field("cooldown", TextInputField.field(PersistTextParser.INTEGER, Grapple::getCooldown))
+
+        .field("swing_force", TextInputField.field(PersistTextParser.FLOAT, Grapple::getPullForce))
+        .field("tension_strength", TextInputField.field(PersistTextParser.FLOAT, Grapple::getPullForceDecayRate))
+        .field("max_rope_length", TextInputField.field(PersistTextParser.FLOAT, Grapple::getMinPullForceMultiplier))
+        .field("swing_boost_speed", TextInputField.field(PersistTextParser.FLOAT, Grapple::getSwingBoostSpeed))
+        .field("rope_boost_speed", TextInputField.field(PersistTextParser.FLOAT, Grapple::getRopeBoostSpeed))
         .apply(ctx ->{
             Key grappleType = ctx.get("grapple_type");
             int maxHooks = ctx.getOptional("max_hooks", 1);
@@ -45,7 +51,10 @@ public class USurviveCompParsers {
 
                 ctx.getOptional("pull_decay_rate", ctx.getOptional("tension_strength",1f)), //temp change?
                 ctx.getOptional("min_pull_multiplier", ctx.getOptional("max_rope_length", .2f)), //temp change?
-                ctx.getOptional("decay_duration", 20)
+                ctx.getOptional("decay_duration", 20),
+
+                ctx.getOptional("swing_boost_speed", 50f),
+                ctx.getOptional("rope_boost_speed", 2f)
             );
         });
 
@@ -56,6 +65,8 @@ public class USurviveCompParsers {
         .field("throw_force", TextInputField.field(PersistTextParser.FLOAT, Grapple::getThrowForce))
         .field("pull_force", TextInputField.field(PersistTextParser.FLOAT, Grapple::getPullForce))
         .field("swing_force", TextInputField.field(PersistTextParser.FLOAT, Grapple::getPullForce))
+        .field("tension_strength", TextInputField.field(PersistTextParser.FLOAT, Grapple::getPullForceDecayRate))
+        .field("max_rope_length", TextInputField.field(PersistTextParser.FLOAT, Grapple::getMinPullForceMultiplier))
         .field("pull_decay_rate", TextInputField.field(PersistTextParser.FLOAT, Grapple::getPullForceDecayRate))
         .field("min_pull_multiplier", TextInputField.field(PersistTextParser.FLOAT, Grapple::getMinPullForceMultiplier))
         .field("decay_duration", TextInputField.field(PersistTextParser.INTEGER, Grapple::getDecayDuration))
@@ -64,6 +75,8 @@ public class USurviveCompParsers {
         .field("display_type", TextInputField.field(PersistTextParser.STRING, e -> ((SimpleDisplayGrapple) e).getDisplayType()))
         .field("range", TextInputField.field(PersistTextParser.INTEGER, e -> ((SimpleDisplayGrapple) e).getMaxDistance()))
         .field("retract_speed", TextInputField.field(PersistTextParser.FLOAT, e -> ((SimpleDisplayGrapple) e).getRetractSpeed()))
+        .field("swing_boost_speed", TextInputField.field(PersistTextParser.FLOAT, Grapple::getSwingBoostSpeed))
+        .field("rope_boost_speed", TextInputField.field(PersistTextParser.FLOAT, Grapple::getRopeBoostSpeed))
         .apply(ctx ->{
             Key grappleType = ctx.get("grapple_type");
             int maxHooks = ctx.getOptional("max_hooks", 1);
@@ -77,6 +90,9 @@ public class USurviveCompParsers {
                 ctx.getOptional("pull_decay_rate", ctx.getOptional("tension_strength",1f)), //temp change?
                 ctx.getOptional("min_pull_multiplier", ctx.getOptional("max_rope_length", .2f)), //temp change?
                 ctx.getOptional("decay_duration", 20),
+
+                ctx.getOptional("swing_boost_speed", 50f),
+                ctx.getOptional("rope_boost_speed", 2f),
 
                 ctx.get("type_key"),
                 ctx.getOptional("display_type", "block"),

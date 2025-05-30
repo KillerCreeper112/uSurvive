@@ -2,11 +2,8 @@ package killercreepr.usurvive.core.entity.memory;
 
 import killercreepr.crux.api.data.Loadable;
 import killercreepr.crux.api.entity.memory.EntityMemory;
-import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.EntityDataHolder;
-import killercreepr.crux.core.entity.memory.EntityTickedDataHolder;
-import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.common.element.FileObject;
@@ -14,15 +11,11 @@ import killercreepr.cruxconfig.config.common.file.DataFile;
 import killercreepr.usurvive.core.data.Pack;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
 
 public class ItemPackHolder extends EntityDataHolder implements Loadable {
     public static ItemPackHolder itemPackHolder(Entity e){

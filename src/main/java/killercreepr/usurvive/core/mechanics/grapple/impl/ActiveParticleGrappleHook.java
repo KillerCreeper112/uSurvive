@@ -4,12 +4,16 @@ import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxLoc;
+import killercreepr.usurvive.api.mechanics.grapple.ActiveGrappleHook;
+import killercreepr.usurvive.api.mechanics.grapple.context.GrappleContext;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
 
 public class ActiveParticleGrappleHook extends BasicGrappleHook implements Holder<Location> {
     protected @NotNull Location location;
@@ -19,17 +23,14 @@ public class ActiveParticleGrappleHook extends BasicGrappleHook implements Holde
     protected final double retractSpeed;
     protected final double particleDistance;
     protected final @NotNull ParticleBuilder particle;
-    public ActiveParticleGrappleHook(@NotNull Location startLocation, int id, double pullForce,
+    public ActiveParticleGrappleHook(@NotNull Location startLocation, GrappleContext ctx,
                                      int maxDistance,
                                      double throwSpeed,
                                      double retractSpeed,
                                      double particleDistance,
-                                     double pullForceDecayRate,
-                                     double minPullForceMultiplier,
-                                     int decayDuration,
                                      @NotNull ParticleBuilder particle) {
-        super(pullForce, pullForceDecayRate, minPullForceMultiplier, decayDuration);
-        this.id = id;
+        super(ctx);
+        this.id = ctx.getId();
         this.location = startLocation.clone();
         this.maxDistance = maxDistance;
         this.throwSpeed = throwSpeed;
@@ -47,19 +48,24 @@ public class ActiveParticleGrappleHook extends BasicGrappleHook implements Holde
         return super.isValid(owner) && owner.getWorld().equals(location.getWorld());
     }
 
+    @Override
+    public Location getHookLocation() {
+        return location;
+    }
+
     protected boolean wasCollidingLastTick = false;
     protected boolean retracting = false;
     protected int range = 0;
     @Override
-    public void tick(@NotNull Entity owner) {
+    public void tick(@NotNull Entity owner, @NotNull Collection<ActiveGrappleHook> activeHooks) {
         if(retracting){
             retractTick(owner);
             return;
         }
-        throwTick(owner);
+        throwTick(owner, activeHooks);
     }
 
-    public RayTraceResult rayLogic(@NotNull Entity owner, @NotNull Location location){
+    public RayTraceResult rayLogic(@NotNull Entity owner, @NotNull Location location, @NotNull Collection<ActiveGrappleHook> activeHooks){
         RayTraceResult result = location.getWorld().rayTrace(location, location.getDirection(), .5D, FluidCollisionMode.NEVER,
             true, .3D, e -> !e.equals(owner));
         if(result==null) return null;
@@ -69,7 +75,8 @@ public class ActiveParticleGrappleHook extends BasicGrappleHook implements Holde
             if(grappleAttachTime == -1){
                 onGrappleAttach();
             }
-            pullTowardsTarget(owner, location);
+            pullTowardsTargets(owner, buildAnchorList(activeHooks));
+            //pullTowardsTarget(owner, location);
             /*Vector vel = location.toVector().subtract(CruxEntityUtil.getEyeOrLocation(owner).toVector())
                 .multiply(pullForce);
             owner.setVelocity(owner.getVelocity().add(vel));*/
@@ -106,7 +113,7 @@ public class ActiveParticleGrappleHook extends BasicGrappleHook implements Holde
         }
     }
 
-    public void throwTick(@NotNull Entity owner){
+    public void throwTick(@NotNull Entity owner, @NotNull Collection<ActiveGrappleHook> activeHooks){
         if(!wasCollidingLastTick){
             //Location previous = location.clone();
             location = CruxLoc.shift(location, throwSpeed, 0D, 0D);
@@ -116,9 +123,9 @@ public class ActiveParticleGrappleHook extends BasicGrappleHook implements Holde
         ownerLoc.add(0D, owner.getHeight()/2D, 0D);
         displayParticles(ownerLoc);
 
-        Crux.getServer().getScheduler().runTask(Crux.getMainPlugin(), task ->{
+        Crux.scheduler().runTask(() ->{
             if(isScheduledForRemoval()) return;
-            RayTraceResult result = rayLogic(owner, location);
+            RayTraceResult result = rayLogic(owner, location, activeHooks);
             if(result == null){
                 wasCollidingLastTick = false;
             }else{

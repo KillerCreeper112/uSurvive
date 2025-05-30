@@ -35,9 +35,6 @@ public class DefaultGrappleHook extends EntityGrappleHook{
     @Override
     public ActiveGrappleHook throwNew(@NotNull GrappleContext ctx) {
         LivingEntity hook = spawnEntity(ctx);
-        return new ActiveEntityGrappleHook(
-            hook, ctx.getId(), ctx.getPullForce(),
-            ctx.getPullForceDecayRate(), ctx.getMinPullForceMultiplier(), ctx.getDecayDuration()
-        );
+        return new ActiveEntityGrappleHook(hook, ctx);
     }
 }

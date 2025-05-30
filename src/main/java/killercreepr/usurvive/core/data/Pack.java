@@ -1,7 +1,6 @@
 package killercreepr.usurvive.core.data;
 
 import killercreepr.crux.api.item.CruxItem;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

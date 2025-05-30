@@ -2,7 +2,6 @@ package killercreepr.usurvive.core.menu;
 
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.data.DataExchange;
-import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import killercreepr.crux.core.Crux;

@@ -60,6 +60,7 @@ public class GrapplerHolder extends PlayerTickedDataHolder {
     public void remove(Entity owner){
         for(ActiveGrappleHook h : grapples.values()){
             h.remove(owner);
+            h.onRemoving(owner);
         }
         grapples.clear();
     }
@@ -70,12 +71,14 @@ public class GrapplerHolder extends PlayerTickedDataHolder {
             reset(e);
             return;
         }
-        grapples.values().removeIf(d ->{
+        var values = grapples.values();
+        values.removeIf(d ->{
             if(!d.isValid(e)){
                 d.remove(e);
+                d.onRemoving(e);
                 return true;
             }
-            d.tick(e);
+            d.tick(e, values);
             return false;
         });
     }

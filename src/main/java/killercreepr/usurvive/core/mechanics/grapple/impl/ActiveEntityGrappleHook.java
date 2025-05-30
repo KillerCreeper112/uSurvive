@@ -3,6 +3,8 @@ package killercreepr.usurvive.core.mechanics.grapple.impl;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxEntityUtil;
+import killercreepr.usurvive.api.mechanics.grapple.ActiveGrappleHook;
+import killercreepr.usurvive.api.mechanics.grapple.context.GrappleContext;
 import killercreepr.usurvive.core.lang.Lang;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -10,24 +12,25 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.UUID;
 
 public class ActiveEntityGrappleHook extends BasicGrappleHook implements Holder<Entity> {
     protected final @NotNull UUID uuid;
     protected final @NotNull Holder<Entity> entity;
     protected final int id;
-    public ActiveEntityGrappleHook(@NotNull UUID uuid, @NotNull Holder<Entity> entity, int id, double pullForce, double pullForceDecayRate, double minPullForceMultiplier, int decayDuration) {
-        super(pullForce, pullForceDecayRate, minPullForceMultiplier, decayDuration);
+    public ActiveEntityGrappleHook(@NotNull UUID uuid, @NotNull Holder<Entity> entity, GrappleContext ctx) {
+        super(ctx);
         this.uuid = uuid;
         this.entity = entity;
-        this.id = id;
+        this.id = ctx.getId();
     }
 
-    public ActiveEntityGrappleHook(@NotNull Entity entity, int id, double pullForce, double pullForceDecayRate, double minPullForceMultiplier, int decayDuration) {
-        super(pullForce, pullForceDecayRate, minPullForceMultiplier, decayDuration);
+    public ActiveEntityGrappleHook(@NotNull Entity entity, GrappleContext ctx) {
+        super(ctx);
         this.uuid = entity.getUniqueId();
         this.entity = Holder.weakReference(entity);
-        this.id = id;
+        this.id = ctx.getId();
     }
 
     @Override
@@ -48,15 +51,18 @@ public class ActiveEntityGrappleHook extends BasicGrappleHook implements Holder<
         Crux.getServer().getScheduler().runTask(Crux.getMainPlugin(), task -> entity.remove());
     }
 
+    @Override
+    public Location getHookLocation() {
+        return entity.value().getLocation();
+    }
+
     protected boolean wasCollidingLastTick = false;
     @Override
-    public void tick(@NotNull Entity owner) {
+    public void tick(@NotNull Entity owner, @NotNull Collection<ActiveGrappleHook> activeHooks) {
         Entity entity = value();
         if(!(entity instanceof LivingEntity mob)) return;
 
-        Crux.getServer().getScheduler().runTask(Crux.getMainPlugin(), task ->{
-            onTick(owner, mob);
-        });
+        Crux.scheduler().runTask(() -> onTick(owner, mob));
     }
 
     public void onTick(@NotNull Entity owner, @NotNull LivingEntity mob){

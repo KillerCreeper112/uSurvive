@@ -2,20 +2,20 @@ package killercreepr.usurvive.core.mechanics.grapple.impl;
 
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
+import killercreepr.usurvive.api.mechanics.grapple.ActiveGrappleHook;
+import killercreepr.usurvive.api.mechanics.grapple.context.GrappleContext;
 import killercreepr.usurvive.core.attribute.USurviveAttribute;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +24,8 @@ import org.joml.AxisAngle4f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+
+import java.util.Collection;
 
 public class ActiveDisplayGrappleHook extends BasicGrappleHook implements Holder<Location> {
     protected @NotNull Location location;
@@ -34,16 +36,13 @@ public class ActiveDisplayGrappleHook extends BasicGrappleHook implements Holder
     protected final double retractSpeed;
 
     protected final @NotNull Display display;
-    public ActiveDisplayGrappleHook(@NotNull Location startLocation, int id, double pullForce,
+    public ActiveDisplayGrappleHook(@NotNull Location startLocation, GrappleContext ctx,
                                     int maxDistance,
                                     double throwSpeed,
                                     double retractSpeed,
-                                    double pullForceDecayRate,
-                                    double minPullForceMultiplier,
-                                    int decayDuration,
                                     @NotNull Display display) {
-        super(pullForce, pullForceDecayRate, minPullForceMultiplier, decayDuration);
-        this.id = id;
+        super(ctx);
+        this.id = ctx.getId();
         this.location = startLocation.clone();
         this.maxDistance = maxDistance;
         this.throwSpeed = throwSpeed;
@@ -71,17 +70,22 @@ public class ActiveDisplayGrappleHook extends BasicGrappleHook implements Holder
     protected boolean retracting = false;
     protected int range = 0;
     @Override
-    public void tick(@NotNull Entity owner) {
+    public void tick(@NotNull Entity owner, @NotNull Collection<ActiveGrappleHook> activeHooks) {
         if(retracting){
             retractTick(owner);
-        }else throwTick(owner);
+        }else throwTick(owner, activeHooks);
         updateDisplay(owner, owner.getLocation(), location);
+    }
+
+    @Override
+    public Location getHookLocation() {
+        return location;
     }
 
     // Add a new variable to track the time spent attached to the block
     private long grappleAttachTime = -1; // -1 means not attached to a block yet
 
-    public RayTraceResult rayLogic(@NotNull Entity owner, @NotNull Location location){
+    public RayTraceResult rayLogic(@NotNull Entity owner, @NotNull Location location, @NotNull Collection<ActiveGrappleHook> activeHooks){
         double distance = wasCollidingLastTick ? .5D : lastLocation.distanceSquared(location);
         RayTraceResult result = location.getWorld().rayTrace(lastLocation, lastLocation.getDirection(), distance, FluidCollisionMode.NEVER,
             true, .3D, e ->{
@@ -99,7 +103,8 @@ public class ActiveDisplayGrappleHook extends BasicGrappleHook implements Holder
             if (grappleAttachTime == -1) {
                 onGrappleAttach();
             }
-            pullTowardsTarget(owner, location);
+            pullTowardsTargets(owner, buildAnchorList(activeHooks));
+            //pullTowardsTarget(owner, location);
             return result;
         }else grappleAttachTime = -1;
 
@@ -220,7 +225,7 @@ public class ActiveDisplayGrappleHook extends BasicGrappleHook implements Holder
         }
     }
 
-    public void throwTick(@NotNull Entity owner){
+    public void throwTick(@NotNull Entity owner, @NotNull Collection<ActiveGrappleHook> activeHooks){
         if(!wasCollidingLastTick){
             lastLocation = location;
             location = CruxLoc.shift(location, throwSpeed, 0D, 0D);
@@ -228,7 +233,7 @@ public class ActiveDisplayGrappleHook extends BasicGrappleHook implements Holder
 
         Crux.scheduler().runTask(() ->{
             if(isScheduledForRemoval()) return;
-            RayTraceResult result = rayLogic(owner, location);
+            RayTraceResult result = rayLogic(owner, location, activeHooks);
             if(result == null){
                 wasCollidingLastTick = false;
             }else{

@@ -6,7 +6,6 @@ import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxgeneration.util.CruxNoise;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;

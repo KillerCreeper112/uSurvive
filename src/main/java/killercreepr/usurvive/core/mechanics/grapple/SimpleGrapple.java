@@ -28,9 +28,11 @@ public class SimpleGrapple implements Grapple {
     protected final float pullForceDecayRate;
     protected final float minPullForceMultiplier;
     protected final int decayDuration;
+    protected final float swingBoostSpeed;
+    protected final float ropeBoostSpeed;
 
     public SimpleGrapple(@NotNull Key hook, int maxHooks, int cooldown, float pullForce, float throwForce,
-                         float pullForceDecayRate, float minPullForceMultiplier, int decayDuration) {
+                         float pullForceDecayRate, float minPullForceMultiplier, int decayDuration, float swingBoostSpeed, float ropeBoostSpeed) {
         this.hook = hook;
         this.maxHooks = maxHooks;
         this.cooldown = cooldown;
@@ -39,6 +41,8 @@ public class SimpleGrapple implements Grapple {
         this.pullForceDecayRate = pullForceDecayRate;
         this.minPullForceMultiplier = minPullForceMultiplier;
         this.decayDuration = decayDuration;
+        this.swingBoostSpeed = swingBoostSpeed;
+        this.ropeBoostSpeed = ropeBoostSpeed;
     }
 
     public int getMaxHooks() {
@@ -75,6 +79,16 @@ public class SimpleGrapple implements Grapple {
         return decayDuration;
     }
 
+    @Override
+    public float getRopeBoostSpeed() {
+        return ropeBoostSpeed;
+    }
+
+    @Override
+    public float getSwingBoostSpeed() {
+        return swingBoostSpeed;
+    }
+
     @NotNull
     public Key getHookType() {
         return hook;
@@ -83,7 +97,7 @@ public class SimpleGrapple implements Grapple {
     public GrappleContext buildGrappleContext(ItemUseContext ctx, int id){
         Player p = ctx.getPlayer();
         return GrappleContext.context(p.getEyeLocation(), p, id, pullForce, throwForce,
-            pullForceDecayRate, minPullForceMultiplier, decayDuration);
+            pullForceDecayRate, minPullForceMultiplier, decayDuration, swingBoostSpeed, ropeBoostSpeed);
     }
 
     @Override
@@ -103,7 +117,7 @@ public class SimpleGrapple implements Grapple {
 
         ActiveGrappleHook previous = grappler.getGrapple(id);
         if(previous != null){
-            previous.remove(p);
+            previous.forceRemove(p);
             return ItemUseResult.cancelled();
         }
         if(p.hasCooldown(item.item())){
