@@ -432,7 +432,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new CustomObjectivesListener(),
             new MaintenanceListener(),
             new VanishListener(),
-            devCommands
+            devCommands,
+            new VillagerTradeListener()
             //new WaxPaintingListener()
         );
 
