@@ -1,6 +1,8 @@
 package killercreepr.usurvive.core.entity;
 
 import killercreepr.crux.api.entity.memory.EntityMemory;
+import killercreepr.cruxattributes.api.attribute.CruxAttribute;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.usurvive.core.entity.memory.GustTNTHolder;
 import killercreepr.usurvive.core.entity.mob.UCruxMob;
@@ -25,6 +27,10 @@ public class GustTNT extends UCruxMob {
             e.customName(Component.text("Gust TNT"));
             e.setCustomNameVisible(false);
             e.setSilent(true);
+
+            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_KNOCKBACK,
+                CruxAttributeModifier.baseModifier(20));
+
             load(e);
             if(consumer != null) consumer.accept(e);
         });

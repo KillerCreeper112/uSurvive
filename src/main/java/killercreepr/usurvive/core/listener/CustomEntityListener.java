@@ -1,7 +1,10 @@
 package killercreepr.usurvive.core.listener;
 
 import com.destroystokyo.paper.event.entity.EntityKnockbackByEntityEvent;
+import killercreepr.crux.core.Crux;
+import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxblocks.api.event.CustomEntityExplodeEvent;
+import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import org.bukkit.entity.ArmorStand;
@@ -28,16 +31,6 @@ public class CustomEntityListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onEntityKnockbackByEntity(EntityKnockbackByEntityEvent event) {
-        var dmger = event.getHitBy();
-        //var victim = event.getEntity();
-        if(CruxMob.is(dmger, USurviveMobs.GUST_TNT)){
-            event.setKnockback(event.getKnockback().multiply(2.2f));
-        }
-    }
-
-
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         var dmger = event.getDamager();
         var victim = event.getEntity();
@@ -48,6 +41,10 @@ public class CustomEntityListener implements Listener {
         }else{
             if(CruxMob.is(dmger, USurviveMobs.GUST_TNT)){
                 event.setDamage(event.getDamage()*0.5D);
+                Crux.scheduler().runTask(() ->{
+                    EntityDamager.entityDamager(victim, dmger)
+                        .applyKnockback(CruxAttribute.ATTACK_KNOCKBACK.get(dmger));
+                });
             }
         }
     }
