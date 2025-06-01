@@ -9,11 +9,12 @@ public interface GrappleContext {
     static GrappleContext context(@NotNull Location location, @NotNull Entity owner, int id, double pullForce,
                                   double throwForce,
                                   double pullForceDecayRate, double minPullForceMultiplier, int decayDuration,
-                                  double swingBoostSpeed, double ropeBoostSpeed){
+                                  double swingBoostSpeed, double ropeBoostSpeed,
+                                  float swapHandsClimbSpeed){
         return new SimpleGrappleContext(
             location, owner, id, pullForce, throwForce,
             pullForceDecayRate, minPullForceMultiplier, decayDuration,
-            swingBoostSpeed, ropeBoostSpeed
+            swingBoostSpeed, ropeBoostSpeed, swapHandsClimbSpeed
         );
     }
 
@@ -21,6 +22,8 @@ public interface GrappleContext {
     double getThrowForce();
     double getRopeBoostSpeed();
     double getSwingBoostSpeed();
+    boolean hasSwapHandsClimbAction();
+    double getSwapHandsClimbSpeed();
 
     @NotNull
     Location getLocation();

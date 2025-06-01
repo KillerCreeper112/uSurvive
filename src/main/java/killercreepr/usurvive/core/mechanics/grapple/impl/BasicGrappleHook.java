@@ -1,6 +1,7 @@
 package killercreepr.usurvive.core.mechanics.grapple.impl;
 
 import killercreepr.crux.core.util.CruxEntityUtil;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.usurvive.api.mechanics.grapple.ActiveGrappleHook;
@@ -10,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,6 +26,7 @@ public abstract class BasicGrappleHook implements ActiveGrappleHook {
     protected final double minPullForceMultiplier;// = 0.2; // Minimum value for the pull force multiplier
     protected final int decayDuration;// = 20; // Duration in ticks over which the pull force decays to its minimum value
     protected final GrappleContext ctx;
+    protected double maxRopeLength;
 
     public BasicGrappleHook(GrappleContext ctx) {
         this.ctx = ctx;
@@ -31,6 +34,8 @@ public abstract class BasicGrappleHook implements ActiveGrappleHook {
         this.pullForceDecayRate = ctx.getPullForceDecayRate();
         this.minPullForceMultiplier = ctx.getMinPullForceMultiplier();
         this.decayDuration = ctx.getDecayDuration();
+
+        this.maxRopeLength = minPullForceMultiplier;
     }
 
     public void onGrappleAttach(){
@@ -127,7 +132,7 @@ public abstract class BasicGrappleHook implements ActiveGrappleHook {
         // Gravity simulation
         velocity.setY(velocity.getY() - 0.08);
 
-        double maxRopeLength = minPullForceMultiplier;
+        //double maxRopeLength = minPullForceMultiplier;
         double tensionStrength = pullForceDecayRate;
 
         Vector totalPull = new Vector(0, 0, 0);
@@ -177,6 +182,20 @@ public abstract class BasicGrappleHook implements ActiveGrappleHook {
         owner.setVelocity(velocity);
     }
 
+    @Override
+    public boolean hasSwapHandAction() {
+        return ctx.hasSwapHandsClimbAction();
+    }
+
+    @Override
+    public void onSwapHands(PlayerSwapHandItemsEvent event) {
+        event.setCancelled(true);
+        Player p = event.getPlayer();
+        boolean up = p.getPitch() < -45;
+        double add = up ? -ctx.getSwapHandsClimbSpeed() : ctx.getSwapHandsClimbSpeed();
+
+        maxRopeLength = CruxMath.clamp(maxRopeLength + add, 1D, minPullForceMultiplier);
+    }
 
     /*public void pullTowardsTarget(Entity owner, Location anchor) { //VAR GOOD
         Location eyeLoc = CruxEntityUtil.getEyeOrLocation(owner);

@@ -14,5 +14,10 @@ public interface Grapple extends InteractableComponent {
     int getDecayDuration();
     float getRopeBoostSpeed();
     float getSwingBoostSpeed();
+
+    int getItemCountUse();
+    boolean hasSwapHandsClimb();
+    float getSwapHandsClimbSpeed();
+
     @NotNull Key getHookType();
 }

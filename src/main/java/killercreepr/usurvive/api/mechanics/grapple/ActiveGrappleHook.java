@@ -2,6 +2,7 @@ package killercreepr.usurvive.api.mechanics.grapple;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,6 +15,14 @@ public interface ActiveGrappleHook {
         scheduleForRemoval();
     }
     default void onRemoving(@Nullable Entity owner){
+    }
+
+    default boolean hasSwapHandAction(){
+        return false;
+    }
+
+    default void onSwapHands(PlayerSwapHandItemsEvent event){
+
     }
 
     /**

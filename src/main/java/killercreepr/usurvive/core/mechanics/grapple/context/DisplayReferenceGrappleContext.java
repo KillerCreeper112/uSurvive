@@ -13,10 +13,10 @@ import org.jetbrains.annotations.NotNull;
 public class DisplayReferenceGrappleContext extends SimpleGrappleContext implements DisplayGrappleContext {
     protected final SimpleDisplayGrapple grapple;
     public DisplayReferenceGrappleContext(@NotNull Location location, @NotNull Entity owner, int id,
-                                          SimpleDisplayGrapple grapple) {
+                                          SimpleDisplayGrapple grapple, float swapHandsClimbSpeed) {
         super(location, owner, id, grapple.getPullForce(),
             grapple.getThrowForce(), grapple.getPullForceDecayRate(), grapple.getMinPullForceMultiplier(), grapple.getDecayDuration(),
-            grapple.getSwingBoostSpeed(), grapple.getRopeBoostSpeed());
+            grapple.getSwingBoostSpeed(), grapple.getRopeBoostSpeed(), swapHandsClimbSpeed);
         this.grapple = grapple;
     }
 

@@ -28,6 +28,12 @@ public class Lang {
             .build()
     );
 
+    public static final Msg GRAPPLE_USE_SWAP_HANDS = create(
+        Communicator.builder()
+            .actionBar("<latinfont:swaphands & look up/down to climb/descend>")
+            .build()
+    );
+
     public static final Msg GRAPPLE_HOOK = create(
         Communicator.builder()
             .sound(CreateSound.sound(Sound.ENTITY_LEASH_KNOT_PLACE, 1.5f))

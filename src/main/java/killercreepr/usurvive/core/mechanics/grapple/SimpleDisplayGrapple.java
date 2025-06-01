@@ -15,10 +15,11 @@ public class SimpleDisplayGrapple extends SimpleGrapple {
 
     public SimpleDisplayGrapple(@NotNull Key hook, int maxHooks, int cooldown, float pullForce,
                                 float throwForce, float pullForceDecayRate, float minPullForceMultiplier,
-                                int decayDuration, float swingBoostSpeed, float ropeBoostSpeed, Key typeKey, String displayType,
+                                int decayDuration, float swingBoostSpeed, float ropeBoostSpeed, int itemCountUse,
+                                float swapHandsClimbSpeed, Key typeKey, String displayType,
                                 int maxDistance, float retractSpeed) {
         super(hook, maxHooks, cooldown, pullForce, throwForce, pullForceDecayRate, minPullForceMultiplier, decayDuration,
-            swingBoostSpeed, ropeBoostSpeed);
+            swingBoostSpeed, ropeBoostSpeed, itemCountUse, swapHandsClimbSpeed);
         this.typeKey = typeKey;
         this.displayType = displayType;
         this.maxDistance = maxDistance;
@@ -52,7 +53,7 @@ public class SimpleDisplayGrapple extends SimpleGrapple {
     public GrappleContext buildGrappleContext(ItemUseContext ctx, int id) {
         Player p = ctx.getPlayer();
         return new DisplayReferenceGrappleContext(
-            p.getEyeLocation(), p, id, this
+            p.getEyeLocation(), p, id, this, swapHandsClimbSpeed
         );
     }
 

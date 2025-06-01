@@ -38,6 +38,9 @@ public class USurviveCompParsers {
         .field("max_rope_length", TextInputField.field(PersistTextParser.FLOAT, Grapple::getMinPullForceMultiplier))
         .field("swing_boost_speed", TextInputField.field(PersistTextParser.FLOAT, Grapple::getSwingBoostSpeed))
         .field("rope_boost_speed", TextInputField.field(PersistTextParser.FLOAT, Grapple::getRopeBoostSpeed))
+
+        .field("item_count_use", TextInputField.field(PersistTextParser.INTEGER, Grapple::getItemCountUse))
+        .field("swap_hands_climb_speed", TextInputField.field(PersistTextParser.FLOAT, Grapple::getSwapHandsClimbSpeed))
         .apply(ctx ->{
             Key grappleType = ctx.get("grapple_type");
             int maxHooks = ctx.getOptional("max_hooks", 1);
@@ -54,7 +57,10 @@ public class USurviveCompParsers {
                 ctx.getOptional("decay_duration", 20),
 
                 ctx.getOptional("swing_boost_speed", 50f),
-                ctx.getOptional("rope_boost_speed", 2f)
+                ctx.getOptional("rope_boost_speed", 2f),
+
+                ctx.getOptional("item_count_use", 0),
+                ctx.getOptional("swap_hands_climb_speed", 0f)
             );
         });
 
@@ -77,6 +83,9 @@ public class USurviveCompParsers {
         .field("retract_speed", TextInputField.field(PersistTextParser.FLOAT, e -> ((SimpleDisplayGrapple) e).getRetractSpeed()))
         .field("swing_boost_speed", TextInputField.field(PersistTextParser.FLOAT, Grapple::getSwingBoostSpeed))
         .field("rope_boost_speed", TextInputField.field(PersistTextParser.FLOAT, Grapple::getRopeBoostSpeed))
+
+        .field("item_count_use", TextInputField.field(PersistTextParser.INTEGER, Grapple::getItemCountUse))
+        .field("swap_hands_climb_speed", TextInputField.field(PersistTextParser.FLOAT, Grapple::getSwapHandsClimbSpeed))
         .apply(ctx ->{
             Key grappleType = ctx.get("grapple_type");
             int maxHooks = ctx.getOptional("max_hooks", 1);
@@ -93,6 +102,9 @@ public class USurviveCompParsers {
 
                 ctx.getOptional("swing_boost_speed", 50f),
                 ctx.getOptional("rope_boost_speed", 2f),
+
+                ctx.getOptional("item_count_use", 0),
+                ctx.getOptional("swap_hands_climb_speed", 0f),
 
                 ctx.get("type_key"),
                 ctx.getOptional("display_type", "block"),

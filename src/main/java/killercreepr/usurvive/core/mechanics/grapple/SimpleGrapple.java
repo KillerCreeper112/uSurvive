@@ -30,9 +30,12 @@ public class SimpleGrapple implements Grapple {
     protected final int decayDuration;
     protected final float swingBoostSpeed;
     protected final float ropeBoostSpeed;
+    protected final int itemCountUse;
+    protected final float swapHandsClimbSpeed;
 
     public SimpleGrapple(@NotNull Key hook, int maxHooks, int cooldown, float pullForce, float throwForce,
-                         float pullForceDecayRate, float minPullForceMultiplier, int decayDuration, float swingBoostSpeed, float ropeBoostSpeed) {
+                         float pullForceDecayRate, float minPullForceMultiplier, int decayDuration, float swingBoostSpeed,
+                         float ropeBoostSpeed, int itemCountUse, float swapHandsClimbSpeed) {
         this.hook = hook;
         this.maxHooks = maxHooks;
         this.cooldown = cooldown;
@@ -43,6 +46,8 @@ public class SimpleGrapple implements Grapple {
         this.decayDuration = decayDuration;
         this.swingBoostSpeed = swingBoostSpeed;
         this.ropeBoostSpeed = ropeBoostSpeed;
+        this.itemCountUse = itemCountUse;
+        this.swapHandsClimbSpeed = swapHandsClimbSpeed;
     }
 
     public int getMaxHooks() {
@@ -89,6 +94,21 @@ public class SimpleGrapple implements Grapple {
         return swingBoostSpeed;
     }
 
+    @Override
+    public int getItemCountUse() {
+        return itemCountUse;
+    }
+
+    @Override
+    public boolean hasSwapHandsClimb() {
+        return swapHandsClimbSpeed > 0f;
+    }
+
+    @Override
+    public float getSwapHandsClimbSpeed() {
+        return swapHandsClimbSpeed;
+    }
+
     @NotNull
     public Key getHookType() {
         return hook;
@@ -97,7 +117,8 @@ public class SimpleGrapple implements Grapple {
     public GrappleContext buildGrappleContext(ItemUseContext ctx, int id){
         Player p = ctx.getPlayer();
         return GrappleContext.context(p.getEyeLocation(), p, id, pullForce, throwForce,
-            pullForceDecayRate, minPullForceMultiplier, decayDuration, swingBoostSpeed, ropeBoostSpeed);
+            pullForceDecayRate, minPullForceMultiplier, decayDuration, swingBoostSpeed, ropeBoostSpeed,
+            swapHandsClimbSpeed);
     }
 
     @Override
@@ -105,6 +126,8 @@ public class SimpleGrapple implements Grapple {
         if(ctx.getEntityClicked() != null && ctx.getAction().isLeftClick()) return ItemUseResult.empty();
         GrappleHook hook = USurviveRegistries.GRAPPLE_HOOK.get(getHookType());
         if(hook==null || maxHooks < 1) return ItemUseResult.empty();
+        if(maxHooks < 2 && !ctx.getAction().isRightClick()) return ItemUseResult.empty();
+
         Player p = ctx.getPlayer();
         CruxItem item = ctx.getItem();
 
@@ -124,10 +147,15 @@ public class SimpleGrapple implements Grapple {
             return ItemUseResult.cancelled();
         }
         if(cooldown > 0) p.setCooldown(item.item(), cooldown);
-        grappler.throwNewHook(hook, buildGrappleContext(ctx, id));
+        var threw = grappler.throwNewHook(hook, buildGrappleContext(ctx, id));
+        if(threw.hasSwapHandAction()){
+            Lang.GRAPPLE_USE_SWAP_HANDS.use(p);
+        }
         Lang.GRAPPLE_USE.playAt(p.getLocation());
         if(p.getGameMode() != GameMode.CREATIVE){
-            Crux.handlers().item().damageItem(item.item(), 1, p);
+            if(itemCountUse > 0){
+                item.amount(item.amount()-1);
+            }else Crux.handlers().item().damageItem(item.item(), 1, p);
         }
         return ItemUseResult.cancelled();
     }

@@ -15,10 +15,12 @@ public class SimpleGrappleContext implements GrappleContext {
     protected final double minPullForceMultiplier;
     protected final int decayDuration;
     protected final double swingBoostSpeed, ropeBoostSpeed;
+    protected final float swapHandsClimbSpeed;
 
     public SimpleGrappleContext(
         @NotNull Location location, @NotNull Entity owner, int id, double pullForce, double throwForce, double pullForceDecayRate,
-        double minPullForceMultiplier, int decayDuration, double swingBoostSpeed, double ropeBoostSpeed
+        double minPullForceMultiplier, int decayDuration, double swingBoostSpeed, double ropeBoostSpeed,
+        float swapHandsClimbSpeed
     ) {
         this.location = location;
         this.owner = owner;
@@ -30,6 +32,7 @@ public class SimpleGrappleContext implements GrappleContext {
         this.decayDuration = decayDuration;
         this.swingBoostSpeed = swingBoostSpeed;
         this.ropeBoostSpeed = ropeBoostSpeed;
+        this.swapHandsClimbSpeed = swapHandsClimbSpeed;
     }
 
     @Override
@@ -50,6 +53,16 @@ public class SimpleGrappleContext implements GrappleContext {
     @Override
     public double getSwingBoostSpeed() {
         return swingBoostSpeed;
+    }
+
+    @Override
+    public boolean hasSwapHandsClimbAction() {
+        return swapHandsClimbSpeed > 0f;
+    }
+
+    @Override
+    public double getSwapHandsClimbSpeed() {
+        return swapHandsClimbSpeed;
     }
 
     @NotNull

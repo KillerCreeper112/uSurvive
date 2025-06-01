@@ -11,10 +11,7 @@ import killercreepr.usurvive.api.component.WaterProjectile;
 import killercreepr.usurvive.api.mechanics.grapple.Grapple;
 import killercreepr.usurvive.api.mechanics.whip.Whip;
 import killercreepr.usurvive.core.block.GlintingOreBlockComponent;
-import killercreepr.usurvive.core.component.impl.InfusionAttributesBenefit;
-import killercreepr.usurvive.core.component.impl.OrbitConduitComponent;
-import killercreepr.usurvive.core.component.impl.SmokeParticleBlockComponent;
-import killercreepr.usurvive.core.component.impl.SoulParticleBlockComponent;
+import killercreepr.usurvive.core.component.impl.*;
 import killercreepr.usurvive.core.component.teleport.TeleportCheckInStructure;
 import killercreepr.usurvive.core.component.teleport.TeleportSetLastTP;
 
@@ -31,6 +28,8 @@ public class USurviveComponents {
     public static final DataComponentType<Whip> WHIP_DISPLAY = register("whip_display", builder -> builder
         .persistTextParser(USurviveCompParsers.WHIP_DISPLAY.createInput(Crux.key("whip_display"))));
     public static final DataComponentType<OrbitConduitComponent> DEPOSIT_CONDUIT = register("deposit_conduit", builder ->
+        builder);
+    public static final DataComponentType<GustTNTComponent> GUST_TNT = register("gust_tnt", builder ->
         builder);
     public static final DataComponentType<SoulParticleBlockComponent> SOUL_PARTICLE_BLOCK = register("soul_particle_block", builder ->
         builder);

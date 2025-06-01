@@ -24,6 +24,8 @@ public class USurviveMobs {
     public static final CruxMob SKELETON_CHICKEN = CruxEntityRegistries.ENTITIES.register(new SkeletonChicken(Crux.key("skeleton_chicken")));
 
 
+    public static final CruxMob GUST_TNT = CruxEntityRegistries.ENTITIES.register(new GustTNT(Crux.key("gust_tnt")));
+
     public static final CruxMob WHISPERSHADE = CruxEntityRegistries.ENTITIES.register(new Whispershade(Crux.key("whispershade")));
     public static final CruxMob WHIMLET = CruxEntityRegistries.ENTITIES.register(new Whimlet(Crux.key("whimlet")));
     public static final CruxMob VOID_LURKER = CruxEntityRegistries.ENTITIES.register(new VoidLurker(Crux.key("void_lurker")));
