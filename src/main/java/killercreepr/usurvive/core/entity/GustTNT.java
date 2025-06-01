@@ -29,7 +29,9 @@ public class GustTNT extends UCruxMob {
             e.setSilent(true);
 
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_KNOCKBACK,
-                CruxAttributeModifier.baseModifier(20));
+                CruxAttributeModifier.baseModifier(30));
+            CruxAttribute.addModifier(e, CruxAttribute.ATTACK_KNOCKBACK_UP,
+                CruxAttributeModifier.baseModifier(15));
 
             load(e);
             if(consumer != null) consumer.accept(e);
