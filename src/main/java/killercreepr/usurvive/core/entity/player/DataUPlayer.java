@@ -39,6 +39,7 @@ public class DataUPlayer implements UPlayer, ShopSpender {
     protected double totalPaid;
     protected int recentDeaths;
     protected long lastReducedDeath;
+    protected long lastKnownWorldRandomTPKey;
     protected RandomTPData randomTPData;
 
     public DataUPlayer(@NotNull UUID uuid) {
@@ -145,6 +146,12 @@ public class DataUPlayer implements UPlayer, ShopSpender {
 
     @Nullable
     @Override
+    public Long getSavedLastKnownWorldRandomTPKey() {
+        return lastKnownWorldRandomTPKey;
+    }
+
+    @Nullable
+    @Override
     public Key getSavedLastKnownWorld() {
         return lastKnownWorld;
     }
@@ -183,6 +190,11 @@ public class DataUPlayer implements UPlayer, ShopSpender {
     }
 
     @Override
+    public void setLastKnownWorldRandomTPKey(@Nullable Long time) {
+        this.lastKnownWorldRandomTPKey = time == null ? 0L : time;
+    }
+
+    @Override
     public void save() {
         save(Crux.getMainPlugin());
     }
@@ -199,6 +211,7 @@ public class DataUPlayer implements UPlayer, ShopSpender {
         file.serialize("last_known_name", lastKnownName);
         file.serialize("last_known_location", lastKnownPosition);
         file.serialize("last_known_location_world", lastKnownWorld);
+        file.serialize("last_known_world_random_tp_key", lastKnownWorldRandomTPKey);
         file.serialize("last_logout", lastLogout);
         file.serialize("total_premium_paid", totalPaid);
         file.serialize("recent_deaths", recentDeaths);
@@ -214,6 +227,7 @@ public class DataUPlayer implements UPlayer, ShopSpender {
         lastKnownName = file.deserialize("last_known_name", String.class);
         lastKnownPosition = file.deserialize("last_known_location", CruxLocation.class);
         lastKnownWorld = file.deserialize("last_known_location_world", Key.class);
+        lastKnownWorldRandomTPKey = file.deserializeOrDefault("last_known_world_random_tp_key", Long.class, 0L);
         Long n = file.deserialize("last_logout", Long.class);
         if(n != null) lastLogout = n;
         Double totalPaid = file.deserialize("total_premium_paid", Double.class);

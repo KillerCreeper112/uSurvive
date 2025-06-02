@@ -54,12 +54,16 @@ public class GrapplerHolder extends PlayerTickedDataHolder {
     }
 
     public void reset(Entity owner){
-        remove(owner);
+        reset(owner, false);
+    }
+    public void reset(Entity owner, boolean force){
+        remove(owner, force);
     }
 
-    public void remove(Entity owner){
+    public void remove(Entity owner, boolean force){
         for(ActiveGrappleHook h : grapples.values()){
-            h.remove(owner);
+            if(force) h.forceRemove(owner);
+            else h.remove(owner);
             h.onRemoving(owner);
         }
         grapples.clear();
@@ -91,13 +95,13 @@ public class GrapplerHolder extends PlayerTickedDataHolder {
     @Override
     protected void removingFromMemory(@Nullable Player e) {
         super.removingFromMemory(e);
-        remove(e);
+        remove(e, false);
     }
 
     @Override
     public void scheduledRemoval(Entity e) {
         super.scheduledRemoval(e);
         if(e == null) return;
-        remove(e);
+        remove(e, false);
     }
 }

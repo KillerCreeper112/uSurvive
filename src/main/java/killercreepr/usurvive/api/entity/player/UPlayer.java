@@ -28,6 +28,7 @@ public interface UPlayer extends Loadable, PluginLoadable {
     @Nullable RandomTPData getRandomTPData();
 
     @Nullable CruxLocation getSavedLastKnownPosition();
+    @Nullable Long getSavedLastKnownWorldRandomTPKey();
     @Nullable Key getSavedLastKnownWorld();
     @Nullable String getSavedLastKnownName();
 
@@ -40,6 +41,7 @@ public interface UPlayer extends Loadable, PluginLoadable {
     void setLastLogout(long time);
     void setLastKnownPosition(@Nullable CruxLocation pos);
     void setLastKnownWorld(@Nullable Key key);
+    void setLastKnownWorldRandomTPKey(@Nullable Long time);
     void setLastKnownName(@Nullable String name);
 
     boolean hasFriend(@NotNull UUID uuid);

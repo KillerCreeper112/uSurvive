@@ -20,6 +20,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityUnleashEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
@@ -27,6 +28,14 @@ import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 public class GrappleListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
+        Player p = event.getPlayer();
+        GrapplerHolder grappler = EntityMemory.getDataHolder(p, GrapplerHolder.class);
+        if(grappler==null) return;
+        grappler.reset(p);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         Player p = event.getPlayer();
         GrapplerHolder grappler = EntityMemory.getDataHolder(p, GrapplerHolder.class);
         if(grappler==null) return;
@@ -76,7 +85,7 @@ public class GrappleListener implements Listener {
             }
         }
         if(had) return;
-        grappler.reset(p);
+        grappler.reset(p, true);
     }
 
 

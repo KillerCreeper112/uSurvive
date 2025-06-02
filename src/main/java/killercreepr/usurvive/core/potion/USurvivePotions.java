@@ -17,7 +17,7 @@ public class USurvivePotions {
     public static final CruxPotion RECALL = register(new DescribedPotion(Crux.key("recall"),
         "Teleports the user back to the location where they first drank it after it wears off." +
             " Recall I cannot teleport across worlds- doing so cancels the effect." +
-            " Recall II allows cross-world teleportation.") {
+            " Recall II allows cross-world teleportation") {
         @Override
         public @NotNull ActivePotion create(@NotNull Entity entity, int duration, int amplifier, @Nullable PotionInflictor potionInflictor) {
             return new RecallPotion(this, entity, duration, amplifier);
@@ -29,7 +29,7 @@ public class USurvivePotions {
         }
     });
     public static final CruxPotion WATERBOUND = register(new DescribedPotion(Crux.key("waterbound"),
-        "Inverts the user's air supply, causing them to suffocate on land and breathe underwater.") {
+        "Inverts the user's air supply, causing them to suffocate on land and breathe underwater") {
         @Override
         public @NotNull ActivePotion create(@NotNull Entity entity, int duration, int amplifier, @Nullable PotionInflictor potionInflictor) {
 
@@ -42,7 +42,7 @@ public class USurvivePotions {
         }
     });
     public static final CruxPotion RAGE = register(new DescribedPotion(Crux.key("rage"),
-        "EXPERIMENTAL! Causes the user to lose control and attack nearby targets indiscriminately.") {
+        "EXPERIMENTAL! Causes the user to lose control and attack nearby targets indiscriminately") {
         @Override
         public @NotNull ActivePotion create(@NotNull Entity entity, int duration, int amplifier, @Nullable PotionInflictor potionInflictor) {
             return new RagePotion(this, entity, duration, amplifier);
@@ -66,7 +66,7 @@ public class USurvivePotions {
         }
     });
     public static final CruxPotion ELUDING = register(new DescribedPotion(Crux.key("eluding"),
-        "Reduces projectile damage and reflects incoming projectiles.") {
+        "Reduces projectile damage and reflects incoming projectiles") {
         @Override
         public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
             return new EludingPotion(this, e, duration, amplifier);
@@ -78,7 +78,7 @@ public class USurvivePotions {
         }
     });
     public static final CruxPotion ARCHITECT = register(new DescribedPotion(Crux.key("architect"),
-        "Extends the user's block interaction range.") {
+        "Extends the user's block interaction range") {
         @Override
         public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
             return new ArchitectPotion(this, e, duration, amplifier);
@@ -90,7 +90,7 @@ public class USurvivePotions {
         }
     });
     public static final CruxPotion SHRINKAGE = register(new DescribedPotion(Crux.key("shrinkage"),
-        "EXPERIMENTAL! Decreases the user's physical size.") {
+        "EXPERIMENTAL! Decreases the user's physical size") {
         @Override
         public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
             return new ShrinkagePotion(this, e, duration, amplifier);
@@ -102,7 +102,7 @@ public class USurvivePotions {
         }
     });
     public static final CruxPotion ENLARGEMENT = register(new DescribedPotion(Crux.key("enlargement"),
-        "EXPERIMENTAL! Increases the user's physical size.") {
+        "EXPERIMENTAL! Increases the user's physical size") {
         @Override
         public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
             return new EnlargementPotion(this, e, duration, amplifier);
@@ -114,7 +114,7 @@ public class USurvivePotions {
         }
     });
     public static final CruxPotion MAGNETISM = register(new DescribedPotion(Crux.key("magnetism"),
-        "Attracts nearby dropped items toward the user.") {
+        "Attracts nearby dropped items toward the user") {
         @Override
         public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
             return new MagnetismPotion(this, e, duration, amplifier);
@@ -126,7 +126,7 @@ public class USurvivePotions {
         }
     });
     public static final CruxPotion DISORIENTATION = register(new DescribedPotion(Crux.key("disorientation"),
-        "Causes the user's head to twitch.") {
+        "Causes the user's head to twitch") {
         @Override
         public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
             return new DisorientationPotion(this, e, duration, amplifier);
@@ -138,7 +138,7 @@ public class USurvivePotions {
         }
     });
     public static final CruxPotion SCRAMBLE = register(new DescribedPotion(Crux.key("scramble"),
-        "Your items slip through your fingers as if possessed by another will.") {
+        "Your items slip through your fingers as if possessed by another will") {
         @Override
         public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
             return new ScramblePotion(this, e, duration, amplifier);
@@ -150,7 +150,7 @@ public class USurvivePotions {
         }
     });
     public static final CruxPotion DEAFENED = register(new DescribedPotion(Crux.key("deafened"),
-        "Prevents the user from hearing clearly.") {
+        "Prevents the user from hearing clearly") {
         @Override
         public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
             return new DeafenedPotion(this, e, duration, amplifier);
@@ -159,6 +159,18 @@ public class USurvivePotions {
         @Override
         public @NotNull Color getColor() {
             return Color.fromRGB(0x1F1F1F);
+        }
+    });
+    public static final CruxPotion LANDING_SLOW_FALLING = register(new DescribedPotion(Crux.key("landing_slow_falling"),
+        "Provides slow falling until the user lands on the ground") {
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new LandingSlowFallingPotion(this, e, duration, amplifier);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0xF3CFB9);
         }
     });
 

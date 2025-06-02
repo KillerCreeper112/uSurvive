@@ -7,9 +7,12 @@ import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxWorldUtil;
+import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.api.entity.player.UPlayerManager;
 import killercreepr.usurvive.api.values.ValuesProvider;
+import killercreepr.usurvive.core.component.USurviveComponents;
 import killercreepr.usurvive.core.lang.Lang;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Color;
@@ -30,6 +33,7 @@ import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 
 public class SpawnListener implements Listener {
@@ -47,6 +51,11 @@ public class SpawnListener implements Listener {
         for(Player p : plugin.getServer().getOnlinePlayers()){
             savePlayer(p);
         }
+    }
+
+    public boolean isSpawnWorld(World world){
+        String worldName = cfg.SPAWN_WORLD().value();
+        return worldName != null && world.getName().equals(worldName);
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -74,6 +83,24 @@ public class SpawnListener implements Listener {
         if(world == null){
             Crux.log(Level.WARNING, "World " + worldKey + " does not exist! " + p.getName() + " cannot spawn there.");
             return;
+        }
+        CruxWorld cruxWorld = CruxCore.core().worldManager().getWorld(world.key());
+        if(cruxWorld != null){
+            Long savedTime = uPlay.getSavedLastKnownWorldRandomTPKey();
+            if(savedTime != null){
+                Long time = cruxWorld.get(USurviveComponents.WORLD_RANDOM_TELEPORT_TIME);
+                if(!Objects.equals(time, savedTime)){
+                    String worldName = cfg.SPAWN_WORLD().value();
+                    if(worldName == null) return;
+                    world = plugin.getServer().getWorld(worldName);
+                    if(world == null){
+                        Communicator.chat("<red>An error has occurred 809 - " + worldName).use(p);
+                        return;
+                    }
+                    event.setSpawnLocation(world.getSpawnLocation());
+                    return;
+                }
+            }
         }
 
         /*DataFile cfg = getDataFile(p);
@@ -119,11 +146,28 @@ public class SpawnListener implements Listener {
     public void savePlayer(Player p){
         UPlayer uPlay = playerManager.getPlayer(p);
         if(uPlay == null) return;
+
+        Long randomTPKey;
+        if(isSpawnWorld(p.getWorld())){
+            randomTPKey = null;
+        }else{
+            CruxWorld crux = CruxCore.core().worldManager().getWorld(p.getWorld().key());
+            if(crux != null) {
+                Long time = crux.get(USurviveComponents.WORLD_RANDOM_TELEPORT_TIME);
+                if(time == null){
+                    time = System.currentTimeMillis();
+                    crux.set(USurviveComponents.WORLD_RANDOM_TELEPORT_TIME, time);
+                }
+                randomTPKey = time;
+            }else randomTPKey = null;
+        }
+
         //uPlay.load();
         uPlay.setLastLogout(System.currentTimeMillis());
         uPlay.setLastKnownWorld(p.getWorld().key());
         uPlay.setLastKnownPosition(CruxLocation.location(p.getLocation()));
         uPlay.setLastKnownName(p.getName());
+        uPlay.setLastKnownWorldRandomTPKey(randomTPKey);
         uPlay.save();
     }
 
