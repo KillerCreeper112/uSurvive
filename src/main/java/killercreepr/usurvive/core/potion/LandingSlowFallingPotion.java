@@ -27,7 +27,9 @@ public class LandingSlowFallingPotion extends ActiveEntityPotion<LivingEntity> {
     @Override
     protected void onStop(@NotNull LivingEntity e) {
         super.onStop(e);
-        e.removePotionEffect(PotionEffectType.SLOW_FALLING);
+        Crux.scheduler().runTaskMain(()-> {
+            e.removePotionEffect(PotionEffectType.SLOW_FALLING);
+        });
     }
 
     protected int tick = 0;
@@ -36,6 +38,7 @@ public class LandingSlowFallingPotion extends ActiveEntityPotion<LivingEntity> {
     protected void onTick(@NotNull LivingEntity e) {
         super.onTick(e);
         tick++;
+        if(tick < 20) return;
         if(tick % 10 == 0){
             Block b = CruxEntityUtil.getBlockStandingOn(entity);
             if(b != null && (b.isSolid() || b.isLiquid())){
@@ -43,6 +46,8 @@ public class LandingSlowFallingPotion extends ActiveEntityPotion<LivingEntity> {
                 return;
             }
         }
-        e.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 20, 0));
+        Crux.scheduler().runTaskMain(()->{
+            e.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 60, 0));
+        });
     }
 }
