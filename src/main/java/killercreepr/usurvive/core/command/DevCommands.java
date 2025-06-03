@@ -10,6 +10,7 @@ import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.component.parser.TextDataComponentDecoder;
 import killercreepr.crux.core.data.util.MapBuilder;
@@ -28,6 +29,7 @@ import killercreepr.usurvive.core.listener.MaintenanceListener;
 import killercreepr.usurvive.core.vanish.VanishHandler;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -96,6 +98,22 @@ public class DevCommands implements Listener {
                                 p.sendMessage("Vanish set to: " + VanishHandler.toggleVanish(p));
                                 return 1;
                             })
+                            .then(
+                                Commands.literal("msg")
+                                    .executes(ctx ->{
+                                        if(!(getExecutor(ctx.getSource()) instanceof Player p)) return -1;
+                                        p.sendMessage("Vanish set to: " + VanishHandler.toggleVanish(p));
+
+                                        if(VanishHandler.isVanished(p)){
+                                            Bukkit.broadcast(Crux.format().deserialize("<yellow><player_name> left the game", TagContainer.merged()
+                                                .hook(p)));
+                                        }else{
+                                            Bukkit.broadcast(Crux.format().deserialize("<yellow><player_name> joined the game", TagContainer.merged()
+                                                .hook(p)));
+                                        }
+                                        return 1;
+                                    })
+                            )
                     ).then(
                         Commands.literal("advancelostfix")
                             .then(
