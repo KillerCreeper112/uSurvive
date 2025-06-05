@@ -15,7 +15,7 @@ public class VillagerTradeListener implements Listener {
         if(recipe.getResult().getType() == Material.EMERALD){
             event.setCancelled(true);
             event.getPlayer().sendMessage(Crux.format().deserialize(
-                "<red>Buying villager trades have been disabled for the time being. We are experimenting with heavily nerfing villager trading, especially in regards to mending. Feel free to provide feedback on our Discord! /discord"
+                "<red>Buying villager trades have been disabled for the time being. We are experimenting with heavily nerfing villager trading. Feel free to provide feedback on our Discord! /discord"
             ));
         }
     }
@@ -27,7 +27,7 @@ public class VillagerTradeListener implements Listener {
             event.setCancelled(true);
             event.getWhoClicked().closeInventory();
             event.getWhoClicked().sendMessage(Crux.format().deserialize(
-                "<red>Buying villager trades have been disabled for the time being. We are experimenting with heavily nerfing villager trading, especially in regards to mending. Feel free to provide feedback on our Discord! /discord"
+                "<red>Buying villager trades have been disabled for the time being. We are experimenting with heavily nerfing villager trading. Feel free to provide feedback on our Discord! /discord"
             ));
         }
     }
