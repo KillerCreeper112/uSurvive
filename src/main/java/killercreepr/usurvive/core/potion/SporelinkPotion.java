@@ -59,30 +59,32 @@ public class SporelinkPotion extends ActiveEntityPotion<LivingEntity> {
 
     public void onTakeDamage(EntityDamageEvent event){
         if(isOnCooldown()) return;
+        setCooldown(getEffectiveCooldown());
         var source = event.getDamageSource();
         getSporeLinked().forEach(hit ->{
+            PotionHolder holder = EntityMemory.getDataHolder(hit, SimplePotionHolder.class);
+            if(holder == null) return;
+            if(holder.getPotion(potion) instanceof SporelinkPotion pot) pot.onSporeLinkDamage(event.getEntity());
             EntityDamager.entityDamager(hit, source.getDirectEntity())
                 .setSource(source)
                 .setCause(CruxEntityDamageEvent.DamageCause.fromBukkit(event.getCause()))
                 .attack(event.getDamage());
-            PotionHolder holder = EntityMemory.getDataHolder(hit, SimplePotionHolder.class);
-            if(holder == null) return;
-            if(holder.getPotion(potion) instanceof SporelinkPotion pot) pot.onSporeLinkDamage(event.getEntity());
         });
     }
 
     public void onTakeDamage(CruxEntityDamageEvent event){
         if(isOnCooldown()) return;
+        setCooldown(getEffectiveCooldown());
         var source = event.getSource();
         getSporeLinked().forEach(hit ->{
+            PotionHolder holder = EntityMemory.getDataHolder(hit, SimplePotionHolder.class);
+            if(holder == null) return;
+            if(holder.getPotion(potion) instanceof SporelinkPotion pot) pot.onSporeLinkDamage(event.getEntity());
             EntityDamager.entityDamager(hit, source.getDirectEntity())
                 .setSource(source)
                 .setHitPosition(event.getHitPosition())
                 .setCause(event.getCause())
                 .attack(event.getTrueDmg(), event.getTrueKb(), event.getTrueUpKb());
-            PotionHolder holder = EntityMemory.getDataHolder(hit, SimplePotionHolder.class);
-            if(holder == null) return;
-            if(holder.getPotion(potion) instanceof SporelinkPotion pot) pot.onSporeLinkDamage(event.getEntity());
         });
     }
 
@@ -109,10 +111,10 @@ public class SporelinkPotion extends ActiveEntityPotion<LivingEntity> {
     }
 
     public double getEffectiveRadius(){
-        return 12D * ((amplifier)*6D);
+        return 12D + ((amplifier)*6D);
     }
 
     public int getEffectiveCooldown(){
-        return Math.min(0, 80 - (amplifier * 10));
+        return Math.max(5, 80 - (amplifier * 10));
     }
 }

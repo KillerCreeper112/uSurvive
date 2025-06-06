@@ -170,11 +170,11 @@ public class USurvivePotions {
 
         @Override
         public @NotNull Color getColor() {
-            return Color.fromRGB(0x8CA755);
+            return Color.fromRGB(0xF3CFB9);
         }
     });
     public static final CruxPotion SPORELINK = register(new DescribedPotion(Crux.key("sporelink"),
-        "Damage shared between all spore-linked entities") {
+        "Shares damage between all spore-linked entities") {
         @Override
         public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
             return new SporelinkPotion(this, e, duration, amplifier);
@@ -182,7 +182,7 @@ public class USurvivePotions {
 
         @Override
         public @NotNull Color getColor() {
-            return Color.fromRGB(0xF3CFB9);
+            return Color.fromRGB(0x8CA755);
         }
     });
 

@@ -112,7 +112,7 @@ public class ActiveAbsorbNearbyFriendlyDamageTickable extends ListenerActiveEnti
 
         EntityDamager.entityDamager(entity, dmger)
             .setSource(event.getDamageSource())
-            .setCause(CruxEntityDamageEvent.DamageCause.grim(event.getCause()))
+            .setCause(CruxEntityDamageEvent.DamageCause.fromBukkit(event.getCause()))
             .attack(dmg);
     }
 

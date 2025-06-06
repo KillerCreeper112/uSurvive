@@ -15,6 +15,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +52,7 @@ public class EludingPotion extends SimpleActivePotion implements Listener {
         EntityDamager.entityDamager(entity, p)
             .setSource(DamageSource.builder(type == null ? DamageType.MOB_PROJECTILE : type)
                 .withCausingEntity(EntityDamager.getOwner(p)).withDirectEntity(p).build())
-            .setCause(CruxEntityDamageEvent.DamageCause.PROJECTILE)
+            .setCause(CruxEntityDamageEvent.DamageCause.fromBukkit(EntityDamageEvent.DamageCause.PROJECTILE))
             .attack();
 
         Vector vel = p.getLocation().toVector().subtract(CruxEntityUtil.getEyeOrLocation(entity).toVector())

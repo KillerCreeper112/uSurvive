@@ -145,7 +145,7 @@ public class BaseSlumberData implements SlumberData, SlumberSpectator, SlumberSn
         if(targetDmg != null) damage(targetDmg);
         if(starving){
             EntityDamager.entityDamager(entity)
-                .setCause(CruxEntityDamageEvent.DamageCause.STARVATION)
+                .setCause(CruxEntityDamageEvent.DamageCause.fromBukkit(EntityDamageEvent.DamageCause.STARVATION))
                 .setSource(DamageSource.builder(DamageType.STARVE).build())
                 .attack(1D);
         }
@@ -185,7 +185,7 @@ public class BaseSlumberData implements SlumberData, SlumberSpectator, SlumberSn
             damager = by.getDamager();
         }else damager = null;
         EntityDamager.entityDamager(entity, damager)
-            .setCause(CruxEntityDamageEvent.DamageCause.grim(event.getCause()))
+            .setCause(CruxEntityDamageEvent.DamageCause.fromBukkit(event.getCause()))
             .setSource(event.getDamageSource())
             .attack(event.getDamage());
     }
