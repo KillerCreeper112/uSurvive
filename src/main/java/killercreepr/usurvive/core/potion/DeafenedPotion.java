@@ -1,10 +1,8 @@
 package killercreepr.usurvive.core.potion;
 
-import killercreepr.crux.core.Crux;
 import killercreepr.cruxpotions.api.potion.CruxPotion;
 import killercreepr.cruxpotions.core.potions.ActiveEntityPotion;
 import net.kyori.adventure.sound.SoundStop;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;

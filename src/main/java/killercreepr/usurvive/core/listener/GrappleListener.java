@@ -1,15 +1,10 @@
 package killercreepr.usurvive.core.listener;
 
 import killercreepr.crux.api.entity.memory.EntityMemory;
-import killercreepr.crux.api.entity.memory.PlayerMemory;
-import killercreepr.crux.api.item.CruxItem;
 import killercreepr.cruxentities.entity.CruxMob;
-import killercreepr.cruxitems.api.item.interaction.ItemUseResult;
 import killercreepr.usurvive.api.mechanics.grapple.ActiveGrappleHook;
-import killercreepr.usurvive.api.mechanics.grapple.GrappleHook;
 import killercreepr.usurvive.core.data.entity.GrapplerHolder;
 import killercreepr.usurvive.core.entity.USurviveMobs;
-import killercreepr.usurvive.core.registries.USurviveRegistries;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -21,7 +16,6 @@ import org.bukkit.event.entity.EntityUnleashEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 

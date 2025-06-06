@@ -4,12 +4,9 @@ import killercreepr.cruxblocks.api.block.CruxBlock;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxBlock;
 import killercreepr.cruxblocks.api.block.component.CruxBlockComponent;
 import killercreepr.usurvive.core.block.ActiveGustTNT;
-import killercreepr.usurvive.core.block.ActiveOrbitConduit;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class GustTNTComponent implements CruxBlockComponent {
     @Override

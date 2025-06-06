@@ -5,7 +5,6 @@ import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
-import net.kyori.adventure.key.Key;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;

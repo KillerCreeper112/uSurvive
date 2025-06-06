@@ -1,9 +1,7 @@
 package killercreepr.usurvive.core.potion;
 
-import killercreepr.crux.core.Crux;
 import killercreepr.cruxpotions.api.potion.CruxPotion;
 import killercreepr.cruxpotions.core.potions.ActiveEntityPotion;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;

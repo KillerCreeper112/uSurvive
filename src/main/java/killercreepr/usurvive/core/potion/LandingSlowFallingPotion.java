@@ -4,19 +4,12 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.cruxpotions.api.potion.CruxPotion;
 import killercreepr.cruxpotions.core.potions.ActiveEntityPotion;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class LandingSlowFallingPotion extends ActiveEntityPotion<LivingEntity> {
     public LandingSlowFallingPotion(@NotNull CruxPotion potion, @NotNull Entity entity, int duration, int amplifier) {

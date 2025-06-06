@@ -1,6 +1,5 @@
 package killercreepr.usurvive.core.listener;
 
-import com.destroystokyo.paper.event.entity.EntityKnockbackByEntityEvent;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
