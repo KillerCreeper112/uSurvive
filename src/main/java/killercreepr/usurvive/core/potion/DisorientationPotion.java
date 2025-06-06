@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class DisorientationPotion extends ActiveEntityPotion<LivingEntity> {
-    protected final NamespacedKey key = Crux.key("potion/disorientation");
     public DisorientationPotion(@NotNull CruxPotion potion, @NotNull Entity entity, int duration, int amplifier) {
         super(LivingEntity.class, potion, entity, duration, amplifier);
     }

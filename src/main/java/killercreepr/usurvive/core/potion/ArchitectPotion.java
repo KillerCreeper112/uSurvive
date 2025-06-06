@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ArchitectPotion extends ActiveEntityPotion<LivingEntity> {
     protected final Attribute bukkit = Attribute.BLOCK_INTERACTION_RANGE;
-    protected final NamespacedKey key = Crux.key("potion/architect");
+    public static final NamespacedKey key = Crux.key("potion/architect");
     public ArchitectPotion(@NotNull CruxPotion potion, @NotNull Entity entity, int duration, int amplifier) {
         super(LivingEntity.class, potion, entity, duration, amplifier);
     }

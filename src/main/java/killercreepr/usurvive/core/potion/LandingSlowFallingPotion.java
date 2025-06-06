@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class LandingSlowFallingPotion extends ActiveEntityPotion<LivingEntity> {
-    protected final NamespacedKey key = Crux.key("potion/landing_slow_falling");
     public LandingSlowFallingPotion(@NotNull CruxPotion potion, @NotNull Entity entity, int duration, int amplifier) {
         super(LivingEntity.class, potion, entity, duration, amplifier);
     }

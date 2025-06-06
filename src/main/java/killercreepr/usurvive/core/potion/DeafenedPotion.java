@@ -10,7 +10,6 @@ import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class DeafenedPotion extends ActiveEntityPotion<LivingEntity> {
-    protected final NamespacedKey key = Crux.key("potion/deafened");
     public DeafenedPotion(@NotNull CruxPotion potion, @NotNull Entity entity, int duration, int amplifier) {
         super(LivingEntity.class, potion, entity, duration, amplifier);
     }

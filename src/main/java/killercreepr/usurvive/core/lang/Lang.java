@@ -47,6 +47,12 @@ public class Lang {
             .build()
     );
 
+    public static final Msg SPORELINK_DAMAGED = create(
+        Communicator.builder()
+            .chat("<<crux_potion_color>><latinfont:\"<crux_potion_name>\"> <red>Spores flare around you as linked pain is shared. <green><bold><hover:show_text:\"You have taken damage because a nearby<newline>spore-linked entity was harmed!<newline><newline>Sporelink is a new custom effect<newline>that shares damage between all<newline>entities who have the Sporelink effect.<newline>You can press TAB to see your<newline>active custom potion effects.\">HOVER FOR MORE INFO")
+            .build()
+    );
+
     public static final Msg CHECK_ORBITS = create(
         Communicator.builder()
             .chat("<yellow>You currently have <gold>{{<orbits>}[0]} orbits<yellow>.")

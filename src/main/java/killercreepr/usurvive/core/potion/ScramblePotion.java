@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class ScramblePotion extends ActiveEntityPotion<LivingEntity> {
-    protected final NamespacedKey key = Crux.key("potion/scramble");
     public ScramblePotion(@NotNull CruxPotion potion, @NotNull Entity entity, int duration, int amplifier) {
         super(LivingEntity.class, potion, entity, duration, amplifier);
     }
