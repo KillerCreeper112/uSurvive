@@ -6,6 +6,7 @@ import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import net.kyori.adventure.key.Key;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
@@ -13,7 +14,7 @@ import org.bukkit.entity.Mob;
 import java.util.*;
 
 public class MobAttackHandler {
-    public static final Key STRONG_ATTACK_KEY = Crux.key("strong_attack");
+    public static final NamespacedKey STRONG_ATTACK_KEY = Crux.key("strong_attack");
     protected final Mob mob;
     protected final CruxMobModeledGoal goal;
 
@@ -162,5 +163,45 @@ public class MobAttackHandler {
             cooldownAttacksTick();
         }
         movementTick();
+    }
+
+    public Mob getMob() {
+        return mob;
+    }
+
+    public CruxMobModeledGoal getGoal() {
+        return goal;
+    }
+
+    public List<MobAttack> getAttacks() {
+        return attacks;
+    }
+
+    public List<MobAttack> getCooldownAttacks() {
+        return cooldownAttacks;
+    }
+
+    public Map<UUID, Long> getLastAttacked() {
+        return lastAttacked;
+    }
+
+    public int getStrongAttackCooldown() {
+        return strongAttackCooldown;
+    }
+
+    public int getAttackTime() {
+        return attackTime;
+    }
+
+    public int getMaxAttackTime() {
+        return maxAttackTime;
+    }
+
+    public int getHitAt() {
+        return hitAt;
+    }
+
+    public MobAttack getCurrentAttack() {
+        return currentAttack;
     }
 }
