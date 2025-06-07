@@ -30,7 +30,7 @@ public class AnimalEnhancedPanicGoal extends CruxMobGoal {
         this.panicTicks = panicTicks;
     }
 
-    protected @NotNull NumberHolder speedMultiplier = new ConstantNumber(2D);
+    protected @NotNull NumberHolder speedMultiplier = new ConstantNumber(1.5D);
 
     private double currentSpeedMultiplier = 1D;
     @Override
