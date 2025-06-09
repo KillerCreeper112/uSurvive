@@ -166,6 +166,7 @@ public class ArmorTrimListener implements Listener {
 
         if(event.getClickedInventory() instanceof SmithingInventory clickedInv){
             if(CruxItem.isEmpty(cursor)) return;
+
             if(inputTrim.test(cursor)){
                 int slot = event.getSlot();
                 if(slot != 0) return;
