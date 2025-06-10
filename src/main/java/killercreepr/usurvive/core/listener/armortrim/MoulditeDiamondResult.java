@@ -1,6 +1,5 @@
 package killercreepr.usurvive.core.listener.armortrim;
 
-import io.papermc.paper.datacomponent.DataComponentType;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import killercreepr.crux.api.component.TypedDataComponent;
 import killercreepr.crux.api.text.context.TextParserContext;

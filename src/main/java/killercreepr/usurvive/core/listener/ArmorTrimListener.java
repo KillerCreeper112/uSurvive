@@ -12,6 +12,7 @@ import killercreepr.cruxitems.api.item.plugin.PluginItem;
 import killercreepr.cruxitems.core.registries.CruxItemRegistries;
 import killercreepr.usurvive.core.listener.armortrim.ArmorSmithResult;
 import killercreepr.usurvive.core.listener.armortrim.MoulditeDiamondResult;
+import killercreepr.usurvive.core.listener.armortrim.MoulditeRoseGoldResult;
 import net.kyori.adventure.key.Key;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -65,6 +66,7 @@ public class ArmorTrimListener implements Listener {
         ;
 
     protected final ArmorSmithResult moulditeDiamondResult = new MoulditeDiamondResult();
+    protected final ArmorSmithResult moulditeRoseGoldResult = new MoulditeRoseGoldResult();
 
     protected final Map<Key, ArmorSmithResult> ARMOR_SMITH_RESULTS = new MapBuilder<Key, ArmorSmithResult>()
         .put(Key.key("diamond_helmet"), moulditeDiamondResult)
@@ -77,6 +79,18 @@ public class ArmorTrimListener implements Listener {
         .put(Key.key("diamond_axe"), moulditeDiamondResult)
         .put(Key.key("diamond_shovel"), moulditeDiamondResult)
         .put(Key.key("diamond_hoe"), moulditeDiamondResult)
+
+        .put(Key.key("rose_gold_helmet"), moulditeRoseGoldResult)
+        .put(Key.key("rose_gold_chestplate"), moulditeRoseGoldResult)
+        .put(Key.key("rose_gold_leggings"), moulditeRoseGoldResult)
+        .put(Key.key("rose_gold_boots"), moulditeRoseGoldResult)
+
+        .put(Key.key("rose_gold_sword"), moulditeRoseGoldResult)
+        .put(Key.key("rose_gold_pickaxe"), moulditeRoseGoldResult)
+        .put(Key.key("rose_gold_axe"), moulditeRoseGoldResult)
+        .put(Key.key("rose_gold_shovel"), moulditeRoseGoldResult)
+        .put(Key.key("rose_gold_hoe"), moulditeRoseGoldResult)
+
         .buildUnmodifiable()
         ;
 
