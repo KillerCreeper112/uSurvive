@@ -2,9 +2,7 @@ package killercreepr.usurvive.core.entity.tickable;
 
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxattributes.api.equipment.CruxSlot;
-import killercreepr.cruxtickables.api.entity.tickable.ActiveEntityTickable;
 import killercreepr.cruxtickables.api.entity.tickable.EntityTickable;
-import killercreepr.cruxtickables.core.entity.tickable.ListenerActiveEntityTickable;
 import killercreepr.cruxtickables.core.entity.tickable.SimpleActiveEntityTickable;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
