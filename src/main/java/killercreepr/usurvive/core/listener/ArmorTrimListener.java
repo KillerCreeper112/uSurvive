@@ -10,6 +10,8 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.data.util.MapBuilder;
 import killercreepr.cruxitems.api.item.plugin.PluginItem;
 import killercreepr.cruxitems.core.registries.CruxItemRegistries;
+import killercreepr.usurvive.core.listener.armortrim.ArmorSmithResult;
+import killercreepr.usurvive.core.listener.armortrim.MoulditeDiamondResult;
 import net.kyori.adventure.key.Key;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,13 +28,20 @@ import org.bukkit.inventory.meta.trim.TrimPattern;
 import java.util.Map;
 
 public class ArmorTrimListener implements Listener {
+    protected final ItemPredicate mouldite =  ItemPredicate.fromType(Crux.key("mouldite"));
+    protected final ItemPredicate moulditeUpgrade =  ItemPredicate.fromType(Crux.key("mouldite_upgrade_smithing_template"));
     protected final ItemPredicate abyssalRelic =  ItemPredicate.fromType(Crux.key("abyssal_relic"));
     protected final ItemPredicate ironIngot =  ItemPredicate.fromType(Key.key("iron_ingot"));
     protected final ItemPredicate inputTrim = ItemPredicate.fromAnyOf(
         abyssalRelic,
-        ironIngot
+        ironIngot,
+        moulditeUpgrade
     );
-    protected final ItemPredicate material = ItemPredicate.fromType(Crux.key("rose_gold_ingot"));
+    protected final ItemPredicate roseGoldIngot = ItemPredicate.fromType(Crux.key("rose_gold_ingot"));
+    protected final ItemPredicate inputMaterial = ItemPredicate.fromAnyOf(
+        roseGoldIngot,
+        mouldite
+    );
     protected final ItemPredicate inputEquipment = ItemPredicate.fromAnyOf(
         ItemPredicate.fromType(Key.key("golden_sword")),
         ItemPredicate.fromType(Key.key("golden_pickaxe")),
@@ -55,11 +64,45 @@ public class ArmorTrimListener implements Listener {
         .buildUnmodifiable()
         ;
 
+    protected final ArmorSmithResult moulditeDiamondResult = new MoulditeDiamondResult();
+
+    protected final Map<Key, ArmorSmithResult> ARMOR_SMITH_RESULTS = new MapBuilder<Key, ArmorSmithResult>()
+        .put(Key.key("diamond_helmet"), moulditeDiamondResult)
+        .put(Key.key("diamond_chestplate"), moulditeDiamondResult)
+        .put(Key.key("diamond_leggings"), moulditeDiamondResult)
+        .put(Key.key("diamond_boots"), moulditeDiamondResult)
+
+        .put(Key.key("diamond_sword"), moulditeDiamondResult)
+        .put(Key.key("diamond_pickaxe"),moulditeDiamondResult)
+        .put(Key.key("diamond_axe"), moulditeDiamondResult)
+        .put(Key.key("diamond_shovel"), moulditeDiamondResult)
+        .put(Key.key("diamond_hoe"), moulditeDiamondResult)
+        .buildUnmodifiable()
+        ;
+
     @EventHandler(ignoreCancelled = true)
     public void onPrepareSmithing(PrepareSmithingEvent event) {
         editMaterial(event);
         editTrim(event);
         roseGold(event);
+        mouldite(event);
+    }
+
+    public void mouldite(PrepareSmithingEvent event){
+        SmithingInventory inv = event.getInventory();
+        ItemStack gem = inv.getInputMineral();
+        if(CruxItem.isEmpty(gem)) return;
+        ItemStack armor = inv.getInputEquipment();
+        if(CruxItem.isEmpty(armor)) return;
+        ItemStack template = inv.getInputTemplate();
+        if(CruxItem.isEmpty(template)) return;
+
+        if(!mouldite.test(gem)) return;
+        if(!moulditeUpgrade.test(template)) return;
+
+        var result = ARMOR_SMITH_RESULTS.get(Crux.handlers().item().getType(armor));
+        if(result == null) return;
+        event.setResult(result.createResult(template, armor, gem));
     }
 
     public void roseGold(PrepareSmithingEvent event){
@@ -72,7 +115,7 @@ public class ArmorTrimListener implements Listener {
         if(CruxItem.isEmpty(template)) return;
 
         if(!ironIngot.test(template)) return;
-        if(!material.test(gem)) return;
+        if(!roseGoldIngot.test(gem)) return;
 
         Key inputKey = Crux.handlers().item().getType(armor);
         Key newItemKey = roseGolds.get(inputKey);
@@ -113,7 +156,7 @@ public class ArmorTrimListener implements Listener {
     public void editMaterial(PrepareSmithingEvent event){
         SmithingInventory inv = event.getInventory();
         ItemStack gem = inv.getInputMineral();
-        if(CruxItem.isEmpty(gem) || !material.test(gem)) return;
+        if(CruxItem.isEmpty(gem) || !roseGoldIngot.test(gem)) return;
         ItemStack armor = inv.getInputEquipment();
         if(CruxItem.isEmpty(armor)) return;
         ItemStack template = inv.getInputTemplate();
@@ -145,7 +188,7 @@ public class ArmorTrimListener implements Listener {
         if(CruxItem.isEmpty(gem)) return;
 
         TrimMaterial material = RegistryAccess.registryAccess().getRegistry(RegistryKey.TRIM_MATERIAL)
-            .get(this.material.test(gem) ? Crux.key("rose_gold") : Key.key(gem.getType().key().value().split("_")[0]));
+            .get(this.roseGoldIngot.test(gem) ? Crux.key("rose_gold") : Key.key(gem.getType().key().value().split("_")[0]));
         if(material==null) return;
 
         TrimPattern trim = RegistryAccess.registryAccess().getRegistry(RegistryKey.TRIM_PATTERN)
@@ -178,7 +221,7 @@ public class ArmorTrimListener implements Listener {
                 clickedInv.setItem(slot, putIn);
                 return;
             }
-            if(material.test(cursor)){
+            if(inputMaterial.test(cursor)){
                 int slot = event.getSlot();
                 if(slot != 2) return;
                 if(!CruxItem.isEmpty(item)) return;
@@ -215,7 +258,7 @@ public class ArmorTrimListener implements Listener {
             inv.setInputTemplate(putIn);
             return;
         }
-        if(material.test(item)){
+        if(inputMaterial.test(item)){
             ItemStack invInput = inv.getInputMineral();
             if(!CruxItem.isEmpty(invInput)) return;
             event.setCancelled(true);
@@ -236,5 +279,4 @@ public class ArmorTrimListener implements Listener {
             inv.setInputEquipment(putIn);
         }
     }
-
 }
