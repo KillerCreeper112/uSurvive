@@ -50,11 +50,11 @@ public class ArmorTrimListener implements Listener {
         ItemPredicate.fromType(Key.key("golden_shovel")),
         ItemPredicate.fromType(Key.key("golden_hoe")),
 
-        ItemPredicate.fromType(Key.key("rose_gold_sword")),
-        ItemPredicate.fromType(Key.key("rose_gold_pickaxe")),
-        ItemPredicate.fromType(Key.key("rose_gold_axe")),
-        ItemPredicate.fromType(Key.key("rose_gold_shovel")),
-        ItemPredicate.fromType(Key.key("rose_gold_hoe"))
+        ItemPredicate.fromType(Crux.key("rose_gold_sword")),
+        ItemPredicate.fromType(Crux.key("rose_gold_pickaxe")),
+        ItemPredicate.fromType(Crux.key("rose_gold_axe")),
+        ItemPredicate.fromType(Crux.key("rose_gold_shovel")),
+        ItemPredicate.fromType(Crux.key("rose_gold_hoe"))
 
     );
 
