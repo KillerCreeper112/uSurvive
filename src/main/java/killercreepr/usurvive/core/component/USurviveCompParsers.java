@@ -174,6 +174,13 @@ public class USurviveCompParsers {
             ctx.getOptional("drop_off_rate", 2D),
             ctx.getOptional("max_time", 50)
         ));
+    public static final PersistTextParser<BaseItemUpgradedFrom> BASE_ITEM_UPGRADED_FROM = PersistTextParser.mapBuilder(BaseItemUpgradedFrom.class)
+        .field("type", TextInputField.field(PersistTextParser.STRING, BaseItemUpgradedFrom::getType))
+        .field("color", TextInputField.field(PersistTextParser.COLOR, BaseItemUpgradedFrom::getColor))
+        .apply(ctx -> new BaseItemUpgradedFrom(
+            ctx.get("type"),
+            ctx.get("color")
+        ));
 
     public static final PersistTextParser<TeleportCheckInStructure> TELEPORT_STRUCTURE_CHECK = PersistTextParser.mapBuilder(TeleportCheckInStructure.class)
         .field("blacklist", TextInputField.field(ComponentInputParsers.KEY_PREDICATE, TeleportCheckInStructure::getBlacklist))

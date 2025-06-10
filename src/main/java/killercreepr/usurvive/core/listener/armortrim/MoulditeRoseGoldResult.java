@@ -8,7 +8,10 @@ import killercreepr.cruxitems.api.item.CruxedItem;
 import killercreepr.cruxitems.api.item.plugin.PluginItem;
 import killercreepr.cruxitems.core.item.plugin.CfgPluginItem;
 import killercreepr.cruxitems.core.registries.CruxItemRegistries;
+import killercreepr.usurvive.core.component.USurviveComponents;
+import killercreepr.usurvive.core.component.impl.BaseItemUpgradedFrom;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 
@@ -67,6 +70,9 @@ public class MoulditeRoseGoldResult implements ArmorSmithResult{
                 }
             }catch (Exception ignored){}
         });*/
+        cruxed.set(USurviveComponents.BASE_ITEM_UPGRADED_FROM, new BaseItemUpgradedFrom("rose_gold", Color.fromRGB(0xFF938C)));
+        Crux.handlers().item().update(result);
+
         return result;
     }
 
@@ -81,12 +87,12 @@ public class MoulditeRoseGoldResult implements ArmorSmithResult{
     //rose_gold_axe
     //rose_gold_pickaxe
     public Key getMoulditeKeyRaw(Key key){
-        String[] args = key.value().split("_");
+        String[] args = key.value().split("_", 3);
         return Crux.key("mouldite_rose_gold_" + args[2]);
     }
 
     public Key getMoulditeKey(Key key){
-        String[] args = key.value().split("_", 2);
+        String[] args = key.value().split("_", 3);
         return Crux.key("mouldite_" + args[2]);
     }
 }

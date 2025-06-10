@@ -51,6 +51,8 @@ public class USurviveComponents {
 
     public static final DataComponentType<WaterProjectile> WATER_PROJECTILE = register("water_projectile", builder ->
         builder.persistTextParser(USurviveCompParsers.WATER_PROJECTILE.createInput(Crux.key("water_projectile"))));
+    public static final DataComponentType<BaseItemUpgradedFrom> BASE_ITEM_UPGRADED_FROM = register("base_item_upgraded_from", builder ->
+        builder.persistTextParser(USurviveCompParsers.BASE_ITEM_UPGRADED_FROM.createInput(Crux.key("base_item_upgraded_from"))));
 
 
     public static final DataComponentType<TeleportCheckInStructure> TELEPORT_STRUCTURE_CHECK = register("teleport/structure_check", builder ->

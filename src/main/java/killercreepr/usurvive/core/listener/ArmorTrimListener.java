@@ -48,7 +48,14 @@ public class ArmorTrimListener implements Listener {
         ItemPredicate.fromType(Key.key("golden_pickaxe")),
         ItemPredicate.fromType(Key.key("golden_axe")),
         ItemPredicate.fromType(Key.key("golden_shovel")),
-        ItemPredicate.fromType(Key.key("golden_hoe"))
+        ItemPredicate.fromType(Key.key("golden_hoe")),
+
+        ItemPredicate.fromType(Key.key("rose_gold_sword")),
+        ItemPredicate.fromType(Key.key("rose_gold_pickaxe")),
+        ItemPredicate.fromType(Key.key("rose_gold_axe")),
+        ItemPredicate.fromType(Key.key("rose_gold_shovel")),
+        ItemPredicate.fromType(Key.key("rose_gold_hoe"))
+
     );
 
     protected final Map<Key, Key> roseGolds = new MapBuilder<Key, Key>()
@@ -80,16 +87,16 @@ public class ArmorTrimListener implements Listener {
         .put(Key.key("diamond_shovel"), moulditeDiamondResult)
         .put(Key.key("diamond_hoe"), moulditeDiamondResult)
 
-        .put(Key.key("rose_gold_helmet"), moulditeRoseGoldResult)
-        .put(Key.key("rose_gold_chestplate"), moulditeRoseGoldResult)
-        .put(Key.key("rose_gold_leggings"), moulditeRoseGoldResult)
-        .put(Key.key("rose_gold_boots"), moulditeRoseGoldResult)
+        .put(Crux.key("rose_gold_helmet"), moulditeRoseGoldResult)
+        .put(Crux.key("rose_gold_chestplate"), moulditeRoseGoldResult)
+        .put(Crux.key("rose_gold_leggings"), moulditeRoseGoldResult)
+        .put(Crux.key("rose_gold_boots"), moulditeRoseGoldResult)
 
-        .put(Key.key("rose_gold_sword"), moulditeRoseGoldResult)
-        .put(Key.key("rose_gold_pickaxe"), moulditeRoseGoldResult)
-        .put(Key.key("rose_gold_axe"), moulditeRoseGoldResult)
-        .put(Key.key("rose_gold_shovel"), moulditeRoseGoldResult)
-        .put(Key.key("rose_gold_hoe"), moulditeRoseGoldResult)
+        .put(Crux.key("rose_gold_sword"), moulditeRoseGoldResult)
+        .put(Crux.key("rose_gold_pickaxe"), moulditeRoseGoldResult)
+        .put(Crux.key("rose_gold_axe"), moulditeRoseGoldResult)
+        .put(Crux.key("rose_gold_shovel"), moulditeRoseGoldResult)
+        .put(Crux.key("rose_gold_hoe"), moulditeRoseGoldResult)
 
         .buildUnmodifiable()
         ;

@@ -8,7 +8,10 @@ import killercreepr.cruxitems.api.item.CruxedItem;
 import killercreepr.cruxitems.api.item.plugin.PluginItem;
 import killercreepr.cruxitems.core.item.plugin.CfgPluginItem;
 import killercreepr.cruxitems.core.registries.CruxItemRegistries;
+import killercreepr.usurvive.core.component.USurviveComponents;
+import killercreepr.usurvive.core.component.impl.BaseItemUpgradedFrom;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 
@@ -67,6 +70,10 @@ public class MoulditeDiamondResult implements ArmorSmithResult{
                 }
             }catch (Exception ignored){}
         });*/
+
+        cruxed.set(USurviveComponents.BASE_ITEM_UPGRADED_FROM, new BaseItemUpgradedFrom("diamond", Color.fromRGB(0x6EECD2)));
+        Crux.handlers().item().update(result);
+
         return result;
     }
 

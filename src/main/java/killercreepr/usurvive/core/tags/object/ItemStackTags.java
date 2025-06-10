@@ -7,6 +7,8 @@ import killercreepr.crux.api.text.resolver.StringListResolver;
 import killercreepr.crux.api.text.tags.TagParser;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.text.resolver.Tag;
+import killercreepr.crux.core.util.CruxColor;
+import killercreepr.crux.core.util.CruxString;
 import killercreepr.usurvive.api.component.InfusedPotions;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.component.USurviveComponents;
@@ -58,6 +60,15 @@ public class ItemStackTags implements ObjectTag<ItemStack> {
                 });
                 return list;
             }))
+            .add((Tag.stringList("base_item_upgraded_from", (args, ctx) ->{
+                CruxItem crux = CruxItem.wrap(object);
+                var upgrade = crux.getOrDefaultData(USurviveComponents.BASE_ITEM_UPGRADED_FROM);
+                if(upgrade==null) return List.of();
+                return List.of(
+                    "<gray>Base Material:",
+                    " <" + CruxColor.colorToHex(upgrade.getColor()) + ">" + CruxString.toTitleCase(upgrade.getType())
+                );
+            })))
             ;
     }
 }
