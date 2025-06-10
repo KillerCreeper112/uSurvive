@@ -14,6 +14,8 @@ import killercreepr.cruxtickables.api.entity.tickable.EntityTickableModifier;
 import killercreepr.cruxtickables.core.entity.tickable.SimpleDataEntityTickable;
 import killercreepr.cruxtickables.core.registries.CruxTickableRegistries;
 import net.kyori.adventure.key.Key;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -136,6 +138,34 @@ public class USurviveTickables {
                 (int) data.getOrDefault("dont_move_ticks", 60),
                 particleSupplier,
                 particleRate
+            );
+        }
+    });
+
+    public static final EntityTickable MOULDITE_DIAMOND = register(new SimpleDataEntityTickable(Crux.key("mouldite_diamond")) {
+        public static final PersistParser<?> DATA_PARSER = PersistTextParser.mapBuilder(Map.class)
+            .apply(InputDecodeContext::get)
+            .createInput(Crux.key("data"));
+
+        @Override
+        public PersistParser<?> getDataParser() {
+            return DATA_PARSER;
+        }
+
+        @Override
+        public @Nullable ActiveEntityTickable buildActive(@NotNull Entity entity, @Nullable CruxSlot slot, @NotNull EntityTickableModifier mod) {
+            return new AttributesTickable(
+                entity, this, slot,
+                Map.of(
+                    Attribute.ARMOR_TOUGHNESS,
+                    new AttributeModifier(Crux.key("item/set_bonus/mouldite_diamond"), 0.15D, AttributeModifier.Operation.MULTIPLY_SCALAR_1),
+
+                    Attribute.ATTACK_DAMAGE,
+                    new AttributeModifier(Crux.key("item/set_bonus/mouldite_diamond"), 0.05D, AttributeModifier.Operation.MULTIPLY_SCALAR_1),
+
+                    Attribute.MAX_HEALTH,
+                    new AttributeModifier(Crux.key("item/set_bonus/mouldite_diamond"), 4D, AttributeModifier.Operation.ADD_NUMBER)
+                )
             );
         }
     });
