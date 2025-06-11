@@ -1,6 +1,8 @@
 package killercreepr.usurvive.core.entity.mob;
 
+import com.destroystokyo.paper.entity.ai.Goal;
 import com.ticxo.modelengine.api.model.ActiveModel;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
@@ -69,6 +71,12 @@ public class SkeletonWolf extends UCruxMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
+        for (Goal<Mob> goal : Crux.getServer().getMobGoals().getAllGoals(mob)) {
+            if(goal.getKey().getNamespacedKey().asString().equalsIgnoreCase("minecraft:nearest_attackable")){
+                Crux.getServer().getMobGoals().removeGoal(mob, goal);
+            }
+        }
+
         CompletableFuture<ActiveModel> model = new DesignEntity(mob).setBaseEntityVisible(false).getOrAddModelAsync(key.value());
         applyWhenCompleteModel(mob, model);
         CruxGoalUtil.addIfNotPresent(mob, SkeletonWolfGoal.class, 0, () -> new SkeletonWolfGoal(mob).model(model));
