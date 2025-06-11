@@ -170,6 +170,34 @@ public class USurviveTickables {
         }
     });
 
+    public static final EntityTickable MOULDITE_ROSE_GOLD = register(new SimpleDataEntityTickable(Crux.key("mouldite_rose_gold")) {
+        public static final PersistParser<?> DATA_PARSER = PersistTextParser.mapBuilder(Map.class)
+            .apply(InputDecodeContext::get)
+            .createInput(Crux.key("data"));
+
+        @Override
+        public PersistParser<?> getDataParser() {
+            return DATA_PARSER;
+        }
+
+        @Override
+        public @Nullable ActiveEntityTickable buildActive(@NotNull Entity entity, @Nullable CruxSlot slot, @NotNull EntityTickableModifier mod) {
+            return new AttributesTickable(
+                entity, this, slot,
+                Map.of(
+                    Attribute.BLOCK_BREAK_SPEED,
+                    new AttributeModifier(Crux.key("item/set_bonus/mouldite_rose_gold"), 0.1D, AttributeModifier.Operation.MULTIPLY_SCALAR_1),
+
+                    Attribute.MOVEMENT_SPEED,
+                    new AttributeModifier(Crux.key("item/set_bonus/mouldite_rose_gold"), 0.15D, AttributeModifier.Operation.MULTIPLY_SCALAR_1),
+
+                    Attribute.SAFE_FALL_DISTANCE,
+                    new AttributeModifier(Crux.key("item/set_bonus/mouldite_rose_gold"), 3.5D, AttributeModifier.Operation.ADD_NUMBER)
+                )
+            );
+        }
+    });
+
     private static EntityTickable register(EntityTickable tickable){
         return CruxTickableRegistries.ENTITY_TICKABLE.register(tickable);
     }

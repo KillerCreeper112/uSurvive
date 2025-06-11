@@ -109,7 +109,7 @@ public class USurviveEntitySpawns {
                     if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
-                return true;
+                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 6;
             }
             return false;
         }
@@ -148,7 +148,7 @@ public class USurviveEntitySpawns {
                 }
             }
             if(!solid) return false;
-            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob, USurviveMobs.STARE)) < 2;
+            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 8, e -> CruxMob.is(e, mob, USurviveMobs.STARE)) < 2;
         }
 
         @Override
@@ -185,7 +185,7 @@ public class USurviveEntitySpawns {
                 }
             }
             if(!solid) return false;
-            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob, USurviveMobs.VANE)) < 2;
+            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 8, e -> CruxMob.is(e, mob, USurviveMobs.VANE)) < 2;
         }
 
         @Override
@@ -222,7 +222,7 @@ public class USurviveEntitySpawns {
                 }
             }
             if(!solid) return false;
-            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 2;
+            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 8, e -> CruxMob.is(e, mob)) < 2;
         }
 
         @Override
@@ -248,7 +248,7 @@ public class USurviveEntitySpawns {
                     if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
-                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 5, e -> CruxMob.is(e, mob)) < 6;
+                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 7, e -> CruxMob.is(e, mob)) < 6;
             }
             return false;
             //return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 6;
@@ -277,7 +277,7 @@ public class USurviveEntitySpawns {
                     if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
-                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 5, e -> CruxMob.is(e, mob)) < 5;
+                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 7, e -> CruxMob.is(e, mob)) < 5;
             }
             return false;
             //return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 6;
@@ -306,7 +306,7 @@ public class USurviveEntitySpawns {
                     if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
-                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 5, e -> CruxMob.is(e, mob)) < 3;
+                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 7, e -> CruxMob.is(e, mob)) < 3;
             }
             return false;
             //return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 6;
@@ -335,7 +335,7 @@ public class USurviveEntitySpawns {
                     if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
-                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 5, e -> CruxMob.is(e, mob)) < 4;
+                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 7, e -> CruxMob.is(e, mob)) < 4;
             }
             return false;
             //return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 6;
@@ -364,7 +364,7 @@ public class USurviveEntitySpawns {
                     if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
-                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 4, e -> CruxMob.is(e, mob)) < 2;
+                return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 2;
             }
             return false;
             //return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 6;
@@ -431,7 +431,8 @@ public class USurviveEntitySpawns {
                 if(!isWater(check)) return false;
             }
             return b.getWorld().getNearbyEntities(b.getLocation(), 28D, 28D, 28D,
-                x -> CruxMob.is(x, mob)).isEmpty();
+                x -> CruxMob.is(x, mob)).isEmpty() &&
+                CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, null) < 6;
         }
 
         @Override

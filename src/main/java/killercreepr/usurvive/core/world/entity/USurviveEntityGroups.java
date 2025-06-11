@@ -31,7 +31,7 @@ public class USurviveEntityGroups {
             Block b = ctx.getBlock();
             if(b.getBiome() != Biome.DEEP_DARK) return false;
             return getEntityAmountNearChunk(b.getChunk(), 4) < 3 &&
-                getEntityAmountNearChunk(b.getChunk(), 2, e -> CruxMob.is(e, USurviveMobs.SCULK_BLIGHT)) < 1;
+                getEntityAmountNearChunk(b.getChunk(), 5, e -> CruxMob.is(e, USurviveMobs.SCULK_BLIGHT)) < 1;
         }
     };
     public static final NaturalEntitySpawnGroup STICK_BUG = new NaturalSpawnPartGroup(10, 0f,
@@ -45,7 +45,7 @@ public class USurviveEntityGroups {
             if(world.isDayTime() && CruxMath.testChance(60)) return false;
             if(b.getBiome() != Biome.FOREST && b.getBiome() != Biome.WINDSWEPT_FOREST) return false;
             if(b.getLightFromBlocks() > 0) return false;
-            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 4, e -> CruxMob.is(e, USurviveMobs.STICK_BUG)) < 6;
+            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 7, e -> CruxMob.is(e, USurviveMobs.STICK_BUG)) < 6;
         }
     };
     public static final NaturalEntitySpawnGroup ELDRITCH_WASTES_HOSTILE_NIGHT = new NaturalSpawnPartGroup(6, 0f,
@@ -59,7 +59,7 @@ public class USurviveEntityGroups {
             World world = ctx.getWorld();
             if(world.isDayTime()) return false;
             if(b.getLightFromBlocks() > 0) return false;
-            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 4, e -> CruxMob.is(e)) < 6;
+            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e)) < 6;
         }
     };
     public static final NaturalEntitySpawnGroup ELDRITCH_WASTES_HOSTILE = new NaturalSpawnPartGroup(10, 0f,
@@ -73,7 +73,7 @@ public class USurviveEntityGroups {
             Block b = ctx.getBlock();
             if(!BiomeUtil.isEldritchWastes(b.getBiome().key())) return false;
             if(b.getLightFromBlocks() > 0) return false;
-            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 4, e -> CruxMob.is(e)) < 15;
+            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e)) < 15;
         }
     };
     public static final NaturalEntitySpawnGroup ELDRITCH_WASTES_PASSIVE = new NaturalSpawnPartGroup(6, 0f,
@@ -85,7 +85,7 @@ public class USurviveEntityGroups {
             Block b = ctx.getBlock();
             if(!BiomeUtil.isEldritchWastes(b.getBiome().key())) return false;
             if(b.getLightFromBlocks() > 0) return false;
-            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 4, e -> CruxMob.is(e)) < 6;
+            return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e)) < 6;
         }
     };
 
