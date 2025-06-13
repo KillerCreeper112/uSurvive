@@ -13,6 +13,11 @@ public interface MobAttack {
     default boolean ignoreAnimation(){
         return false;
     }
+
+    default boolean ignoreMaxTime(){
+        return false;
+    }
+
     default boolean isFinished(){
         return false;
     }

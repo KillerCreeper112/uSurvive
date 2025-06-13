@@ -104,14 +104,15 @@ public class MobAttackHandler {
             hitAt = 0;
         }
         if(currentAttack != null) currentAttack.onTick();
-        if(currentAttack == null || attackTime >= maxAttackTime || checkIfAnimationComplete()){
+        if(currentAttack == null || checkIfComplete()){
             onCombatStrongAttackComplete();
             return;
         }
         onCombatUsingStrongAttackTick();
     }
 
-    public boolean checkIfAnimationComplete(){
+    public boolean checkIfComplete(){
+        if(!currentAttack.ignoreMaxTime() && attackTime >= maxAttackTime) return true;
         if(currentAttack.ignoreAnimation() || currentAttack.isFinished()) return false;
         return !goal.isPlayingAnimation(currentAttack.getAnimationID());
     }
