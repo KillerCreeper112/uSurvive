@@ -77,6 +77,26 @@ public class MobAttackHandler {
         CruxAttribute.removeModifier(mob, CruxAttribute.ATTACK_KNOCKBACK_UP, STRONG_ATTACK_KEY);*/
     }
 
+    public void setStrongAttackCooldown(int strongAttackCooldown) {
+        this.strongAttackCooldown = strongAttackCooldown;
+    }
+
+    public void setAttackTime(int attackTime) {
+        this.attackTime = attackTime;
+    }
+
+    public void setMaxAttackTime(int maxAttackTime) {
+        this.maxAttackTime = maxAttackTime;
+    }
+
+    public void setHitAt(int hitAt) {
+        this.hitAt = hitAt;
+    }
+
+    public void setCurrentAttack(MobAttack currentAttack) {
+        this.currentAttack = currentAttack;
+    }
+
     public void combatUsingStrongAttackTick(){
         attackTime++;
         if(hitAt == attackTime){
@@ -84,12 +104,18 @@ public class MobAttackHandler {
             hitAt = 0;
         }
         if(currentAttack != null) currentAttack.onTick();
-        if(currentAttack == null || attackTime >= maxAttackTime || !goal.isPlayingAnimation(currentAttack.getAnimationID())){
+        if(currentAttack == null || attackTime >= maxAttackTime || checkIfAnimationComplete()){
             onCombatStrongAttackComplete();
             return;
         }
         onCombatUsingStrongAttackTick();
     }
+
+    public boolean checkIfAnimationComplete(){
+        if(currentAttack.ignoreAnimation() || currentAttack.isFinished()) return false;
+        return !goal.isPlayingAnimation(currentAttack.getAnimationID());
+    }
+
     public void onCombatUsingStrongAttackTick(){}
 
     public MobAttack generateStrongAttack(List<MobAttack> attacks){

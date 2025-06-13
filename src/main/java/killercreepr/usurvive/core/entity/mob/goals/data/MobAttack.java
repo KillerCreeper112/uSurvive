@@ -10,6 +10,13 @@ public interface MobAttack {
         return -1;
     }
 
+    default boolean ignoreAnimation(){
+        return false;
+    }
+    default boolean isFinished(){
+        return false;
+    }
+
     default boolean canUseAttack(){
         return true;
     }
