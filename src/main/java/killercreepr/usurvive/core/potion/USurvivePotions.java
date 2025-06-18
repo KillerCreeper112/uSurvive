@@ -7,9 +7,14 @@ import killercreepr.cruxpotions.api.potion.inflictor.PotionInflictor;
 import killercreepr.cruxpotions.core.potions.DescribedPotion;
 import killercreepr.cruxpotions.core.registries.CruxPotionRegistries;
 import org.bukkit.Color;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 public class USurvivePotions {
     public static void register(){
@@ -178,6 +183,56 @@ public class USurvivePotions {
         @Override
         public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
             return new SporelinkPotion(this, e, duration, amplifier);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0x8CA755);
+        }
+    });
+    public static final CruxPotion ENCUMBERED = register(new DescribedPotion(Crux.key("encumbered"),
+        "Makes movement difficult") {
+        final Map<Attribute, AttributesPotion.PotModCreator> potions = Map.of(
+            Attribute.MOVEMENT_SPEED,
+            new AttributesPotion.PotModCreator() {
+                @Override
+                public double calculateAmount(LivingEntity e, int amplifier) {
+                    return (amplifier+1) * -0.1f;
+                }
+
+                @Override
+                public AttributeModifier.Operation getOperation() {
+                    return AttributeModifier.Operation.MULTIPLY_SCALAR_1;
+                }
+            },
+            Attribute.JUMP_STRENGTH,
+            new AttributesPotion.PotModCreator() {
+                @Override
+                public double calculateAmount(LivingEntity e, int amplifier) {
+                    return (amplifier+1) * -0.1f;
+                }
+
+                @Override
+                public AttributeModifier.Operation getOperation() {
+                    return AttributeModifier.Operation.MULTIPLY_SCALAR_1;
+                }
+            }
+        );
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new AttributesPotion(this, e, duration, amplifier, potions);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0x8CA755);
+        }
+    });
+    public static final CruxPotion THORNLASH = register(new DescribedPotion(Crux.key("thornlash"),
+        "Thorns in your feet") {
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new ThornlashPotion(this, e, duration, amplifier, inflictor);
         }
 
         @Override
