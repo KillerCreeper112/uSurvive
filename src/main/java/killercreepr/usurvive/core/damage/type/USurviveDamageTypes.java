@@ -1,0 +1,11 @@
+package killercreepr.usurvive.core.damage.type;
+
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
+import killercreepr.crux.core.Crux;
+import org.bukkit.damage.DamageType;
+
+public class USurviveDamageTypes {
+    public static final DamageType THORNLASH = RegistryAccess.registryAccess()
+        .getRegistry(RegistryKey.DAMAGE_TYPE).get(Crux.key("thornlash"));
+}

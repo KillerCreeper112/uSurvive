@@ -90,7 +90,6 @@ public class AnimalEnhancedGoal extends CruxMobGoal implements Listener {
                 ));
             }
         }
-
         double moveSpeed = CruxAttribute.get(mob, CruxAttribute.MOVEMENT_SPEED);
         mob.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(moveSpeed);
     }
