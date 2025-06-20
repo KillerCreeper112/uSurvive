@@ -37,6 +37,8 @@ public class USurviveComponents {
         builder);
     public static final DataComponentType<GlintingOreBlockComponent> GLINTING_ORE_BLOCK = register("glinting_ore_block", builder ->
         builder);
+    public static final DataComponentType<WatcherPillarComponent> WATCHER_PILLAR_BLOCK = register("watcher_pillar_block", builder ->
+        builder);
     public static final DataComponentType<TeleporterComponent> TPA_CHECK_WORLD = register("teleport/tpa_check_world", builder ->
         builder);
     public static final DataComponentType<InfusedPotions> INFUSED_POTIONS = register("infused_potions", builder ->
