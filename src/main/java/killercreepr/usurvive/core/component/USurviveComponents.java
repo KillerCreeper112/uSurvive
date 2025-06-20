@@ -14,6 +14,7 @@ import killercreepr.usurvive.core.block.GlintingOreBlockComponent;
 import killercreepr.usurvive.core.component.impl.*;
 import killercreepr.usurvive.core.component.teleport.TeleportCheckInStructure;
 import killercreepr.usurvive.core.component.teleport.TeleportSetLastTP;
+import killercreepr.usurvive.core.mechanics.StickyChargeComponent;
 
 import java.util.function.UnaryOperator;
 
@@ -65,6 +66,9 @@ public class USurviveComponents {
 
     public static final DataComponentType<Long> WORLD_RANDOM_TELEPORT_TIME = register("world/random_teleport_time", builder ->
         builder.persistTextParser(PersistTextParser.LONG.createInput(Crux.key("world/random_teleport_time"))));
+
+    public static final DataComponentType<StickyChargeComponent> STICKY_CHARGE = register("sticky_charge", builder ->
+        builder.persistTextParser(USurviveCompParsers.STICKY_CHARGE.createInput(Crux.key("sticky_charge"))));
 
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());

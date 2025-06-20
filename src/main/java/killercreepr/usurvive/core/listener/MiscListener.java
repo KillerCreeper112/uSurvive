@@ -8,6 +8,7 @@ import killercreepr.cruxitems.api.item.CruxedItem;
 import killercreepr.usurvive.api.component.WaterProjectile;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.component.USurviveComponents;
+import killercreepr.usurvive.core.entity.memory.StickyChargeMemory;
 import killercreepr.usurvive.core.entity.memory.WaterProjectileHolder;
 import killercreepr.usurvive.core.item.QuickAccessItem;
 import org.bukkit.World;
@@ -16,6 +17,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDispenseLootEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -122,6 +124,14 @@ public class MiscListener implements Listener {
                 }
             });
         });
+    }
+
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onEntityDamage(EntityDamageEvent event) {
+        if(EntityMemory.get(event.getEntity()) instanceof StickyChargeMemory m){
+            m.onDamage(event);
+        }
     }
 
 }

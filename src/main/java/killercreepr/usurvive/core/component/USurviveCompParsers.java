@@ -14,6 +14,8 @@ import killercreepr.usurvive.api.mechanics.whip.Whip;
 import killercreepr.usurvive.core.component.impl.*;
 import killercreepr.usurvive.core.component.teleport.TeleportCheckInStructure;
 import killercreepr.usurvive.core.component.teleport.TeleportSetLastTP;
+import killercreepr.usurvive.core.entity.StickyCharge;
+import killercreepr.usurvive.core.mechanics.StickyChargeComponent;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleDisplayGrapple;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleGrapple;
 import killercreepr.usurvive.core.mechanics.whip.SimpleDisplayWhip;
@@ -190,4 +192,12 @@ public class USurviveCompParsers {
 
     public static final PersistTextParser<TeleportSetLastTP> TELEPORT_SET_LAST_TP = PersistTextParser.mapBuilder(TeleportSetLastTP.class)
         .apply(ctx -> new TeleportSetLastTP());
+
+
+
+    public static final PersistTextParser<StickyChargeComponent> STICKY_CHARGE = PersistTextParser.mapBuilder(StickyChargeComponent.class)
+        .field("throw_force", TextInputField.field(PersistTextParser.FLOAT, StickyChargeComponent::getThrowForce))
+        .apply(ctx -> new StickyChargeComponent(
+            ctx.getOptional("throw_force", 1f)
+        ));
 }
