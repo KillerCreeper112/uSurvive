@@ -155,7 +155,7 @@ public class ActiveWatcherPillar extends ActiveEntitySpawner implements ActiveCr
             finishedNightTask = false;
         }
 
-        if(isOpen() || (lastNightTick != -1 && openData != null)){
+        if(!finishedNightTask && (isOpen() || (lastNightTick != -1 && openData != null))){
             onOpenTick();
             return;
         }
