@@ -197,7 +197,11 @@ public class USurviveCompParsers {
 
     public static final PersistTextParser<StickyChargeComponent> STICKY_CHARGE = PersistTextParser.mapBuilder(StickyChargeComponent.class)
         .field("throw_force", TextInputField.field(PersistTextParser.FLOAT, StickyChargeComponent::getThrowForce))
+        .field("fuse_ticks", TextInputField.field(PersistTextParser.INTEGER, StickyChargeComponent::getFuseTicks))
+        .field("attributes", TextInputField.field(CruxAttributeCompParsers.CRUX_ATTRIBUTE_CONTAINER, StickyChargeComponent::getAttributes))
         .apply(ctx -> new StickyChargeComponent(
-            ctx.getOptional("throw_force", 1f)
+            ctx.getOptional("throw_force", 1f),
+            ctx.getOptional("attributes"),
+            ctx.getOptional("fuse_ticks", 60)
         ));
 }

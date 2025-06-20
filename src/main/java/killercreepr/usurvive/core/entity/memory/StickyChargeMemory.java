@@ -1,9 +1,21 @@
 package killercreepr.usurvive.core.entity.memory;
 
+import com.destroystokyo.paper.ParticleBuilder;
+import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.data.Holder;
+import killercreepr.crux.api.entity.CruxEntity;
 import killercreepr.crux.core.entity.memory.DataHolderRegistry;
 import killercreepr.crux.core.entity.memory.SimpleEntityMemoryMainThread;
 import killercreepr.crux.core.util.CruxEntityUtil;
+import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.GetEntityNear;
+import killercreepr.cruxattributes.api.attribute.CruxAttribute;
+import killercreepr.cruxentities.api.combat.EntityDamager;
+import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
+import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -44,7 +56,28 @@ public class StickyChargeMemory extends SimpleEntityMemoryMainThread {
     }
 
     public void explode(){
+        Entity entity = value();
+        double range = CruxAttribute.get(entity, CruxAttribute.ATTACK_RANGE);
+        new GetEntityNear<>(Entity.class)
+            .filter(e -> !e.equals(value()) && CruxMobGoal.UNDESIRED_BEHAVIOR.test(e))
+            .center(entity.getLocation())
+            .range(range)
+            .find().forEach(hit ->{
+                EntityDamager.entityDamager(hit, entity)
+                    .attackWithMultiplier(
+                        CruxMath.distanceFalloff(hit, entity, range, 1.75f)
+                    );
+            });
+        entity.remove();
 
+        new ParticleBuilder(Particle.EXPLOSION)
+            .count(CruxMath.random(4,6))
+            .location(entity.getLocation())
+            .offset(range/3, range/3, range/3)
+            .extra(.1)
+            .spawn()
+            ;
+        CreateSound.sound(Sound.ENTITY_GENERIC_EXPLODE, 1f, 1.4f).playAt(entity);
     }
 
     protected byte fullCooldown = 5;
@@ -106,8 +139,14 @@ public class StickyChargeMemory extends SimpleEntityMemoryMainThread {
 
     protected byte hitTimes;
     public void onDamage(EntityDamageEvent event){
-        event.setCancelled(true);
-        if(!(event instanceof EntityDamageByEntityEvent)){
+        if(event.getCause() == EntityDamageEvent.DamageCause.VOID || event.getCause() == EntityDamageEvent.DamageCause.SUICIDE){
+            return;
+        }
+        if(!(event instanceof EntityDamageByEntityEvent e)){
+            event.setCancelled(true);
+            return;
+        }
+        if(CruxEntityUtil.isNonSurvival(e.getDamager())){
             return;
         }
         hitTimes++;
@@ -121,6 +160,7 @@ public class StickyChargeMemory extends SimpleEntityMemoryMainThread {
     public void onTickEntity(Entity e){
         if(!isHitEntityValid(e)){
             reset(e);
+            cooldown = 3;
             return;
         }
 
@@ -153,6 +193,7 @@ public class StickyChargeMemory extends SimpleEntityMemoryMainThread {
     public void reset(Entity e){
         hitBlock = null;
         hitEntity = null;
+        hitTimes = 0;
         onUnhit(e);
     }
 
@@ -167,8 +208,9 @@ public class StickyChargeMemory extends SimpleEntityMemoryMainThread {
     }
 
     public void onTickBlock(Entity e){
-        if(isHitBlockValid(hitBlock)){
+        if(!isHitBlockValid(hitBlock)){
             reset(e);
+            cooldown = 3;
         }
     }
 
@@ -207,6 +249,15 @@ public class StickyChargeMemory extends SimpleEntityMemoryMainThread {
         return null;
     }
 
+    public void playAnimation(){
+        new ModelEntity(value(), CruxMob.getKey(value()).value())
+            .playAnimation("explode", 0D, 0D, calculateAnimationSpeed(), true);
+    }
+
+    public double calculateAnimationSpeed(){
+        return 60D / fuseTicks;
+    }
+
     protected Entity hitEntity;
     protected float hitEntityRotation;
     protected Vector hitEntityOffset; //Maybe need?
@@ -214,6 +265,9 @@ public class StickyChargeMemory extends SimpleEntityMemoryMainThread {
     public void onTick(){
         if(fullCooldown > 0){
             fullCooldown--;
+            if(fullCooldown < 1){
+                playAnimation();
+            }
             return;
         }
 
@@ -229,7 +283,7 @@ public class StickyChargeMemory extends SimpleEntityMemoryMainThread {
 
         Entity e = value();
         World world = e.getWorld();
-        BoundingBox box = e.getBoundingBox().expand(.2, .2, .2);
+        BoundingBox box = e.getBoundingBox().expand(.25, .25, .25);
         if(CruxEntityUtil.isValid(hitEntity)){
             onTickEntity(e);
             return;

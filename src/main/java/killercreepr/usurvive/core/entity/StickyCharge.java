@@ -2,6 +2,7 @@ package killercreepr.usurvive.core.entity;
 
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.api.entity.memory.EntityMemory;
+import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
@@ -17,6 +18,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,6 +42,8 @@ public class StickyCharge extends UCruxMob {
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE,
                 CruxAttributeModifier.baseModifier(6));
 
+            CruxTag.set(e, "fuse_ticks", PersistentDataType.INTEGER, 60);
+
             load(e);
             if(consumer != null) consumer.accept(e);
         });
@@ -55,14 +59,11 @@ public class StickyCharge extends UCruxMob {
             });
 
             CompletableFuture<ActiveModel> model = new DesignEntity(mob).setBaseEntityVisible(false).getOrAddModelAsync(key.value());
-            model.whenComplete((m, throwable) ->{
-                m.getAnimationHandler().playAnimation("explode", 0D, 0D, 1D, true);
-            });
             applyWhenCompleteModel(mob, model);
         }
 
         var mem = new StickyChargeMemory(e);
-        mem.setFuseTicks(60);
+        mem.setFuseTicks(CruxTag.get(e, "fuse_ticks", PersistentDataType.INTEGER, 60));
         EntityMemory.register(mem, true);
     }
 
