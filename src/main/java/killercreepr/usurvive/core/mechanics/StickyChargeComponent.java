@@ -7,6 +7,7 @@ import killercreepr.cruxattributes.api.attribute.CruxAttributeContainer;
 import killercreepr.cruxitems.api.item.component.InteractableComponent;
 import killercreepr.cruxitems.api.item.interaction.ItemUseContext;
 import killercreepr.cruxitems.api.item.interaction.ItemUseResult;
+import killercreepr.cruxpotions.api.potion.StoredPotion;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.memory.StickyChargeMemory;
 import org.bukkit.GameMode;
@@ -15,15 +16,23 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class StickyChargeComponent implements InteractableComponent {
     protected final float throwForce;
     protected final CruxAttributeContainer attributes;
     protected final int fuseTicks;
+    protected final List<StoredPotion> cruxPotions;
 
-    public StickyChargeComponent(float throwForce, CruxAttributeContainer attributes, int fuseTicks) {
+    public StickyChargeComponent(float throwForce, CruxAttributeContainer attributes, int fuseTicks, List<StoredPotion> cruxPotions) {
         this.throwForce = throwForce;
         this.attributes = attributes;
         this.fuseTicks = fuseTicks;
+        this.cruxPotions = cruxPotions;
+    }
+
+    public List<StoredPotion> getCruxPotions() {
+        return cruxPotions;
     }
 
     public float getThrowForce() {
@@ -57,6 +66,7 @@ public class StickyChargeComponent implements InteractableComponent {
 
             if(EntityMemory.get(e) instanceof StickyChargeMemory m){
                 m.setFuseTicks(fuseTicks);
+                m.setData(this);
             }
 
             Vector dir = p.getEyeLocation().getDirection()

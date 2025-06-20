@@ -4,6 +4,7 @@ import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.entity.CruxEntity;
+import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.core.entity.memory.DataHolderRegistry;
 import killercreepr.crux.core.entity.memory.SimpleEntityMemoryMainThread;
 import killercreepr.crux.core.util.CruxEntityUtil;
@@ -14,6 +15,10 @@ import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;
+import killercreepr.cruxpotions.api.entity.PotionHolder;
+import killercreepr.cruxpotions.core.entity.memory.SimplePotionHolder;
+import killercreepr.cruxpotions.core.potions.inflictor.EntityInflictor;
+import killercreepr.usurvive.core.mechanics.StickyChargeComponent;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -55,6 +60,16 @@ public class StickyChargeMemory extends SimpleEntityMemoryMainThread {
         this.fuseTicks = fuseTicks;
     }
 
+    protected StickyChargeComponent data;
+
+    public StickyChargeComponent getData() {
+        return data;
+    }
+
+    public void setData(StickyChargeComponent data) {
+        this.data = data;
+    }
+
     public void explode(){
         Entity entity = value();
         double range = CruxAttribute.get(entity, CruxAttribute.ATTACK_RANGE);
@@ -63,10 +78,24 @@ public class StickyChargeMemory extends SimpleEntityMemoryMainThread {
             .center(entity.getLocation())
             .range(range)
             .find().forEach(hit ->{
+                double fallOff = CruxMath.distanceFalloff(hit, entity, range, 1.75f);
                 EntityDamager.entityDamager(hit, entity)
                     .attackWithMultiplier(
-                        CruxMath.distanceFalloff(hit, entity, range, 1.75f)
+                        fallOff
                     );
+
+                if(data == null) return;
+                if(data.getCruxPotions() != null){
+                    PotionHolder holder = EntityMemory.getOrCreateDataHolder(hit, SimplePotionHolder.class,
+                        SimplePotionHolder::new);
+                    if(holder != null){
+                        data.getCruxPotions().forEach(pot ->{
+                            int duration = (int) Math.ceil(pot.getDuration() * fallOff);
+                            if(duration < 1) return;
+                            holder.addPotion(pot.withDuration(duration).create(hit, new EntityInflictor(entity)));
+                        });
+                    }
+                }
             });
         entity.remove();
 

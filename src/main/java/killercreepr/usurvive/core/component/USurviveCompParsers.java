@@ -5,6 +5,8 @@ import killercreepr.crux.api.component.parser.hybrid.TextInputField;
 import killercreepr.crux.core.component.parser.type.ComponentInputParsers;
 import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.cruxattributes.core.component.CruxAttributeCompParsers;
+import killercreepr.cruxpotions.core.command.CruxPotionCommands;
+import killercreepr.cruxpotions.core.component.parser.PotionCompParsers;
 import killercreepr.usurvive.api.component.InfusedPotionGroup;
 import killercreepr.usurvive.api.component.InfusedPotions;
 import killercreepr.usurvive.api.component.PotionInfusable;
@@ -199,9 +201,11 @@ public class USurviveCompParsers {
         .field("throw_force", TextInputField.field(PersistTextParser.FLOAT, StickyChargeComponent::getThrowForce))
         .field("fuse_ticks", TextInputField.field(PersistTextParser.INTEGER, StickyChargeComponent::getFuseTicks))
         .field("attributes", TextInputField.field(CruxAttributeCompParsers.CRUX_ATTRIBUTE_CONTAINER, StickyChargeComponent::getAttributes))
+        .field("crux_potions", TextInputField.field(PotionCompParsers.LIST_STORED_CRUX_POTION, StickyChargeComponent::getCruxPotions))
         .apply(ctx -> new StickyChargeComponent(
             ctx.getOptional("throw_force", 1f),
             ctx.getOptional("attributes"),
-            ctx.getOptional("fuse_ticks", 60)
+            ctx.getOptional("fuse_ticks", 60),
+            ctx.getOptional("crux_potions")
         ));
 }
