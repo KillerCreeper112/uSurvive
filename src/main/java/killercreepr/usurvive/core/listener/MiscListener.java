@@ -1,10 +1,16 @@
 package killercreepr.usurvive.core.listener;
 
+import killercreepr.crux.api.entity.CruxEntity;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxitems.api.item.CruxedItem;
+import killercreepr.cruxpotions.api.entity.PotionHolder;
+import killercreepr.cruxpotions.api.potion.StoredPotion;
+import killercreepr.cruxpotions.core.component.PotionComponents;
+import killercreepr.cruxpotions.core.entity.memory.SimplePotionHolder;
+import killercreepr.cruxpotions.core.potions.inflictor.EntityInflictor;
 import killercreepr.usurvive.api.component.WaterProjectile;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.component.USurviveComponents;
@@ -13,20 +19,46 @@ import killercreepr.usurvive.core.entity.memory.WaterProjectileHolder;
 import killercreepr.usurvive.core.item.QuickAccessItem;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDispenseLootEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.world.LootGenerateEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 
+import java.util.List;
 import java.util.Random;
 
 public class MiscListener implements Listener {
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if(!(event.getEntity() instanceof LivingEntity hit)) return;
+        CruxEntity crux = CruxEntity.entity(event.getDamager());
+        List<PotionEffect> potions = crux.get(USurviveComponents.PROJECTILE_HIT_POTIONS);
+        if(potions != null){
+            hit.addPotionEffects(potions);
+        }
+
+        List<StoredPotion> cruxPotions = crux.get(PotionComponents.STORED_CRUX_POTIONS);
+        if(cruxPotions != null){
+            PotionHolder holder = EntityMemory.getOrCreateDataHolder(hit, SimplePotionHolder.class, SimplePotionHolder::new);
+            if(holder != null){
+                var inflictor = new EntityInflictor(crux.entity());
+                cruxPotions.forEach(pot ->{
+                    holder.addPotion(pot.create(hit, inflictor));
+                });
+            }
+        }
+    }
+
+
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         if(event.getHotbarButton() >= 0){

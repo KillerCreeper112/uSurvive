@@ -17,7 +17,9 @@ import killercreepr.usurvive.core.component.impl.*;
 import killercreepr.usurvive.core.component.teleport.TeleportCheckInStructure;
 import killercreepr.usurvive.core.component.teleport.TeleportSetLastTP;
 import killercreepr.usurvive.core.entity.StickyCharge;
+import killercreepr.usurvive.core.mechanics.LashComponent;
 import killercreepr.usurvive.core.mechanics.StickyChargeComponent;
+import killercreepr.usurvive.core.mechanics.ThrowableEffectsComponents;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleDisplayGrapple;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleGrapple;
 import killercreepr.usurvive.core.mechanics.whip.SimpleDisplayWhip;
@@ -195,8 +197,6 @@ public class USurviveCompParsers {
     public static final PersistTextParser<TeleportSetLastTP> TELEPORT_SET_LAST_TP = PersistTextParser.mapBuilder(TeleportSetLastTP.class)
         .apply(ctx -> new TeleportSetLastTP());
 
-
-
     public static final PersistTextParser<StickyChargeComponent> STICKY_CHARGE = PersistTextParser.mapBuilder(StickyChargeComponent.class)
         .field("throw_force", TextInputField.field(PersistTextParser.FLOAT, StickyChargeComponent::getThrowForce))
         .field("fuse_ticks", TextInputField.field(PersistTextParser.INTEGER, StickyChargeComponent::getFuseTicks))
@@ -207,5 +207,31 @@ public class USurviveCompParsers {
             ctx.getOptional("attributes"),
             ctx.getOptional("fuse_ticks", 60),
             ctx.getOptional("crux_potions")
+        ));
+
+    public static final PersistTextParser<LashComponent> LASH = PersistTextParser.mapBuilder(LashComponent.class)
+        .field("cooldown", TextInputField.field(PersistTextParser.INTEGER, LashComponent::getCooldown))
+        .field("item_damage", TextInputField.field(PersistTextParser.BYTE, LashComponent::getItemDamage))
+        .field("push_force", TextInputField.field(PersistTextParser.FLOAT, LashComponent::getPushForce))
+        .field("push_force_y", TextInputField.field(PersistTextParser.FLOAT, LashComponent::getPushForceY))
+        .field("use_sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND, LashComponent::getUseSound))
+        .apply(ctx -> new LashComponent(
+            ctx.getOptional("cooldown", 0),
+            ctx.getOptional("item_damage", (byte)0),
+            ctx.getOptional("push_force", 0f),
+            ctx.getOptional("push_force_y", 0f),
+            ctx.getOptional("use_sound")
+        ));
+
+    public static final PersistTextParser<ThrowableEffectsComponents> THROWABLE_EFFECTS = PersistTextParser.mapBuilder(ThrowableEffectsComponents.class)
+        .field("crux_potions", TextInputField.field(PotionCompParsers.LIST_STORED_CRUX_POTION, ThrowableEffectsComponents::getCruxPotions))
+        .field("potions", TextInputField.field(ComponentInputParsers.LIST.POTION_EFFECT, ThrowableEffectsComponents::getPotions))
+        .field("throw_sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND, ThrowableEffectsComponents::getThrowSound))
+        .field("throw_force", TextInputField.field(PersistTextParser.FLOAT, ThrowableEffectsComponents::getThrowForce))
+        .apply(ctx -> new ThrowableEffectsComponents(
+            ctx.getOptional("crux_potions"),
+            ctx.getOptional("potions"),
+            ctx.getOptional("throw_sound"),
+            ctx.getOptional("throw_force", 1f)
         ));
 }

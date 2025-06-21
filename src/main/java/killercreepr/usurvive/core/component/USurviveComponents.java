@@ -1,8 +1,10 @@
 package killercreepr.usurvive.core.component;
 
+import com.comphenix.protocol.wrappers.ComponentParser;
 import killercreepr.crux.api.component.DataComponentType;
 import killercreepr.crux.api.component.parser.hybrid.PersistTextParser;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.component.parser.type.ComponentInputParsers;
 import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.cruxteleport.api.component.TeleporterComponent;
 import killercreepr.usurvive.api.component.InfusedPotions;
@@ -14,8 +16,12 @@ import killercreepr.usurvive.core.block.GlintingOreBlockComponent;
 import killercreepr.usurvive.core.component.impl.*;
 import killercreepr.usurvive.core.component.teleport.TeleportCheckInStructure;
 import killercreepr.usurvive.core.component.teleport.TeleportSetLastTP;
+import killercreepr.usurvive.core.mechanics.LashComponent;
 import killercreepr.usurvive.core.mechanics.StickyChargeComponent;
+import killercreepr.usurvive.core.mechanics.ThrowableEffectsComponents;
+import org.bukkit.potion.PotionEffect;
 
+import java.util.List;
 import java.util.function.UnaryOperator;
 
 public class USurviveComponents {
@@ -69,6 +75,15 @@ public class USurviveComponents {
 
     public static final DataComponentType<StickyChargeComponent> STICKY_CHARGE = register("sticky_charge", builder ->
         builder.persistTextParser(USurviveCompParsers.STICKY_CHARGE.createInput(Crux.key("sticky_charge"))));
+
+    public static final DataComponentType<LashComponent> LASH = register("lash", builder ->
+        builder.persistTextParser(USurviveCompParsers.LASH.createInput(Crux.key("lash"))));
+
+    public static final DataComponentType<List<PotionEffect>> PROJECTILE_HIT_POTIONS = register("projectile_hit_potions", builder ->
+        builder.persistTextParser(ComponentInputParsers.LIST.POTION_EFFECT.createInput(Crux.key("projectile_hit_potions"))));
+
+    public static final DataComponentType<ThrowableEffectsComponents> THROWABLE_EFFECTS = register("throwable_effects", builder ->
+        builder.persistTextParser(USurviveCompParsers.THROWABLE_EFFECTS.createInput(Crux.key("throwable_effects"))));
 
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());
