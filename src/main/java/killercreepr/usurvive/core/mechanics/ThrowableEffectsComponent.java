@@ -5,7 +5,6 @@ import killercreepr.crux.api.entity.CruxEntity;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
-import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxitems.api.item.component.InteractableComponent;
 import killercreepr.cruxitems.api.item.interaction.ItemUseContext;
 import killercreepr.cruxitems.api.item.interaction.ItemUseResult;
@@ -23,14 +22,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Random;
 
-public class ThrowableEffectsComponents implements InteractableComponent {
+public class ThrowableEffectsComponent implements InteractableComponent {
     protected final List<StoredPotion> cruxPotions;
     protected final List<PotionEffect> potions;
     protected final CreateSound throwSound;
     protected final float throwForce;
     protected final float spread;
 
-    public ThrowableEffectsComponents(List<StoredPotion> cruxPotions, List<PotionEffect> potions, CreateSound throwSound, float throwForce, float spread) {
+    public ThrowableEffectsComponent(List<StoredPotion> cruxPotions, List<PotionEffect> potions, CreateSound throwSound, float throwForce, float spread) {
         this.cruxPotions = cruxPotions;
         this.potions = potions;
         this.throwSound = throwSound;

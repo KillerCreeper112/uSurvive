@@ -3,10 +3,8 @@ package killercreepr.usurvive.core.component;
 import killercreepr.crux.api.component.parser.hybrid.PersistTextParser;
 import killercreepr.crux.api.component.parser.hybrid.TextInputField;
 import killercreepr.crux.core.component.parser.type.ComponentInputParsers;
-import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.cruxattributes.core.component.CruxAttributeCompParsers;
-import killercreepr.cruxpotions.core.command.CruxPotionCommands;
 import killercreepr.cruxpotions.core.component.parser.PotionCompParsers;
 import killercreepr.usurvive.api.component.InfusedPotionGroup;
 import killercreepr.usurvive.api.component.InfusedPotions;
@@ -17,10 +15,10 @@ import killercreepr.usurvive.api.mechanics.whip.Whip;
 import killercreepr.usurvive.core.component.impl.*;
 import killercreepr.usurvive.core.component.teleport.TeleportCheckInStructure;
 import killercreepr.usurvive.core.component.teleport.TeleportSetLastTP;
-import killercreepr.usurvive.core.entity.StickyCharge;
+import killercreepr.usurvive.core.mechanics.GloomstingComponent;
 import killercreepr.usurvive.core.mechanics.LashComponent;
 import killercreepr.usurvive.core.mechanics.StickyChargeComponent;
-import killercreepr.usurvive.core.mechanics.ThrowableEffectsComponents;
+import killercreepr.usurvive.core.mechanics.ThrowableEffectsComponent;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleDisplayGrapple;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleGrapple;
 import killercreepr.usurvive.core.mechanics.whip.SimpleDisplayWhip;
@@ -224,17 +222,37 @@ public class USurviveCompParsers {
             ctx.getOptional("use_sound")
         ));
 
-    public static final PersistTextParser<ThrowableEffectsComponents> THROWABLE_EFFECTS = PersistTextParser.mapBuilder(ThrowableEffectsComponents.class)
-        .field("crux_potions", TextInputField.field(PotionCompParsers.LIST_STORED_CRUX_POTION, ThrowableEffectsComponents::getCruxPotions))
-        .field("potions", TextInputField.field(ComponentInputParsers.LIST.POTION_EFFECT, ThrowableEffectsComponents::getPotions))
-        .field("throw_sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND, ThrowableEffectsComponents::getThrowSound))
-        .field("throw_force", TextInputField.field(PersistTextParser.FLOAT, ThrowableEffectsComponents::getThrowForce))
-        .field("spread", TextInputField.field(PersistTextParser.FLOAT, ThrowableEffectsComponents::getSpread))
-        .apply(ctx -> new ThrowableEffectsComponents(
+    public static final PersistTextParser<ThrowableEffectsComponent> THROWABLE_EFFECTS = PersistTextParser.mapBuilder(ThrowableEffectsComponent.class)
+        .field("crux_potions", TextInputField.field(PotionCompParsers.LIST_STORED_CRUX_POTION, ThrowableEffectsComponent::getCruxPotions))
+        .field("potions", TextInputField.field(ComponentInputParsers.LIST.POTION_EFFECT, ThrowableEffectsComponent::getPotions))
+        .field("throw_sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND, ThrowableEffectsComponent::getThrowSound))
+        .field("throw_force", TextInputField.field(PersistTextParser.FLOAT, ThrowableEffectsComponent::getThrowForce))
+        .field("spread", TextInputField.field(PersistTextParser.FLOAT, ThrowableEffectsComponent::getSpread))
+        .apply(ctx -> new ThrowableEffectsComponent(
             ctx.getOptional("crux_potions"),
             ctx.getOptional("potions"),
             ctx.getOptional("throw_sound"),
             ctx.getOptional("throw_force", 1f),
             ctx.getOptional("spread", .1f)
+        ));
+
+    public static final PersistTextParser<GloomstingComponent> GLOOMSTING = PersistTextParser.mapBuilder(GloomstingComponent.class)
+        .field("attributes", TextInputField.field(CruxAttributeCompParsers.CRUX_ATTRIBUTE_CONTAINER, GloomstingComponent::getAttributes))
+        .field("use_sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND, GloomstingComponent::getUseSound))
+        .field("shoot_force", TextInputField.field(PersistTextParser.FLOAT, GloomstingComponent::getShootForce))
+        .field("cooldown", TextInputField.field(PersistTextParser.INTEGER, GloomstingComponent::getCooldown))
+        .field("item_damage", TextInputField.field(PersistTextParser.INTEGER, GloomstingComponent::getItemDamage))
+        .field("shoot_amount", TextInputField.field(ComponentInputParsers.NUMBER_PROVIDER, GloomstingComponent::getShootAmount))
+        .field("crux_potions", TextInputField.field(PotionCompParsers.LIST_STORED_CRUX_POTION, GloomstingComponent::getCruxPotions))
+        .field("potions", TextInputField.field(ComponentInputParsers.LIST.POTION_EFFECT, GloomstingComponent::getPotions))
+        .apply(ctx -> new GloomstingComponent(
+            ctx.getOptional("cooldown"),
+            ctx.getOptional("item_damage"),
+            ctx.getOptional("shoot_force"),
+            ctx.getOptional("shoot_amount"),
+            ctx.getOptional("attributes"),
+            ctx.getOptional("use_sound"),
+            ctx.getOptional("crux_potions"),
+            ctx.getOptional("potions")
         ));
 }

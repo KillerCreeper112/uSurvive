@@ -1,6 +1,5 @@
 package killercreepr.usurvive.core.component;
 
-import com.comphenix.protocol.wrappers.ComponentParser;
 import killercreepr.crux.api.component.DataComponentType;
 import killercreepr.crux.api.component.parser.hybrid.PersistTextParser;
 import killercreepr.crux.core.Crux;
@@ -20,7 +19,7 @@ import killercreepr.usurvive.core.component.teleport.TeleportCheckInStructure;
 import killercreepr.usurvive.core.component.teleport.TeleportSetLastTP;
 import killercreepr.usurvive.core.mechanics.LashComponent;
 import killercreepr.usurvive.core.mechanics.StickyChargeComponent;
-import killercreepr.usurvive.core.mechanics.ThrowableEffectsComponents;
+import killercreepr.usurvive.core.mechanics.ThrowableEffectsComponent;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.List;
@@ -84,7 +83,7 @@ public class USurviveComponents {
     public static final DataComponentType<List<PotionEffect>> PROJECTILE_HIT_POTIONS = register("projectile_hit_potions", builder ->
         builder.persistTextParser(ComponentInputParsers.LIST.POTION_EFFECT.createInput(Crux.key("projectile_hit_potions"))));
 
-    public static final DataComponentType<ThrowableEffectsComponents> THROWABLE_EFFECTS = register("throwable_effects", builder ->
+    public static final DataComponentType<ThrowableEffectsComponent> THROWABLE_EFFECTS = register("throwable_effects", builder ->
         builder.persistTextParser(USurviveCompParsers.THROWABLE_EFFECTS.createInput(Crux.key("throwable_effects"))));
     public static final DataComponentType<CruxAttributeContainer> PROJECTILE_ATTRIBUTES = register("projectile_attributes", builder ->
         builder.persistTextParser(CruxAttributeCompParsers.CRUX_ATTRIBUTE_CONTAINER.createInput(Crux.key("projectile_attributes"))));
