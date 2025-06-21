@@ -3,8 +3,6 @@ package killercreepr.usurvive.core.mechanics;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.entity.CruxEntity;
 import killercreepr.crux.api.item.CruxItem;
-import killercreepr.crux.core.persistence.CruxPersistence;
-import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxitems.api.item.component.InteractableComponent;
 import killercreepr.cruxitems.api.item.interaction.ItemUseContext;
 import killercreepr.cruxitems.api.item.interaction.ItemUseResult;
@@ -74,6 +72,8 @@ public class ThrowableEffectsComponents implements InteractableComponent {
         });
 
         if(throwSound != null) throwSound.playAt(p);
+
+        p.swingHand(ctx.getHand());
 
         return ItemUseResult.cancelled();
     }

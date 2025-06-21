@@ -240,6 +240,19 @@ public class USurvivePotions {
             return Color.fromRGB(0x8CA755);
         }
     });
+    public static final CruxPotion SPETTLE = register(new DescribedPotion(Crux.key("spettle"),
+        "Eww") {
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new TitleDisplayPotion(this, e, duration, amplifier,
+                "<!shadow><font:'crux:spettle'>1", null);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0x8CA755);
+        }
+    });
 
     private static CruxPotion register(CruxPotion pot){
         return CruxPotionRegistries.POTION.register(pot);
