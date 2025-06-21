@@ -3,6 +3,9 @@ package killercreepr.usurvive.core.mechanics;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.entity.CruxEntity;
 import killercreepr.crux.api.item.CruxItem;
+import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxattributes.api.attribute.CruxAttribute;
+import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxitems.api.item.component.InteractableComponent;
 import killercreepr.cruxitems.api.item.interaction.ItemUseContext;
 import killercreepr.cruxitems.api.item.interaction.ItemUseResult;
@@ -18,18 +21,21 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Random;
 
 public class ThrowableEffectsComponents implements InteractableComponent {
     protected final List<StoredPotion> cruxPotions;
     protected final List<PotionEffect> potions;
     protected final CreateSound throwSound;
     protected final float throwForce;
+    protected final float spread;
 
-    public ThrowableEffectsComponents(List<StoredPotion> cruxPotions, List<PotionEffect> potions, CreateSound throwSound, float throwForce) {
+    public ThrowableEffectsComponents(List<StoredPotion> cruxPotions, List<PotionEffect> potions, CreateSound throwSound, float throwForce, float spread) {
         this.cruxPotions = cruxPotions;
         this.potions = potions;
         this.throwSound = throwSound;
         this.throwForce = throwForce;
+        this.spread = spread;
     }
 
     public List<StoredPotion> getCruxPotions() {
@@ -44,9 +50,26 @@ public class ThrowableEffectsComponents implements InteractableComponent {
         return throwSound;
     }
 
+    public float getSpread() {
+        return spread;
+    }
+
     public float getThrowForce() {
         return throwForce;
     }
+
+    public Vector getRandomizedDirection(Vector direction, float spread, Random random) {
+        // Normalize the direction just in case
+        direction = direction.normalize();
+
+        // Add small random variations to each component
+        double dx = direction.getX() + (random.nextGaussian() * spread);
+        double dy = direction.getY() + (random.nextGaussian() * spread);
+        double dz = direction.getZ() + (random.nextGaussian() * spread);
+
+        return new Vector(dx, dy, dz).normalize();
+    }
+
 
     @Override
     public @NotNull ItemUseResult onInteract(@NotNull ItemUseContext ctx) {
@@ -61,14 +84,26 @@ public class ThrowableEffectsComponents implements InteractableComponent {
             item.amount(item.amount()-1);
         }
 
-        Vector dir = p.getEyeLocation().getDirection()
-                .multiply(throwForce);
+        Vector dir = getRandomizedDirection(
+            p.getEyeLocation().getDirection(),
+            spread,
+            CruxMath.random()
+        ).multiply(throwForce);
 
         p.launchProjectile(Snowball.class, dir, e ->{
             e.setItem(clone);
             CruxEntity crux = CruxEntity.entity(e);
             crux.set(PotionComponents.STORED_CRUX_POTIONS, cruxPotions);
             crux.set(USurviveComponents.PROJECTILE_HIT_POTIONS, potions);
+
+            var attributes = item.getOrDefaultData(USurviveComponents.PROJECTILE_ATTRIBUTES);
+            if(attributes != null){
+                attributes.getAttributeInstances().forEach(instance ->{
+                    instance.getModifiers().forEach(mod ->{
+                        CruxAttribute.addModifier(e, instance.getAttribute(), mod);
+                    });
+                });
+            }
         });
 
         if(throwSound != null) throwSound.playAt(p);

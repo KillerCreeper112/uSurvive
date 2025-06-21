@@ -6,6 +6,8 @@ import killercreepr.crux.api.component.parser.hybrid.PersistTextParser;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.component.parser.type.ComponentInputParsers;
 import killercreepr.crux.core.registries.CruxRegistries;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeContainer;
+import killercreepr.cruxattributes.core.component.CruxAttributeCompParsers;
 import killercreepr.cruxteleport.api.component.TeleporterComponent;
 import killercreepr.usurvive.api.component.InfusedPotions;
 import killercreepr.usurvive.api.component.PotionInfusable;
@@ -84,6 +86,8 @@ public class USurviveComponents {
 
     public static final DataComponentType<ThrowableEffectsComponents> THROWABLE_EFFECTS = register("throwable_effects", builder ->
         builder.persistTextParser(USurviveCompParsers.THROWABLE_EFFECTS.createInput(Crux.key("throwable_effects"))));
+    public static final DataComponentType<CruxAttributeContainer> PROJECTILE_ATTRIBUTES = register("projectile_attributes", builder ->
+        builder.persistTextParser(CruxAttributeCompParsers.CRUX_ATTRIBUTE_CONTAINER.createInput(Crux.key("projectile_attributes"))));
 
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());

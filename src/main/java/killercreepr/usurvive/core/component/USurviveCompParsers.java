@@ -3,6 +3,7 @@ package killercreepr.usurvive.core.component;
 import killercreepr.crux.api.component.parser.hybrid.PersistTextParser;
 import killercreepr.crux.api.component.parser.hybrid.TextInputField;
 import killercreepr.crux.core.component.parser.type.ComponentInputParsers;
+import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.cruxattributes.core.component.CruxAttributeCompParsers;
 import killercreepr.cruxpotions.core.command.CruxPotionCommands;
@@ -228,10 +229,12 @@ public class USurviveCompParsers {
         .field("potions", TextInputField.field(ComponentInputParsers.LIST.POTION_EFFECT, ThrowableEffectsComponents::getPotions))
         .field("throw_sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND, ThrowableEffectsComponents::getThrowSound))
         .field("throw_force", TextInputField.field(PersistTextParser.FLOAT, ThrowableEffectsComponents::getThrowForce))
+        .field("spread", TextInputField.field(PersistTextParser.FLOAT, ThrowableEffectsComponents::getSpread))
         .apply(ctx -> new ThrowableEffectsComponents(
             ctx.getOptional("crux_potions"),
             ctx.getOptional("potions"),
             ctx.getOptional("throw_sound"),
-            ctx.getOptional("throw_force", 1f)
+            ctx.getOptional("throw_force", 1f),
+            ctx.getOptional("spread", .1f)
         ));
 }
