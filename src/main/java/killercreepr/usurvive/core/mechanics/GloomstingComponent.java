@@ -40,18 +40,24 @@ public class GloomstingComponent implements InteractableComponent, ConsumableCom
         return cruxPotions;
     }
 
+    public float getSpread() {
+        return spread;
+    }
+
     protected final int itemDamage;
     protected final float shootForce;
+    protected final float spread;
     protected final NumberProvider shootAmount;
     protected final CruxAttributeContainer attributes;
     protected final CreateSound useSound;
     protected final List<StoredPotion> cruxPotions;
     protected final List<PotionEffect> potions;
 
-    public GloomstingComponent(int cooldown, int itemDamage, float shootForce, NumberProvider shootAmount, CruxAttributeContainer attributes, CreateSound useSound, List<StoredPotion> cruxPotions, List<PotionEffect> potions) {
+    public GloomstingComponent(int cooldown, int itemDamage, float shootForce, float spread, NumberProvider shootAmount, CruxAttributeContainer attributes, CreateSound useSound, List<StoredPotion> cruxPotions, List<PotionEffect> potions) {
         this.cooldown = cooldown;
         this.itemDamage = itemDamage;
         this.shootForce = shootForce;
+        this.spread = spread;
         this.shootAmount = shootAmount;
         this.attributes = attributes;
         this.useSound = useSound;
@@ -94,9 +100,9 @@ public class GloomstingComponent implements InteractableComponent, ConsumableCom
 
     public Vector generateDirection(Vector dir){
         dir = dir.clone()
-            .rotateAroundX(CruxMath.random(-.1f, .1f))
-            .rotateAroundY(CruxMath.random(-.1f, .1f))
-            .rotateAroundZ(CruxMath.random(-.1f, .1f));
+            .rotateAroundX(CruxMath.random(-spread, spread))
+            .rotateAroundY(CruxMath.random(-spread, spread))
+            .rotateAroundZ(CruxMath.random(-spread, spread));
         return dir;
     }
 

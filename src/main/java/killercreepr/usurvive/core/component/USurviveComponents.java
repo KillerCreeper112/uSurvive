@@ -17,6 +17,7 @@ import killercreepr.usurvive.core.block.GlintingOreBlockComponent;
 import killercreepr.usurvive.core.component.impl.*;
 import killercreepr.usurvive.core.component.teleport.TeleportCheckInStructure;
 import killercreepr.usurvive.core.component.teleport.TeleportSetLastTP;
+import killercreepr.usurvive.core.mechanics.GloomstingComponent;
 import killercreepr.usurvive.core.mechanics.LashComponent;
 import killercreepr.usurvive.core.mechanics.StickyChargeComponent;
 import killercreepr.usurvive.core.mechanics.ThrowableEffectsComponent;
@@ -85,8 +86,12 @@ public class USurviveComponents {
 
     public static final DataComponentType<ThrowableEffectsComponent> THROWABLE_EFFECTS = register("throwable_effects", builder ->
         builder.persistTextParser(USurviveCompParsers.THROWABLE_EFFECTS.createInput(Crux.key("throwable_effects"))));
+
     public static final DataComponentType<CruxAttributeContainer> PROJECTILE_ATTRIBUTES = register("projectile_attributes", builder ->
         builder.persistTextParser(CruxAttributeCompParsers.CRUX_ATTRIBUTE_CONTAINER.createInput(Crux.key("projectile_attributes"))));
+
+    public static final DataComponentType<GloomstingComponent> GLOOMSTING = register("gloomsting", builder ->
+        builder.persistTextParser(USurviveCompParsers.GLOOMSTING.createInput(Crux.key("gloomsting"))));
 
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());

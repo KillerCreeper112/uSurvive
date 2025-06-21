@@ -240,6 +240,7 @@ public class USurviveCompParsers {
         .field("attributes", TextInputField.field(CruxAttributeCompParsers.CRUX_ATTRIBUTE_CONTAINER, GloomstingComponent::getAttributes))
         .field("use_sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND, GloomstingComponent::getUseSound))
         .field("shoot_force", TextInputField.field(PersistTextParser.FLOAT, GloomstingComponent::getShootForce))
+        .field("spread", TextInputField.field(PersistTextParser.FLOAT, GloomstingComponent::getSpread))
         .field("cooldown", TextInputField.field(PersistTextParser.INTEGER, GloomstingComponent::getCooldown))
         .field("item_damage", TextInputField.field(PersistTextParser.INTEGER, GloomstingComponent::getItemDamage))
         .field("shoot_amount", TextInputField.field(ComponentInputParsers.NUMBER_PROVIDER, GloomstingComponent::getShootAmount))
@@ -249,6 +250,7 @@ public class USurviveCompParsers {
             ctx.getOptional("cooldown"),
             ctx.getOptional("item_damage"),
             ctx.getOptional("shoot_force"),
+            ctx.getOptional("spread"),
             ctx.getOptional("shoot_amount"),
             ctx.getOptional("attributes"),
             ctx.getOptional("use_sound"),
