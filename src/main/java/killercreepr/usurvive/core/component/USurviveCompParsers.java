@@ -1,10 +1,14 @@
 package killercreepr.usurvive.core.component;
 
+import killercreepr.crux.api.component.DataComponentType;
+import killercreepr.crux.api.component.parser.InputDecodeContext;
 import killercreepr.crux.api.component.parser.hybrid.PersistTextParser;
 import killercreepr.crux.api.component.parser.hybrid.TextInputField;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.component.parser.type.ComponentInputParsers;
 import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.cruxattributes.core.component.CruxAttributeCompParsers;
+import killercreepr.cruxentities.component.SpawnerData;
 import killercreepr.cruxpotions.core.component.parser.PotionCompParsers;
 import killercreepr.usurvive.api.component.InfusedPotionGroup;
 import killercreepr.usurvive.api.component.InfusedPotions;
@@ -26,6 +30,7 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.List;
+import java.util.Map;
 
 public class USurviveCompParsers {
     public static final PersistTextParser<Grapple> GRAPPLE = PersistTextParser.mapBuilder(Grapple.class)
@@ -256,5 +261,28 @@ public class USurviveCompParsers {
             ctx.getOptional("use_sound"),
             ctx.getOptional("crux_potions"),
             ctx.getOptional("potions")
+        ));
+
+    public static final PersistTextParser<Map<Key, Double>> EXTRA_MOB_TYPE_DAMAGE = PersistTextParser.mapBuilder(Map.class)
+        .field("", TextInputField.field(
+            PersistTextParser.mapDynamicBuilder((Class<Map< Key, Double>>) (Class) Map.class)
+                .keyParser(PersistTextParser.KEY)
+                .valueParser(PersistTextParser.DOUBLE)
+                .mapToEncode(m -> m)
+                .apply(InputDecodeContext::get), e -> e
+        )).build();
+
+    public static final PersistTextParser<AttackPotionEffectsComponent.AttackPotionEffect> ATTACK_POTION_EFFECT = PersistTextParser.mapBuilder(AttackPotionEffectsComponent.AttackPotionEffect.class)
+        .field("chance", TextInputField.field(PersistTextParser.FLOAT, AttackPotionEffectsComponent.AttackPotionEffect::getChance))
+        .field("potions", TextInputField.field(ComponentInputParsers.LIST.POTION_EFFECT, AttackPotionEffectsComponent.AttackPotionEffect::getEffects))
+        .apply(ctx -> new AttackPotionEffectsComponent.AttackPotionEffect(
+            ctx.getOptional("potions"),
+            ctx.getOptional("chance", 100f)
+        ));
+
+    public static final PersistTextParser<AttackPotionEffectsComponent> ATTACK_POTION_EFFECTS = PersistTextParser.mapBuilder(AttackPotionEffectsComponent.class)
+        .field("effects", TextInputField.field(PersistTextParser.collectionList(ATTACK_POTION_EFFECT), AttackPotionEffectsComponent::getEffects))
+        .apply(ctx -> new AttackPotionEffectsComponent(
+            ctx.getOptional("effects")
         ));
 }

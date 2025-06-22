@@ -10,6 +10,8 @@ import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.core.component.CruxAttributeComponents;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxentities.api.combat.EntityDamager;
+import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxitems.api.item.CruxedItem;
 import killercreepr.cruxpotions.api.entity.PotionHolder;
 import killercreepr.cruxpotions.api.potion.StoredPotion;
@@ -23,6 +25,7 @@ import killercreepr.usurvive.core.damage.type.USurviveDamageTypes;
 import killercreepr.usurvive.core.entity.memory.StickyChargeMemory;
 import killercreepr.usurvive.core.entity.memory.WaterProjectileHolder;
 import killercreepr.usurvive.core.item.QuickAccessItem;
+import net.kyori.adventure.key.Key;
 import org.bukkit.World;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.ArmorStand;
@@ -38,14 +41,56 @@ import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.world.LootGenerateEvent;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class MiscListener implements Listener {
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
+    public void onEntityDamageByEntityNormal(EntityDamageByEntityEvent event) {
+        var victim = event.getEntity();
+        var attacker = CruxEntity.entity(event.getDamager());
+
+        Map<Key, Double> extraDamage = attacker.get(USurviveComponents.EXTRA_MOB_TYPE_DAMAGE);
+        if(extraDamage != null){
+            Double highest = null;
+            for(MobCategory category : CruxMob.getCategories(victim)){
+                if(!extraDamage.containsKey(category.key())) continue;
+                double check = extraDamage.get(category.key());
+                if(highest == null || check > highest){
+                    highest = check;
+                }
+            }
+            if(highest != null){
+                event.setDamage(event.getDamage()*highest);
+            }
+        }
+
+        if(attacker instanceof LivingEntity attackLiving && victim instanceof LivingEntity victimLiving){
+            EntityEquipment equip = attackLiving.getEquipment();
+            if(equip != null){
+                ItemStack item = equip.getItemInMainHand();
+                if(!CruxItem.isEmpty(item)){
+                    CruxItem cruxItem = CruxItem.wrap(item);
+                    var hitEffects = cruxItem.getOrDefaultData(USurviveComponents.ATTACK_POTION_EFFECTS);
+                    if(hitEffects != null){
+                        hitEffects.getEffects().forEach(effect ->{
+                            if(!CruxMath.testChance(effect.getChance())) return;
+                            victimLiving.addPotionEffects(effect.getEffects());
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         Entity victim = event.getEntity();
@@ -138,6 +183,7 @@ public class MiscListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onEntityShootBow(EntityShootBowEvent event) {
         Entity proj = event.getProjectile();
+        CruxEntity projCrux = CruxEntity.entity(proj);
         if(!CruxItem.isEmpty(event.getBow())){
             CruxItem bow = CruxItem.wrap(event.getBow());
             var transferAttributes = bow.getOrDefaultData(CruxAttributeComponents.PROJECTILE_CRUX_ATTRIBUTES);
@@ -147,6 +193,13 @@ public class MiscListener implements Listener {
                         CruxAttribute.addModifier(proj, instance.getAttribute(), mod);
                     });
                 });
+            }
+
+            var transferExtraTypeDmg = bow.getOrDefaultData(USurviveComponents.PROJECTILE_EXTRA_MOB_TYPE_DAMAGE);
+            if(transferExtraTypeDmg != null){
+                Map<Key, Double> current = new HashMap<>(projCrux.getOrDefault(USurviveComponents.EXTRA_MOB_TYPE_DAMAGE, Map.of()));
+                current.putAll(transferExtraTypeDmg);
+                projCrux.set(USurviveComponents.EXTRA_MOB_TYPE_DAMAGE, current);
             }
         }
 

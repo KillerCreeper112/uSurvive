@@ -21,9 +21,11 @@ import killercreepr.usurvive.core.mechanics.GloomstingComponent;
 import killercreepr.usurvive.core.mechanics.LashComponent;
 import killercreepr.usurvive.core.mechanics.StickyChargeComponent;
 import killercreepr.usurvive.core.mechanics.ThrowableEffectsComponent;
+import net.kyori.adventure.key.Key;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.UnaryOperator;
 
 public class USurviveComponents {
@@ -92,6 +94,15 @@ public class USurviveComponents {
 
     public static final DataComponentType<GloomstingComponent> GLOOMSTING = register("gloomsting", builder ->
         builder.persistTextParser(USurviveCompParsers.GLOOMSTING.createInput(Crux.key("gloomsting"))));
+
+    public static final DataComponentType<Map<Key, Double>> EXTRA_MOB_TYPE_DAMAGE = register("extra_mob_type_damage", builder ->
+        builder.persistTextParser(USurviveCompParsers.EXTRA_MOB_TYPE_DAMAGE.createInput(Crux.key("extra_mob_type_damage"))));
+
+    public static final DataComponentType<Map<Key, Double>> PROJECTILE_EXTRA_MOB_TYPE_DAMAGE = register("projectile_extra_mob_type_damage", builder ->
+        builder.persistTextParser(USurviveCompParsers.EXTRA_MOB_TYPE_DAMAGE.createInput(Crux.key("projectile_extra_mob_type_damage"))));
+
+    public static final DataComponentType<AttackPotionEffectsComponent> ATTACK_POTION_EFFECTS = register("attack_potion_effects", builder ->
+        builder.persistTextParser(USurviveCompParsers.ATTACK_POTION_EFFECTS.createInput(Crux.key("attack_potion_effects"))));
 
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());
