@@ -1,9 +1,12 @@
 package killercreepr.usurvive.core.entity;
 
+import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.cruxentities.entity.MobCategory;
+import killercreepr.usurvive.core.entity.memory.ParticleTrailHolder;
 import killercreepr.usurvive.core.entity.mob.UCruxMob;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -30,6 +33,14 @@ public class GloomstingProjectile extends UCruxMob {
             load(e);
             if(consumer != null) consumer.accept(e);
         });
+    }
+
+    @Override
+    public void load(@NotNull Entity e) {
+        super.load(e);
+        EntityMemory.getOrCreateDataHolder(e, ParticleTrailHolder.class, mem -> new ParticleTrailHolder(
+            mem, Color.fromRGB(0x74F43D)
+        ));
     }
 
     @Override

@@ -3,8 +3,13 @@ package killercreepr.usurvive.core.listener;
 import killercreepr.crux.api.entity.CruxEntity;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.item.CruxItem;
+import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.CruxTag;
+import killercreepr.cruxattributes.api.attribute.CruxAttribute;
+import killercreepr.cruxattributes.core.component.CruxAttributeComponents;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxitems.api.item.CruxedItem;
 import killercreepr.cruxpotions.api.entity.PotionHolder;
 import killercreepr.cruxpotions.api.potion.StoredPotion;
@@ -19,6 +24,7 @@ import killercreepr.usurvive.core.entity.memory.WaterProjectileHolder;
 import killercreepr.usurvive.core.item.QuickAccessItem;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -31,6 +37,7 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.world.LootGenerateEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.List;
@@ -39,6 +46,24 @@ import java.util.Random;
 public class MiscListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        Entity victim = event.getEntity();
+        Entity attacker = event.getDamager();
+
+        boolean blocked = CruxEntityUtil.isDamageSourceBlocked(victim, attacker);
+
+        if(CruxTag.has(attacker, "ignore_shield_pierce_attack_logic")){
+            CruxTag.remove(attacker, "ignore_shield_pierce_attack_logic");
+            return;
+        }
+
+        if(blocked){
+            double shieldPierce = CruxAttribute.get(attacker, CruxAttribute.SHIELD_PIERCING);
+            if(shieldPierce > 0D){
+                shieldPierce(victim, attacker, shieldPierce);
+                return;
+            }
+        }
+
         if(!(event.getEntity() instanceof LivingEntity hit)) return;
         CruxEntity crux = CruxEntity.entity(event.getDamager());
         List<PotionEffect> potions = crux.get(USurviveComponents.PROJECTILE_HIT_POTIONS);
@@ -58,6 +83,12 @@ public class MiscListener implements Listener {
         }
     }
 
+    public void shieldPierce(Entity victim, Entity attacker, double shieldPierce){
+        double multiplier = shieldPierce/100D;
+        CruxTag.set(attacker, "ignore_shield_pierce_attack_logic", PersistentDataType.BOOLEAN, true);
+        EntityDamager.entityDamager(victim, attacker)
+            .attackWithMultiplier(multiplier);
+    }
 
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
@@ -92,15 +123,28 @@ public class MiscListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onEntityShootBow(EntityShootBowEvent event) {
+        Entity proj = event.getProjectile();
+        if(!CruxItem.isEmpty(event.getBow())){
+            CruxItem bow = CruxItem.wrap(event.getBow());
+            var transferAttributes = bow.getOrDefaultData(CruxAttributeComponents.PROJECTILE_CRUX_ATTRIBUTES);
+            if(transferAttributes != null){
+                transferAttributes.getAttributeInstances().forEach(instance ->{
+                    instance.getModifiers().forEach(mod ->{
+                        CruxAttribute.addModifier(proj, instance.getAttribute(), mod);
+                    });
+                });
+            }
+        }
+
         ItemStack arrow = event.getConsumable();
         if(CruxItem.isEmpty(arrow)) return;
         CruxItem crux = CruxItem.wrap(arrow);
         WaterProjectile water = crux.getOrDefaultData(USurviveComponents.WATER_PROJECTILE);
         if(water==null) return;
-        EntityMemory.getOrCreateDataHolder(event.getProjectile(), WaterProjectileHolder.class, mem ->{
-            event.getProjectile().setPersistent(false);
+        EntityMemory.getOrCreateDataHolder(proj, WaterProjectileHolder.class, mem ->{
+            proj.setPersistent(false);
             return new WaterProjectileHolder(mem, water);
         });
     }
