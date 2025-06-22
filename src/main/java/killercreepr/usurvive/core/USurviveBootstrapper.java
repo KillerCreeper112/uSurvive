@@ -42,6 +42,13 @@ public class USurviveBootstrapper implements PluginBootstrap {
                     .damageScaling(DamageScaling.ALWAYS)
                     .damageEffect(DamageEffect.POKING)
             );
+
+            event.registry().register(
+                RegistryKey.DAMAGE_TYPE.typedKey(Crux.key("entity_attack_bypass_shield")),
+                builder -> builder.exhaustion(0.25f)
+                    .messageId("entity_attack_bypass_shield")
+                    .damageScaling(DamageScaling.ALWAYS)
+            );
         }));
 
 
@@ -53,7 +60,13 @@ public class USurviveBootstrapper implements PluginBootstrap {
                 DamageTypeTagKeys.NO_KNOCKBACK,
                 List.of(
                     TypedKey.create(RegistryKey.DAMAGE_TYPE, Crux.key("thornlash"))
-                    //TagEntry.tagEntry(RegistryKey.DAMAGE_TYPE.tagKey(Crux.key("thornlash")))
+                )
+            );
+
+            registrar.addToTag(
+                DamageTypeTagKeys.BYPASSES_SHIELD,
+                List.of(
+                    TypedKey.create(RegistryKey.DAMAGE_TYPE, Crux.key("entity_attack_bypass_shield"))
                 )
             );
         });

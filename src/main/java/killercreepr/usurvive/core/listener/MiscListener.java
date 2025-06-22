@@ -19,10 +19,12 @@ import killercreepr.cruxpotions.core.potions.inflictor.EntityInflictor;
 import killercreepr.usurvive.api.component.WaterProjectile;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.component.USurviveComponents;
+import killercreepr.usurvive.core.damage.type.USurviveDamageTypes;
 import killercreepr.usurvive.core.entity.memory.StickyChargeMemory;
 import killercreepr.usurvive.core.entity.memory.WaterProjectileHolder;
 import killercreepr.usurvive.core.item.QuickAccessItem;
 import org.bukkit.World;
+import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -49,7 +51,7 @@ public class MiscListener implements Listener {
         Entity victim = event.getEntity();
         Entity attacker = event.getDamager();
 
-        boolean blocked = CruxEntityUtil.isDamageSourceBlocked(victim, attacker);
+        boolean blocked = CruxEntityUtil.isBlocking(victim) && CruxEntityUtil.isDamageSourceBlocked(victim, attacker);
 
         if(CruxTag.has(attacker, "ignore_shield_pierce_attack_logic")){
             CruxTag.remove(attacker, "ignore_shield_pierce_attack_logic");
@@ -86,8 +88,18 @@ public class MiscListener implements Listener {
     public void shieldPierce(Entity victim, Entity attacker, double shieldPierce){
         double multiplier = shieldPierce/100D;
         CruxTag.set(attacker, "ignore_shield_pierce_attack_logic", PersistentDataType.BOOLEAN, true);
-        EntityDamager.entityDamager(victim, attacker)
+        var builder = DamageSource.builder(USurviveDamageTypes.ENTITY_ATTACK_BYPASS_SHIELD)
+            .withDirectEntity(attacker);
+        Entity owner = EntityDamager.getOwner(attacker);
+        if(owner != null && !owner.equals(attacker)){
+            builder.withCausingEntity(owner);
+        }
+        var event = EntityDamager.entityDamager(victim, attacker)
+            .setSource(builder.build())
             .attackWithMultiplier(multiplier);
+        if(event == null || event.isCancelled()){
+            CruxTag.remove(attacker, "ignore_shield_pierce_attack_logic");
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
