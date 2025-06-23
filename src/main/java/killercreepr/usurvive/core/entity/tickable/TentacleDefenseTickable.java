@@ -2,6 +2,7 @@ package killercreepr.usurvive.core.entity.tickable;
 
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
+import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxEntityUtil;
@@ -9,7 +10,10 @@ import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.GetEntityNear;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeAccessor;
 import killercreepr.cruxattributes.api.equipment.CruxSlot;
+import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
 import killercreepr.cruxtickables.api.entity.tickable.EntityTickable;
+import killercreepr.cruxtickables.api.entity.tickable.EntityTickableModifier;
+import killercreepr.cruxtickables.core.component.CruxTickableComponents;
 import killercreepr.cruxtickables.core.entity.tickable.ListenerActiveEntityTickable;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.api.mechanics.whip.Whip;
@@ -26,6 +30,7 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
@@ -36,7 +41,7 @@ import java.util.UUID;
 public class TentacleDefenseTickable extends ListenerActiveEntityTickable {
     protected final CruxAttributeAccessor attributes;
     protected final Whip whip;
-    protected final int maxTentacles = 2;
+    protected int maxTentacles;
     protected final NumberProvider cooldown;
     protected final NumberProvider nearRange;
     protected final Player p;
@@ -54,6 +59,25 @@ public class TentacleDefenseTickable extends ListenerActiveEntityTickable {
         lastAttacked.values().removeIf(hit -> !hit.isValid(entity));
     }
 
+    public int calculateMaxTentacles(){
+        int max = 0;
+        for(var slot : AttributeBukkitAdaptor.ARMOR_SLOTS){
+            ItemStack item = p.getInventory().getItemInMainHand();
+            if(CruxItem.isEmpty(item)) continue;
+            CruxItem crux = CruxItem.wrap(item);
+            var tickables = crux.getOrDefaultData(CruxTickableComponents.ENTITY_TICKABLES);
+            if(tickables == null) continue;
+            for (EntityTickableModifier mod : tickables.getTickableModifiers()) {
+                if(!mod.getTickable().equals(USurviveTickables.TENTACLE_DEFENSE)) continue;
+                if(mod.getSlotGroup().test(AttributeBukkitAdaptor.adapt(slot))){
+                    max++;
+                    break;
+                }
+            }
+        }
+        return max;
+    }
+
     protected int currentCooldown = 20;
     @Override
     public void tick() {
@@ -67,6 +91,7 @@ public class TentacleDefenseTickable extends ListenerActiveEntityTickable {
         currentCooldown = cooldown.value().intValue();
         updateLastAttacked();
 
+        maxTentacles = calculateMaxTentacles();
         int total = getCurrentWhips();
         if(total >= maxTentacles) return;
         Crux.scheduler().runTaskMain(() ->{
