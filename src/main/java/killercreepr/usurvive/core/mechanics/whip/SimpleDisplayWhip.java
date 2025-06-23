@@ -26,12 +26,12 @@ public class SimpleDisplayWhip extends SimpleWhip {
     }
 
     @Override
-    public WhipContext buildWhipContext(PlayerItemedContext ctx, int id) {
+    public WhipContext buildWhipContext(PlayerItemedContext ctx, Key key) {
         Player p = ctx.getPlayer();
         return new DisplaySimpleWhipContext(
-            p.getEyeLocation(), p, id,
+            p.getEyeLocation(), p, key,
             CruxAttribute.get(p, USurviveAttribute.WHIP_THROW_FORCE),
-            (int) CruxAttribute.get(p, USurviveAttribute.WHIP_PIERCE),
+            (int) CruxAttribute.get(p, USurviveAttribute.WHIP_PIERCE), null,
             typeKey,
             "item".equalsIgnoreCase(displayType) ? ItemDisplay.class : BlockDisplay.class,
             (int) CruxAttribute.get(p, USurviveAttribute.WHIP_RANGE),

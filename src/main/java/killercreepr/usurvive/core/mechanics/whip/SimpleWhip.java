@@ -67,11 +67,11 @@ public class SimpleWhip implements Whip {
         return throwSound;
     }
 
-    public WhipContext buildWhipContext(PlayerItemedContext ctx, int id){
+    public WhipContext buildWhipContext(PlayerItemedContext ctx, Key key){
         Player p = ctx.getPlayer();
-        return WhipContext.context(p.getEyeLocation(), p, id,
+        return WhipContext.context(p.getEyeLocation(), p, key,
             CruxAttribute.get(p, USurviveAttribute.WHIP_THROW_FORCE),
-            (int) CruxAttribute.get(p, USurviveAttribute.WHIP_PIERCE));
+            (int) CruxAttribute.get(p, USurviveAttribute.WHIP_PIERCE), null);
     }
 
     @Override
@@ -90,12 +90,12 @@ public class SimpleWhip implements Whip {
         WhipperHolder whipper = PlayerMemory.getOrCreate(p)
             .getPlayerDataHolderOrCompute(WhipperHolder.class, WhipperHolder::new);
 
-        int id;
+        Key key;
         if(maxWhips > 1 && ctx instanceof ItemUseContext c){
-            id = c.getAction().isRightClick() ? 0 : 1;
-        } else id = 0;
+            key = c.getAction().isRightClick() ? Crux.key("right_click") : Crux.key("left_click");
+        } else key = Crux.key("general");
 
-        ActiveWhip previous = whipper.getWhip(id);
+        ActiveWhip previous = whipper.getWhip(key);
         if(previous != null){
             previous.remove(p);
             return false;
@@ -103,7 +103,7 @@ public class SimpleWhip implements Whip {
         if(p.hasCooldown(item.item())){
             return false;
         }
-        WhipContext whipCtx = buildWhipContext(ctx, id);
+        WhipContext whipCtx = buildWhipContext(ctx, key);
         if(whipCtx.getThrowForce() == 0D) return false;
 
         whipper.throwNewHook(hook, whipCtx);

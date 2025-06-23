@@ -18,6 +18,7 @@ import killercreepr.cruxpotions.api.potion.StoredPotion;
 import killercreepr.cruxpotions.core.component.PotionComponents;
 import killercreepr.cruxpotions.core.entity.memory.SimplePotionHolder;
 import killercreepr.cruxpotions.core.potions.inflictor.EntityInflictor;
+import killercreepr.cruxworlds.api.world.type.CruxWorldType;
 import killercreepr.usurvive.api.component.WaterProjectile;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.component.USurviveComponents;
@@ -25,12 +26,11 @@ import killercreepr.usurvive.core.damage.type.USurviveDamageTypes;
 import killercreepr.usurvive.core.entity.memory.StickyChargeMemory;
 import killercreepr.usurvive.core.entity.memory.WaterProjectileHolder;
 import killercreepr.usurvive.core.item.QuickAccessItem;
+import killercreepr.usurvive.core.mechanics.FungireRepairComponent;
 import net.kyori.adventure.key.Key;
 import org.bukkit.World;
 import org.bukkit.damage.DamageSource;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -40,9 +40,11 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.world.LootGenerateEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 
@@ -87,6 +89,51 @@ public class MiscListener implements Listener {
                     }
                 }
             }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerItemDamage(PlayerItemDamageEvent event) {
+        int damage = event.getDamage();
+        if(damage < 1) return;
+
+        Player p = event.getPlayer();
+        if(p.getFoodLevel() < 1) return;
+
+        CruxItem item = CruxItem.wrap(event.getItem());
+
+        FungireRepairComponent data = item.getOrDefaultData(USurviveComponents.FUNGIRE_REPAIR);
+        if(data != null){
+            onFungireRepair(p, item, data);
+        }
+    }
+
+    public void onFungireRepair(HumanEntity p, CruxItem item, FungireRepairComponent data){
+        if(!CruxMath.testChance(data.getRepairChance())) return;
+        int amount = data.getRepairAmount().value().intValue();
+        if(amount != 0){
+            item.editMeta(Damageable.class, meta ->{
+                if(meta.getDamage() < 1) return;
+                meta.setDamage(Math.max(0, meta.getDamage() - amount));
+            });
+        }
+
+        if(CruxMath.testChance(data.getExhaustionChance())){
+            float exhaust = data.getExhaustionAmount().value().floatValue();
+            p.setExhaustion(p.getExhaustion() + exhaust);
+        }
+
+        CruxWorldType type = CruxCore.core().worldManager().getWorldType(p.getWorld());
+        if(type == null) return;
+        var worldData = data.getWorldRepair(type.key());
+        if(worldData == null) return;
+        if(!CruxMath.testChance(worldData.repairChance())) return;
+        int worldAmount = worldData.repairAmount().value().intValue();
+        if(worldAmount != 0){
+            item.editMeta(Damageable.class, meta ->{
+                if(meta.getDamage() < 1) return;
+                meta.setDamage(Math.max(0, meta.getDamage() - worldAmount));
+            });
         }
     }
 

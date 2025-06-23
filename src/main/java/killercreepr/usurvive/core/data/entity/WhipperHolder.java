@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WhipperHolder extends PlayerTickedDataHolder {
     public static final Key KEY = Crux.key("whipper");
@@ -34,22 +35,22 @@ public class WhipperHolder extends PlayerTickedDataHolder {
         return hook.throwNew(ctx);
     }
 
-    protected final Map<Integer, ActiveWhip> whips = new HashMap<>();
+    protected final Map<Key, ActiveWhip> whips = new ConcurrentHashMap<>();
 
-    public Map<Integer, ActiveWhip> getWhips() {
+    public Map<Key, ActiveWhip> getWhips() {
         return whips;
     }
 
-    public ActiveWhip removeWhip(int id){
+    public ActiveWhip removeWhip(Key id){
         return whips.remove(id);
     }
 
     public void putWhip(@NotNull ActiveWhip grapple){
-        ActiveWhip previous = whips.put(grapple.getId(), grapple);
+        ActiveWhip previous = whips.put(grapple.key(), grapple);
         if(previous != null) previous.remove(getParent().value());
     }
 
-    public ActiveWhip getWhip(int id){
+    public ActiveWhip getWhip(Key id){
         return whips.get(id);
     }
 

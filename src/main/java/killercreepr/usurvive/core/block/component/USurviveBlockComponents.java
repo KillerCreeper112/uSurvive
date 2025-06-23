@@ -6,7 +6,6 @@ import killercreepr.crux.api.component.DataComponentType;
 import killercreepr.crux.api.component.TypedDataComponent;
 import killercreepr.crux.api.data.ParticleBuilderSupplier;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
-import killercreepr.crux.core.Crux;
 import killercreepr.cruxblocks.core.block.component.standard.EntitySpawnerComponent;
 import killercreepr.cruxblocks.core.config.handler.component.FileEntitySpawnerComponent;
 import killercreepr.cruxconfig.config.bukkit.handler.impl.component.FileDataComponentType;

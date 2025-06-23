@@ -5,10 +5,12 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeAccessor;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.usurvive.core.attribute.USurviveAttribute;
+import net.kyori.adventure.key.Key;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.entity.BlockDisplay;
@@ -30,19 +32,20 @@ import java.util.UUID;
 public class ActiveDisplayWhip extends BasicWhip implements Holder<Location> {
     protected @NotNull Location location;
     protected @NotNull Location lastLocation;
-    protected final int id;
+    protected final Key key;
     protected final int maxDistance;
     protected final double throwSpeed;
     protected final double retractSpeed;
     protected final int pierce;
 
     protected final @NotNull Display display;
-    public ActiveDisplayWhip(@NotNull Location startLocation, int id,
+    protected final @Nullable CruxAttributeAccessor attributes;
+    public ActiveDisplayWhip(@NotNull Location startLocation, Key key,
                              int maxDistance,
                              double throwSpeed,
                              double retractSpeed, int pierce,
-                             @NotNull Display display) {
-        this.id = id;
+                             @NotNull Display display, @Nullable CruxAttributeAccessor attributes) {
+        this.key = key;
         this.location = startLocation.clone();
         this.maxDistance = maxDistance;
         this.throwSpeed = throwSpeed;
@@ -50,12 +53,15 @@ public class ActiveDisplayWhip extends BasicWhip implements Holder<Location> {
         this.pierce = pierce;
         this.display = display;
         this.lastLocation = startLocation;
+        this.attributes = attributes;
     }
 
+    @NotNull
     @Override
-    public int getId() {
-        return id;
+    public Key key() {
+        return key;
     }
+
     @Override
     public boolean isValid(@NotNull Entity owner){
         return super.isValid(owner) && owner.getWorld().equals(location.getWorld());
@@ -114,9 +120,15 @@ public class ActiveDisplayWhip extends BasicWhip implements Holder<Location> {
             Location hitLoc = CruxLoc.shiftToward(hitPoint.toLocation(owner.getWorld()), lastLocation, .5D);
             EntityDamager.entityDamager(hit, owner).setHitPosition(hitLoc)
                 .attack(
-                    CruxAttribute.get(owner, USurviveAttribute.WHIP_DAMAGE),
-                    CruxAttribute.get(owner, USurviveAttribute.WHIP_KNOCKBACK),
-                    CruxAttribute.get(owner, USurviveAttribute.WHIP_KNOCKBACK_UP)
+                    attributes == null ?
+                    CruxAttribute.get(owner, USurviveAttribute.WHIP_DAMAGE)
+                        : attributes.getValue(USurviveAttribute.WHIP_DAMAGE),
+                    attributes == null ?
+                    CruxAttribute.get(owner, USurviveAttribute.WHIP_KNOCKBACK)
+                        : attributes.getValue(USurviveAttribute.WHIP_KNOCKBACK),
+                    attributes == null ?
+                        CruxAttribute.get(owner, USurviveAttribute.WHIP_KNOCKBACK_UP)
+                        : attributes.getValue(USurviveAttribute.WHIP_KNOCKBACK_UP)
                 );
             hitEntities.put(hit.getUniqueId(), System.currentTimeMillis());
             if(hitEntities.size() >= (pierce+1)) setRetracting(true);
@@ -266,5 +278,36 @@ public class ActiveDisplayWhip extends BasicWhip implements Holder<Location> {
     @Override
     public Location value() {
         return location;
+    }
+
+    @NotNull
+    public Location getLastLocation() {
+        return lastLocation;
+    }
+
+    public int getMaxDistance() {
+        return maxDistance;
+    }
+
+    public int getPierce() {
+        return pierce;
+    }
+
+    @NotNull
+    public Display getDisplay() {
+        return display;
+    }
+
+    @Nullable
+    public CruxAttributeAccessor getAttributes() {
+        return attributes;
+    }
+
+    public int getRange() {
+        return range;
+    }
+
+    public Map<UUID, Long> getHitEntities() {
+        return hitEntities;
     }
 }

@@ -17,10 +17,7 @@ import killercreepr.usurvive.core.block.GlintingOreBlockComponent;
 import killercreepr.usurvive.core.component.impl.*;
 import killercreepr.usurvive.core.component.teleport.TeleportCheckInStructure;
 import killercreepr.usurvive.core.component.teleport.TeleportSetLastTP;
-import killercreepr.usurvive.core.mechanics.GloomstingComponent;
-import killercreepr.usurvive.core.mechanics.LashComponent;
-import killercreepr.usurvive.core.mechanics.StickyChargeComponent;
-import killercreepr.usurvive.core.mechanics.ThrowableEffectsComponent;
+import killercreepr.usurvive.core.mechanics.*;
 import net.kyori.adventure.key.Key;
 import org.bukkit.potion.PotionEffect;
 
@@ -103,6 +100,10 @@ public class USurviveComponents {
 
     public static final DataComponentType<AttackPotionEffectsComponent> ATTACK_POTION_EFFECTS = register("attack_potion_effects", builder ->
         builder.persistTextParser(USurviveCompParsers.ATTACK_POTION_EFFECTS.createInput(Crux.key("attack_potion_effects"))));
+
+
+    public static final DataComponentType<FungireRepairComponent> FUNGIRE_REPAIR = register("fungire_repair", builder ->
+        builder.persistTextParser(USurviveCompParsers.FUNGIRE_REPAIR.createInput(Crux.key("fungire_repair"))));
 
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());

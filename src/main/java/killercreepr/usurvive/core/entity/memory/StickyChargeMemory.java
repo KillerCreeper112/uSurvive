@@ -3,7 +3,6 @@ package killercreepr.usurvive.core.entity.memory;
 import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.data.Holder;
-import killercreepr.crux.api.entity.CruxEntity;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.core.entity.memory.DataHolderRegistry;
 import killercreepr.crux.core.entity.memory.SimpleEntityMemoryMainThread;

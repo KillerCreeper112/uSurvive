@@ -7,23 +7,15 @@ import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.TypedKey;
 import io.papermc.paper.registry.event.RegistryEvents;
 import io.papermc.paper.registry.keys.tags.DamageTypeTagKeys;
-import io.papermc.paper.registry.keys.tags.ItemTypeTagKeys;
-import io.papermc.paper.registry.tag.TagKey;
 import io.papermc.paper.tag.PostFlattenTagRegistrar;
-import io.papermc.paper.tag.PreFlattenTagRegistrar;
-import io.papermc.paper.tag.TagEntry;
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxenchants.core.registries.CruxEnchantRegistries;
 import killercreepr.usurvive.core.enchant.USurviveEnchantRegisterer;
-import net.kyori.adventure.key.Key;
 import org.bukkit.damage.DamageEffect;
 import org.bukkit.damage.DamageScaling;
 import org.bukkit.damage.DamageType;
-import org.bukkit.inventory.ItemType;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class USurviveBootstrapper implements PluginBootstrap {
     @Override

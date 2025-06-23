@@ -5,14 +5,20 @@ import killercreepr.crux.api.component.parser.hybrid.PersistParser;
 import killercreepr.crux.api.component.parser.hybrid.PersistTextParser;
 import killercreepr.crux.api.component.parser.hybrid.TextInputField;
 import killercreepr.crux.api.data.ParticleBuilderSupplier;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.component.parser.type.ComponentInputParsers;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeAccessor;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeContainer;
 import killercreepr.cruxattributes.api.equipment.CruxSlot;
+import killercreepr.cruxattributes.core.component.CruxAttributeCompParsers;
 import killercreepr.cruxtickables.api.entity.tickable.ActiveEntityTickable;
 import killercreepr.cruxtickables.api.entity.tickable.EntityTickable;
 import killercreepr.cruxtickables.api.entity.tickable.EntityTickableModifier;
 import killercreepr.cruxtickables.core.entity.tickable.SimpleDataEntityTickable;
 import killercreepr.cruxtickables.core.registries.CruxTickableRegistries;
+import killercreepr.usurvive.api.mechanics.whip.Whip;
+import killercreepr.usurvive.core.component.USurviveCompParsers;
 import net.kyori.adventure.key.Key;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -194,6 +200,34 @@ public class USurviveTickables {
                     Attribute.SAFE_FALL_DISTANCE,
                     new AttributeModifier(Crux.key("item/set_bonus/mouldite_rose_gold"), 3.5D, AttributeModifier.Operation.ADD_NUMBER)
                 )
+            );
+        }
+    });
+
+    public static final EntityTickable TENTACLE_DEFENSE = register(new SimpleDataEntityTickable(Crux.key("tentacle_defense")) {
+        public static final PersistParser<?> DATA_PARSER = PersistTextParser.mapBuilder(Map.class)
+            .field("attributes", TextInputField.field(CruxAttributeCompParsers.CRUX_ATTRIBUTE_CONTAINER, e -> (CruxAttributeContainer) e.get("attributes")))
+            .field("whip", TextInputField.field(USurviveCompParsers.WHIP_DISPLAY, e -> (Whip) e.get("whip")))
+            .field("cooldown", TextInputField.field(ComponentInputParsers.NUMBER_PROVIDER, e -> (NumberProvider) e.get("cooldown")))
+            .field("near_range", TextInputField.field(ComponentInputParsers.NUMBER_PROVIDER, e -> (NumberProvider) e.get("near_range")))
+            .apply(InputDecodeContext::get)
+            .createInput(Crux.key("data"));
+
+        @Override
+        public PersistParser<?> getDataParser() {
+            return DATA_PARSER;
+        }
+
+        @Override
+        public @Nullable ActiveEntityTickable buildActive(@NotNull Entity entity, @Nullable CruxSlot slot, @NotNull EntityTickableModifier mod) {
+            Map data = (Map) mod.getData();
+
+            return new TentacleDefenseTickable(
+                entity, this, slot,
+                (CruxAttributeAccessor) data.get("attributes"),
+                (Whip) data.get("whip"),
+                (NumberProvider) data.get("cooldown"),
+                (NumberProvider) data.get("near_range")
             );
         }
     });

@@ -59,6 +59,7 @@ public class StandardGrappleHooks {
             loc.setYaw(0f);
             Display display = loc.getWorld().spawn(
                 loc, displayType, e ->{
+                    e.setPersistent(false);
                     if(e instanceof BlockDisplay b){
                         b.setBlock(Registry.BLOCK.get(typeKey).createBlockData());
                     }else if(e instanceof ItemDisplay b){

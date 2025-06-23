@@ -5,7 +5,6 @@ import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.cruxblocks.api.block.CruxBlock;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxBlock;
 import killercreepr.cruxblocks.api.block.component.CruxBlockComponent;
-import killercreepr.usurvive.core.block.ActiveGustTNT;
 import killercreepr.usurvive.core.block.ActiveWatcherPillar;
 import net.kyori.adventure.key.Key;
 import org.bukkit.block.Block;

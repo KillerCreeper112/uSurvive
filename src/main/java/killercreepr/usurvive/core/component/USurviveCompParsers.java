@@ -1,14 +1,12 @@
 package killercreepr.usurvive.core.component;
 
-import killercreepr.crux.api.component.DataComponentType;
 import killercreepr.crux.api.component.parser.InputDecodeContext;
 import killercreepr.crux.api.component.parser.hybrid.PersistTextParser;
 import killercreepr.crux.api.component.parser.hybrid.TextInputField;
-import killercreepr.crux.core.Crux;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.component.parser.type.ComponentInputParsers;
 import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.cruxattributes.core.component.CruxAttributeCompParsers;
-import killercreepr.cruxentities.component.SpawnerData;
 import killercreepr.cruxpotions.core.component.parser.PotionCompParsers;
 import killercreepr.usurvive.api.component.InfusedPotionGroup;
 import killercreepr.usurvive.api.component.InfusedPotions;
@@ -19,10 +17,7 @@ import killercreepr.usurvive.api.mechanics.whip.Whip;
 import killercreepr.usurvive.core.component.impl.*;
 import killercreepr.usurvive.core.component.teleport.TeleportCheckInStructure;
 import killercreepr.usurvive.core.component.teleport.TeleportSetLastTP;
-import killercreepr.usurvive.core.mechanics.GloomstingComponent;
-import killercreepr.usurvive.core.mechanics.LashComponent;
-import killercreepr.usurvive.core.mechanics.StickyChargeComponent;
-import killercreepr.usurvive.core.mechanics.ThrowableEffectsComponent;
+import killercreepr.usurvive.core.mechanics.*;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleDisplayGrapple;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleGrapple;
 import killercreepr.usurvive.core.mechanics.whip.SimpleDisplayWhip;
@@ -284,5 +279,34 @@ public class USurviveCompParsers {
         .field("effects", TextInputField.field(PersistTextParser.collectionList(ATTACK_POTION_EFFECT), AttackPotionEffectsComponent::getEffects))
         .apply(ctx -> new AttackPotionEffectsComponent(
             ctx.getOptional("effects")
+        ));
+
+
+    public static final PersistTextParser<FungireRepairComponent.WorldRepair> FUNGIRE_REPAIR_WORLD_REPAIR = PersistTextParser.mapBuilder(FungireRepairComponent.WorldRepair.class)
+        .field("repair_chance", TextInputField.field(PersistTextParser.FLOAT, FungireRepairComponent.WorldRepair::repairChance))
+        .field("repair_amount", TextInputField.field(ComponentInputParsers.NUMBER_PROVIDER, FungireRepairComponent.WorldRepair::repairAmount))
+        .apply(ctx -> new FungireRepairComponent.WorldRepair(
+            ctx.getOptional("repair_chance", 50f),
+            ctx.getOptional("repair_amount", NumberProvider.constant(2))
+        ));
+
+    public static final PersistTextParser<FungireRepairComponent> FUNGIRE_REPAIR = PersistTextParser.mapBuilder(FungireRepairComponent.class)
+        .field("repair_chance", TextInputField.field(PersistTextParser.FLOAT, FungireRepairComponent::getRepairChance))
+        .field("repair_amount", TextInputField.field(ComponentInputParsers.NUMBER_PROVIDER, FungireRepairComponent::getRepairAmount))
+        .field("exhaust_chance", TextInputField.field(PersistTextParser.FLOAT, FungireRepairComponent::getExhaustionChance))
+        .field("exhaust_amount", TextInputField.field(ComponentInputParsers.NUMBER_PROVIDER, FungireRepairComponent::getExhaustionAmount))
+        .field("world_repair", TextInputField.field(
+            PersistTextParser.mapDynamicBuilder((Class<Map<Key, FungireRepairComponent.WorldRepair>>) (Class) Map.class)
+                .keyParser(PersistTextParser.KEY)
+                .valueParser(FUNGIRE_REPAIR_WORLD_REPAIR)
+                .mapToEncode(m -> m)
+                .apply(InputDecodeContext::get), FungireRepairComponent::getWorldRepair
+        ))
+        .apply(ctx -> new FungireRepairComponent(
+            ctx.getOptional("repair_chance", 100f),
+            ctx.getOptional("repair_amount", NumberProvider.constant(3)),
+            ctx.getOptional("exhaust_chance", 50f),
+            ctx.getOptional("exhaust_amount", NumberProvider.constant(0.2f)),
+            ctx.getOptional("world_repair")
         ));
 }
