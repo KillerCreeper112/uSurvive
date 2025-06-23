@@ -6,7 +6,6 @@ import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxLoc;
-import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.GetEntityNear;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeAccessor;
 import killercreepr.cruxattributes.api.equipment.CruxSlot;
@@ -68,8 +67,9 @@ public class TentacleDefenseTickable extends ListenerActiveEntityTickable {
             int current = getCurrentWhips();
             if(current >= maxTentacles) return;
             for (LivingEntity target : new GetEntityNear<>(LivingEntity.class)
-                .filter(e -> !e.equals(entity) && lastAttacked.containsKey(e.getUniqueId()))
-                .range(12D)
+                .filter(e -> !e.equals(entity) && lastAttacked.containsKey(e.getUniqueId()) &&
+                    CruxEntityUtil.isRealisticallyVisibleTo(e, p))
+                .range(nearRange.value().doubleValue())
                 .center(entity)
                 .find()) {
                 current++;
