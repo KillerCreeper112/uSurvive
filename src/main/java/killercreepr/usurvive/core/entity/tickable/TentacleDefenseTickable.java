@@ -11,6 +11,7 @@ import killercreepr.cruxattributes.api.attribute.CruxAttributeAccessor;
 import killercreepr.cruxattributes.api.equipment.CruxSlot;
 import killercreepr.cruxtickables.api.entity.tickable.EntityTickable;
 import killercreepr.cruxtickables.core.entity.tickable.ListenerActiveEntityTickable;
+import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.api.mechanics.whip.Whip;
 import killercreepr.usurvive.api.mechanics.whip.WhipHook;
 import killercreepr.usurvive.api.mechanics.whip.context.WhipContext;
@@ -49,6 +50,10 @@ public class TentacleDefenseTickable extends ListenerActiveEntityTickable {
         this.p = (Player) entity;
     }
 
+    public void updateLastAttacked(){
+        lastAttacked.values().removeIf(hit -> !hit.isValid(entity));
+    }
+
     protected int currentCooldown = 20;
     @Override
     public void tick() {
@@ -60,6 +65,7 @@ public class TentacleDefenseTickable extends ListenerActiveEntityTickable {
         }
 
         currentCooldown = cooldown.value().intValue();
+        updateLastAttacked();
 
         int total = getCurrentWhips();
         if(total >= maxTentacles) return;
@@ -132,11 +138,31 @@ public class TentacleDefenseTickable extends ListenerActiveEntityTickable {
         return buildKey(getCurrentWhips()+1);
     }
 
+    public boolean isFriendly(Entity e){
+        if(e.equals(entity)) return true;
+        if(e instanceof Tameable t && entity.getUniqueId().equals(t.getOwnerUniqueId())) return true;
+        if(e instanceof Player){
+            UPlayer uPlayer = UPlayer.getPlayer(entity);
+            if(uPlayer != null && (uPlayer.hasFriend(e.getUniqueId()) || uPlayer.isApartOfParty(e.getUniqueId()))) return true;
+        }
+        return false;
+    }
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if(!event.getEntity().equals(entity)) return;
+        if(!event.getEntity().equals(entity)){
+
+            if(event.getDamager().equals(entity)){
+                Entity target = event.getEntity();
+                if(isFriendly(target)) return;
+                lastAttacked.put(target.getUniqueId(), new Hit(new WeakReference<>(target), System.currentTimeMillis()));
+            }
+
+            return;
+        }
 
         Entity target = event.getDamager();
+        if(isFriendly(target)) return;
         lastAttacked.put(target.getUniqueId(), new Hit(new WeakReference<>(target), System.currentTimeMillis()));
         if(true) return;
 
