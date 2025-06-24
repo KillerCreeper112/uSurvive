@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityExhaustionEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,6 +35,22 @@ public class PiercingPotion extends SimpleActivePotion implements Listener {
             CruxAttributeModifier.modifier(Crux.key("potion/piercing"), calculateArmorPenetration())
         );
     }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onEntityShootBow(EntityShootBowEvent event) {
+        if(!event.getEntity().equals(entity)) return;
+        CruxAttribute.addModifier(
+            event.getProjectile(),
+            CruxAttribute.ATTACK_PIERCE,
+            CruxAttributeModifier.modifier(Crux.key("potion/piercing"), calculatePiercing())
+        );
+        CruxAttribute.addModifier(
+            event.getProjectile(),
+            CruxAttribute.ARMOR_PENETRATION,
+            CruxAttributeModifier.modifier(Crux.key("potion/piercing"), calculateArmorPenetration())
+        );
+    }
+
 
     public int calculatePiercing(){
         return amplifier+1;

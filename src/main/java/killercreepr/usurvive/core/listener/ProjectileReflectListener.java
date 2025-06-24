@@ -8,10 +8,14 @@ import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeInstance;
+import killercreepr.cruxentities.api.combat.EntityDamager;
+import killercreepr.cruxentities.damage.type.CruxEntityDamageTypes;
 import killercreepr.usurvive.api.event.ProjectileRicochetEvent;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;
@@ -29,6 +33,7 @@ public class ProjectileReflectListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onProjectileHit(ProjectileHitEvent event) {
         Projectile proj = event.getEntity();
+
         if(event.getHitEntity() != null){
             projectileHitEntity(proj, event);
             return;
@@ -37,6 +42,33 @@ public class ProjectileReflectListener implements Listener {
             projectileHitBlock(proj, event);
         }
     }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onProjectileHitHighest(ProjectileHitEvent event) {
+        Projectile proj = event.getEntity();
+        Entity hit = event.getHitEntity();
+        if(hit == null) return;
+        if(!CruxAttribute.hasAttributeData(proj)) return;
+        var builder = DamageSource.builder(CruxEntityDamageTypes.ENTITY_PROJECTILE_CALCULATE_CUSTOM)
+            .withDirectEntity(proj);
+
+        var shooter = EntityDamager.getOwner(proj);
+        if(shooter != null && !proj.equals(shooter)){
+            builder.withCausingEntity(shooter);
+        }
+
+        EntityDamager.entityDamager(hit, proj)
+            .setSource(builder.build())
+            .attack();
+
+        int pierce = (int) CruxAttribute.get(proj, CruxAttribute.ATTACK_PIERCE);
+        if(pierce < 1) return;
+        int currentPierce = CruxPersist.PIERCED_ENTITIES_AMOUNT.get(proj);
+        if(currentPierce >= pierce) return;
+        CruxPersist.PIERCED_ENTITIES_AMOUNT.set(proj, currentPierce+1);
+        event.setCancelled(true);
+    }
+
 
     public void projectileHitEntity(Projectile proj, ProjectileHitEvent event){
         CruxAttributeInstance instance = CruxAttribute.getInstance(proj, CruxAttribute.PROJECTILE_RICOCHET_ENTITY);
