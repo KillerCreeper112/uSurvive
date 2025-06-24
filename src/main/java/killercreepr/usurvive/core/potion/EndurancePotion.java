@@ -1,0 +1,26 @@
+package killercreepr.usurvive.core.potion;
+
+import killercreepr.cruxpotions.api.potion.CruxPotion;
+import killercreepr.cruxpotions.core.potions.SimpleActivePotion;
+import org.bukkit.entity.Entity;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityExhaustionEvent;
+import org.jetbrains.annotations.NotNull;
+
+public class EndurancePotion extends SimpleActivePotion implements Listener {
+    public EndurancePotion(@NotNull CruxPotion potion, @NotNull Entity entity, int duration, int amplifier) {
+        super(potion, entity, duration, amplifier);
+    }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onEntityExhaustion(EntityExhaustionEvent event) {
+        if(!event.getEntity().equals(entity)) return;
+        event.setExhaustion(event.getExhaustion()*calculateMultiplier());
+    }
+
+    public float calculateMultiplier(){
+        return 1f - (.2f + (amplifier*.25f));
+    }
+}

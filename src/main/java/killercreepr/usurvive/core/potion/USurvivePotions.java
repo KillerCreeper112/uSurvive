@@ -179,7 +179,7 @@ public class USurvivePotions {
         }
     });
     public static final CruxPotion SPORELINK = register(new DescribedPotion(Crux.key("sporelink"),
-        "Shares damage between all spore-linked entities") {
+        "Shares damage between all nearby spore-linked entities") {
         @Override
         public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
             return new SporelinkPotion(this, e, duration, amplifier);
@@ -225,7 +225,7 @@ public class USurvivePotions {
 
         @Override
         public @NotNull Color getColor() {
-            return Color.fromRGB(0x8CA755);
+            return Color.fromRGB(0x555555);
         }
     });
     public static final CruxPotion THORNLASH = register(new DescribedPotion(Crux.key("thornlash"),
@@ -237,7 +237,7 @@ public class USurvivePotions {
 
         @Override
         public @NotNull Color getColor() {
-            return Color.fromRGB(0x8CA755);
+            return Color.fromRGB(0x4C9A50);
         }
     });
     public static final CruxPotion SPETTLE = register(new DescribedPotion(Crux.key("spettle"),
@@ -250,20 +250,108 @@ public class USurvivePotions {
 
         @Override
         public @NotNull Color getColor() {
-            return Color.fromRGB(0x8CA755);
+            return Color.fromRGB(0x4682B4);
         }
     });
     public static final CruxPotion EXPOSED = register(new DescribedPotion(Crux.key("exposed"),
         "Incoming attacks deal extra damage") {
         @Override
         public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
-            return new TitleDisplayPotion(this, e, duration, amplifier,
-                "<!shadow><font:'crux:spettle'>1", null);
+            return new ExposedPotion(this, e, duration, amplifier);
         }
 
         @Override
         public @NotNull Color getColor() {
-            return Color.fromRGB(0x8CA755);
+            return Color.fromRGB(0xFF6347);
+        }
+    });
+    public static final CruxPotion ENDURANCE = register(new DescribedPotion(Crux.key("endurance"),
+        "Slows hunger depletion rate") {
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new EndurancePotion(this, e, duration, amplifier);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0x8B5A2B);
+        }
+    });
+    //todo
+    public static final CruxPotion PACK_TACTICS = register(new DescribedPotion(Crux.key("pack_tactics"),
+        "Nearby allies deal more damage") {
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new EndurancePotion(this, e, duration, amplifier);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0x5E8D46);
+        }
+    });
+    //todo
+    public static final CruxPotion PACK_ALLIANCE = register(new DescribedPotion(Crux.key("pack_alliance"),
+        "Increases damage dealt. Applies when near an ally with the Pack Tactics effect") {
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new EndurancePotion(this, e, duration, amplifier);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0xAA77CC);
+        }
+    });
+    public static final CruxPotion PIERCING = register(new DescribedPotion(Crux.key("piercing"),
+        "Projectiles pass through entities and ignore a portion of armor") {
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new PiercingPotion(this, e, duration, amplifier);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0xA52A2A);
+        }
+    });
+    //todo
+    public static final CruxPotion SEVERING = register(new DescribedPotion(Crux.key("severing"),
+        "Increased damage dealt to undead mobs") {
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new EndurancePotion(this, e, duration, amplifier);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0x6C4A7E);
+        }
+    });
+    //todo
+    public static final CruxPotion SHATTERING = register(new DescribedPotion(Crux.key("shattering"),
+        "Increased damage dealt to armored entities and shields") {
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new EndurancePotion(this, e, duration, amplifier);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0xD2691E);
+        }
+    });
+    //todo
+    public static final CruxPotion BRACING = register(new DescribedPotion(Crux.key("bracing"),
+        "Reduces knockback taken") {
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new EndurancePotion(this, e, duration, amplifier);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0xB0C4DE);
         }
     });
 

@@ -572,6 +572,27 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
                 };
             }
         });
+
+        registry.register(new SimpleFilePagedCfg(fileMenuHolder, Crux.key("paged/non_brew_custom_potions")) {
+            @NotNull
+            @Override
+            public MenuModule parsePaged(@NotNull String id,
+                                         @NotNull NumberProvider indexes,
+                                         @Nullable String valuesFilter,
+                                         @Nullable MenuItems valueItems,
+                                         @Nullable MenuItems emptyItems) {
+                return new SimplePagedMenuModule<BrewingRecipeLoader.DisplayMix>(id, indexes, valuesFilter, valueItems, emptyItems, this) {
+                    @Override
+                    public @NotNull Holder<List<BrewingRecipeLoader.DisplayMix>> getValues(@NotNull CfgMenu cfgMenu) {
+                        return () -> {
+                            List<BrewingRecipeLoader.DisplayMix> list = new ArrayList<>(BrewingRecipeLoader.NON_BREW_DISPLAY_POTION_MIXES.values());
+                            list.sort(Comparator.comparing(mix -> mix.getCruxPotion().getName()));
+                            return list;
+                        };
+                    }
+                };
+            }
+        });
     }
 
     /*@EventHandler(ignoreCancelled = true)

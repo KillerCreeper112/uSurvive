@@ -26,6 +26,7 @@ public class WhipperHolder extends PlayerTickedDataHolder {
     }
 
     public ActiveWhip throwNewHook(@NotNull WhipHook hook, @NotNull WhipContext ctx){
+        emptyTicks = 0;
         ActiveWhip active = createNewHook(hook, ctx);
         putWhip(active);
         return active;
