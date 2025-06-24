@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.listener;
 
+import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.persistence.CruxPersist;
 import killercreepr.crux.core.persistence.PersistTag;
@@ -11,15 +12,14 @@ import killercreepr.cruxattributes.api.attribute.CruxAttributeInstance;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxentities.damage.type.CruxEntityDamageTypes;
 import killercreepr.usurvive.api.event.ProjectileRicochetEvent;
+import killercreepr.usurvive.core.entity.memory.PiercingProjectileHolder;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
-import org.bukkit.entity.AbstractArrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.ThrowableProjectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -43,11 +43,26 @@ public class ProjectileReflectListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onProjectileHitLowest(ProjectileHitEvent event) {
+        Projectile proj = event.getEntity();
+        Entity hit = event.getHitEntity();
+        if(hit == null) return;
+        PiercingProjectileHolder holder = EntityMemory.getDataHolder(proj, PiercingProjectileHolder.class);
+        if(holder == null) return;
+
+        if(CruxMath.hasOccurredWithin(holder.getLastHit().getOrDefault(hit.getUniqueId(), 0L), 10L)){
+            event.setCancelled(true);
+        }
+    }
+
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onProjectileHitHighest(ProjectileHitEvent event) {
         Projectile proj = event.getEntity();
         Entity hit = event.getHitEntity();
         if(hit == null) return;
+
         if(!CruxAttribute.hasAttributeData(proj)) return;
         var builder = DamageSource.builder(CruxEntityDamageTypes.ENTITY_PROJECTILE_CALCULATE_CUSTOM)
             .withDirectEntity(proj);
@@ -57,14 +72,20 @@ public class ProjectileReflectListener implements Listener {
             builder.withCausingEntity(shooter);
         }
 
+        Location loc = proj.getLocation();
         EntityDamager.entityDamager(hit, proj)
-            .setSource(builder.build())
+            .setHitPosition(loc)
+            .setSource(builder.withDamageLocation(loc).build())
             .attack();
 
         int pierce = (int) CruxAttribute.get(proj, CruxAttribute.ATTACK_PIERCE);
         if(pierce < 1) return;
-        int currentPierce = CruxPersist.PIERCED_ENTITIES_AMOUNT.get(proj);
+        int currentPierce = CruxPersist.PIERCED_ENTITIES_AMOUNT.get(proj, 0);
         if(currentPierce >= pierce) return;
+        PiercingProjectileHolder holder = EntityMemory.getOrCreateDataHolder(proj, PiercingProjectileHolder.class, PiercingProjectileHolder::new);
+        if(holder != null){
+            holder.getLastHit().put(hit.getUniqueId(), System.currentTimeMillis());
+        }
         CruxPersist.PIERCED_ENTITIES_AMOUNT.set(proj, currentPierce+1);
         event.setCancelled(true);
     }
