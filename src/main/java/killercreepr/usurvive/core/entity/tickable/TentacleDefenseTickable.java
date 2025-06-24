@@ -25,6 +25,7 @@ import killercreepr.usurvive.core.mechanics.whip.SimpleDisplayWhip;
 import killercreepr.usurvive.core.mechanics.whip.context.DisplaySimpleWhipContext;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -37,6 +38,7 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class TentacleDefenseTickable extends ListenerActiveEntityTickable {
     protected final CruxAttributeAccessor attributes;
@@ -59,16 +61,33 @@ public class TentacleDefenseTickable extends ListenerActiveEntityTickable {
         lastAttacked.values().removeIf(hit -> !hit.isValid(entity));
     }
 
-    public int calculateMaxTentacles(){
-        int max = 0;
+    public void forEachValidArmor(Consumer<ItemStack> consumer){
         for(var slot : AttributeBukkitAdaptor.ARMOR_SLOTS){
-            ItemStack item = p.getInventory().getItemInMainHand();
+            ItemStack item = p.getInventory().getItem(slot);
             if(CruxItem.isEmpty(item)) continue;
             CruxItem crux = CruxItem.wrap(item);
             var tickables = crux.getOrDefaultData(CruxTickableComponents.ENTITY_TICKABLES);
             if(tickables == null) continue;
             for (EntityTickableModifier mod : tickables.getTickableModifiers()) {
-                if(!mod.getTickable().equals(USurviveTickables.TENTACLE_DEFENSE)) continue;
+                if(!mod.getTickable().compare(USurviveTickables.TENTACLE_DEFENSE)) continue;
+                if(mod.getSlotGroup().test(AttributeBukkitAdaptor.adapt(slot))){
+                    consumer.accept(item);
+                    break;
+                }
+            }
+        }
+    }
+
+    public int calculateMaxTentacles(){
+        int max = 0;
+        for(var slot : AttributeBukkitAdaptor.ARMOR_SLOTS){
+            ItemStack item = p.getInventory().getItem(slot);
+            if(CruxItem.isEmpty(item)) continue;
+            CruxItem crux = CruxItem.wrap(item);
+            var tickables = crux.getOrDefaultData(CruxTickableComponents.ENTITY_TICKABLES);
+            if(tickables == null) continue;
+            for (EntityTickableModifier mod : tickables.getTickableModifiers()) {
+                if(!mod.getTickable().compare(USurviveTickables.TENTACLE_DEFENSE)) continue;
                 if(mod.getSlotGroup().test(AttributeBukkitAdaptor.adapt(slot))){
                     max++;
                     break;
@@ -97,19 +116,37 @@ public class TentacleDefenseTickable extends ListenerActiveEntityTickable {
         Crux.scheduler().runTaskMain(() ->{
             int current = getCurrentWhips();
             if(current >= maxTentacles) return;
+            boolean launched = false;
             for (LivingEntity target : new GetEntityNear<>(LivingEntity.class)
                 .filter(e -> !e.equals(entity) && lastAttacked.containsKey(e.getUniqueId()) &&
-                    CruxEntityUtil.isRealisticallyVisibleTo(e, p))
+                    CruxEntityUtil.isRealisticallyVisibleTo(e, p) && p.hasLineOfSight(e))
                 .range(nearRange.value().doubleValue())
                 .center(entity)
                 .find()) {
                 current++;
 
+                if(!canLaunchTentacle(target, p)){
+                    if(current >= maxTentacles) break;
+                    continue;
+                }
                 launchTentacle(target, p);
+                launched = true;
 
                 if(current >= maxTentacles) break;
             }
+            if(launched){
+                forEachValidArmor(item ->{
+                    Crux.handlers().item().damageItem(item, 1, p);
+                });
+            }
         });
+    }
+
+    public boolean canLaunchTentacle(Entity target, Player p){
+        WhipperHolder whipper = EntityMemory.getDataHolder(p, WhipperHolder.class);
+        if(whipper == null) return true;
+        Key key = buildNextKey();
+        return whipper.getWhip(key) == null;
     }
 
     public void launchTentacle(Entity target, Player p){

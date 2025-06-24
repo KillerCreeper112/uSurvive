@@ -64,13 +64,13 @@ public class ActiveDisplayWhip extends BasicWhip implements Holder<Location> {
 
     @Override
     public boolean isValid(@NotNull Entity owner){
-        return super.isValid(owner) && owner.getWorld().equals(location.getWorld());
+        return super.isValid(owner) && display.isValid() && owner.getWorld().equals(location.getWorld());
     }
 
     @Override
     public void remove(@Nullable Entity owner) {
         super.remove(owner);
-        Crux.scheduler().runTask(display::remove);
+        Crux.scheduler().runTaskMain(display::remove);
     }
 
     protected boolean wasCollidingLastTick = false;
@@ -227,7 +227,7 @@ public class ActiveDisplayWhip extends BasicWhip implements Holder<Location> {
             location = CruxLoc.shift(location, throwSpeed, 0D, 0D);
         }
 
-        Crux.scheduler().runTask(() ->{
+        Crux.scheduler().runTaskMain(() ->{
             if(isScheduledForRemoval()) return;
             RayTraceResult result = rayLogic(owner, location);
             if(result == null){

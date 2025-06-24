@@ -65,12 +65,18 @@ public class WhipperHolder extends PlayerTickedDataHolder {
         whips.clear();
     }
 
+    protected byte emptyTicks = 0;
     @Override
     protected void onTick(@NotNull Player e) {
         if(!e.isValid()){
             reset(e);
             return;
         }
+        if(whips.isEmpty()){
+            emptyTicks++;
+            return;
+        }
+        emptyTicks = 0;
         whips.values().removeIf(d ->{
             if(!d.isValid(e)){
                 d.remove(e);
@@ -83,7 +89,7 @@ public class WhipperHolder extends PlayerTickedDataHolder {
 
     @Override
     public boolean shouldRemoveFromMemory(@Nullable Player e) {
-        return whips.isEmpty();
+        return whips.isEmpty() && emptyTicks > 20;
     }
 
     @Override
