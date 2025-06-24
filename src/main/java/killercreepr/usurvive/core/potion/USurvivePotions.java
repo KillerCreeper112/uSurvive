@@ -277,12 +277,11 @@ public class USurvivePotions {
             return Color.fromRGB(0x8B5A2B);
         }
     });
-    //todo
     public static final CruxPotion PACK_TACTICS = register(new DescribedPotion(Crux.key("pack_tactics"),
         "Nearby allies deal more damage") {
         @Override
         public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
-            return new EndurancePotion(this, e, duration, amplifier);
+            return new PackTacticsPotion(this, e, duration, amplifier);
         }
 
         @Override
@@ -290,12 +289,11 @@ public class USurvivePotions {
             return Color.fromRGB(0x5E8D46);
         }
     });
-    //todo
     public static final CruxPotion PACK_ALLIANCE = register(new DescribedPotion(Crux.key("pack_alliance"),
         "Increases damage dealt. Applies when near an ally with the Pack Tactics effect") {
         @Override
         public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
-            return new EndurancePotion(this, e, duration, amplifier);
+            return new PackAlliancePotion(this, e, duration, amplifier);
         }
 
         @Override
@@ -315,12 +313,11 @@ public class USurvivePotions {
             return Color.fromRGB(0xA52A2A);
         }
     });
-    //todo
     public static final CruxPotion SEVERING = register(new DescribedPotion(Crux.key("severing"),
-        "Increased damage dealt to undead mobs") {
+        "Increases damage dealt to undead mobs") {
         @Override
         public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
-            return new EndurancePotion(this, e, duration, amplifier);
+            return new SeveringPotion(this, e, duration, amplifier);
         }
 
         @Override
@@ -328,12 +325,11 @@ public class USurvivePotions {
             return Color.fromRGB(0x6C4A7E);
         }
     });
-    //todo
     public static final CruxPotion SHATTERING = register(new DescribedPotion(Crux.key("shattering"),
-        "Increased damage dealt to armored entities and shields") {
+        "Increases damage dealt to armored entities and durability damage to shields") {
         @Override
         public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
-            return new EndurancePotion(this, e, duration, amplifier);
+            return new ShatteringPotion(this, e, duration, amplifier);
         }
 
         @Override
@@ -341,12 +337,15 @@ public class USurvivePotions {
             return Color.fromRGB(0xD2691E);
         }
     });
-    //todo
     public static final CruxPotion BRACING = register(new DescribedPotion(Crux.key("bracing"),
         "Reduces knockback taken") {
+        final Map<Attribute, AttributesPotion.PotModCreator> potions = Map.of(
+            Attribute.KNOCKBACK_RESISTANCE,
+            (e, amplifier) -> (amplifier+1) * 0.15f
+        );
         @Override
         public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
-            return new EndurancePotion(this, e, duration, amplifier);
+            return new AttributesPotion(this, e, duration, amplifier, potions);
         }
 
         @Override
