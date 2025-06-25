@@ -3,6 +3,7 @@ package killercreepr.usurvive.core.potion;
 import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
+import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.crux.core.util.CruxEntityUtil;
@@ -101,7 +102,7 @@ public class SporelinkPotion extends ActiveEntityPotion<LivingEntity> {
     public boolean attemptMsg(){
         if(CruxMath.hasOccurredWithin(lastMsg, 600)) return false;
         lastMsg = System.currentTimeMillis();
-        Lang.SPORELINK_DAMAGED.use(entity);
+        Lang.SPORELINK_DAMAGED.use(entity, TagContainer.merged().hook(potion));
         return true;
     }
 
