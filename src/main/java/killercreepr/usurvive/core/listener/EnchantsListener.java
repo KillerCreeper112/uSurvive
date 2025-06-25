@@ -274,7 +274,7 @@ public class EnchantsListener implements Listener {
             CruxAttribute.addModifier(e, CruxAttribute.ARMOR_PENETRATION,
                 CruxAttributeModifier.modifier(
                     Crux.key("enchant/penetrate"),
-                    level * 6.3D
+                    level * 7D
                 ));
         }
     }

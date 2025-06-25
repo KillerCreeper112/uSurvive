@@ -246,7 +246,7 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
                 .activeSlots(EquipmentSlotGroup.MAINHAND),
 
-            crux -> crux.description("Arrows ignore a portion of the target's armor")
+            crux -> crux.description("Projectiles ignore a portion of the target's armor")
                 .applicableItemGroup(ApplicableItemGroup.builder()
                     .add(ApplicableItemType.BOW)
                     .add(ApplicableItemType.CROSSBOW)
