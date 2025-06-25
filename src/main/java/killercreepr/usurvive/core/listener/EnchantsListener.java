@@ -1,16 +1,23 @@
 package killercreepr.usurvive.core.listener;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
+import io.papermc.paper.event.entity.EntityEquipmentChangedEvent;
 import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.entity.CruxEntity;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.component.CruxComponents;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
 import killercreepr.crux.core.util.GetEntityNear;
+import killercreepr.cruxattributes.api.attribute.CruxAttribute;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
 import killercreepr.cruxentities.api.combat.EntityDamager;
+import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.api.event.EntityTrampleEnchantEvent;
 import killercreepr.usurvive.core.data.entity.TrampleHolder;
 import killercreepr.usurvive.core.enchant.USurviveEnchant;
@@ -20,11 +27,9 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -43,6 +48,7 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class EnchantsListener implements Listener {
     protected final Plugin plugin;
@@ -115,6 +121,57 @@ public class EnchantsListener implements Listener {
             }
         }
     }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onProjectileHitLowest(ProjectileHitEvent event) {
+        Entity proj = event.getEntity();
+        Map<Enchantment, Integer> enchants = CruxEntity.entity(proj)
+            .get(CruxComponents.INHERITED_ENCHANTMENTS);
+        if(enchants == null || enchants.isEmpty()) return;
+
+        if(enchants.containsKey(USurviveEnchant.TRUESHOT)){
+            Entity hit = event.getHitEntity();
+            if(hit != null){
+                UUID owner = EntityDamager.getOwnerUUID(proj);
+                if(isFriendly(hit, owner)){
+                    event.setCancelled(true);
+                }
+            }
+        }
+    }
+
+    public boolean isFriendly(Entity hit, UUID owner){
+        if(hit instanceof Tameable t && owner.equals(t.getOwnerUniqueId())) return true;
+        if(hit instanceof Player){
+            UPlayer player = UPlayer.getPlayer(owner);
+            if(player != null){
+                if(player.hasFriend(hit.getUniqueId()) || player.isApartOfParty(hit.getUniqueId())) return true;
+            }
+        }
+        return false;
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityEquipmentChanged(EntityEquipmentChangedEvent event) {
+        LivingEntity e = event.getEntity();
+        var kbResistance = e.getAttribute(Attribute.KNOCKBACK_RESISTANCE);
+        if(kbResistance == null) return;
+        event.getEquipmentChanges().forEach((slot, change) ->{
+            kbResistance.removeModifier(Crux.key("enchant/braced/" + slot.toString().toLowerCase()));
+
+            ItemStack newItem = change.newItem();
+            if(CruxItem.isEmpty(newItem)) return;
+
+            int level = newItem.getEnchantmentLevel(USurviveEnchant.BRACED);
+            if(level > 0){
+                kbResistance.addTransientModifier(new AttributeModifier(
+                    Crux.key("enchant/braced/" + slot.toString().toLowerCase()),
+                    .05 * level, AttributeModifier.Operation.ADD_NUMBER
+                ));
+            }
+        });
+    }
+
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onProjectileHit(ProjectileHitEvent event) {
@@ -189,17 +246,21 @@ public class EnchantsListener implements Listener {
         event.setDroppedExp(droppedExp);
     }
 
-
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onEntityShootBow(EntityShootBowEvent event) {
+    public void onPlayerLaunchProjectile(PlayerLaunchProjectileEvent event) {
         Entity e = event.getProjectile();
-        ItemStack item = event.getBow();
+        ItemStack item = event.getItemStack();
         if(CruxItem.isEmpty(item)) return;
+        onProjectile(event.getPlayer(), e, item);
+    }
+
+    public void onProjectile(Entity owner, Entity e, ItemStack item){
+        CruxEntity.entity(e).set(CruxComponents.INHERITED_ENCHANTMENTS, item.getEnchantments());
         int level = item.getEnchantmentLevel(USurviveEnchant.BOOMSHOT);
         if(level > 0){
             float chance = 10f + ((level-1) * 4);
             if(CruxMath.testChance(chance)){
-                CruxTag.set(event.getProjectile(), "enchant/boomshot", PersistentDataType.INTEGER, level);
+                CruxTag.set(e, "enchant/boomshot", PersistentDataType.INTEGER, level);
             }
         }
         level = item.getEnchantmentLevel(USurviveEnchant.VELOCITY);
@@ -208,6 +269,23 @@ public class EnchantsListener implements Listener {
             Vector vec = e.getVelocity();
             e.setVelocity(vec.multiply(multiplier));
         }
+        level = item.getEnchantmentLevel(USurviveEnchant.PENETRATE);
+        if(level > 0){
+            CruxAttribute.addModifier(e, CruxAttribute.ARMOR_PENETRATION,
+                CruxAttributeModifier.modifier(
+                    Crux.key("enchant/penetrate"),
+                    level * 6.3D
+                ));
+        }
+    }
+
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onEntityShootBow(EntityShootBowEvent event) {
+        Entity e = event.getProjectile();
+        ItemStack item = event.getBow();
+        if(CruxItem.isEmpty(item)) return;
+        onProjectile(event.getEntity(), e, item);
     }
 
 

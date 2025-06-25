@@ -38,6 +38,8 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
     }
     public static final TagKey<ItemType> SHARP_WEAPON_PICKAXE = TagKey.create(RegistryKey.ITEM, Key.key("crux", "sharp_weapon_pickaxe"));
     public static final TagKey<ItemType> SHARP_WEAPON_PICKAXE_HOE = TagKey.create(RegistryKey.ITEM, Key.key("crux", "sharp_weapon_pickaxe_hoe"));
+    public static final TagKey<ItemType> BOW_CROSSBOW = TagKey.create(RegistryKey.ITEM, Key.key("crux", "bow_crossbow"));
+    public static final TagKey<ItemType> CHESTPLATE_LEGGINGS = TagKey.create(RegistryKey.ITEM, Key.key("crux", "chestplate_leggings"));
 
     public static void register(LifecycleEventManager<BootstrapContext> manager){
         manager.registerEventHandler(LifecycleEvents.TAGS.preFlatten(RegistryKey.ITEM), event -> {
@@ -51,6 +53,16 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_SHARP_WEAPON, true),
                 TagEntry.tagEntry(ItemTypeTagKeys.PICKAXES, true),
                 TagEntry.tagEntry(ItemTypeTagKeys.HOES, true)
+            ));
+
+            registrar.setTag(BOW_CROSSBOW, Set.of(
+                TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_BOW, true),
+                TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_CROSSBOW, true)
+            ));
+
+            registrar.setTag(CHESTPLATE_LEGGINGS, Set.of(
+                TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_CHEST_ARMOR, true),
+                TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_LEG_ARMOR, true)
             ));
         });
 
@@ -68,7 +80,10 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                     TypedKey.create(RegistryKey.ENCHANTMENT, Crux.key("boomshot")),
                     TypedKey.create(RegistryKey.ENCHANTMENT, Crux.key("velocity")),
                     TypedKey.create(RegistryKey.ENCHANTMENT, Crux.key("frostbite")),
-                    TypedKey.create(RegistryKey.ENCHANTMENT, Crux.key("insight"))
+                    TypedKey.create(RegistryKey.ENCHANTMENT, Crux.key("insight")),
+                    TypedKey.create(RegistryKey.ENCHANTMENT, Crux.key("penetrate")),
+                    TypedKey.create(RegistryKey.ENCHANTMENT, Crux.key("trueshot")),
+                    TypedKey.create(RegistryKey.ENCHANTMENT, Crux.key("braced"))
                 )
             );
         });
@@ -100,7 +115,7 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
                 .activeSlots(EquipmentSlotGroup.MAINHAND),
 
-            crux -> crux.description("Launches hit targets in the air and spins them around")
+            crux -> crux.description("Chance to launch hit targets in the air and spin them around")
                 .applicableItemGroup(ApplicableItemGroup.itemGroup(ApplicableItemType.SWORD))
                 //.exclusiveWith(RegistrySet.keySet(RegistryKey.ENCHANTMENT, TypedKey.create(RegistryKey.ENCHANTMENT, Key.key("feather_falling"))))
         );
@@ -218,6 +233,55 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                     .add(ApplicableItemType.PICKAXE)
                     .add(ApplicableItemGroup.SHARP_WEAPONS)
                     .add(ApplicableItemType.HOE)
+                    .build())
+        );
+        register(
+            "penetrate", b -> b.description(Component.text("Penetrate"))
+                .supportedItems(event.getOrCreateTag(BOW_CROSSBOW))
+                .anvilCost(1)
+                .exclusiveWith(RegistrySet.keySet(RegistryKey.ENCHANTMENT, RegistryKey.ENCHANTMENT.typedKey(Key.key("piercing"))))
+                .maxLevel(4)
+                .weight(2)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.MAINHAND),
+
+            crux -> crux.description("Arrows ignore a portion of the target's armor")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemType.BOW)
+                    .add(ApplicableItemType.CROSSBOW)
+                    .build())
+        );
+        register(
+            "braced", b -> b.description(Component.text("Braced"))
+                .supportedItems(event.getOrCreateTag(CHESTPLATE_LEGGINGS))
+                .anvilCost(1)
+                .maxLevel(4)
+                .weight(2)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.MAINHAND),
+
+            crux -> crux.description("Reduces knockback taken")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemType.CHESTPLATE)
+                    .add(ApplicableItemType.LEGGINGS)
+                    .build())
+        );
+        register(
+            "trueshot", b -> b.description(Component.text("Trueshot"))
+                .supportedItems(event.getOrCreateTag(BOW_CROSSBOW))
+                .anvilCost(1)
+                .maxLevel(1)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.MAINHAND),
+
+            crux -> crux.description("Projectiles ignore friendly entities (friended players or players within party and your tamed animals)")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemGroup.BOWS_N_CROSSBOWS)
+                    .add(ApplicableItemType.TRIDENT)
                     .build())
         );
     }
