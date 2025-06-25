@@ -105,6 +105,9 @@ public class USurviveComponents {
     public static final DataComponentType<FungireRepairComponent> FUNGIRE_REPAIR = register("fungire_repair", builder ->
         builder.persistTextParser(USurviveCompParsers.FUNGIRE_REPAIR.createInput(Crux.key("fungire_repair"))));
 
+    public static final DataComponentType<GlowingMeadComponent> GLOWING_MEAD = register("glowing_mead", builder ->
+        builder.persistTextParser(USurviveCompParsers.GLOWING_MEAD.createInput(Crux.key("glowing_mead"))));
+
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());
     }

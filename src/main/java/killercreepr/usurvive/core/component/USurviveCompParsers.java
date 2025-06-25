@@ -309,4 +309,14 @@ public class USurviveCompParsers {
             ctx.getOptional("exhaust_amount", NumberProvider.constant(0.2f)),
             ctx.getOptional("world_repair")
         ));
+
+    public static final PersistTextParser<GlowingMeadComponent> GLOWING_MEAD = PersistTextParser.mapBuilder(GlowingMeadComponent.class)
+        .field("range", TextInputField.field(PersistTextParser.FLOAT, GlowingMeadComponent::getRange))
+        .field("near_potions", TextInputField.field(ComponentInputParsers.LIST.POTION_EFFECT, GlowingMeadComponent::getNearbyPotions))
+        .field("crux_potions", TextInputField.field(PotionCompParsers.LIST_STORED_CRUX_POTION, GlowingMeadComponent::getCruxPotions))
+        .apply(ctx -> new GlowingMeadComponent(
+            ctx.getOptional("range", 12f),
+            ctx.getOptional("near_potions"),
+            ctx.getOptional("crux_potions")
+        ));
 }

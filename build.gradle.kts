@@ -10,6 +10,7 @@ version = "1.0"
 repositories {
     mavenCentral()
     maven("https://jitpack.io")
+    maven { url = uri("https://repo.codemc.io/repository/maven-releases/") }
 }
 
 dependencies {
@@ -36,6 +37,7 @@ dependencies {
     ))
 
     compileOnly("com.github.ZockerAxel", "CrazyAdvancementsAPI", "2.1.19")
+    compileOnly("com.github.retrooper:packetevents-spigot:2.8.0")
 
     compileOnly(fileTree("libs"){
         include("*.jar")

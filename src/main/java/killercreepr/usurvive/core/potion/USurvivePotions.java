@@ -353,6 +353,18 @@ public class USurvivePotions {
             return Color.fromRGB(0xB0C4DE);
         }
     });
+    public static final CruxPotion MENDING_BLOOM = register(new DescribedPotion(Crux.key("mending_bloom"),
+        "Heals small amounts of health over time") {
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new MendingBloomPotion(this, e, duration, amplifier);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0xDA8370);
+        }
+    });
 
     private static CruxPotion register(CruxPotion pot){
         return CruxPotionRegistries.POTION.register(pot);
