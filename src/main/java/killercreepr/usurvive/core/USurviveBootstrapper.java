@@ -38,7 +38,7 @@ public class USurviveBootstrapper implements PluginBootstrap {
             event.registry().register(
                 RegistryKey.DAMAGE_TYPE.typedKey(Crux.key("entity_attack_bypass_shield")),
                 builder -> builder.exhaustion(0.25f)
-                    .messageId("entity_attack_bypass_shield")
+                    .messageId("mob")
                     .damageScaling(DamageScaling.ALWAYS)
             );
         }));

@@ -11,13 +11,10 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
-import java.util.Set;
 
 public class USurvivePotions {
     public static void register(){
@@ -424,8 +421,8 @@ public class USurvivePotions {
             return Color.fromRGB(0x7B2C70);
         }
     });
-    public static final CruxPotion TENDRIL = register(new DescribedPotion(Crux.key("tendril"),
-        "Increases attack reach and life steal") {
+    public static final CruxPotion TENDRIL_GRASP = register(new DescribedPotion(Crux.key("tendril_grasp"),
+        "Increases attack reach and slightly heals when attacking entities") {
         final Map<Attribute, AttributesPotion.PotModCreator> potions = Map.of(
             Attribute.ENTITY_INTERACTION_RANGE, new AttributesPotion.PotModCreator() {
                 @Override
@@ -441,13 +438,12 @@ public class USurvivePotions {
         );
         @Override
         public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
-            return new TendrilPotion(this, e, duration, amplifier, potions);
+            return new TendrilGraspPotion(this, e, duration, amplifier, potions);
         }
 
         @Override
         public @NotNull Color getColor() {
-            //todo
-            return Color.fromRGB(0x7B2C70);
+            return Color.fromRGB(0x4A7D5F);
         }
     });
 
