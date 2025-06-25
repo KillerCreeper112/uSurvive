@@ -11,10 +11,13 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Set;
 
 public class USurvivePotions {
     public static void register(){
@@ -363,6 +366,88 @@ public class USurvivePotions {
         @Override
         public @NotNull Color getColor() {
             return Color.fromRGB(0xDA8370);
+        }
+    });
+    public static final CruxPotion FUNGIRE_EXTRACT = register(new DescribedPotion(Crux.key("fungire_extract"),
+        "Boosts mining speed and attack speed, then causes hunger") {
+        final Map<Attribute, AttributesPotion.PotModCreator> potions = Map.of(
+            Attribute.ATTACK_SPEED,
+            new AttributesPotion.PotModCreator() {
+                @Override
+                public double calculateAmount(LivingEntity e, int amplifier) {
+                    return (amplifier+1) * 0.2f;
+                }
+
+                @Override
+                public AttributeModifier.Operation getOperation() {
+                    return AttributeModifier.Operation.MULTIPLY_SCALAR_1;
+                }
+            },
+            Attribute.BLOCK_BREAK_SPEED,
+            new AttributesPotion.PotModCreator() {
+                @Override
+                public double calculateAmount(LivingEntity e, int amplifier) {
+                    return (amplifier+1) * 0.2f;
+                }
+
+                @Override
+                public AttributeModifier.Operation getOperation() {
+                    return AttributeModifier.Operation.MULTIPLY_SCALAR_1;
+                }
+            }
+        );
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new FungireExactPotion(this, e, duration, amplifier, potions);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0x78FF53);
+        }
+    });
+    public static final CruxPotion WITHERING_MIGHT = register(new DescribedPotion(Crux.key("withering_might"),
+        "Increases attack damage but reduces max health") {
+        final Map<Attribute, AttributesPotion.PotModCreator> potions = Map.of(
+            Attribute.ATTACK_DAMAGE,
+            (e, amplifier) -> (amplifier+1) * 3f,
+            Attribute.MAX_HEALTH,
+            (e, amplifier) -> (amplifier+1) * -3f
+        );
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new AttributesPotion(this, e, duration, amplifier, potions);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0x7B2C70);
+        }
+    });
+    public static final CruxPotion TENDRIL = register(new DescribedPotion(Crux.key("tendril"),
+        "Increases attack reach and life steal") {
+        final Map<Attribute, AttributesPotion.PotModCreator> potions = Map.of(
+            Attribute.ENTITY_INTERACTION_RANGE, new AttributesPotion.PotModCreator() {
+                @Override
+                public double calculateAmount(LivingEntity e, int amplifier) {
+                    return (amplifier+1) * .15f;
+                }
+
+                @Override
+                public AttributeModifier.Operation getOperation() {
+                    return AttributeModifier.Operation.MULTIPLY_SCALAR_1;
+                }
+            }
+        );
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new TendrilPotion(this, e, duration, amplifier, potions);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            //todo
+            return Color.fromRGB(0x7B2C70);
         }
     });
 
