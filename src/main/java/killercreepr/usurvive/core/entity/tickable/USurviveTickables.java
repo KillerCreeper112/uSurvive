@@ -232,6 +232,36 @@ public class USurviveTickables {
         }
     });
 
+    public static final EntityTickable PASSIVE_HUNGER_RESTORE = register(new SimpleDataEntityTickable(Crux.key("passive_hunger_restore")) {
+        public static final PersistParser<?> DATA_PARSER = PersistTextParser.mapBuilder(Map.class)
+            .field("tick_rate", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("tick_rate")))
+            .field("nutrition", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("nutrition")))
+            .field("saturation", TextInputField.field(PersistTextParser.FLOAT, e -> (Float) e.get("saturation")))
+            .field("max_uses", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("max_uses")))
+            .field("uses", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("uses")))
+            .field("charm_id", TextInputField.field(PersistTextParser.KEY, e -> (Key) e.get("charm_id")))
+            .field("charm_name_format", TextInputField.field(PersistTextParser.STRING, e -> (String) e.get("charm_name_format")))
+            .apply(InputDecodeContext::get)
+            .createInput(Crux.key("data"));
+
+        @Override
+        public PersistParser<?> getDataParser() {
+            return DATA_PARSER;
+        }
+
+        @Override
+        public @Nullable ActiveEntityTickable buildActive(@NotNull Entity entity, @Nullable CruxSlot slot, @NotNull EntityTickableModifier mod) {
+            Map data = (Map) mod.getData();
+
+            return new PassiveHungerRestoreTickable(
+                entity, this, slot,
+                (int) data.getOrDefault("tick_rate", 20),
+                (int) data.getOrDefault("nutrition", 1),
+                (float) data.getOrDefault("saturation", 0.1f)
+            );
+        }
+    });
+
     private static EntityTickable register(EntityTickable tickable){
         return CruxTickableRegistries.ENTITY_TICKABLE.register(tickable);
     }
