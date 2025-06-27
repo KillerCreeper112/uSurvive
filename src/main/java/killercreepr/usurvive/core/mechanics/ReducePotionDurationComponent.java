@@ -44,7 +44,7 @@ public class ReducePotionDurationComponent implements InteractableComponent, Con
                         PlayerItemedContext ctx){
         removePotions.forEach(value ->{
             PotionEffect effect = p.getPotionEffect(value.type());
-            if(effect == null) return;
+            if(effect == null || effect.isInfinite()) return;
             int newDuration = effect.getDuration() - value.removeDuration();
             p.removePotionEffect(value.type());
             if(newDuration < 1) return;
