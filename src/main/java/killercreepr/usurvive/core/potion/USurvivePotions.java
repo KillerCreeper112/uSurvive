@@ -446,6 +446,43 @@ public class USurvivePotions {
             return Color.fromRGB(0x4A7D5F);
         }
     });
+    public static final CruxPotion LEECH = register(new DescribedPotion(Crux.key("leech"),
+        "Heals when attacking entities") {
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new LeechPotion(this, e, duration, amplifier);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0xB82A30);
+        }
+    });
+    public static final CruxPotion DEEP_BREATHING = register(new DescribedPotion(Crux.key("deep_breathing"),
+        "Increases the user's underwater breath duration") {
+        final Map<Attribute, AttributesPotion.PotModCreator> potions = Map.of(
+            Attribute.OXYGEN_BONUS, new AttributesPotion.PotModCreator() {
+                @Override
+                public double calculateAmount(LivingEntity e, int amplifier) {
+                    return (amplifier+1) * .1f;
+                }
+
+                @Override
+                public AttributeModifier.Operation getOperation() {
+                    return AttributeModifier.Operation.ADD_NUMBER;
+                }
+            }
+        );
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new AttributesPotion(this, e, duration, amplifier, potions);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0x435B8D);
+        }
+    });
 
     private static CruxPotion register(CruxPotion pot){
         return CruxPotionRegistries.POTION.register(pot);
