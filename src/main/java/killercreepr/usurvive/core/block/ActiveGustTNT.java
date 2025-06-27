@@ -103,7 +103,7 @@ public class ActiveGustTNT extends SimpleActiveCruxBlock implements ActiveCruxRe
     @NotNull
     @Override
     public Result exploded(CustomExplodeEvent event, Miner miner) {
-        if(event.getResult() == ExplosionResult.KEEP) return Result.DEFAULT;
+        if(event.isCancelled() || event.getResult() == ExplosionResult.KEEP) return Result.DEFAULT;
         explode(miner);
         return Result.DENY;
     }
