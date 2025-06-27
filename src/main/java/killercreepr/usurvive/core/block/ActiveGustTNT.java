@@ -5,16 +5,19 @@ import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxBlockUtil;
 import killercreepr.cruxblocks.api.block.CruxBlock;
+import killercreepr.cruxblocks.api.block.active.ActiveCruxExploded;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxInteractable;
 import killercreepr.cruxblocks.api.block.active.ActiveCruxRedstonePowerable;
 import killercreepr.cruxblocks.api.block.flag.BlockBreakFlag;
 import killercreepr.cruxblocks.api.block.flag.BlockBreakFlags;
+import killercreepr.cruxblocks.api.event.CustomExplodeEvent;
 import killercreepr.cruxblocks.api.mining.user.Miner;
 import killercreepr.cruxblocks.core.block.active.SimpleActiveCruxBlock;
 import killercreepr.cruxblocks.core.mining.user.BlockMiner;
 import killercreepr.cruxblocks.core.mining.user.EntityMiner;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import net.kyori.adventure.key.Key;
+import org.bukkit.ExplosionResult;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -26,7 +29,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class ActiveGustTNT extends SimpleActiveCruxBlock implements ActiveCruxRedstonePowerable, ActiveCruxInteractable {
+public class ActiveGustTNT extends SimpleActiveCruxBlock implements ActiveCruxRedstonePowerable, ActiveCruxInteractable,
+    ActiveCruxExploded {
     public ActiveGustTNT(@NotNull Block block, @NotNull CruxBlock cruxBlock) {
         super(block, cruxBlock);
     }
@@ -59,7 +63,16 @@ public class ActiveGustTNT extends SimpleActiveCruxBlock implements ActiveCruxRe
         if(!event.getAction().isRightClick()) return null;
         ItemStack item = event.getItem();
         if(CruxItem.isEmpty(item)) return null;
-        if(!Crux.handlers().item().getType(item).equals(Key.key("flint_and_steel"))) return null;
+        if(!Crux.handlers().item().getType(item).equals(Key.key("flint_and_steel"))){
+            if(!Crux.handlers().item().getType(item).equals(Key.key("wind_charge"))) return null;
+
+            var p = event.getPlayer();
+            if(p.getGameMode() != GameMode.CREATIVE){
+                item.setAmount(item.getAmount()-1);
+            }
+            explode(new EntityMiner(item, p, event.getHand()));
+            return Event.Result.ALLOW;
+        }
 
         var p = event.getPlayer();
         if(p.getGameMode() != GameMode.CREATIVE){
@@ -85,5 +98,13 @@ public class ActiveGustTNT extends SimpleActiveCruxBlock implements ActiveCruxRe
                 t.setSource(m.getEntity());
             }
         });
+    }
+
+    @NotNull
+    @Override
+    public Result exploded(CustomExplodeEvent event, Miner miner) {
+        if(event.getResult() == ExplosionResult.KEEP) return Result.DEFAULT;
+        explode(miner);
+        return Result.DENY;
     }
 }
