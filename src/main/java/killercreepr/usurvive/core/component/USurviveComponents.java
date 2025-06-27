@@ -108,6 +108,9 @@ public class USurviveComponents {
     public static final DataComponentType<GlowingMeadComponent> GLOWING_MEAD = register("glowing_mead", builder ->
         builder.persistTextParser(USurviveCompParsers.GLOWING_MEAD.createInput(Crux.key("glowing_mead"))));
 
+    public static final DataComponentType<ReducePotionDurationComponent> REDUCE_POTION_DURATION = register("reduce_potion_duration", builder ->
+        builder.persistTextParser(USurviveCompParsers.REDUCE_POTION_DURATION.createInput(Crux.key("reduce_potion_duration"))));
+
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());
     }

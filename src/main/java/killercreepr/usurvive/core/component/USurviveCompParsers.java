@@ -282,7 +282,6 @@ public class USurviveCompParsers {
             ctx.getOptional("effects")
         ));
 
-
     public static final PersistTextParser<FungireRepairComponent.WorldRepair> FUNGIRE_REPAIR_WORLD_REPAIR = PersistTextParser.mapBuilder(FungireRepairComponent.WorldRepair.class)
         .field("repair_chance", TextInputField.field(PersistTextParser.FLOAT, FungireRepairComponent.WorldRepair::repairChance))
         .field("repair_amount", TextInputField.field(ComponentInputParsers.NUMBER_PROVIDER, FungireRepairComponent.WorldRepair::repairAmount))
@@ -319,5 +318,21 @@ public class USurviveCompParsers {
             ctx.getOptional("range", 12f),
             ctx.getOptional("near_potions"),
             ctx.getOptional("crux_potions")
+        ));
+
+    public static final PersistTextParser<ReducePotionDurationComponent.Value> REDUCE_POTION_VALUE = PersistTextParser.mapBuilder(ReducePotionDurationComponent.Value.class)
+        .field("potion", TextInputField.field(ComponentInputParsers.POTION_EFFECT_TYPE, ReducePotionDurationComponent.Value::type))
+        .field("remove_duration", TextInputField.field(PersistTextParser.INTEGER, ReducePotionDurationComponent.Value::removeDuration))
+        .apply(ctx -> new ReducePotionDurationComponent.Value(
+            ctx.get("potion"),
+            ctx.get("remove_duration")
+        ));
+
+    public static final PersistTextParser<List<ReducePotionDurationComponent.Value>> REDUCE_POTION_VALUE_LIST = PersistTextParser.list(REDUCE_POTION_VALUE);
+
+    public static final PersistTextParser<ReducePotionDurationComponent> REDUCE_POTION_DURATION = PersistTextParser.mapBuilder(ReducePotionDurationComponent.class)
+        .field("remove_potions", TextInputField.field(REDUCE_POTION_VALUE_LIST, ReducePotionDurationComponent::getRemovePotions))
+        .apply(ctx -> new ReducePotionDurationComponent(
+            ctx.get("remove_potions")
         ));
 }
