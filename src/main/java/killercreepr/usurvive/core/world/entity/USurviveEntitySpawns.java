@@ -37,18 +37,7 @@ public class USurviveEntitySpawns {
 
     public static final Map<Integer, NaturalEntitySpawn> EMPTY = new HashMap<>();
     public static NaturalEntitySpawn empty(int weight){
-        return EMPTY.computeIfAbsent(weight, (e) -> new SimpleNaturalEntitySpawn(weight, 0f) {
-            @Nullable
-            @Override
-            public Entity spawn(@NotNull SpawnContext ctx, @Nullable Consumer<Entity> consumer) {
-                return null;
-            }
-
-            @Override
-            public boolean canSpawn(@NotNull SpawnContext ctx) {
-                return true;
-            }
-        });
+        return EMPTY.computeIfAbsent(weight, (e) -> NaturalEntitySpawn.empty(weight));
     }
 
     public static final NaturalEntitySpawn SCULK_BLIGHT = new NaturalCruxMobSpawn(4, 0, USurviveMobs.SCULK_BLIGHT) {

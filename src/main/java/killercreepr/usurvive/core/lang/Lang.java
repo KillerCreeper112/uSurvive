@@ -24,7 +24,7 @@ public class Lang {
 
     public static final Msg GRAPPLE_USE = create(
         Communicator.builder()
-            .sound(CreateSound.sound(Sound.ENTITY_LEASH_KNOT_BREAK, 1.5f))
+            .sound(CreateSound.sound(Sound.ITEM_LEAD_BREAK, 1.5f))
             .build()
     );
 
@@ -36,7 +36,7 @@ public class Lang {
 
     public static final Msg GRAPPLE_HOOK = create(
         Communicator.builder()
-            .sound(CreateSound.sound(Sound.ENTITY_LEASH_KNOT_PLACE, 1.5f))
+            .sound(CreateSound.sound(Sound.ITEM_LEAD_TIED, 1.5f))
             .build()
     );
 

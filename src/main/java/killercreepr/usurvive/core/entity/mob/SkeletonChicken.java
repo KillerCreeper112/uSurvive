@@ -17,6 +17,7 @@ import org.bukkit.entity.Mob;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -71,9 +72,9 @@ public class SkeletonChicken extends UCruxMob {
     }
 
     @Override
-    public MobCategory[] getCategories() {
-        return new MobCategory[]{
+    public Set<MobCategory> getCategories() {
+        return Set.of(
             MobCategory.MONSTER, MobCategory.ENEMY, USurviveMobCategory.ELDRITCH
-        };
+        );
     }
 }

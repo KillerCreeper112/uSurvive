@@ -11,6 +11,7 @@ import org.bukkit.entity.PufferFish;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
 import java.util.function.Consumer;
 
 public class GrappleHookMob extends SimpleCruxMob {
@@ -43,7 +44,7 @@ public class GrappleHookMob extends SimpleCruxMob {
     }
 
     @Override
-    public MobCategory[] getCategories() {
-        return new MobCategory[]{MobCategory.OBJECT};
+    public Set<MobCategory> getCategories() {
+        return Set.of(MobCategory.OBJECT);
     }
 }

@@ -6,6 +6,7 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.TypedKey;
 import io.papermc.paper.registry.data.EnchantmentRegistryEntry;
+import io.papermc.paper.registry.event.RegistryComposeEvent;
 import io.papermc.paper.registry.event.RegistryFreezeEvent;
 import io.papermc.paper.registry.event.WritableRegistry;
 import io.papermc.paper.registry.keys.tags.EnchantmentTagKeys;
@@ -33,7 +34,7 @@ import java.util.Set;
 public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
     public USurviveEnchantRegisterer(WritableRegistry<Enchantment, EnchantmentRegistryEntry.Builder> registry,
                                      @Nullable KeyedRegistry<CruxEnchant> wrapperRegistry,
-                                     RegistryFreezeEvent<Enchantment, EnchantmentRegistryEntry.Builder> event) {
+                                     RegistryComposeEvent<Enchantment, EnchantmentRegistryEntry.Builder> event) {
         super(registry, wrapperRegistry, event);
     }
     public static final TagKey<ItemType> SHARP_WEAPON_PICKAXE = TagKey.create(RegistryKey.ITEM, Key.key("crux", "sharp_weapon_pickaxe"));

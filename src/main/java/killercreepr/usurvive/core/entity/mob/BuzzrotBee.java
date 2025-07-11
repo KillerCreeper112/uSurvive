@@ -15,6 +15,7 @@ import org.bukkit.entity.Mob;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
 import java.util.function.Consumer;
 
 public class BuzzrotBee extends UCruxMob {
@@ -57,9 +58,9 @@ public class BuzzrotBee extends UCruxMob {
     }
 
     @Override
-    public MobCategory[] getCategories() {
-        return new MobCategory[]{
+    public Set<MobCategory> getCategories() {
+        return Set.of(
             MobCategory.ENEMY, MobCategory.MONSTER, USurviveMobCategory.ELDRITCH
-        };
+        );
     }
 }

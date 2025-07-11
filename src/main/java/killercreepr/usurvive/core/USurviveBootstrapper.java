@@ -21,11 +21,11 @@ public class USurviveBootstrapper implements PluginBootstrap {
     @Override
     public void bootstrap(BootstrapContext context) {
         USurviveEnchantRegisterer.register(context.getLifecycleManager());
-        context.getLifecycleManager().registerEventHandler(RegistryEvents.ENCHANTMENT.freeze().newHandler(event -> {
+        context.getLifecycleManager().registerEventHandler(RegistryEvents.ENCHANTMENT.compose().newHandler(event -> {
             new USurviveEnchantRegisterer(event.registry(), CruxEnchantRegistries.CRUX_ENCHANT, event).register();
         }));
 
-        context.getLifecycleManager().registerEventHandler(RegistryEvents.DAMAGE_TYPE.freeze().newHandler(event -> {
+        context.getLifecycleManager().registerEventHandler(RegistryEvents.DAMAGE_TYPE.compose().newHandler(event -> {
 
             event.registry().register(
                 RegistryKey.DAMAGE_TYPE.typedKey(Crux.key("thornlash")),

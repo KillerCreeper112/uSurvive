@@ -14,6 +14,7 @@ import org.bukkit.entity.TNTPrimed;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
 import java.util.function.Consumer;
 
 public class GustTNT extends UCruxMob {
@@ -45,9 +46,9 @@ public class GustTNT extends UCruxMob {
     }
 
     @Override
-    public MobCategory[] getCategories() {
-        return new MobCategory[]{
+    public Set<MobCategory> getCategories() {
+        return Set.of(
             MobCategory.OBJECT
-        };
+        );
     }
 }

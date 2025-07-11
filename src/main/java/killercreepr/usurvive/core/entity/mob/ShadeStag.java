@@ -17,6 +17,7 @@ import org.bukkit.entity.Pig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -71,9 +72,9 @@ public class ShadeStag extends UCruxMob {
     }
 
     @Override
-    public MobCategory[] getCategories() {
-        return new MobCategory[]{
+    public Set<MobCategory> getCategories() {
+        return Set.of(
             MobCategory.ENEMY, MobCategory.MONSTER, USurviveMobCategory.ELDRITCH
-        };
+        );
     }
 }
