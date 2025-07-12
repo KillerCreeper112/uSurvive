@@ -11,6 +11,7 @@ import killercreepr.crux.api.text.provider.StringTagProvider;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.text.resolver.Tag;
+import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
 import killercreepr.crux.core.util.GetEntityNear;
@@ -145,10 +146,10 @@ public class EchoGoal extends CruxMobModeledGoal implements Listener {
         graveParticleCooldown = (byte) CruxMath.random(20, 40);
         if(!isInGraveTransformation()) return;
         new ParticleBuilder(Particle.SOUL)
-            .location(mob.getLocation().add(0, mob.getHeight()/2, 0))
-            .count(CruxMath.random(1,2))
+            .location(mob.getLocation().add(0, mob.getHeight()*.7, 0))
+            .count(CruxMath.random(1,3))
             .offset(.2, .2, .2)
-            .extra(.1)
+            .extra(.01)
             .spawn();
     }
 
@@ -159,7 +160,9 @@ public class EchoGoal extends CruxMobModeledGoal implements Listener {
         }
         checkNearbyPlayersCooldown = 100;
         if(!isInGraveTransformation()) return;
-        if(new GetEntityNear<>(Player.class).center(mob).range(8D).find().isEmpty()) return;
+        if(new GetEntityNear<>(Player.class).center(mob)
+            .filter(p -> !CruxEntityUtil.isNonSurvival(p))
+            .range(8D).find().isEmpty()) return;
         transformToEcho();
     }
 
