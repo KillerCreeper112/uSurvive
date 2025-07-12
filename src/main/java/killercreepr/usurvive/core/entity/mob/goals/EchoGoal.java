@@ -116,7 +116,7 @@ public class EchoGoal extends CruxMobModeledGoal implements Listener {
         return getModeledEntity().getModel("grave").isPresent();
     }
 
-    protected int checkNearbyPlayersCooldown = 100;
+    protected byte checkNearbyPlayersCooldown = 100;
 
     @Override
     public void tick() {
@@ -133,6 +133,23 @@ public class EchoGoal extends CruxMobModeledGoal implements Listener {
             if(mob.getTarget() != null) mob.setTarget(null);
         }
         checkNearbyPlayersTick();
+        graveParticlesTick();
+    }
+
+    protected byte graveParticleCooldown;
+    public void graveParticlesTick(){
+        if(graveParticleCooldown > 0){
+            graveParticleCooldown--;
+            return;
+        }
+        graveParticleCooldown = (byte) CruxMath.random(20, 40);
+        if(!isInGraveTransformation()) return;
+        new ParticleBuilder(Particle.SOUL)
+            .location(mob.getLocation().add(0, mob.getHeight()/2, 0))
+            .count(CruxMath.random(1,2))
+            .offset(.2, .2, .2)
+            .extra(.1)
+            .spawn();
     }
 
     public void checkNearbyPlayersTick(){

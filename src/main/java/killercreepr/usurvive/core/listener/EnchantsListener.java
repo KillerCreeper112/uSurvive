@@ -17,11 +17,16 @@ import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
 import killercreepr.cruxentities.api.combat.EntityDamager;
+import killercreepr.cruxpotions.api.entity.PotionHolder;
+import killercreepr.cruxpotions.core.entity.memory.SimplePotionHolder;
+import killercreepr.cruxpotions.core.potions.inflictor.EntityInflictor;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.api.event.EntityTrampleEnchantEvent;
 import killercreepr.usurvive.core.data.entity.TrampleHolder;
 import killercreepr.usurvive.core.enchant.USurviveEnchant;
 import killercreepr.usurvive.core.enchant.logic.JoyWhirl;
+import killercreepr.usurvive.core.potion.FrostbitePotion;
+import killercreepr.usurvive.core.potion.USurvivePotions;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -410,24 +415,14 @@ public class EnchantsListener implements Listener {
                 }
                 //todo make into own potion
                 if(mainHand.getEnchantments().containsKey(USurviveEnchant.FROSTBITE)){
-                    int level = mainHand.getEnchantments().getOrDefault(USurviveEnchant.FROSTBITE, 0);
-                    victim.setFreezeTicks(140 + ((6 * level) * 20));
-                    victim.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, (40 + ((level - 1) * 80)), level));
-                    new BukkitRunnable(){
-                        int tick = 0;
-                        @Override
-                        public void run() {
-                            if(!victim.isValid() || victim.getFreezeTicks() <= 140){
-                                cancel();
-                                return;
-                            }
-                            tick++;
-                            if(tick >= 30 - (level * 10)){
-                                tick = 0;
-                                victim.damage(1D);
-                            }
-                        }
-                    }.runTaskTimer(plugin, 0L, 1L);
+                    PotionHolder holder = EntityMemory.getOrCreateDataHolder(victim, SimplePotionHolder.class, SimplePotionHolder::new);
+                    if(holder != null){
+                        int level = mainHand.getEnchantments().getOrDefault(USurviveEnchant.FROSTBITE, 0);
+                        int amplifier = level -1;
+                        int duration = FrostbitePotion.calculateDuration(amplifier);
+                        holder.addPotion(USurvivePotions.FROSTBITE.create(victim, duration, amplifier,
+                            new EntityInflictor(damager)));
+                    }
                 }
             }
             if(enchants.containsKey(USurviveEnchant.BACKSTAB) && isBehind(vic, attacker)){

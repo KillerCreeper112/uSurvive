@@ -483,6 +483,18 @@ public class USurvivePotions {
             return Color.fromRGB(0x435B8D);
         }
     });
+    public static final CruxPotion FROSTBITE = register(new DescribedPotion(Crux.key("frostbite"),
+        "Oh my, it's cold") {
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new FrostbitePotion(this, e, duration, amplifier, inflictor);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0xA8F7FF);
+        }
+    });
 
     private static CruxPotion register(CruxPotion pot){
         return CruxPotionRegistries.POTION.register(pot);
