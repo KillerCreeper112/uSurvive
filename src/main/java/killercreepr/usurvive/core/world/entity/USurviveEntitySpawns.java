@@ -9,7 +9,6 @@ import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.world.entity.NaturalCruxMobSpawn;
 import killercreepr.cruxworlds.api.world.entity.NaturalEntitySpawn;
 import killercreepr.cruxworlds.api.world.entity.SpawnContext;
-import killercreepr.cruxworlds.core.world.entity.SimpleNaturalEntitySpawn;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

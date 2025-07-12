@@ -7,7 +7,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityExhaustionEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class ExposedPotion extends SimpleActivePotion implements Listener {

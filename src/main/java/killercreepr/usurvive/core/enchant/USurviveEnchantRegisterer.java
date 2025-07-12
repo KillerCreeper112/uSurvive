@@ -7,7 +7,6 @@ import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.TypedKey;
 import io.papermc.paper.registry.data.EnchantmentRegistryEntry;
 import io.papermc.paper.registry.event.RegistryComposeEvent;
-import io.papermc.paper.registry.event.RegistryFreezeEvent;
 import io.papermc.paper.registry.event.WritableRegistry;
 import io.papermc.paper.registry.keys.tags.EnchantmentTagKeys;
 import io.papermc.paper.registry.keys.tags.ItemTypeTagKeys;

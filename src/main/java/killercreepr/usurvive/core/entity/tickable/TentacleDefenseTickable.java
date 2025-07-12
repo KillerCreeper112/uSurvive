@@ -25,7 +25,6 @@ import killercreepr.usurvive.core.mechanics.whip.SimpleDisplayWhip;
 import killercreepr.usurvive.core.mechanics.whip.context.DisplaySimpleWhipContext;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;

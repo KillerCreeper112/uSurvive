@@ -22,7 +22,6 @@ import killercreepr.usurvive.core.mechanics.grapple.SimpleDisplayGrapple;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleGrapple;
 import killercreepr.usurvive.core.mechanics.whip.SimpleDisplayWhip;
 import net.kyori.adventure.key.Key;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.List;

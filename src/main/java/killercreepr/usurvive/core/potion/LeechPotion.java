@@ -16,8 +16,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-
 public class LeechPotion extends ActiveEntityPotion<LivingEntity> implements Listener {
     public LeechPotion(@NotNull CruxPotion potion, @NotNull Entity entity, int duration, int amplifier) {
         super(LivingEntity.class, potion, entity, duration, amplifier);
