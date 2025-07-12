@@ -4,6 +4,7 @@ import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.api.math.CruxLocation;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.data.tick.SimpleCruxTick;
+import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.cruxform.api.scheduler.ShapeScheduler;
 import killercreepr.cruxform.api.shape.CreateWarpedLine;
 import killercreepr.usurvive.core.USurvivePlugin;
@@ -74,12 +75,13 @@ public class SporelinkVisualizer extends SimpleCruxTick {
         if(links.isEmpty()) return;
 
         if(tick % 5 != 0) return;
-        for (Map.Entry<Entity, SporelinkPotion> entry : links.entrySet()) {
+        links.entrySet().removeIf(entry ->{
             Entity main = entry.getKey();
-            if(entry.getValue().getDuration() < 1) continue;
+            if(!entry.getValue().isActive()) return true;
+            if(!CruxEntityUtil.isValid(main)) return true;
 
-            for (Entity linked : entry.getValue().getSporeLinked()) {
-                boolean hasBackLink = links.containsKey(linked) && links.get(linked).getSporeLinked().contains(main);
+            for (Entity linked : entry.getValue().getLastLinked()) {
+                boolean hasBackLink = links.containsKey(linked) && links.get(linked).getLastLinked().contains(main);
                 if (hasBackLink && main.getUniqueId().compareTo(linked.getUniqueId()) >= 0) continue;
 
                 ShapeScheduler.builder()
@@ -101,6 +103,7 @@ public class SporelinkVisualizer extends SimpleCruxTick {
                         .build())
                     .build().scheduleAsync(0);
             }
-        }
+            return false;
+        });
     }
 }

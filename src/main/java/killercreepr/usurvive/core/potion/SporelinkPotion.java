@@ -12,6 +12,7 @@ import killercreepr.crux.core.util.GetEntityNear;
 import killercreepr.crux.core.util.GetNear;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxpotions.api.entity.PotionHolder;
+import killercreepr.cruxpotions.api.potion.ActivePotion;
 import killercreepr.cruxpotions.api.potion.CruxPotion;
 import killercreepr.cruxpotions.core.entity.memory.SimplePotionHolder;
 import killercreepr.cruxpotions.core.potions.ActiveEntityPotion;
@@ -22,6 +23,7 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -42,6 +44,10 @@ public class SporelinkPotion extends ActiveEntityPotion<LivingEntity> {
     }
 
     public static final int PARTICLE_TICK_RATE = 20;
+
+    public Collection<Entity> getLastLinked() {
+        return lastLinked;
+    }
 
     public void particleTick(){
         SporelinkVisualizer visualizer = getOrCreateVisualizer();
