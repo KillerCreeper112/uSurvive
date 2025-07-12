@@ -413,7 +413,6 @@ public class EnchantsListener implements Listener {
                         }
                     }
                 }
-                //todo make into own potion
                 if(mainHand.getEnchantments().containsKey(USurviveEnchant.FROSTBITE)){
                     PotionHolder holder = EntityMemory.getOrCreateDataHolder(victim, SimplePotionHolder.class, SimplePotionHolder::new);
                     if(holder != null){
