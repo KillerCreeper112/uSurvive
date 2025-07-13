@@ -231,8 +231,6 @@ public class VoidLurkerGoal extends CruxMobModeledGoal implements Listener {
         model.getAnimationHandler().setDefaultProperty(should);
         playAnimation(should.getAnimation(), false);
     }
-
-
     @Override
     public void tick() {
         //animationPropertyTick();
