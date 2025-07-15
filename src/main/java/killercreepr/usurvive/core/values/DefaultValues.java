@@ -4,6 +4,7 @@ import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.item.predicate.ItemPredicate;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.valueproviders.number.UniformNumber;
+import killercreepr.cruxstructures.api.structure.generation.StructureGenerator;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.data.CfgLootData;
 import killercreepr.usurvive.core.data.PremiumRank;
@@ -265,6 +266,16 @@ public class DefaultValues implements ValuesProvider {
 
     @Override
     public Holder<Collection<CfgLootData>> BLOCK_DISPENSE_LOOT_DATA() {
+        return null;
+    }
+
+    @Override
+    public Holder<StructureGenerator> GUIDE_RESOURCE_WORLD_STRUCTURE() {
+        return null;
+    }
+
+    @Override
+    public Holder<NumberProvider> GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE() {
         return null;
     }
 }

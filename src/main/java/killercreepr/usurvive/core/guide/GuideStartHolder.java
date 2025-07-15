@@ -3,11 +3,14 @@ package killercreepr.usurvive.core.guide;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.PlayerTickedDataHolder;
+import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementManager;
+import killercreepr.cruxadvancements.core.registries.AdvancementRegistries;
 import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.common.file.DataFile;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.data.DeathGuide;
+import killercreepr.usurvive.core.lang.Lang;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -15,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class GuideStartHolder extends PlayerTickedDataHolder {
+    public static final Key DISCOVER_GUIDE_METEOR = USurvivePlugin.inst().key("main/discover_guide_meteor");
     public static final Key KEY = Crux.key("guide/start");
     public GuideStartHolder(@NotNull Key key, @NotNull PlayerMemory parent) {
         super(key, parent);
@@ -52,11 +56,30 @@ public class GuideStartHolder extends PlayerTickedDataHolder {
         int every = 30;//cfg.DEATH_GUIDE_TICK_EVERY().value().intValue();
         if(every==0) return;
         if(Crux.getCurrentTick() % every != 0) return;
-        tickDeathGuide(p);
+        tickDistance(p);
+        tickStructureGuide(p);
     }
 
-    public void tickDeathGuide(@NotNull Player p){
+    protected double lastDistanceSquared;
+    public void tickDistance(Player p){
         if(fallenMeteorLocation == null) return;
+        CruxAdvancementManager manager = AdvancementRegistries.ADVANCEMENT_MANAGERS.get(USurvivePlugin.inst().key("main"));
+        if(manager == null) return;
+        var advancement = manager.getAdvancement(DISCOVER_GUIDE_METEOR);
+        if(advancement == null) return;
+        if(advancement.isGranted(p)) return;
+
+        lastDistanceSquared = p.getLocation().distanceSquared(fallenMeteorLocation);
+        if(lastDistanceSquared > (12D*12D)) return;
+        var event = manager.grantAdvancement(p, advancement);
+        if(event == null || event.isCancelled()) return;
+        Lang.GUIDE_STRUCTURE_NEARBY.use(p);
+    }
+
+    protected final double maxParticleShowDistance = 16D*16D;
+    public void tickStructureGuide(@NotNull Player p){
+        if(fallenMeteorLocation == null) return;
+        if(lastDistanceSquared < maxParticleShowDistance) return;
         //Entity guardian = death.getGuardian();
         Location pos =  fallenMeteorLocation;
 

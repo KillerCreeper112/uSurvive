@@ -303,6 +303,22 @@ public class Lang {
             .sound(CreateSound.sound(Sound.BLOCK_SNIFFER_EGG_PLOP, 2f))
             .build()
     );
+    public static final Msg GUIDE_STRUCTURE_CANNOT_BE_PLACED = create(
+        Communicator.builder()
+            .chat("<gold>Whoops! <yellow>The fallen meteor structure could not be placed nearby. If you wish to continue the starting guide, please return to spawn and randomly teleport again. <click:run_command:\"/spawn\"><hover:show_text:\"Click to run /spawn\"><bold>CLICK HERE")
+            .sound(CreateSound.sound(Sound.BLOCK_SNIFFER_EGG_PLOP, 1.2f))
+            .build()
+    );
+    public static final Msg GUIDE_STRUCTURE_PLACED = create(
+        Communicator.builder()
+            .chat("<yellow>Particles guide you toward the fallen meteor... Follow them.")
+            .build()
+    );
+    public static final Msg GUIDE_STRUCTURE_NEARBY = create(
+        Communicator.builder()
+            .chat("<yellow>The fallen meteor is nearby! It contains a new ore inside. You'll need an iron pickaxe to mine it!")
+            .build()
+    );
 
     public static Msg create(@NotNull String id, @Nullable Communicator communicator){
         return new Msg(id, communicator, Lang::lang);
