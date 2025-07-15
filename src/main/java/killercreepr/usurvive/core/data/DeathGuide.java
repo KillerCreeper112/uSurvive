@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.data;
 
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.game.SimpleStatutable;
 import killercreepr.crux.core.util.CruxLoc;
@@ -17,27 +18,40 @@ public class DeathGuide extends SimpleStatutable {
     protected final @NotNull Location from;
     protected final @NotNull Location to;
     protected final int particleAmount;
-    protected final @NotNull ValuesProvider cfg;
+    protected final @NotNull NumberProvider particleShiftStart;
+    protected final @NotNull NumberProvider particleSpeedDistanceMultiplier;
+    protected final @NotNull NumberProvider particleOffsetVertical;
+    protected final @NotNull NumberProvider particleOffsetSide;
+    protected final @NotNull NumberProvider particleShift;
     protected final Location toCloneSameY;
-    public DeathGuide(@NotNull Player p, @NotNull Location from, @NotNull Location to, int particleAmount, @NotNull ValuesProvider cfg) {
-        this.p = p;
-        this.from = from;
-        this.to = to;
-        this.particleAmount = particleAmount;
-        this.cfg = cfg;
+    protected final Particle particle;
 
-        this.toCloneSameY = to.clone();
-        toCloneSameY.setY(from.getY());
-    }
 
     protected int currentParticleAmount;
     protected Location currentLocation;
     protected Vector dir;
+
+    public DeathGuide(@NotNull Player p, @NotNull Location from, @NotNull Location location, int particleAmount, @NotNull NumberProvider particleShiftStart, @NotNull NumberProvider particleSpeedDistanceMultiplier, @NotNull NumberProvider particleOffsetVertical, @NotNull NumberProvider particleOffsetSide, @NotNull NumberProvider particleShift, Particle particle) {
+        this.p = p;
+        this.from = from;
+        to = location;
+        this.particleAmount = particleAmount;
+        this.particleShiftStart = particleShiftStart;
+        this.particleSpeedDistanceMultiplier = particleSpeedDistanceMultiplier;
+        this.particleOffsetVertical = particleOffsetVertical;
+        this.particleOffsetSide = particleOffsetSide;
+        this.particleShift = particleShift;
+
+        this.particle = particle;
+        this.toCloneSameY = to.clone();
+        this.toCloneSameY.setY(from.getY());
+    }
+
     @Override
     public void started() {
         super.started();
         currentParticleAmount = particleAmount;
-        currentLocation = CruxLoc.shiftToward(from.clone(), toCloneSameY, cfg.DEATH_GUIDE_PARTICLE_SHIFT_START().value().doubleValue());
+        currentLocation = CruxLoc.shiftToward(from.clone(), toCloneSameY, particleShiftStart.value().doubleValue());
         dir = currentLocation.getDirection();
         distance = p.getLocation().distance(to);
         new BukkitRunnable(){
@@ -63,13 +77,13 @@ public class DeathGuide extends SimpleStatutable {
     @Override
     public void tick() {
         double speed = CruxMath.clamp(
-            distance*cfg.DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER().value().doubleValue(),
+            distance*particleSpeedDistanceMultiplier.value().doubleValue(),
             .01, .6
         );
         Location spawn = CruxLoc.shift(currentLocation.clone(), 0D,
-            cfg.DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL().value().doubleValue(),
-            cfg.DEATH_GUIDE_PARTICLE_OFFSET_SIDE().value().doubleValue());
-        p.spawnParticle(Particle.SOUL_FIRE_FLAME, spawn, 0,
+            particleOffsetVertical.value().doubleValue(),
+            particleOffsetSide.value().doubleValue());
+        p.spawnParticle(particle, spawn, 0,
             dir.getX(), getParticleY(), dir.getZ(), speed
         );
 
@@ -79,6 +93,6 @@ public class DeathGuide extends SimpleStatutable {
             return;
         }
 
-        currentLocation = CruxLoc.shiftToward(currentLocation, toCloneSameY, cfg.DEATH_GUIDE_PARTICLE_SHIFT().value().doubleValue());
+        currentLocation = CruxLoc.shiftToward(currentLocation, toCloneSameY, particleShift.value().doubleValue());
     }
 }

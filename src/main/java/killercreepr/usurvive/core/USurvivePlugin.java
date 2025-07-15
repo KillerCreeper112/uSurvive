@@ -99,6 +99,7 @@ import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeakness;
 import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeaknessCalculator;
 import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeaknessWarning;
 import killercreepr.usurvive.core.entity.tickable.USurviveTickables;
+import killercreepr.usurvive.core.guide.listener.GuideListener;
 import killercreepr.usurvive.core.item.QuickAccessItem;
 import killercreepr.usurvive.core.item.USurviveItems;
 import killercreepr.usurvive.core.lang.Lang;
@@ -435,7 +436,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             devCommands,
             new VillagerTradeListener(),
             new CustomEntityListener(),
-            new SporelinkListener()
+            new SporelinkListener(),
+            new GuideListener(values.GUIDE_RESOURCE_WORLD_STRUCTURE(), values.GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE())
             //new WaxPaintingListener()
         );
 

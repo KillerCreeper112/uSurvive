@@ -10,6 +10,7 @@ import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
 import killercreepr.cruxconfig.config.bukkit.value.CfgValue;
 import killercreepr.cruxconfig.config.bukkit.value.CommonValue;
 import killercreepr.cruxconfig.config.bukkit.value.NumCfgValue;
+import killercreepr.cruxstructures.api.structure.generation.StructureGenerator;
 import killercreepr.usurvive.api.values.GravestoneCfg;
 import killercreepr.usurvive.api.values.SleeperCfg;
 import killercreepr.usurvive.api.values.ValuesProvider;
@@ -105,6 +106,8 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg, Graveston
     public final NumCfgValue REDUCE_RECENT_DEATHS_TIME = new NumCfgValue(288000);
     public final NumCfgValue MAX_RECENT_DEATHS = new NumCfgValue(3);
     public final NumCfgValue RESET_SET_RANDOM_TP_TIME = new NumCfgValue(12096000);
+    public final NumCfgValue GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE = new NumCfgValue(NumberProvider.uniform(12,16));
+    public final CfgValue<StructureGenerator> GUIDE_RESOURCE_WORLD_STRUCTURE = new CommonValue<>(){};
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -423,6 +426,16 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg, Graveston
     @Override
     public Holder<Collection<CfgLootData>> BLOCK_DISPENSE_LOOT_DATA() {
         return BLOCK_DISPENSE_LOOT_DATA;
+    }
+
+    @Override
+    public Holder<StructureGenerator> GUIDE_RESOURCE_WORLD_STRUCTURE() {
+        return GUIDE_RESOURCE_WORLD_STRUCTURE;
+    }
+
+    @Override
+    public Holder<NumberProvider> GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE() {
+        return GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE;
     }
 
     @Override

@@ -4,6 +4,7 @@ import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.data.Reloadable;
 import killercreepr.crux.api.item.predicate.ItemPredicate;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import killercreepr.cruxstructures.api.structure.generation.StructureGenerator;
 import killercreepr.usurvive.core.data.CfgLootData;
 import killercreepr.usurvive.core.data.PremiumRank;
 import killercreepr.usurvive.core.data.ResourcePackRequestData;
@@ -77,4 +78,6 @@ public interface ValuesProvider extends Reloadable {
 
     Holder<Collection<CfgLootData>> CHESTS_LOOT_DATA();
     Holder<Collection<CfgLootData>> BLOCK_DISPENSE_LOOT_DATA();
+    Holder<StructureGenerator> GUIDE_RESOURCE_WORLD_STRUCTURE();
+    Holder<NumberProvider> GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE();
 }

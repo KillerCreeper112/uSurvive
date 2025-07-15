@@ -15,6 +15,7 @@ import killercreepr.usurvive.core.stat.USurviveStats;
 import killercreepr.usurvive.core.statistic.USurviveStatistics;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -90,6 +91,14 @@ public class DeathHolder extends PlayerTickedDataHolder {
         Location pos =  death.getGravePosition().toLocation(p.getWorld()); //guardian == null ? death.getGravePosition().toLocation(p.getWorld()) : guardian.getLocation();
 
         //Location startingPoint = CruxLoc.shiftToward(p.getEyeLocation(), pos, 1D);
-        new DeathGuide(p, p.getLocation().add(0, p.getHeight()/2, 0), pos, cfg.DEATH_GUIDE_PARTICLE_AMOUNT().value().intValue(), cfg).setStarted();
+        new DeathGuide(p, p.getLocation().add(0, p.getHeight()/2, 0), pos,
+            cfg.DEATH_GUIDE_PARTICLE_AMOUNT().value().intValue(),
+            cfg.DEATH_GUIDE_PARTICLE_SHIFT_START(),
+            cfg.DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER(),
+            cfg.DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL(),
+            cfg.DEATH_GUIDE_PARTICLE_OFFSET_SIDE(),
+            cfg.DEATH_GUIDE_PARTICLE_SHIFT(),
+            Particle.SOUL_FIRE_FLAME
+        ).setStarted();
     }
 }
