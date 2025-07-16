@@ -8,6 +8,8 @@ import killercreepr.crux.core.Crux;
 import killercreepr.cruxadvancements.api.advancement.CruxAdvancement;
 import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementManager;
 import killercreepr.cruxadvancements.api.event.CruxAdvancementGrantEvent;
+import killercreepr.cruxblocks.api.event.CruxBlockBreakEvent;
+import killercreepr.cruxblocks.core.mining.user.EntityMiner;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstructures.api.structure.generation.StructureGenerator;
 import killercreepr.cruxworlds.api.world.CruxWorld;
@@ -37,6 +39,18 @@ public class GuideListener implements Listener {
     public GuideListener(Holder<StructureGenerator> GUIDE_RESOURCE_WORLD_STRUCTURE, Holder<NumberProvider> guideResourceWorldStructureChunkDistance) {
         this.GUIDE_RESOURCE_WORLD_STRUCTURE = GUIDE_RESOURCE_WORLD_STRUCTURE;
         GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE = guideResourceWorldStructureChunkDistance;
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onCruxBlockBreak(CruxBlockBreakEvent event) {
+        if(!(event.getContext().getMiner() instanceof EntityMiner miner)) return;
+        if(!(miner.getEntity() instanceof Player p)) return;
+        if(!event.getBlock().key().equals(Crux.key("orbit_ore"))) return;
+
+        GuideStartHolder holder = EntityMemory.getDataHolder(p, GuideStartHolder.class);
+        if(holder == null) return;
+        holder.setFallenMeteorLocation(null);
+        holder.deleteSaveFile();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
