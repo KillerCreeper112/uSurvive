@@ -6,10 +6,14 @@ import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxadvancements.api.advancement.CruxAdvancement;
+import killercreepr.cruxadvancements.api.advancement.flag.CruxAdvancementFlag;
 import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementManager;
 import killercreepr.cruxadvancements.api.event.CruxAdvancementGrantEvent;
+import killercreepr.cruxadvancements.crazy.advancement.CrazyAdvancement;
 import killercreepr.cruxblocks.api.event.CruxBlockBreakEvent;
 import killercreepr.cruxblocks.core.mining.user.EntityMiner;
+import killercreepr.cruxclaims.api.event.ClaimerClaimEvent;
+import killercreepr.cruxclaims.core.claiming.data.PlayerClaimer;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxcurrency.api.event.CurrencyDepositEvent;
 import killercreepr.cruxshops.api.event.EntityPurchaseTraderTradeEvent;
@@ -21,10 +25,7 @@ import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.guide.GuideAdvances;
 import killercreepr.usurvive.core.guide.GuideHolder;
 import killercreepr.usurvive.core.guide.GuideStructurePlacer;
-import killercreepr.usurvive.core.guide.progression.FirstGuideProgression;
-import killercreepr.usurvive.core.guide.progression.FourthGuideProgression;
-import killercreepr.usurvive.core.guide.progression.SecondGuideProgression;
-import killercreepr.usurvive.core.guide.progression.ThirdGuideProgression;
+import killercreepr.usurvive.core.guide.progression.*;
 import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.world.USurviveWorldTypes;
 import net.kyori.adventure.text.Component;
@@ -109,10 +110,36 @@ public class GuideListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onClaimerClaim(ClaimerClaimEvent event) {
+        if(!(event.getClaimer() instanceof PlayerClaimer claimer)) return;
+        Player p = claimer.getPlayer();
+        if(p == null) return;
+
+        GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
+        if(holder == null) return;
+        if(holder.getCurrentProgression() instanceof FifthGuideProgression){
+            holder.completeAndClearCurrent();
+        }
+    }
+
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCruxAdvancementGrant(CruxAdvancementGrantEvent event) {
         CruxAdvancement advancement = event.getAdvancement();
+
+        if(advancement instanceof CrazyAdvancement advance && !advance.hasFlag(CruxAdvancementFlag.GLOBAL)){
+            UUID who = event.getWho();
+            Player p = Crux.getServer().getPlayer(who);
+            if(p == null) return;
+
+            GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
+            if(holder != null){
+                if(holder.getCurrentProgression() instanceof SixthGuideProgression){
+                    holder.completeAndClearCurrent();
+                }
+            }
+        }
         if(advancement.key().equals(GuideAdvances.ENTER_RESOURCE_OVERWORLD)){
             onEnterResourceOverworld(event);
             return;

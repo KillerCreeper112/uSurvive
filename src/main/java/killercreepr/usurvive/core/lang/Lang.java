@@ -352,6 +352,16 @@ public class Lang {
             .chat("<yellow>Now that you're here, you can use <hover:show_text:\"Click to use /claim\"><click:run_command:\"/claim\"><white>/claim</white></click></hover> and start claiming some land!")
             .build()
     );
+    public static final Msg GUIDE_FIFTH_COMPLETE = create(
+        Communicator.builder()
+            .chat("<yellow>You can exit Astraclaim View by clicking anywhere in your inventory. Once you do that, use <hover:show_text:\"Click to use /quests\"><click:run_command:\"/quests\"><white>/quests</white></click></hover> and complete one of the quests! There are plenty to choose from.")
+            .build()
+    );
+    public static final Msg GUIDE_SIXTH_COMPLETE = create(
+        Communicator.builder()
+            .chat("<yellow>todo")
+            .build()
+    );
 
     public static Msg create(@NotNull String id, @Nullable Communicator communicator){
         return new Msg(id, communicator, Lang::lang);
