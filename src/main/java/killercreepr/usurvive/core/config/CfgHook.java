@@ -33,6 +33,15 @@ public class CfgHook {
                 return new GuideShardChooseObjective(data, maxProgress);
             }
         });
+        fileAdvancementObjective.registerCustomHandler(new FileSimpleAdvanceObjective<>(USurvivePlugin.inst().key("guide_discover_meteor")) {
+
+            @Override
+            public @Nullable AdvancementObjective deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e, @NotNull ObjectiveCommonData data) {
+                Integer maxProgress = e.getObject(Integer.class, "amount");
+                if (maxProgress == null) maxProgress = 1;
+                return new GuideDiscoverMeteorObjective(data, maxProgress);
+            }
+        });
         fileAdvancementObjective.registerCustomHandler(new FileSimpleAdvanceObjective<>(USurvivePlugin.inst().key("slumber")) {
 
             @Override

@@ -1,19 +1,25 @@
 package killercreepr.usurvive.core.guide;
 
+import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
+import killercreepr.crux.api.loot.LootContext;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.PlayerTickedDataHolder;
 import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementManager;
+import killercreepr.cruxadvancements.core.entity.memory.AdvancementHolder;
 import killercreepr.cruxadvancements.core.registries.AdvancementRegistries;
 import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.common.file.DataFile;
 import killercreepr.usurvive.core.USurvivePlugin;
+import killercreepr.usurvive.core.advancement.objective.GuideDiscoverMeteorObjective;
+import killercreepr.usurvive.core.advancement.objective.GuideShardChooseObjective;
 import killercreepr.usurvive.core.data.DeathGuide;
 import killercreepr.usurvive.core.lang.Lang;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -71,9 +77,19 @@ public class GuideStartHolder extends PlayerTickedDataHolder {
 
         lastDistanceSquared = p.getLocation().distanceSquared(fallenMeteorLocation);
         if(lastDistanceSquared > (12D*12D)) return;
-        var event = manager.grantAdvancement(p, advancement);
-        if(event == null || event.isCancelled()) return;
-        Lang.GUIDE_STRUCTURE_NEARBY.use(p);
+
+        AdvancementHolder holder = holder(p);
+        if(holder!= null) {
+            holder.getAdvancementTracker().apply(GuideDiscoverMeteorObjective.class, (man, ad, objective) -> {
+                objective.trigger(p.getUniqueId(), man, ad, LootContext.builder().looter(p).location(fallenMeteorLocation).build());
+            });
+        }
+
+        if(advancement.isGranted(p)) Lang.GUIDE_STRUCTURE_NEARBY.use(p);
+    }
+
+    private AdvancementHolder holder(@NotNull Entity p){
+        return EntityMemory.getDataHolder(p, AdvancementHolder.class);
     }
 
     protected final double maxParticleShowDistance = 16D*16D;
