@@ -357,6 +357,11 @@ public class Lang {
             .chat("<yellow>You can exit Astraclaim View by clicking anywhere in your inventory. Once you do that, use <hover:show_text:\"Click to use /quests\"><click:run_command:\"/quests\"><white>/quests</white></click></hover> and complete one of the quests! There are plenty to choose from.")
             .build()
     );
+    public static final Msg GUIDE_SIXTH_END = create(
+        Communicator.builder()
+            .chat("<yellow>And that is a basic precept of some of the features that uSurvive has! If you need help, we have <hover:show_text:\"Click to use /guide\"><click:run_command:\"/guide\"><white>/guide</white></click></hover> and <hover:show_text:\"Click to use /discord\"><click:run_command:\"/discord\"><white>/discord</white></click></hover>. There are still many things to discover... including the Abyss Dimension! But first, get a full set of Diamond armor or Rose Gold <hover:show_text:\"Click to use /help rosegold\"><click:run_command:\"/help rosegold\"><white><bold>(?)</bold></white></click></hover> armor. Then we'll talk. Stay safe, you never know what's out there..")
+            .build()
+    );
     public static final Msg GUIDE_SEVENTH_START = create(
         Communicator.builder()
             .chat("<yellow>todo")

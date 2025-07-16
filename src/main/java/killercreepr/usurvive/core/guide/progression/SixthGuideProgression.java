@@ -35,6 +35,7 @@ public class SixthGuideProgression implements GuideProgression{
 
     @Override
     public void onComplete(Player p, GuideHolder holder) {
+        Lang.GUIDE_SIXTH_END.use(p);
     }
 
     @Override
