@@ -107,10 +107,7 @@ import killercreepr.usurvive.core.listener.*;
 import killercreepr.usurvive.core.mechanics.grapple.standard.StandardGrappleHooks;
 import killercreepr.usurvive.core.mechanics.whip.standard.StandardWhipHooks;
 import killercreepr.usurvive.core.menu.ItemPackMenu;
-import killercreepr.usurvive.core.menu.action.CancelTPAAction;
-import killercreepr.usurvive.core.menu.action.ConfirmTPAAction;
-import killercreepr.usurvive.core.menu.action.PlayerSettingAction;
-import killercreepr.usurvive.core.menu.action.PlayerSettingCacheAction;
+import killercreepr.usurvive.core.menu.action.*;
 import killercreepr.usurvive.core.menu.module.CurrencyDepositModule;
 import killercreepr.usurvive.core.potion.USurvivePotions;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
@@ -288,6 +285,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         menuActions.register(new PlayerSettingAction(Crux.key("player_settings")));
         menuActions.register(new ConfirmTPAAction(Crux.key("confirm_tpa")));
         menuActions.register(new CancelTPAAction(Crux.key("cancel_tpa")));
+        menuActions.register(new GuideShardAction(Crux.key("guide_shard")));
 
         EntityMemory.registerFunction(this, mem ->{
             if(!(mem instanceof PlayerMemory m)) return;
