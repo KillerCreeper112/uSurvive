@@ -99,7 +99,10 @@ import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeakness;
 import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeaknessCalculator;
 import killercreepr.usurvive.core.entity.sleeper.effects.SleepWeaknessWarning;
 import killercreepr.usurvive.core.entity.tickable.USurviveTickables;
+import killercreepr.usurvive.core.guide.GuideHolder;
+import killercreepr.usurvive.core.guide.config.GuideCfgLoader;
 import killercreepr.usurvive.core.guide.listener.GuideListener;
+import killercreepr.usurvive.core.guide.progression.GuideProgression;
 import killercreepr.usurvive.core.item.QuickAccessItem;
 import killercreepr.usurvive.core.item.USurviveItems;
 import killercreepr.usurvive.core.lang.Lang;
@@ -222,6 +225,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
         USurviveBlockComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());
 
+        new GuideCfgLoader(CfgHook.FILE_GUIDE_PROGRESSION).load();
+
         if(getServer().getPluginManager().getPlugin("CruxCharms") != null){
             CharmTypes.register();
         }
@@ -295,6 +300,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             m.getDataHolders().register(new SleeperHolder(m, () -> (SleeperCfg) values()));
             m.getDataHolders().register(new AdvancementLoaderHolder(m, cfgManagerLoader));
             m.getDataHolders().register(new AdvancementAutoSaveHolder(m, cfgManagerLoader));
+            m.getDataHolders().register(new GuideHolder(m));
         });
         StandardGrappleHooks.register(USurviveRegistries.GRAPPLE_HOOK);
         StandardWhipHooks.register(USurviveRegistries.WHIP_HOOK);
@@ -435,7 +441,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new VillagerTradeListener(),
             new CustomEntityListener(),
             new SporelinkListener(),
-            new GuideListener(values.GUIDE_RESOURCE_WORLD_STRUCTURE(), values.GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE())
+            new GuideListener(values, values.GUIDE_RESOURCE_WORLD_STRUCTURE(), values.GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE())
             //new WaxPaintingListener()
         );
 
@@ -650,6 +656,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         registry.registerFileHandler(SleepWeaknessWarning.class, new FileSleepWeaknessWarning());
         registry.registerFileHandler(RandomTPData.class, new FileRandomTPData());
         registry.registerFileHandler(RandomTPData.Pos.class, new FileRandomTPPos());
+        registry.registerFileHandler(GuideProgression.class, CfgHook.FILE_GUIDE_PROGRESSION);
         registry.registerFileHandler(
             new AutoFileHandler<>(PremiumRank.class),
             new AutoFileHandler<>(CfgLootData.class)

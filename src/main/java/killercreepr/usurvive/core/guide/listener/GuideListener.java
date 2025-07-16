@@ -15,28 +15,31 @@ import killercreepr.cruxstructures.api.structure.generation.StructureGenerator;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.type.CruxWorldType;
 import killercreepr.cruxworlds.core.component.CruxWorldsComponents;
-import killercreepr.usurvive.core.USurvivePlugin;
-import killercreepr.usurvive.core.guide.GuideStartHolder;
+import killercreepr.usurvive.api.values.ValuesProvider;
+import killercreepr.usurvive.core.guide.GuideAdvances;
+import killercreepr.usurvive.core.guide.GuideHolder;
 import killercreepr.usurvive.core.guide.GuideStructurePlacer;
+import killercreepr.usurvive.core.guide.progression.FirstGuideProgression;
+import killercreepr.usurvive.core.guide.progression.SecondGuideProgression;
 import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.world.USurviveWorldTypes;
-import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 
 import java.util.UUID;
 
 public class GuideListener implements Listener {
-    public static final Key ENTER_RESOURCE_OVERWORLD = USurvivePlugin.inst().key("main/enter_resource_world");
-
+    protected final ValuesProvider cfg;
     protected final Holder<StructureGenerator> GUIDE_RESOURCE_WORLD_STRUCTURE;
     protected final Holder<NumberProvider> GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE;
 
-    public GuideListener(Holder<StructureGenerator> GUIDE_RESOURCE_WORLD_STRUCTURE, Holder<NumberProvider> guideResourceWorldStructureChunkDistance) {
+    public GuideListener(ValuesProvider cfg, Holder<StructureGenerator> GUIDE_RESOURCE_WORLD_STRUCTURE, Holder<NumberProvider> guideResourceWorldStructureChunkDistance) {
+        this.cfg = cfg;
         this.GUIDE_RESOURCE_WORLD_STRUCTURE = GUIDE_RESOURCE_WORLD_STRUCTURE;
         GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE = guideResourceWorldStructureChunkDistance;
     }
@@ -47,17 +50,38 @@ public class GuideListener implements Listener {
         if(!(miner.getEntity() instanceof Player p)) return;
         if(!event.getBlock().key().equals(Crux.key("orbit_ore"))) return;
 
-        GuideStartHolder holder = EntityMemory.getDataHolder(p, GuideStartHolder.class);
+        GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
         if(holder == null) return;
-        holder.setFallenMeteorLocation(null);
-        holder.deleteSaveFile();
+        if(holder.getCurrentProgression() instanceof FirstGuideProgression){
+            holder.completeAndClearCurrent();
+        }
     }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
+        String world = cfg.SPAWN_WORLD().value();
+        if(world == null) return;
+
+        Player p = event.getPlayer();
+        GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
+        if(holder == null) return;
+
+        if(holder.getCurrentProgression() instanceof SecondGuideProgression prog){
+            if(!p.getWorld().getName().equals(world)) return;
+            Crux.scheduler().runTaskAsync(() ->{
+                prog.findAndSetConduit(p.getLocation().getBlock());
+            });
+            Lang.GUIDE_SECOND_GUIDE_SPAWN.use(p);
+            return;
+        }
+    }
+
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCruxAdvancementGrant(CruxAdvancementGrantEvent event) {
         CruxAdvancementManager manager = event.getManager();
         CruxAdvancement advancement = event.getAdvancement();
-        if(!advancement.key().equals(ENTER_RESOURCE_OVERWORLD)) return;
+        if(!advancement.key().equals(GuideAdvances.ENTER_RESOURCE_OVERWORLD)) return;
         UUID who = event.getWho();
         Player p = Crux.getServer().getPlayer(who);
         if(p == null) return;
@@ -86,12 +110,14 @@ public class GuideListener implements Listener {
                 return;
             }
 
-            GuideStartHolder holder = EntityMemory.getOrCreateDataHolder(p, GuideStartHolder.class, mem -> new GuideStartHolder((PlayerMemory) mem));
-            if(holder == null){
+            GuideHolder holder = EntityMemory.getOrCreateDataHolder(p, GuideHolder.class, mem -> new GuideHolder((PlayerMemory) mem));
+            if(holder == null || !holder.hasProgressOrNull(FirstGuideProgression.class)){
                 p.sendActionBar(Component.text("An error occurred. Contact developer. CODE 7391"));
                 return;
             }
-            holder.setFallenMeteorLocation(loc);
+            FirstGuideProgression prog = new FirstGuideProgression();
+            prog.setFallenMeteorLocation(loc);
+            holder.setCurrentProgression(prog);
             Lang.GUIDE_STRUCTURE_PLACED.use(p);
         });
     }

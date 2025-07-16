@@ -9,10 +9,12 @@ import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.advancement.objective.*;
+import killercreepr.usurvive.core.config.handler.FileGuideProgression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CfgHook {
+    public static final FileGuideProgression FILE_GUIDE_PROGRESSION = new FileGuideProgression();
     private static final FileAdvancementObjective fileAdvancementObjective = CruxAdvanceCfgData.fileAdvancementObjective();
     public static void load() {
         fileAdvancementObjective.registerCustomHandler(new FileSimpleAdvanceObjective<>(USurvivePlugin.inst().key("item_infuse_potion")) {
@@ -79,4 +81,6 @@ public class CfgHook {
             }
         });
     }
+
+
 }

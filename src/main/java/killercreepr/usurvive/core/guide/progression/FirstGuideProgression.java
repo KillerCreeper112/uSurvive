@@ -1,44 +1,80 @@
-package killercreepr.usurvive.core.guide;
+package killercreepr.usurvive.core.guide.progression;
 
-import killercreepr.crux.api.data.AutoSavable;
-import killercreepr.crux.api.data.Loadable;
 import killercreepr.crux.api.entity.memory.EntityMemory;
-import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.loot.LootContext;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.entity.memory.PlayerTickedDataHolder;
 import killercreepr.crux.core.math.BlockPos;
 import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementManager;
 import killercreepr.cruxadvancements.core.entity.memory.AdvancementHolder;
 import killercreepr.cruxadvancements.core.registries.AdvancementRegistries;
-import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
-import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
-import killercreepr.cruxconfig.config.common.file.DataFile;
+import killercreepr.cruxconfig.config.common.FileContext;
+import killercreepr.cruxconfig.config.common.element.FileElement;
+import killercreepr.cruxconfig.config.common.element.FileObject;
+import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
+import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxworlds.api.world.CruxWorld;
+import killercreepr.cruxworlds.core.component.CruxWorldsComponents;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.advancement.objective.GuideDiscoverMeteorObjective;
 import killercreepr.usurvive.core.data.DeathGuide;
+import killercreepr.usurvive.core.guide.GuideAdvances;
+import killercreepr.usurvive.core.guide.GuideHolder;
 import killercreepr.usurvive.core.lang.Lang;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class GuideStartHolder extends PlayerTickedDataHolder implements AutoSavable, Loadable {
-    public static final Key DISCOVER_GUIDE_METEOR = USurvivePlugin.inst().key("main/discover_guide_meteor");
-    public static final Key KEY = Crux.key("guide/start");
-    public GuideStartHolder(@NotNull Key key, @NotNull PlayerMemory parent) {
-        super(key, parent);
-        load();
+public class FirstGuideProgression implements GuideProgression{
+    public static final Key KEY = Crux.key("first");
+
+    public static class Loader implements FileObjectHandler<FirstGuideProgression>{
+        @Override
+        public @NotNull FileElement serializeToFile(@NotNull FileContext<?> ctx, @NotNull FirstGuideProgression object) {
+            var r = ctx.getRegistry();
+            FileObject o = new FileObject();
+            o.add("fallen_meteor_location", r.serializeToFile(object.fallenMeteorLocation));
+            o.add("fallen_meteor_world_created_at", r.serializeToFile(object.fallenMeteorWorldCreatedAt));
+            o.add("fallen_meteor_world", r.serializeToFile(object.fallenMeteorWorld));
+            return o;
+        }
+
+        @Nullable
+        @Override
+        public FirstGuideProgression deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement e) {
+            var r = ctx.getRegistry();
+            FileObject o = (FileObject) e;
+            FirstGuideProgression progression = new FirstGuideProgression();
+            progression.fallenMeteorLocation = r.deserializeFromFile(BlockPos.class, o.get("fallen_meteor_location"));
+            progression.fallenMeteorWorldCreatedAt = r.deserializeFromFileOrDefault(Long.class, o.get("fallen_meteor_world_created_at"), 0L);
+            progression.fallenMeteorWorld = r.deserializeFromFile(Key.class, o.get("fallen_meteor_world"));
+            return progression;
+        }
     }
-    public GuideStartHolder(@NotNull PlayerMemory parent) {
-        this(KEY, parent);
+
+    @Override
+    public void onComplete(Player p, GuideHolder holder) {
+        holder.setCurrentProgression(new SecondGuideProgression());
+        Lang.GUIDE_SECOND_GUIDE_START.use(p);
+    }
+
+    @Override
+    public void onTick(Player p) {
+        int every = 30;//cfg.DEATH_GUIDE_TICK_EVERY().value().intValue();
+        if(every==0) return;
+        if(Crux.getCurrentTick() % every != 0) return;
+        tickDistance(p);
+        tickStructureGuide(p);
     }
 
     protected Key fallenMeteorWorld;
     protected BlockPos fallenMeteorLocation;
+    protected long fallenMeteorWorldCreatedAt;
 
     public BlockPos getFallenMeteorLocation() {
         return fallenMeteorLocation;
@@ -50,38 +86,31 @@ public class GuideStartHolder extends PlayerTickedDataHolder implements AutoSava
                 fallenMeteorLocation.getBlockX(), fallenMeteorLocation.getBlockY(), fallenMeteorLocation.getBlockZ()
             );
             this.fallenMeteorWorld = fallenMeteorLocation.getWorld().key();
+
+            CruxWorld crux = CruxCore.core().worldManager().getWorld(fallenMeteorWorld.key());
+            if(crux != null){
+                fallenMeteorWorldCreatedAt = crux.getOrDefault(CruxWorldsComponents.WORLD_CREATED_AT_TIME, 0L);
+            }else fallenMeteorWorldCreatedAt = 0L;
             return;
         }
         this.fallenMeteorLocation = null;
         this.fallenMeteorWorld = null;
+        this.fallenMeteorWorldCreatedAt = 0L;
     }
 
-    public void setFallenMeteorLocation(Key world, BlockPos fallenMeteorLocation) {
+    public void setFallenMeteorLocation(Key world, BlockPos fallenMeteorLocation, long fallenMeteorWorldCreatedAt) {
         this.fallenMeteorLocation = fallenMeteorLocation;
         this.fallenMeteorWorld = world;
+        this.fallenMeteorWorldCreatedAt = fallenMeteorWorldCreatedAt;
     }
 
-    public DataFile getSaveFile(boolean createIfNeeded){
-        return BukkitDataFile.parseFromGeneralPath(
-            new CruxFolder(USurvivePlugin.inst(), "data/guide/player/" + parent.getUUID() + ".json").file(),
-            createIfNeeded
-        );
-    }
-
-    public boolean deleteSaveFile(){
-        DataFile file = getSaveFile(false);
-        if(file == null) return false;
-        return file.delete();
-    }
-
-    @Override
-    protected void onTick(@NotNull Player p) {
-        super.onTick(p);
-        int every = 30;//cfg.DEATH_GUIDE_TICK_EVERY().value().intValue();
-        if(every==0) return;
-        if(Crux.getCurrentTick() % every != 0) return;
-        tickDistance(p);
-        tickStructureGuide(p);
+    public boolean compareCreatedTime(World world){
+        long x;
+        CruxWorld crux = CruxCore.core().worldManager().getWorld(world.key());
+        if(crux != null){
+            x = crux.getOrDefault(CruxWorldsComponents.WORLD_CREATED_AT_TIME, 0L);
+        }else x = 0L;
+        return x == fallenMeteorWorldCreatedAt;
     }
 
     protected double lastDistanceSquared;
@@ -89,7 +118,7 @@ public class GuideStartHolder extends PlayerTickedDataHolder implements AutoSava
         if(fallenMeteorLocation == null || stopTickDistance || !p.getWorld().key().equals(fallenMeteorWorld)) return;
         CruxAdvancementManager manager = AdvancementRegistries.ADVANCEMENT_MANAGERS.get(USurvivePlugin.inst().key("main"));
         if(manager == null) return;
-        var advancement = manager.getAdvancement(DISCOVER_GUIDE_METEOR);
+        var advancement = manager.getAdvancement(GuideAdvances.DISCOVER_GUIDE_METEOR);
         if(advancement == null) return;
         if(advancement.isGranted(p)) return;
 
@@ -134,21 +163,9 @@ public class GuideStartHolder extends PlayerTickedDataHolder implements AutoSava
         ).setStarted();
     }
 
+    @NotNull
     @Override
-    public void save() {
-        DataFile cfg = getSaveFile(true);
-        cfg.serialize("fallen_meteor_world", fallenMeteorWorld);
-        cfg.serialize("fallen_meteor_location",
-            fallenMeteorLocation == null ? null : CruxPosition.block(fallenMeteorLocation));
-        cfg.save();
-    }
-
-    @Override
-    public void load() {
-        DataFile cfg = getSaveFile(false);
-        if(cfg == null) return;
-        fallenMeteorLocation = cfg.deserialize("fallen_meteor_location", BlockPos.class);
-        fallenMeteorWorld = cfg.deserialize("fallen_meteor_world", Key.class);
-        cfg.close();
+    public Key key() {
+        return KEY;
     }
 }

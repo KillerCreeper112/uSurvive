@@ -327,6 +327,16 @@ public class Lang {
             ))
             .build()
     );
+    public static final Msg GUIDE_SECOND_GUIDE_START = create(
+        Communicator.builder()
+            .chat("<yellow>Great! You have just mined <white>Orbit Ore</white>, which drops <white>Orbits</white>! Orbits are uSurvive's main global currency. They can be used to purchase various things, like items from the <white>Merchants</white> at spawn. You can head back to spawn using <click:run_command:\"/spawn\"><hover:show_text:\"Click to run /spawn\"><white>/spawn</white></hover></click>.")
+            .build()
+    );
+    public static final Msg GUIDE_SECOND_GUIDE_SPAWN = create(
+        Communicator.builder()
+            .chat("<yellow>Now you can deposit the orbits in an <white>Orbit Conduit</white>. Follow the particles. Make sure you don't accidentally fall into any portals.")
+            .build()
+    );
 
     public static Msg create(@NotNull String id, @Nullable Communicator communicator){
         return new Msg(id, communicator, Lang::lang);
