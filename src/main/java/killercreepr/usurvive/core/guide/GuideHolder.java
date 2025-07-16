@@ -14,6 +14,7 @@ import killercreepr.usurvive.core.guide.progression.GuideProgression;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +27,12 @@ public class GuideHolder extends PlayerTickedDataHolder implements AutoSavable, 
     }
     public GuideHolder(@NotNull PlayerMemory parent) {
         this(KEY, parent);
+    }
+
+    @Override
+    protected void removingFromMemory(@Nullable Player e) {
+        super.removingFromMemory(e);
+        save();
     }
 
     public DataFile getSaveFile(boolean createIfNeeded){

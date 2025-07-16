@@ -39,3 +39,5 @@ dependencies:
       required: false
     CruxEnchantsOverhaul:
       required: false
+    CruxShops:
+      required: false

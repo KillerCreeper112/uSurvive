@@ -12,6 +12,8 @@ import killercreepr.cruxcore.CruxCore;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.block.ActiveOrbitConduit;
 import killercreepr.usurvive.core.data.DeathGuide;
+import killercreepr.usurvive.core.guide.GuideHolder;
+import killercreepr.usurvive.core.lang.Lang;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -50,7 +52,7 @@ public class SecondGuideProgression implements GuideProgression{
     }
 
     public Block findConduit(Block center){
-        return findConduit(center, 64);
+        return findConduit(center, 48);
     }
 
     public Block findConduit(Block center, int range){
@@ -66,6 +68,12 @@ public class SecondGuideProgression implements GuideProgression{
             }
         }
         return null;
+    }
+
+    @Override
+    public void onComplete(Player p, GuideHolder holder) {
+        holder.setCurrentProgression(new ThirdGuideProgression());
+        Lang.GUIDE_SECOND_COMPLETE.use(p);
     }
 
     @Override
@@ -93,6 +101,7 @@ public class SecondGuideProgression implements GuideProgression{
             findAndSetConduit(p.getLocation().getBlock());
             return;
         }
+        if(!conduit.getWorld().equals(p.getWorld())) return;
         Location pos =  conduit.getLocation();
 
         var cfg = USurvivePlugin.inst().values();

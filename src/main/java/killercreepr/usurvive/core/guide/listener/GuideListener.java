@@ -11,6 +11,8 @@ import killercreepr.cruxadvancements.api.event.CruxAdvancementGrantEvent;
 import killercreepr.cruxblocks.api.event.CruxBlockBreakEvent;
 import killercreepr.cruxblocks.core.mining.user.EntityMiner;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxcurrency.api.event.CurrencyDepositEvent;
+import killercreepr.cruxshops.api.event.EntityPurchaseTraderTradeEvent;
 import killercreepr.cruxstructures.api.structure.generation.StructureGenerator;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.type.CruxWorldType;
@@ -20,7 +22,9 @@ import killercreepr.usurvive.core.guide.GuideAdvances;
 import killercreepr.usurvive.core.guide.GuideHolder;
 import killercreepr.usurvive.core.guide.GuideStructurePlacer;
 import killercreepr.usurvive.core.guide.progression.FirstGuideProgression;
+import killercreepr.usurvive.core.guide.progression.FourthGuideProgression;
 import killercreepr.usurvive.core.guide.progression.SecondGuideProgression;
+import killercreepr.usurvive.core.guide.progression.ThirdGuideProgression;
 import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.world.USurviveWorldTypes;
 import net.kyori.adventure.text.Component;
@@ -59,12 +63,17 @@ public class GuideListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
-        String world = cfg.SPAWN_WORLD().value();
-        if(world == null) return;
-
         Player p = event.getPlayer();
         GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
         if(holder == null) return;
+
+        if(holder.getCurrentProgression() instanceof FourthGuideProgression){
+            holder.completeAndClearCurrent();
+            return;
+        }
+
+        String world = cfg.SPAWN_WORLD().value();
+        if(world == null) return;
 
         if(holder.getCurrentProgression() instanceof SecondGuideProgression prog){
             if(!p.getWorld().getName().equals(world)) return;
@@ -76,12 +85,41 @@ public class GuideListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onCurrencyDeposit(CurrencyDepositEvent event) {
+        if(!event.getCurrency().key().equals(Crux.key("orbit"))) return;
+        if(!event.getReason().equalsIgnoreCase("usurvive:menu/currency_deposit")) return;
+        Player p = event.getPlayer().getPlayer();
+        if(p == null) return;
+
+        GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
+        if(holder == null) return;
+        if(holder.getCurrentProgression() instanceof SecondGuideProgression){
+            holder.completeAndClearCurrent();
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityPurchaseTraderTrade(EntityPurchaseTraderTradeEvent event) {
+        if(!(event.getEntity() instanceof Player p)) return;
+        GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
+        if(holder == null) return;
+        if(holder.getCurrentProgression() instanceof ThirdGuideProgression){
+            holder.completeAndClearCurrent();
+        }
+    }
+
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCruxAdvancementGrant(CruxAdvancementGrantEvent event) {
-        CruxAdvancementManager manager = event.getManager();
         CruxAdvancement advancement = event.getAdvancement();
-        if(!advancement.key().equals(GuideAdvances.ENTER_RESOURCE_OVERWORLD)) return;
+        if(advancement.key().equals(GuideAdvances.ENTER_RESOURCE_OVERWORLD)){
+            onEnterResourceOverworld(event);
+            return;
+        }
+    }
+    public void onEnterResourceOverworld(CruxAdvancementGrantEvent event){
+        CruxAdvancementManager manager = event.getManager();
         UUID who = event.getWho();
         Player p = Crux.getServer().getPlayer(who);
         if(p == null) return;

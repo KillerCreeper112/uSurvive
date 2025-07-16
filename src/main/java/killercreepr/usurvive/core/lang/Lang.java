@@ -327,14 +327,29 @@ public class Lang {
             ))
             .build()
     );
-    public static final Msg GUIDE_SECOND_GUIDE_START = create(
+    public static final Msg GUIDE_FIRST_COMPLETE = create(
         Communicator.builder()
             .chat("<yellow>Great! You have just mined <white>Orbit Ore</white>, which drops <white>Orbits</white>! Orbits are uSurvive's main global currency. They can be used to purchase various things, like items from the <white>Merchants</white> at spawn. You can head back to spawn using <click:run_command:\"/spawn\"><hover:show_text:\"Click to run /spawn\"><white>/spawn</white></hover></click>.")
             .build()
     );
     public static final Msg GUIDE_SECOND_GUIDE_SPAWN = create(
         Communicator.builder()
-            .chat("<yellow>Now you can deposit the orbits in an <white>Orbit Conduit</white>. Follow the particles. Make sure you don't accidentally fall into any portals.")
+            .chat("<yellow>Now, to use orbits, they must be deposited into your <white>Orbit Stash</white>. You can do this by going to an <white>Orbit Conduit</white>. Follow the particles. Make sure you don't accidentally fall into any portals. ")
+            .build()
+    );
+    public static final Msg GUIDE_SECOND_COMPLETE = create(
+        Communicator.builder()
+            .chat("<yellow>Perfect! Now, try selling or buying items from the merchants at spawn!")
+            .build()
+    );
+    public static final Msg GUIDE_THIRD_COMPLETE = create(
+        Communicator.builder()
+            .chat("<yellow>You have done great! It may be a good time to settle in and create a base so you can store all your goodies securely. Head to the <white>Main Overworld <hover:show_text:\"Click to use /rtp\"><click:run_command:\"/rtp\"><bold>CLICK</bold></click></hover></white>. It will never get reset so it is a perfect place to build a base and <white>Claim</white>!")
+            .build()
+    );
+    public static final Msg GUIDE_FOURTH_COMPLETE = create(
+        Communicator.builder()
+            .chat("<yellow>Now that you're here, you can use <hover:show_text:\"Click to use /claim\"><click:run_command:\"/claim\"><white>/claim</white></click></hover> and start claiming some land!")
             .build()
     );
 

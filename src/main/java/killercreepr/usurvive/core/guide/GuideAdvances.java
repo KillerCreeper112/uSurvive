@@ -6,4 +6,5 @@ import net.kyori.adventure.key.Key;
 public class GuideAdvances {
     public static final Key DISCOVER_GUIDE_METEOR = USurvivePlugin.inst().key("main/discover_guide_meteor");
     public static final Key ENTER_RESOURCE_OVERWORLD = USurvivePlugin.inst().key("main/enter_resource_world");
+    public static final Key DEPOSIT_ORBIT_FROM_CONDUIT = USurvivePlugin.inst().key("main/deposit_orbit_from_conduit");
 }
