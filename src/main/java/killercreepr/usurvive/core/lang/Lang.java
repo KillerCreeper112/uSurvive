@@ -319,6 +319,14 @@ public class Lang {
             .chat("<yellow>The fallen meteor is nearby! It contains a new ore inside. You'll need an iron pickaxe to mine it!")
             .build()
     );
+    public static final Msg GUIDE_SHARD_USE = create(
+        Communicator.builder()
+            .title(CreateTitle.title(
+                "<yellow>You have chosen", "<item_name><yellow>!",
+                10, 40, 10
+            ))
+            .build()
+    );
 
     public static Msg create(@NotNull String id, @Nullable Communicator communicator){
         return new Msg(id, communicator, Lang::lang);

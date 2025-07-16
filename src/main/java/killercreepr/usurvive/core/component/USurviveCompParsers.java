@@ -334,4 +334,10 @@ public class USurviveCompParsers {
         .apply(ctx -> new ReducePotionDurationComponent(
             ctx.get("remove_potions")
         ));
+
+    public static final PersistTextParser<ExecuteConsoleCommandsComponent> EXECUTE_CONSOLE_COMMANDS = PersistTextParser.mapBuilder(ExecuteConsoleCommandsComponent.class)
+        .field("right_click_commands", TextInputField.field(PersistTextParser.LIST.STRING,ExecuteConsoleCommandsComponent::getCommands))
+        .apply(ctx -> new ExecuteConsoleCommandsComponent(
+            ctx.get("right_click_commands")
+        ));
 }

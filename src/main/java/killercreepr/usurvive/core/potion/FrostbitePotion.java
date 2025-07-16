@@ -2,26 +2,18 @@ package killercreepr.usurvive.core.potion;
 
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxentities.api.combat.EntityDamager;
-import killercreepr.cruxpotions.api.potion.ActiveInflictedPotion;
 import killercreepr.cruxpotions.api.potion.CruxPotion;
 import killercreepr.cruxpotions.api.potion.inflictor.LocationedInflictor;
 import killercreepr.cruxpotions.api.potion.inflictor.PotionInflictor;
-import killercreepr.cruxpotions.core.potions.ActiveEntityPotion;
 import killercreepr.cruxpotions.core.potions.InflictedPotion;
-import killercreepr.cruxpotions.core.potions.SimpleActivePotion;
 import killercreepr.cruxpotions.core.potions.inflictor.EntityInflictor;
-import killercreepr.usurvive.core.enchant.USurviveEnchant;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

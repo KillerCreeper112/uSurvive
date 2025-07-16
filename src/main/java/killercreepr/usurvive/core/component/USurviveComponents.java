@@ -111,6 +111,9 @@ public class USurviveComponents {
     public static final DataComponentType<ReducePotionDurationComponent> REDUCE_POTION_DURATION = register("reduce_potion_duration", builder ->
         builder.persistTextParser(USurviveCompParsers.REDUCE_POTION_DURATION.createInput(Crux.key("reduce_potion_duration"))));
 
+    public static final DataComponentType<ExecuteConsoleCommandsComponent> EXECUTE_CONSOLE_COMMANDS = register("execute_console_commands", builder ->
+        builder.persistTextParser(USurviveCompParsers.EXECUTE_CONSOLE_COMMANDS.createInput(Crux.key("execute_console_commands"))));
+
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());
     }

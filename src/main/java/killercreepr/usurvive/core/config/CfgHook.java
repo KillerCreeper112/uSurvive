@@ -24,6 +24,15 @@ public class CfgHook {
                 return new ItemInfusePotionObjective(data, maxProgress);
             }
         });
+        fileAdvancementObjective.registerCustomHandler(new FileSimpleAdvanceObjective<>(USurvivePlugin.inst().key("guide_shard_choose")) {
+
+            @Override
+            public @Nullable AdvancementObjective deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e, @NotNull ObjectiveCommonData data) {
+                Integer maxProgress = e.getObject(Integer.class, "amount");
+                if (maxProgress == null) maxProgress = 1;
+                return new GuideShardChooseObjective(data, maxProgress);
+            }
+        });
         fileAdvancementObjective.registerCustomHandler(new FileSimpleAdvanceObjective<>(USurvivePlugin.inst().key("slumber")) {
 
             @Override

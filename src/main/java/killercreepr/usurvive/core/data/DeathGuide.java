@@ -5,7 +5,6 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.game.SimpleStatutable;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
-import killercreepr.usurvive.api.values.ValuesProvider;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
