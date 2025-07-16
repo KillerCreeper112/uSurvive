@@ -68,7 +68,7 @@ public class GuideStartHolder extends PlayerTickedDataHolder {
 
     protected double lastDistanceSquared;
     public void tickDistance(Player p){
-        if(fallenMeteorLocation == null) return;
+        if(fallenMeteorLocation == null || stopTickDistance) return;
         CruxAdvancementManager manager = AdvancementRegistries.ADVANCEMENT_MANAGERS.get(USurvivePlugin.inst().key("main"));
         if(manager == null) return;
         var advancement = manager.getAdvancement(DISCOVER_GUIDE_METEOR);
@@ -80,13 +80,17 @@ public class GuideStartHolder extends PlayerTickedDataHolder {
 
         AdvancementHolder holder = holder(p);
         if(holder!= null) {
-            holder.getAdvancementTracker().apply(GuideDiscoverMeteorObjective.class, (man, ad, objective) -> {
-                objective.trigger(p.getUniqueId(), man, ad, LootContext.builder().looter(p).location(fallenMeteorLocation).build());
+            stopTickDistance = true;
+            Crux.scheduler().runTaskMain(() ->{
+                holder.getAdvancementTracker().apply(GuideDiscoverMeteorObjective.class, (man, ad, objective) -> {
+                    objective.trigger(p.getUniqueId(), man, ad, LootContext.builder().looter(p).location(fallenMeteorLocation).build());
+                });
+                if(advancement.isGranted(p)) Lang.GUIDE_STRUCTURE_NEARBY.use(p);
+                stopTickDistance = false;
             });
         }
-
-        if(advancement.isGranted(p)) Lang.GUIDE_STRUCTURE_NEARBY.use(p);
     }
+    protected boolean stopTickDistance = false;
 
     private AdvancementHolder holder(@NotNull Entity p){
         return EntityMemory.getDataHolder(p, AdvancementHolder.class);
