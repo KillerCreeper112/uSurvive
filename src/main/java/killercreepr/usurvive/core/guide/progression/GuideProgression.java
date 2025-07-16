@@ -12,4 +12,5 @@ public interface GuideProgression extends Keyed {
     default void save(DataFile file){}
 
     default void onComplete(Player p, GuideHolder holder){}
+    default void onStart(Player p, GuideHolder holder){}
 }

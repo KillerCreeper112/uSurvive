@@ -60,7 +60,10 @@ public class FirstGuideProgression implements GuideProgression{
     @Override
     public void onComplete(Player p, GuideHolder holder) {
         holder.setCurrentProgression(new SecondGuideProgression());
-        Lang.GUIDE_FIRST_COMPLETE.use(p);
+    }
+
+    @Override
+    public void onStart(Player p, GuideHolder holder) {
     }
 
     @Override

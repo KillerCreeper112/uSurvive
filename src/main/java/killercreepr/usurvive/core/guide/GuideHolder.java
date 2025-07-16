@@ -58,6 +58,7 @@ public class GuideHolder extends PlayerTickedDataHolder implements AutoSavable, 
 
     public void setCurrentProgression(GuideProgression currentProgression) {
         this.currentProgression = currentProgression;
+        if(currentProgression != null) currentProgression.onStart(parent.value(), this);
     }
 
     protected GuideProgression currentProgression;

@@ -35,7 +35,12 @@ public class FifthGuideProgression implements GuideProgression{
 
     @Override
     public void onComplete(Player p, GuideHolder holder) {
-        Lang.GUIDE_FIFTH_COMPLETE.use(p);
+        holder.setCurrentProgression(new SixthGuideProgression());
+    }
+
+    @Override
+    public void onStart(Player p, GuideHolder holder) {
+        Lang.GUIDE_FIFTH_START.use(p);
     }
 
     @NotNull
