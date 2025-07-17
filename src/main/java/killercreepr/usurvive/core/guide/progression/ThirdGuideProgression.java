@@ -40,7 +40,9 @@ public class ThirdGuideProgression implements GuideProgression{
 
     @Override
     public void onStart(Player p, GuideHolder holder) {
-        Lang.GUIDE_THIRD_START.use(p);
+        Crux.scheduler().runTaskLater(() ->{
+            Lang.GUIDE_THIRD_START.use(p);
+        }, 2L);
     }
 
     @NotNull

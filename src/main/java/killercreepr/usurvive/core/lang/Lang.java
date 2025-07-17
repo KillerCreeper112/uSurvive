@@ -305,18 +305,37 @@ public class Lang {
     );
     public static final Msg GUIDE_STRUCTURE_CANNOT_BE_PLACED = create(
         Communicator.builder()
-            .chat("<gold>Whoops! <yellow>The fallen meteor structure could not be placed nearby. If you wish to continue the starting guide, please return to spawn and randomly teleport again. <click:run_command:\"/spawn\"><hover:show_text:\"Click to run /spawn\"><bold>CLICK HERE")
+            .chat(List.of(
+                "",
+                "",
+                "<dark_aqua><latinfont:Guide>",
+                "<gold>Whoops! <yellow>The fallen meteor structure could not be placed nearby. If you wish to continue the starting guide, please return to spawn and randomly teleport again. <click:run_command:\"/spawn\"><hover:show_text:\"Click to run /spawn\"><bold>CLICK HERE"
+            ))
             .sound(CreateSound.sound(Sound.BLOCK_SNIFFER_EGG_PLOP, 1.2f))
             .build()
     );
     public static final Msg GUIDE_STRUCTURE_PLACED = create(
         Communicator.builder()
-            .chat("<yellow>Particles guide you toward the fallen meteor... Follow them.")
+            .chat(List.of(
+                "",
+                "",
+                "<dark_aqua><latinfont:Guide>",
+                "<yellow>Flame particles guide you toward the fallen meteor... Follow them."
+            ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
     public static final Msg GUIDE_STRUCTURE_NEARBY = create(
         Communicator.builder()
-            .chat("<yellow>The fallen meteor is nearby! It contains a new ore inside. You'll need an iron pickaxe to mine it!")
+            .chat(List.of(
+                "",
+                "",
+                "<dark_aqua><latinfont:Guide>",
+                "<yellow>The fallen meteor is nearby! It contains a new ore inside. You'll need an iron pickaxe to mine it! Before you start getting supplies, you can set your home here using <hover:show_text:\"Click to use /sethome \"><click:suggest_command:\"/sethome\"><white><bold>/sethome <name></bold></white></click></hover>. Or you can use <hover:show_text:\"Click to use /homes\"><click:run_command:\"/homes\"><white><bold>/homes</bold></white></click></hover>!",
+                "",
+                "<yellow>When you are done with that, look around for a campfire and a chest. It contains supplies that will kick start your adventure!"
+            ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
     public static final Msg GUIDE_SHARD_USE = create(
@@ -329,84 +348,180 @@ public class Lang {
     );
     public static final Msg GUIDE_SECOND_START = create(
         Communicator.builder()
-            .chat("<yellow>Great! You have just mined <white>Orbit Ore</white>, which drops <white>Orbits</white>! Orbits are uSurvive's main global currency. They can be used to purchase various things, like items from the <white>Merchants</white> at spawn. You can head back to spawn using <click:run_command:\"/spawn\"><hover:show_text:\"Click to run /spawn\"><white>/spawn</white></hover></click>.")
+            .chat(List.of(
+                "",
+                "",
+                "<dark_aqua><latinfont:Guide>",
+                "<yellow>Great! You have just mined <white>Orbit Ore</white>, which drops <white>Orbits</white>! Orbits are uSurvive's main global currency. They can be used to purchase various things, like items from the <white>Merchants</white> at spawn. You can head back to spawn using <click:run_command:\"/spawn\"><hover:show_text:\"Click to run /spawn\"><white>/spawn</white></hover></click>."
+            ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
     public static final Msg GUIDE_SECOND_GUIDE_SPAWN = create(
         Communicator.builder()
-            .chat("<yellow>Now, to use orbits, they must be deposited into your <white>Orbit Stash</white>. You can do this by going to an <white>Orbit Conduit</white>. Follow the particles. Make sure you don't accidentally fall into any portals. ")
+            .chat(List.of(
+                "",
+                "",
+                "<dark_aqua><latinfont:Guide>",
+                "<yellow>Now, to use orbits, they must be deposited into your <white>Orbit Stash</white>. You can do this by going to an <white>Orbit Conduit</white>. Follow the particles. Make sure you don't accidentally fall into any portals. "
+            ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
     public static final Msg GUIDE_THIRD_START = create(
         Communicator.builder()
-            .chat("<yellow>Perfect! Now, try selling or buying items from the merchants at spawn!")
+            .chat(List.of(
+                    "",
+                    "",
+                    "<dark_aqua><latinfont:Guide>",
+                    "<yellow>Perfect! Now, try selling or buying items from the merchants at spawn!"
+                ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
     public static final Msg GUIDE_FOURTH_START = create(
         Communicator.builder()
-            .chat("<yellow>You have done great! It may be a good time to settle in and create a base so you can store all your goodies securely. Head to the <white>Main Overworld <hover:show_text:\"Click to use /rtp\"><click:run_command:\"/rtp\"><bold>CLICK</bold></click></hover></white>. It will never get reset so it is a perfect place to build a base and <white>Claim</white>!")
+            .chat(List.of(
+                    "",
+                    "",
+                    "<dark_aqua><latinfont:Guide>",
+                    "<yellow>You have done great! It may be a good time to settle in and create a base so you can store all your goodies securely. Head to the <white>Main Overworld <hover:show_text:\"Click to use /rtp\"><click:run_command:\"/rtp\"><bold>CLICK</bold></click></hover></white>. It will never get reset so it is a perfect place to build a base and <white>Claim</white>!"
+                ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
     public static final Msg GUIDE_FIFTH_START = create(
         Communicator.builder()
-            .chat("<yellow>Now that you're here, you can use <hover:show_text:\"Click to use /claim\"><click:run_command:\"/claim\"><white>/claim</white></click></hover> and start claiming some land!")
+            .chat(List.of(
+                    "",
+                    "",
+                    "<dark_aqua><latinfont:Guide>",
+                    "<yellow>Now that you're here, you can use <hover:show_text:\"Click to use /claim\"><click:run_command:\"/claim\"><white>/claim</white></click></hover> and start claiming some land!"
+                ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
     public static final Msg GUIDE_SIXTH_START = create(
         Communicator.builder()
-            .chat("<yellow>You can exit Astraclaim View by clicking anywhere in your inventory. Once you do that, use <hover:show_text:\"Click to use /quests\"><click:run_command:\"/quests\"><white>/quests</white></click></hover> and complete one of the quests! There are plenty to choose from.")
+            .chat(List.of(
+                    "",
+                    "",
+                    "<dark_aqua><latinfont:Guide>",
+                    "<yellow>You can exit Astraclaim View by clicking anywhere in your inventory. Once you do that, use <hover:show_text:\"Click to use /quests\"><click:run_command:\"/quests\"><white>/quests</white></click></hover> and complete one of the quests! There are plenty to choose from."
+                ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
     public static final Msg GUIDE_SEVENTH_START = create(
         Communicator.builder()
-            .chat("<yellow>And that is a basic precept of some of the features that uSurvive has! If you need help, we have <hover:show_text:\"Click to use /guide\"><click:run_command:\"/guide\"><white>/guide</white></click></hover> and <hover:show_text:\"Click to use /discord\"><click:run_command:\"/discord\"><white>/discord</white></click></hover>. There are still many things to discover... including the Abyss Dimension! But first, get a full set of Diamond armor or Rose Gold <hover:show_text:\"Click to use /help rosegold\"><click:run_command:\"/help rosegold\"><white><bold>(?)</bold></white></click></hover> armor. Then we'll talk. Stay safe, you never know what's out there..")
+            .chat(List.of(
+                    "",
+                    "",
+                    "<dark_aqua><latinfont:Guide>",
+                    "<yellow>And that is a basic precept of some of the features that uSurvive has! If you need help, we have <hover:show_text:\"Click to use /guide\"><click:run_command:\"/guide\"><white>/guide</white></click></hover> and <hover:show_text:\"Click to use /discord\"><click:run_command:\"/discord\"><white>/discord</white></click></hover>. There are still many things to discover... including the Abyss Dimension! But first, get a full set of Diamond armor or Rose Gold <hover:show_text:\"Click to use /help rosegold\"><click:run_command:\"/help rosegold\"><white><bold>(?)</bold></white></click></hover> armor. Then we'll talk. Stay safe, you never know what's out there.."
+                ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
     public static final Msg GUIDE_EIGHTH_START = create(
         Communicator.builder()
-            .chat("<yellow>You have been doing a fantastic job! Have you been exploring and figuring things out on your own? Before thinking about entering the Abyss, it's best you gear up. It is a nasty place. Craft a Copper Staff, then we'll go from there. You can find the recipe if you use <hover:show_text:\"Click to use /recipes\"><click:run_command:\"/recipes\"><white>/recipes</white></click></hover>. I assume you've collected at least one copper ingot, eh?")
+            .chat(List.of(
+                    "",
+                    "",
+                    "<dark_aqua><latinfont:Guide>",
+                    "<yellow>You have been doing a fantastic job! Have you been exploring and figuring things out on your own? Before thinking about entering the Abyss, it's best you gear up. It is a nasty place. Craft a Copper Staff, then we'll go from there. You can find the recipe if you use <hover:show_text:\"Click to use /recipes\"><click:run_command:\"/recipes\"><white>/recipes</white></click></hover>. I assume you've collected at least one copper ingot, eh?"
+                ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
     //obtain soul essence
     public static final Msg GUIDE_NINTH_START = create(
         Communicator.builder()
-            .chat("<yellow>Great! But not so great is the copper staff by itself is quite weak and boring. However, you can apply spells to it! You're going to need some Soul Essence and soul sand first. Head into the Nether and dig around in soul sand or soul soil areas to find Spectral Soil- it has blue streaks in it. When looking for materials in general, it's best to look in the resource worlds since they reset periodically. To get to the Resource Nether, head to the Resource Overworld and enter a nether portal.")
+            .chat(List.of(
+                    "",
+                    "",
+                    "<dark_aqua><latinfont:Guide>",
+                    "<yellow>Great! But not so great is the copper staff by itself is quite weak and boring. However, you can apply spells to it! You're going to need some Soul Essence and soul sand first. Head into the Nether and dig around in soul sand or soul soil areas to find Spectral Soil- it has blue streaks in it. When looking for materials in general, it's best to look in the resource worlds since they reset periodically. To get to the Resource Nether, head to the Resource Overworld and enter a nether portal."
+                ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
     //craft soul orb
     public static final Msg GUIDE_TENTH_START = create(
         Communicator.builder()
-            .chat("<yellow>You got some Soul Essence- perfect! Now you need to make that into a Soul Orb. Again, the recipe can be found within <hover:show_text:\"Click to use /recipes\"><click:run_command:\"/recipes\"><white>/recipes</white></click></hover>. Pro tip: If you click on the result item while viewing a recipe in the custom recipe book, it'll automatically try to find a crafting table and place all the ingredients in it.")
+            .chat(List.of(
+                    "",
+                    "",
+                    "<dark_aqua><latinfont:Guide>",
+                    "<yellow>You got some Soul Essence- perfect! Now you need to make that into a Soul Orb. Again, the recipe can be found within <hover:show_text:\"Click to use /recipes\"><click:run_command:\"/recipes\"><white>/recipes</white></click></hover>. Pro tip: If you click on the result item while viewing a recipe in the custom recipe book, it'll automatically try to find a crafting table and place all the ingredients in it."
+                ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
     public static final Msg GUIDE_ELEVENTH_START = create(
         Communicator.builder()
-            .chat("<yellow>Here comes the tricky part. You're going to need to kill a certain mob while holding the Soul Orb in one of your hands. The goal is to consume the mob's soul. Each mob soul has a different spell attached to it. Not all mobs have been implemented though. Check <hover:show_text:\"Click to use /help copper_staff\"><click:run_command:\"/help copper_staff\"><white>/help copper_staff</white></click></hover> and navigate to Current Mobs to see all of the currently implemented mobs. You may need to kill a bunch of the same mob to extract a soul from them.")
+            .chat(List.of(
+                    "",
+                    "",
+                    "<dark_aqua><latinfont:Guide>",
+                    "<yellow>Here comes the tricky part. You're going to need to kill a certain mob while holding the Soul Orb in one of your hands. The goal is to consume the mob's soul. Each mob soul has a different spell attached to it. Not all mobs have been implemented though. Check <hover:show_text:\"Click to use /help copper_staff\"><click:run_command:\"/help copper_staff\"><white>/help copper_staff</white></click></hover> and navigate to Current Mobs to see all of the currently implemented mobs. You may need to kill a bunch of the same mob to extract a soul from them."
+                ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
     public static final Msg GUIDE_TWELFTH_START = create(
         Communicator.builder()
-            .chat("<yellow>That's the spirit! When the Soul Orb reaches 100% and then you kill one last mob (of the same type), that is when their soul will release! Then you can capture it within the Soul Orb.")
+            .chat(List.of(
+                "",
+                "",
+                "<dark_aqua><latinfont:Guide>",
+                "<yellow>That's the spirit! When the Soul Orb reaches 100% and then you kill one last mob (of the same type), that is when their soul will release! Then you can capture it within the Soul Orb."
+            ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
     public static final Msg GUIDE_THIRTEENTH_START = create(
         Communicator.builder()
-            .chat("<yellow>Fantastic work! To apply the Soul Orb onto your Copper Staff, you'll need to build an Abyss Altar. Sounds scary, huh? Cause it is... kind of. Anyway, open your journal, <hover:show_text:\"Click to use /help abyss\"><click:run_command:\"/help abyss\"><white>/help abyss</white></click></hover>, and navigate to the Traveling to the Abyss section to see how to build the Abyss Altar.")
+            .chat(List.of(
+                "",
+                "",
+                "<dark_aqua><latinfont:Guide>",
+                "<yellow>Fantastic work! To apply the Soul Orb onto your Copper Staff, you'll need to build an Abyss Altar. Sounds scary, huh? Cause it is... kind of. Anyway, open your journal, <hover:show_text:\"Click to use /help abyss\"><click:run_command:\"/help abyss\"><white>/help abyss</white></click></hover>, and navigate to the Traveling to the Abyss section to see how to build the Abyss Altar."
+            ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
     public static final Msg GUIDE_FOURTEENTH_START = create(
         Communicator.builder()
-            .chat("<yellow>Go to your Abyss Altar, make sure the candles are lit. Take your Copper Staff and right click the enchanting table part. After that, do the same with your Soul Orb. Then.. watch some magic happen!")
+            .chat(List.of(
+                "",
+                "",
+                "<dark_aqua><latinfont:Guide>",
+                "<yellow>Go to your Abyss Altar, make sure the candles are lit. Take your Copper Staff and right click the enchanting table part. After that, do the same with your Soul Orb. Then.. watch some magic happen!"
+            ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
     public static final Msg GUIDE_FIFTEENTH_START = create(
         Communicator.builder()
-            .chat("<yellow>Haha, you did it! How about you try it out? Hold right click while holding the Copper Staff to cast the spell!")
+            .chat(List.of(
+                "",
+                "",
+                "<dark_aqua><latinfont:Guide>",
+                "<yellow>Haha, you did it! How about you try it out? Hold right click while holding the Copper Staff to cast the spell!"
+            ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
     public static final Msg GUIDE_SIXTEENTH_START = create(
         Communicator.builder()
-            .chat("<yellow>")
+            .chat(List.of(
+                "",
+                "",
+                "<dark_aqua><latinfont:Guide>",
+                "<yellow>"
+            ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
 

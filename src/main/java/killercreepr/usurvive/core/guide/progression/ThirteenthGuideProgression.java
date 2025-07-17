@@ -40,7 +40,9 @@ public class ThirteenthGuideProgression implements GuideProgression{
 
     @Override
     public void onStart(Player p, GuideHolder holder) {
-        Lang.GUIDE_THIRTEENTH_START.use(p);
+        Crux.scheduler().runTaskLater(() ->{
+            Lang.GUIDE_THIRTEENTH_START.use(p);
+        }, 2L);
     }
 
     @NotNull
