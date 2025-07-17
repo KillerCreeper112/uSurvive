@@ -364,37 +364,44 @@ public class Lang {
     );
     public static final Msg GUIDE_EIGHTH_START = create(
         Communicator.builder()
-            .chat("<yellow>Get a copper staff")
+            .chat("<yellow>You have been doing a fantastic job! Have you been exploring and figuring things out on your own? Before thinking about entering the Abyss, it's best you gear up. It is a nasty place. Craft a Copper Staff, then we'll go from there. You can find the recipe if you use <hover:show_text:\"Click to use /recipes\"><click:run_command:\"/recipes\"><white>/recipes</white></click></hover>. I assume you've collected at least one copper ingot, eh?")
             .build()
     );
+    //obtain soul essence
     public static final Msg GUIDE_NINTH_START = create(
         Communicator.builder()
-            .chat("<yellow>todo")
+            .chat("<yellow>Great! But not so great is the copper staff by itself is quite weak and boring. However, you can apply spells to it! You're going to need some Soul Essence and soul sand first. Head into the Nether and dig around in soul sand or soul soil areas to find Spectral Soil- it has blue streaks in it. When looking for materials in general, it's best to look in the resource worlds since they reset periodically. To get to the Resource Nether, head to the Resource Overworld and enter a nether portal.")
             .build()
     );
+    //craft soul orb
     public static final Msg GUIDE_TENTH_START = create(
         Communicator.builder()
-            .chat("<yellow>todo")
+            .chat("<yellow>You got some Soul Essence- perfect! Now you need to make that into a Soul Orb. Again, the recipe can be found within <hover:show_text:\"Click to use /recipes\"><click:run_command:\"/recipes\"><white>/recipes</white></click></hover>. Pro tip: If you click on the result item while viewing a recipe in the custom recipe book, it'll automatically try to find a crafting table and place all the ingredients in it.")
             .build()
     );
     public static final Msg GUIDE_ELEVENTH_START = create(
         Communicator.builder()
-            .chat("<yellow>todo")
+            .chat("<yellow>Here comes the tricky part. You're going to need to kill a certain mob while holding the Soul Orb in one of your hands. The goal is to consume the mob's soul. Each mob soul has a different spell attached to it. Not all mobs have been implemented though. Check <hover:show_text:\"Click to use /help copper_staff\"><click:run_command:\"/help copper_staff\"><white>/help copper_staff</white></click></hover> and navigate to Current Mobs to see all of the currently implemented mobs. You may need to kill a bunch of the same mob to extract a soul from them.")
             .build()
     );
     public static final Msg GUIDE_TWELFTH_START = create(
         Communicator.builder()
-            .chat("<yellow>todo")
+            .chat("<yellow>That's the spirit! When the Soul Orb reaches 100% and then you kill one last mob (of the same type), that is when their soul will release! Then you can capture it within the Soul Orb.")
             .build()
     );
     public static final Msg GUIDE_THIRTEENTH_START = create(
         Communicator.builder()
-            .chat("<yellow>todo")
+            .chat("<yellow>Fantastic work! To apply the Soul Orb onto your Copper Staff, you'll need to build an Abyss Altar. Sounds scary, huh? Cause it is... kind of. Anyway, open your journal, <hover:show_text:\"Click to use /help abyss\"><click:run_command:\"/help abyss\"><white>/help abyss</white></click></hover>, and navigate to the Traveling to the Abyss section to see how to build the Abyss Altar.")
             .build()
     );
     public static final Msg GUIDE_FOURTEENTH_START = create(
         Communicator.builder()
-            .chat("<yellow>todo")
+            .chat("<yellow>infuse soul orb")
+            .build()
+    );
+    public static final Msg GUIDE_FIFTEENTH_START = create(
+        Communicator.builder()
+            .chat("<yellow>test copper staff")
             .build()
     );
 

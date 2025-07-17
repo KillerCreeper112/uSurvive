@@ -17,8 +17,13 @@ import killercreepr.cruxblocks.core.mining.user.EntityMiner;
 import killercreepr.cruxclaims.api.event.ClaimerClaimEvent;
 import killercreepr.cruxclaims.core.claiming.data.PlayerClaimer;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxcrafting.api.event.PlayerCruxCraftEvent;
 import killercreepr.cruxcurrency.api.event.CurrencyDepositEvent;
+import killercreepr.cruxitems.api.event.ConsumableComponentUseEvent;
 import killercreepr.cruxitems.api.item.plugin.PluginItem;
+import killercreepr.cruxmagic.api.event.EntityInfuseSpellOrbItemEvent;
+import killercreepr.cruxmagic.api.event.EntitySoulOrbConsumeDamageEvent;
+import killercreepr.cruxmagic.api.event.SoulOrbTransferEvent;
 import killercreepr.cruxshops.api.event.EntityPurchaseTraderTradeEvent;
 import killercreepr.cruxstructures.api.structure.generation.StructureGenerator;
 import killercreepr.cruxworlds.api.world.CruxWorld;
@@ -142,6 +147,23 @@ public class GuideListener implements Listener {
             if(PluginItem.isPluginItem(item, Crux.key("copper_staff"))){
                 holder.completeAndClearCurrent();
             }
+        }else if(holder.getCurrentProgression() instanceof NinthGuideProgression){
+            if(PluginItem.isPluginItem(item, Crux.key("soul_essence"))){
+                holder.completeAndClearCurrent();
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerCruxCraft(PlayerCruxCraftEvent event) {
+        if(!(event.getPlayer() instanceof Player p)) return;
+        if(event.getResults().isEmpty()) return;
+        GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
+        if(holder == null) return;
+        if(holder.getCurrentProgression() instanceof TenthGuideProgression){
+            if(PluginItem.isPluginItem(event.getResults().getFirst(), Crux.key("soul_essence"))){
+                holder.completeAndClearCurrent();
+            }
         }
     }
 
@@ -220,4 +242,45 @@ public class GuideListener implements Listener {
             Lang.GUIDE_STRUCTURE_PLACED.use(p);
         });
     }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntitySoulOrbConsumeDamage(EntitySoulOrbConsumeDamageEvent event) {
+        if(!(event.getEntity() instanceof Player p)) return;
+        GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
+        if(holder == null) return;
+        if(holder.getCurrentProgression() instanceof EleventhGuideProgression){
+            holder.completeAndClearCurrent();
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onSoulOrbTransfer(SoulOrbTransferEvent event) {
+        if(!(event.getKiller() instanceof Player p)) return;
+        GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
+        if(holder == null) return;
+        if(holder.getCurrentProgression() instanceof TwelfthGuideProgression){
+            holder.completeAndClearCurrent();
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityInfuseSpellOrbItem(EntityInfuseSpellOrbItemEvent event) {
+        if(!(event.getEntity() instanceof Player p)) return;
+        GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
+        if(holder == null) return;
+        if(holder.getCurrentProgression() instanceof FourteenthGuideProgression){
+            holder.completeAndClearCurrent();
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onConsumableComponentUse(ConsumableComponentUseEvent event) {
+        Player p = event.getContext().getPlayer();
+        GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
+        if(holder == null) return;
+        if(holder.getCurrentProgression() instanceof FifteenthGuideProgression){
+            holder.completeAndClearCurrent();
+        }
+    }
+
 }

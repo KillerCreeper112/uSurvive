@@ -41,3 +41,5 @@ dependencies:
       required: false
     CruxShops:
       required: false
+    CruxMagic:
+      required: false
