@@ -1,8 +1,10 @@
 package killercreepr.usurvive.core.guide.listener;
 
+import io.papermc.paper.event.player.PlayerInventorySlotChangeEvent;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
+import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxadvancements.api.advancement.CruxAdvancement;
@@ -16,6 +18,7 @@ import killercreepr.cruxclaims.api.event.ClaimerClaimEvent;
 import killercreepr.cruxclaims.core.claiming.data.PlayerClaimer;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxcurrency.api.event.CurrencyDepositEvent;
+import killercreepr.cruxitems.api.item.plugin.PluginItem;
 import killercreepr.cruxshops.api.event.EntityPurchaseTraderTradeEvent;
 import killercreepr.cruxstructures.api.structure.generation.StructureGenerator;
 import killercreepr.cruxworlds.api.world.CruxWorld;
@@ -35,6 +38,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
@@ -123,13 +127,28 @@ public class GuideListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerInventorySlotChange(PlayerInventorySlotChangeEvent event) {
+        ItemStack item = event.getNewItemStack();
+        if(CruxItem.isEmpty(item)) return;
+
+        Player p = event.getPlayer();
+        GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
+        if(holder == null) return;
+        if(holder.getCurrentProgression() instanceof EighthGuideProgression){
+            if(PluginItem.isPluginItem(item, Crux.key("copper_staff"))){
+                holder.completeAndClearCurrent();
+            }
+        }
+    }
+
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCruxAdvancementGrant(CruxAdvancementGrantEvent event) {
         CruxAdvancement advancement = event.getAdvancement();
 
+        UUID who = event.getWho();
         if(advancement instanceof CrazyAdvancement advance && !advance.hasFlag(CruxAdvancementFlag.GLOBAL)){
-            UUID who = event.getWho();
             Player p = Crux.getServer().getPlayer(who);
             if(p == null) return;
 
@@ -143,6 +162,18 @@ public class GuideListener implements Listener {
         if(advancement.key().equals(GuideAdvances.ENTER_RESOURCE_OVERWORLD)){
             onEnterResourceOverworld(event);
             return;
+        }
+
+        if(advancement.key().equals(GuideAdvances.OBTAIN_FULL_DIAMOND_ARMOR) || advancement.key().equals(GuideAdvances.OBTAIN_FULL_ROSE_GOLD_ARMOR)){
+            Player p = Crux.getServer().getPlayer(who);
+            if(p == null) return;
+
+            GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
+            if(holder != null){
+                if(holder.getCurrentProgression() instanceof SeventhGuideProgression){
+                    holder.completeAndClearCurrent();
+                }
+            }
         }
     }
     public void onEnterResourceOverworld(CruxAdvancementGrantEvent event){

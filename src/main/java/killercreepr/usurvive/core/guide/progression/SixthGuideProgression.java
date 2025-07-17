@@ -5,8 +5,10 @@ import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
+import killercreepr.usurvive.core.guide.GuideAdvances;
 import killercreepr.usurvive.core.guide.GuideHolder;
 import killercreepr.usurvive.core.lang.Lang;
+import killercreepr.usurvive.core.util.AdvanceUtil;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +37,11 @@ public class SixthGuideProgression implements GuideProgression{
 
     @Override
     public void onComplete(Player p, GuideHolder holder) {
-        Lang.GUIDE_SIXTH_END.use(p);
+        if(AdvanceUtil.hasAnyAdvancement(p, GuideAdvances.OBTAIN_FULL_DIAMOND_ARMOR, GuideAdvances.OBTAIN_FULL_ROSE_GOLD_ARMOR)){
+            holder.setCurrentProgression(new EighthGuideProgression());
+            return;
+        }
+        holder.setCurrentProgression(new SeventhGuideProgression());
     }
 
     @Override

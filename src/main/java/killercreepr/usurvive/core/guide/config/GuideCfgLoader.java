@@ -17,5 +17,8 @@ public class GuideCfgLoader {
         fileGuideProgression.register(FourthGuideProgression.KEY, new FourthGuideProgression.Loader());
         fileGuideProgression.register(FifthGuideProgression.KEY, new FifthGuideProgression.Loader());
         fileGuideProgression.register(SixthGuideProgression.KEY, new SixthGuideProgression.Loader());
+        fileGuideProgression.register(SeventhGuideProgression.KEY, new SeventhGuideProgression.Loader());
+        fileGuideProgression.register(EighthGuideProgression.KEY, new EighthGuideProgression.Loader());
+        fileGuideProgression.register(NinthGuideProgression.KEY, new NinthGuideProgression.Loader());
     }
 }
