@@ -161,7 +161,7 @@ public class GuideListener implements Listener {
         GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
         if(holder == null) return;
         if(holder.getCurrentProgression() instanceof TenthGuideProgression){
-            if(PluginItem.isPluginItem(event.getResults().getFirst(), Crux.key("soul_essence"))){
+            if(PluginItem.isPluginItem(event.getResults().getFirst(), Crux.key("soul_orb"))){
                 holder.completeAndClearCurrent();
             }
         }
