@@ -11,6 +11,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class GuideStructurePlacer {
     protected final World world;
@@ -35,17 +37,21 @@ public class GuideStructurePlacer {
             for(int i = 0; i < maxAttempts; i++){
                 int x = maxChunkDistance.value().intValue();
                 int z = maxChunkDistance.value().intValue();
+                long key = Chunk.getChunkKey(center.getX()+x, center.getZ()+z);
+                if(alreadyChecked.contains(key)) continue;
+
                 Chunk chunk;
                 try {
                     chunk = world.getChunkAtAsync(
                         center.getX()+x, center.getZ()+z
-                    ).get();
+                    ).get(8L, TimeUnit.SECONDS);
                 } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                } catch (TimeoutException e) {
                     throw new RuntimeException(e);
                 }
                 if(!stillValid.value()) return null;
-                if(alreadyChecked.contains(chunk.getChunkKey())) continue;
-                alreadyChecked.add(chunk.getChunkKey());
+                alreadyChecked.add(key);
                 Location placed = attemptPlace(chunk, gen);
                 if(placed!= null) return placed;
             }

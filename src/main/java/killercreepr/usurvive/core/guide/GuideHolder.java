@@ -9,7 +9,13 @@ import killercreepr.crux.core.entity.memory.PlayerTickedDataHolder;
 import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.common.file.DataFile;
+import killercreepr.usurvive.api.entity.player.UPlayer;
+import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
+import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsManager;
 import killercreepr.usurvive.core.USurvivePlugin;
+import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettingSelections;
+import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettings;
+import killercreepr.usurvive.core.guide.progression.FirstGuideProgression;
 import killercreepr.usurvive.core.guide.progression.GuideProgression;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
@@ -94,6 +100,7 @@ public class GuideHolder extends PlayerTickedDataHolder implements AutoSavable, 
     protected void onTick(@NotNull Player p) {
         super.onTick(p);
         if(currentProgression != null){
+            if(!(currentProgression instanceof FirstGuideProgression) && GuideUtil.hasGuideDisabled(p)) return;
             currentProgression.onTick(p);
         }
     }

@@ -132,7 +132,9 @@ public class FirstGuideProgression implements GuideProgression{
 
                 var advancement = manager.getAdvancement(GuideAdvances.ENTER_RESOURCE_WORLD);
                 if(advancement == null) return;
-                manager.revokeAdvancement(p, advancement);
+                Crux.scheduler().runTaskMain(() ->{
+                    manager.revokeAdvancement(p, advancement);
+                });
             }
             return;
         }
@@ -168,6 +170,7 @@ public class FirstGuideProgression implements GuideProgression{
     protected final double maxParticleShowDistance = 16D*16D;
     public void tickStructureGuide(@NotNull Player p){
         if(fallenMeteorLocation == null) return;
+        if(!p.getWorld().key().equals(fallenMeteorWorld)) return;
         if(lastDistanceSquared < maxParticleShowDistance) return;
         //Entity guardian = death.getGuardian();
         Location pos =  fallenMeteorLocation.toLocation(p.getWorld());

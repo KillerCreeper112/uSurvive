@@ -61,6 +61,18 @@ public class StandardPlayerSettings {
         )
     ));
 
+    public static final PlayerSetting GUIDE = register(new SimplePlayerSetting(
+        Crux.key("guide"), StandardPlayerSettingSelections.ENABLED,
+        List.of(
+            StandardPlayerSettingSelections.ENABLED,
+            StandardPlayerSettingSelections.DISABLED
+        ),
+        Map.of(
+            StandardPlayerSettingSelections.ENABLED, "You will have a general guide to help you get started on the server at your own pace.",
+            StandardPlayerSettingSelections.DISABLED, "You will not have a general guide. Does not disable the first stage of the guide. This option is not recommended for new players."
+        )
+    ));
+
     public static PlayerSetting register(PlayerSetting s){
         return USurviveRegistries.PLAYER_SETTING.register(s);
     }
