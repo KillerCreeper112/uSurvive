@@ -396,12 +396,17 @@ public class Lang {
     );
     public static final Msg GUIDE_FOURTEENTH_START = create(
         Communicator.builder()
-            .chat("<yellow>infuse soul orb")
+            .chat("<yellow>Go to your Abyss Altar, make sure the candles are lit. Take your Copper Staff and right click the enchanting table part. After that, do the same with your Soul Orb. Then.. watch some magic happen!")
             .build()
     );
     public static final Msg GUIDE_FIFTEENTH_START = create(
         Communicator.builder()
-            .chat("<yellow>test copper staff")
+            .chat("<yellow>Haha, you did it! How about you try it out? Hold right click while holding the Copper Staff to cast the spell!")
+            .build()
+    );
+    public static final Msg GUIDE_SIXTEENTH_START = create(
+        Communicator.builder()
+            .chat("<yellow>")
             .build()
     );
 

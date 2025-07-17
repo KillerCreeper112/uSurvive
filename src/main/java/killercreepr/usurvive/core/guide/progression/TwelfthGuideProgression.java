@@ -5,8 +5,10 @@ import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
+import killercreepr.usurvive.core.guide.GuideAdvances;
 import killercreepr.usurvive.core.guide.GuideHolder;
 import killercreepr.usurvive.core.lang.Lang;
+import killercreepr.usurvive.core.util.AdvanceUtil;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +37,11 @@ public class TwelfthGuideProgression implements GuideProgression{
 
     @Override
     public void onComplete(Player p, GuideHolder holder) {
+        if(AdvanceUtil.hasAnyAdvancement(p, GuideAdvances.BUILD_ABYSS_ALTAR)){
+            holder.setCurrentProgression(new FourteenthGuideProgression());
+            return;
+        }
+
         holder.setCurrentProgression(new ThirteenthGuideProgression());
     }
 

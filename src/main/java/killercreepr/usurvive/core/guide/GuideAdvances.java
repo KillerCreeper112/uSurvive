@@ -9,4 +9,5 @@ public class GuideAdvances {
     public static final Key DEPOSIT_ORBIT_FROM_CONDUIT = USurvivePlugin.inst().key("main/deposit_orbit_from_conduit");
     public static final Key OBTAIN_FULL_ROSE_GOLD_ARMOR = USurvivePlugin.inst().key("main/obtain_full_rose_gold_armor");
     public static final Key OBTAIN_FULL_DIAMOND_ARMOR = USurvivePlugin.inst().key("main/obtain_full_diamond_armor");
+    public static final Key BUILD_ABYSS_ALTAR = USurvivePlugin.inst().key("main/build_abyss_altar");
 }

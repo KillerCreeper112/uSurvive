@@ -199,6 +199,19 @@ public class GuideListener implements Listener {
                     holder.completeAndClearCurrent();
                 }
             }
+            return;
+        }
+        if(advancement.key().equals(GuideAdvances.BUILD_ABYSS_ALTAR)){
+            Player p = Crux.getServer().getPlayer(who);
+            if(p == null) return;
+
+            GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
+            if(holder != null){
+                if(holder.getCurrentProgression() instanceof ThirteenthGuideProgression){
+                    holder.completeAndClearCurrent();
+                }
+            }
+            return;
         }
     }
     public void onEnterResourceOverworld(CruxAdvancementGrantEvent event){
