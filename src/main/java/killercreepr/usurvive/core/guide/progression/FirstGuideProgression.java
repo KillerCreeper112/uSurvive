@@ -21,6 +21,7 @@ import killercreepr.usurvive.core.data.DeathGuide;
 import killercreepr.usurvive.core.guide.GuideAdvances;
 import killercreepr.usurvive.core.guide.GuideHolder;
 import killercreepr.usurvive.core.lang.Lang;
+import killercreepr.usurvive.core.util.AdvanceUtil;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -118,7 +119,25 @@ public class FirstGuideProgression implements GuideProgression{
 
     protected double lastDistanceSquared;
     public void tickDistance(Player p){
-        if(fallenMeteorLocation == null || stopTickDistance || !p.getWorld().key().equals(fallenMeteorWorld)) return;
+        if(fallenMeteorLocation == null) return;
+        if(stopTickDistance) return;
+        World world = p.getServer().getWorld(fallenMeteorWorld);
+        if(world == null || !compareCreatedTime(world)){
+            if(!AdvanceUtil.hasAnyAdvancement(p, GuideAdvances.DISCOVER_GUIDE_METEOR, GuideAdvances.GUIDE_SHARD_CLAIM)){
+                setFallenMeteorLocation(null);
+
+                Lang.GUIDE_WORLD_RESET.use(p);
+                CruxAdvancementManager manager = AdvancementRegistries.ADVANCEMENT_MANAGERS.get(USurvivePlugin.inst().key("main"));
+                if(manager == null) return;
+
+                var advancement = manager.getAdvancement(GuideAdvances.ENTER_RESOURCE_WORLD);
+                if(advancement == null) return;
+                manager.revokeAdvancement(p, advancement);
+            }
+            return;
+        }
+
+        if(!p.getWorld().key().equals(fallenMeteorWorld)) return;
         CruxAdvancementManager manager = AdvancementRegistries.ADVANCEMENT_MANAGERS.get(USurvivePlugin.inst().key("main"));
         if(manager == null) return;
         var advancement = manager.getAdvancement(GuideAdvances.DISCOVER_GUIDE_METEOR);

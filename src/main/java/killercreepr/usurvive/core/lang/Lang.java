@@ -338,6 +338,17 @@ public class Lang {
             .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
+    public static final Msg GUIDE_WORLD_RESET = create(
+        Communicator.builder()
+            .chat(List.of(
+                "",
+                "",
+                "<dark_aqua><latinfont:Guide>",
+                "<yellow>The world reset. Travel back to the Resource Overworld to discover your fallen meteor!"
+            ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
+            .build()
+    );
     public static final Msg GUIDE_SHARD_USE = create(
         Communicator.builder()
             .title(CreateTitle.title(
