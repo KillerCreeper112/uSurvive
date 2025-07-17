@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class NinthGuideProgression implements GuideProgression{
-    public static final Key KEY = Crux.key("nineth");
+    public static final Key KEY = Crux.key("ninth");
 
     public static class Loader implements FileObjectHandler<NinthGuideProgression>{
         @Override

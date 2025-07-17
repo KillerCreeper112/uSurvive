@@ -372,6 +372,31 @@ public class Lang {
             .chat("<yellow>todo")
             .build()
     );
+    public static final Msg GUIDE_TENTH_START = create(
+        Communicator.builder()
+            .chat("<yellow>todo")
+            .build()
+    );
+    public static final Msg GUIDE_ELEVENTH_START = create(
+        Communicator.builder()
+            .chat("<yellow>todo")
+            .build()
+    );
+    public static final Msg GUIDE_TWELFTH_START = create(
+        Communicator.builder()
+            .chat("<yellow>todo")
+            .build()
+    );
+    public static final Msg GUIDE_THIRTEENTH_START = create(
+        Communicator.builder()
+            .chat("<yellow>todo")
+            .build()
+    );
+    public static final Msg GUIDE_FOURTEENTH_START = create(
+        Communicator.builder()
+            .chat("<yellow>todo")
+            .build()
+    );
 
     public static Msg create(@NotNull String id, @Nullable Communicator communicator){
         return new Msg(id, communicator, Lang::lang);

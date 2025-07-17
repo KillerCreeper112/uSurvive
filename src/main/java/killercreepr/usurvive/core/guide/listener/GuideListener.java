@@ -30,6 +30,7 @@ import killercreepr.usurvive.core.guide.GuideHolder;
 import killercreepr.usurvive.core.guide.GuideStructurePlacer;
 import killercreepr.usurvive.core.guide.progression.*;
 import killercreepr.usurvive.core.lang.Lang;
+import killercreepr.usurvive.core.util.AdvanceUtil;
 import killercreepr.usurvive.core.world.USurviveWorldTypes;
 import net.kyori.adventure.text.Component;
 import org.bukkit.World;
@@ -62,7 +63,9 @@ public class GuideListener implements Listener {
         GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
         if(holder == null) return;
         if(holder.getCurrentProgression() instanceof FirstGuideProgression){
-            holder.completeAndClearCurrent();
+            if(AdvanceUtil.hasAnyAdvancement(p, GuideAdvances.DISCOVER_GUIDE_METEOR)){
+                holder.completeAndClearCurrent();
+            }
         }
     }
 
