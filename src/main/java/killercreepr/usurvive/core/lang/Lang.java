@@ -519,7 +519,7 @@ public class Lang {
                 "",
                 "",
                 "<dark_aqua><latinfont:Guide>",
-                "<yellow>"
+                "<yellow>Whadja' think? Excited? Disappointed? Regardless, there are more spells out there for you to try. "
             ))
             .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
