@@ -151,17 +151,8 @@ public class GuideListener implements Listener {
             if(PluginItem.isPluginItem(item, Crux.key("soul_essence"))){
                 holder.completeAndClearCurrent();
             }
-        }
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerCruxCraft(PlayerCruxCraftEvent event) {
-        if(!(event.getPlayer() instanceof Player p)) return;
-        if(event.getResults().isEmpty()) return;
-        GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
-        if(holder == null) return;
-        if(holder.getCurrentProgression() instanceof TenthGuideProgression){
-            if(PluginItem.isPluginItem(event.getResults().getFirst(), Crux.key("soul_orb"))){
+        }else if(holder.getCurrentProgression() instanceof TenthGuideProgression){
+            if(PluginItem.isPluginItem(item, Crux.key("soul_orb"))){
                 holder.completeAndClearCurrent();
             }
         }
