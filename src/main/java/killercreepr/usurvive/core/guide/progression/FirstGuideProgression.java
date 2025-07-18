@@ -20,6 +20,7 @@ import killercreepr.usurvive.core.advancement.objective.GuideDiscoverMeteorObjec
 import killercreepr.usurvive.core.data.DeathGuide;
 import killercreepr.usurvive.core.guide.GuideAdvances;
 import killercreepr.usurvive.core.guide.GuideHolder;
+import killercreepr.usurvive.core.guide.GuideUtil;
 import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.util.AdvanceUtil;
 import net.kyori.adventure.key.Key;
@@ -171,6 +172,7 @@ public class FirstGuideProgression implements GuideProgression{
     public void tickStructureGuide(@NotNull Player p){
         if(fallenMeteorLocation == null) return;
         if(!p.getWorld().key().equals(fallenMeteorWorld)) return;
+        if(GuideUtil.hasGuideDisabled(p)) return;
         if(lastDistanceSquared < maxParticleShowDistance) return;
         //Entity guardian = death.getGuardian();
         Location pos =  fallenMeteorLocation.toLocation(p.getWorld());

@@ -94,7 +94,6 @@ public class GuideHolder extends PlayerTickedDataHolder implements AutoSavable, 
     protected void onTick(@NotNull Player p) {
         super.onTick(p);
         if(currentProgression != null){
-            if(GuideUtil.hasGuideDisabled(p)) return;
             currentProgression.onTick(p);
         }
     }

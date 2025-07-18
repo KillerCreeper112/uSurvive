@@ -13,6 +13,7 @@ import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.block.ActiveOrbitConduit;
 import killercreepr.usurvive.core.data.DeathGuide;
 import killercreepr.usurvive.core.guide.GuideHolder;
+import killercreepr.usurvive.core.guide.GuideUtil;
 import killercreepr.usurvive.core.lang.Lang;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
@@ -101,6 +102,7 @@ public class SecondGuideProgression implements GuideProgression{
 
     protected Block conduit;
     public void tickStructureGuide(@NotNull Player p){
+        if(GuideUtil.hasGuideDisabled(p)) return;
         if(conduit == null){
             if(!isAtSpawn(p.getWorld())) return;
             if(CruxMath.hasOccurredWithin(lastCheckedConduit, 80L)) return;
