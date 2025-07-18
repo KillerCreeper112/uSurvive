@@ -2,6 +2,7 @@ package killercreepr.usurvive.core.guide;
 
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxstructures.api.structure.generation.StructureGenerator;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -37,6 +38,8 @@ public class GuideStructurePlacer {
             for(int i = 0; i < maxAttempts; i++){
                 int x = maxChunkDistance.value().intValue();
                 int z = maxChunkDistance.value().intValue();
+                if(CruxMath.random().nextBoolean()) x *= -1;
+                if(CruxMath.random().nextBoolean()) z *= -1;
                 long key = Chunk.getChunkKey(center.getX()+x, center.getZ()+z);
                 if(alreadyChecked.contains(key)) continue;
 
