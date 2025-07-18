@@ -43,3 +43,5 @@ dependencies:
       required: false
     CruxMagic:
       required: false
+    CruxAbyss:
+      required: false

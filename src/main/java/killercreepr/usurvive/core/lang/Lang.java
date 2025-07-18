@@ -530,9 +530,32 @@ public class Lang {
                 "",
                 "",
                 "<dark_aqua><latinfont:Guide>",
-                "<yellow>Whadja' think? Excited? Disappointed? Regardless, there are more spells out there for you to try. "
+                "<yellow>Whadja' think? Excited? Disappointed? Regardless, there are more spells out there for you to try. Look, I'm not so sure if you're ready for the Abyss. It's dangerous. It's unforgiving.",
+                "<yellow>Ah, whatever. You're here for adventure, right? Hold a Red Abyss Crystal in your hand and right click the enchanting table from the Abyss Altar. Make sure the candles are lit. Red Abyss Crystals can be found all over the world, where the Abyss is seeping through. Look for them in the Resource Overworld. <hover:show_text:\"Click to use /help abyss\"><click:run_command:\"/help abyss\"><white>/help abyss</white></click></hover>"
             ))
             .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
+            .build()
+    );
+    public static final Msg GUIDE_SEVENTEENTH_START = create(
+        Communicator.builder()
+            .chat(List.of(
+                "",
+                "",
+                "<dark_aqua><latinfont:Guide>",
+                "<yellow>Well, don't say I didn't warn you. This is on you."
+            ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
+            .build()
+    );
+    public static final Msg GUIDE_EIGHTEENTH_START = create(
+        Communicator.builder()
+            .chat(List.of(
+                "",
+                "",
+                "<dark_aqua><latinfont:Guide>",
+                "<yellow>TODO"
+            ))
+            .sound(CreateSound.sound(Sound.ENTITY_ENDERMAN_AMBIENT, .3f))
             .build()
     );
 

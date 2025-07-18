@@ -36,7 +36,7 @@ public class SixteenthGuideProgression implements GuideProgression{
 
     @Override
     public void onComplete(Player p, GuideHolder holder) {
-        //holder.setCurrentProgression(new NinthGuideProgression());
+        holder.setCurrentProgression(new SeventeenthGuideProgression());
     }
 
     @Override

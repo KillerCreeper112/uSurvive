@@ -7,6 +7,7 @@ import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
+import killercreepr.cruxabyss.api.event.AbyssAltarActivatePortalEvent;
 import killercreepr.cruxadvancements.api.advancement.CruxAdvancement;
 import killercreepr.cruxadvancements.api.advancement.flag.CruxAdvancementFlag;
 import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementManager;
@@ -82,6 +83,10 @@ public class GuideListener implements Listener {
         if(holder == null) return;
 
         if(holder.getCurrentProgression() instanceof FourthGuideProgression){
+            holder.completeAndClearCurrent();
+            return;
+        }
+        if(holder.getCurrentProgression() instanceof SeventeenthGuideProgression){
             holder.completeAndClearCurrent();
             return;
         }
@@ -307,6 +312,16 @@ public class GuideListener implements Listener {
         GuideHolder holder = getGuideHolder(p);
         if(holder == null) return;
         if(holder.getCurrentProgression() instanceof FifteenthGuideProgression){
+            holder.completeAndClearCurrent();
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onAbyssAltarActivatePortal(AbyssAltarActivatePortalEvent event) {
+        Player p = event.getPlayer();
+        GuideHolder holder = getGuideHolder(p);
+        if(holder == null) return;
+        if(holder.getCurrentProgression() instanceof SixteenthGuideProgression){
             holder.completeAndClearCurrent();
         }
     }
