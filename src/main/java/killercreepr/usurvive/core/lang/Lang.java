@@ -331,9 +331,9 @@ public class Lang {
                 "",
                 "",
                 "<dark_aqua><latinfont:Guide>",
-                "<yellow>The fallen meteor is nearby! It contains a new ore inside. You'll need an iron pickaxe to mine it! Before you start getting supplies, you can set your home here using <hover:show_text:\"Click to use /sethome \"><click:suggest_command:\"/sethome\"><white><bold>/sethome <name></bold></white></click></hover>. Or you can use <hover:show_text:\"Click to use /homes\"><click:run_command:\"/homes\"><white><bold>/homes</bold></white></click></hover>!",
+                "<yellow>The fallen meteor is nearby! It contains a new ore inside. You'll need an iron pickaxe to mine it! Before you start getting supplies, you can set your home here using <hover:show_text:\"Click to use /sethome \"><click:suggest_command:\"/sethome\"><white>/sethome <name></white></click></hover>. Or you can use <hover:show_text:\"Click to use /homes\"><click:run_command:\"/homes\"><white>/homes</white></click></hover>!",
                 "",
-                "<yellow>When you are done with that, look around for a campfire and a chest. It contains supplies that will kick start your adventure!"
+                "<yellow>When you are done with that, look around for a <white>campfire and a chest</white>. It contains supplies that will kick start your adventure!"
             ))
             .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
