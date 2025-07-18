@@ -357,6 +357,19 @@ public class Lang {
             ))
             .build()
     );
+    public static final Msg GUIDE_FIRST_START = create(
+        Communicator.builder()
+            .chat(List.of(
+                "",
+                "",
+                "<dark_aqua><latinfont:Guide>",
+                "<yellow>Welcome to uSurvive!",
+                "<yellow>Nice to meet you, fella! My name is not important and I need your attention now!",
+                "<yellow>A meteor has fallen! Enter the <white>Resource Overworld</white> to find it <click:run_command:\"/rtp\"><hover:show_text:\"Click to run /rtp\"><white>(CLICK)</white></hover></click>."
+            ))
+            .sound(CreateSound.sound(Sound.BLOCK_SNIFFER_EGG_PLOP, 1.2f))
+            .build()
+    );
     public static final Msg GUIDE_SECOND_START = create(
         Communicator.builder()
             .chat(List.of(
@@ -564,8 +577,68 @@ public class Lang {
                 "",
                 "",
                 "<dark_aqua><latinfont:Guide>",
-                "<yellow>You did great! Hopefully you can get out of here safely, eh? But first, you got your Diamond or Rose Gold gear? You're going to need it to get Mouldite <hover:show_text:\"Click to use /help mouldite\"><click:run_command:\"/help mouldite\"><white><bold>(?)</bold></white></click></hover>. Mouldite is required to mine ancient debris to get netherite.",
-                "<yellow><white>Mouldite Crust</white> generate all the way down near the void... Good luck."
+                "<yellow>You did great! Hopefully you can get out of here safely, eh? You got your Diamond or Rose Gold gear? You're going to need it to get Mouldite <hover:show_text:\"Click to use /help mouldite\"><click:run_command:\"/help mouldite\"><white><bold>(?)</bold></white></click></hover>. Mouldite is required to mine ancient debris to get netherite.",
+                "<yellow>First, you'll need to get a Mouldite Upgrade. Travel around on the surface and look for ruined obsidian tower-looking structures. You need to defeat some trials, obtain Plague Keys and unlock vaults to try to get Mouldite Upgrades."
+            ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
+            .build()
+    );
+    public static final Msg GUIDE_NINETEENTH_START = create(
+        Communicator.builder()
+            .chat(List.of(
+                "",
+                "",
+                "<dark_aqua><latinfont:Guide>",
+                "<yellow>Hm. I'm surprised you've made it this far. Interesting...",
+                "<yellow>Well, great! Now to upgrade your gear with Mouldite, you're going to need to mine for Mouldite. This item can be tricky to get.. What are the developers thinking? Two difficult to obtain items just to upgrade one item... Don't trust them, they are against us!",
+                "<yellow><white>Mouldite Crust generates all the way down near the void</white>... Good luck."
+            ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
+            .build()
+    );
+    public static final Msg GUIDE_20_START = create(
+        Communicator.builder()
+            .chat(List.of(
+                "",
+                "",
+                "<dark_aqua><latinfont:Guide>",
+                "<yellow>I am intrigued by your resilience. Most people don't make it far... Do you want to upgrade your gear before you leave the Abyss? Too bad. We're leaving first. This might be one of the trickiest tasks.",
+                "<yellow>You need to find an Abyss Safezone. "
+            ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
+            .build()
+    );
+    public static final Msg GUIDE_21_START = create(
+        Communicator.builder()
+            .chat(List.of(
+                "",
+                "",
+                "<dark_aqua><latinfont:Guide>",
+                "<yellow>Go to the center of the safezone. You should find a unique block in the middle of it. When you walk close to it, it will open up a portal that teleports you to spawn, so you can get out of this mess."
+            ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
+            .build()
+    );
+    public static final Msg GUIDE_22_START = create(
+        Communicator.builder()
+            .chat(List.of(
+                "",
+                "",
+                "<dark_aqua><latinfont:Guide>",
+                "<yellow>What did you think of the Abyss? There's a lot more to it, if you haven't explored around. Especially if you're into capturing territory, factions-style, there are Abyss Outposts. Check out <hover:show_text:\"Click to use /help abyss\"><click:run_command:\"/help abyss\"><white>/help abyss</white></click></hover> for more information. The guide has a lot of useful info.",
+                "<yellow>Now, how about you upgrade your Diamond or Rose Gold gear to Mouldite? Get to a smithing table and input 1 Mouldite Upgrade item, 1 Diamond or Rose Gold item, and 1 Mouldite. And bam! (FYI: You may way to duplicate the Mouldite Upgrade <hover:show_text:\"Click to use /recipes\"><click:run_command:\"/recipes\"><white>/recipes</white></click></hover>)"
+            ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
+            .build()
+    );
+    public static final Msg GUIDE_23_START = create(
+        Communicator.builder()
+            .chat(List.of(
+                "",
+                "",
+                "<dark_aqua><latinfont:Guide>",
+                "<yellow>Well, you did it. And the journey is just getting started. Who knew a fella like you could do so well.",
+                "<yellow>That's it from me for now. I'll be in hidden corners that you'll never find. Hahaha, until next time."
             ))
             .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()

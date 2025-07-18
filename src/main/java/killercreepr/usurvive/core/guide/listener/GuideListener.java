@@ -7,6 +7,7 @@ import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxWorldUtil;
 import killercreepr.cruxabyss.api.event.AbyssAltarActivatePortalEvent;
 import killercreepr.cruxadvancements.api.advancement.CruxAdvancement;
 import killercreepr.cruxadvancements.api.advancement.flag.CruxAdvancementFlag;
@@ -18,6 +19,7 @@ import killercreepr.cruxblocks.core.mining.user.EntityMiner;
 import killercreepr.cruxclaims.api.event.ClaimerClaimEvent;
 import killercreepr.cruxclaims.core.claiming.data.PlayerClaimer;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxcore.api.event.PlayerEnterStructureEvent;
 import killercreepr.cruxcurrency.api.event.CurrencyDepositEvent;
 import killercreepr.cruxitems.api.event.ConsumableComponentUseEvent;
 import killercreepr.cruxitems.api.item.plugin.PluginItem;
@@ -45,7 +47,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -60,6 +64,28 @@ public class GuideListener implements Listener {
         this.GUIDE_RESOURCE_WORLD_STRUCTURE = GUIDE_RESOURCE_WORLD_STRUCTURE;
         GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE = guideResourceWorldStructureChunkDistance;
     }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player p = event.getPlayer();
+        if(AdvanceUtil.hasAnyAdvancement(p, GuideAdvances.ENTER_RESOURCE_OVERWORLD)) return;
+        new BukkitRunnable(){
+            byte tick = 0;
+            @Override
+            public void run() {
+                if(!p.isOnline()){
+                    cancel();
+                    return;
+                }
+                tick++;
+                if(tick > 60){
+                    cancel();
+                    Lang.GUIDE_FIRST_START.use(p);
+                }
+            }
+        }.runTaskTimer(Crux.getMainPlugin(), 0L, 1L);
+    }
+
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCruxBlockBreak(CruxBlockBreakEvent event) {
@@ -81,6 +107,17 @@ public class GuideListener implements Listener {
         Player p = event.getPlayer();
         GuideHolder holder = getGuideHolder(p);
         if(holder == null) return;
+        if(holder.getCurrentProgression() instanceof Guide21Progression){
+            CruxWorld world = CruxCore.core().worldManager().getWorld(event.getFrom().key());
+            if(world != null){
+                var type = world.get(CruxWorldsComponents.WORLD_TYPE);
+                if(type != null && type.key().equals(Crux.key("abyss"))){
+                    holder.completeAndClearCurrent();
+                    return;
+                }
+            }
+        }
+
 
         if(holder.getCurrentProgression() instanceof FourthGuideProgression){
             holder.completeAndClearCurrent();
@@ -159,6 +196,14 @@ public class GuideListener implements Listener {
             }
         }else if(holder.getCurrentProgression() instanceof TenthGuideProgression){
             if(PluginItem.isPluginItem(item, Crux.key("soul_orb"))){
+                holder.completeAndClearCurrent();
+            }
+        }else if(holder.getCurrentProgression() instanceof EighteenthGuideProgression){
+            if(PluginItem.isPluginItem(item, Crux.key("mouldite_upgrade_smithing_template"))){
+                holder.completeAndClearCurrent();
+            }
+        }else if(holder.getCurrentProgression() instanceof NineteenthGuideProgression){
+            if(PluginItem.isPluginItem(item, Crux.key("mouldite"))){
                 holder.completeAndClearCurrent();
             }
         }
@@ -326,4 +371,13 @@ public class GuideListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerEnterStructure(PlayerEnterStructureEvent event) {
+        Player p = event.getPlayer();
+        GuideHolder holder = getGuideHolder(p);
+        if(holder == null) return;
+        if(holder.getCurrentProgression() instanceof Guide20Progression){
+            holder.completeAndClearCurrent();
+        }
+    }
 }
