@@ -1,10 +1,6 @@
 package killercreepr.usurvive.core.config;
 
-import com.google.common.reflect.TypeToken;
-import killercreepr.crux.api.entity.predicate.EntityPredicate;
 import killercreepr.crux.api.loot.conditions.LootCondition;
-import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.loot.conditions.entity.EntityCondition;
 import killercreepr.cruxadvancements.api.advancement.objective.AdvancementObjective;
 import killercreepr.cruxadvancements.core.advancement.objective.ObjectiveCommonData;
 import killercreepr.cruxadvancements.core.config.CruxAdvanceCfgData;
@@ -20,11 +16,8 @@ import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.advancement.objective.*;
 import killercreepr.usurvive.core.config.handler.FileGuideProgression;
 import killercreepr.usurvive.core.loot.condition.BaseItemUpgradedFromCondition;
-import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 public class CfgHook {
     public static final FileGuideProgression FILE_GUIDE_PROGRESSION = new FileGuideProgression();

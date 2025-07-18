@@ -17,7 +17,6 @@ import killercreepr.cruxblocks.core.mining.user.EntityMiner;
 import killercreepr.cruxclaims.api.event.ClaimerClaimEvent;
 import killercreepr.cruxclaims.core.claiming.data.PlayerClaimer;
 import killercreepr.cruxcore.CruxCore;
-import killercreepr.cruxcrafting.api.event.PlayerCruxCraftEvent;
 import killercreepr.cruxcurrency.api.event.CurrencyDepositEvent;
 import killercreepr.cruxitems.api.event.ConsumableComponentUseEvent;
 import killercreepr.cruxitems.api.item.plugin.PluginItem;
@@ -39,7 +38,6 @@ import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.util.AdvanceUtil;
 import killercreepr.usurvive.core.world.USurviveWorldTypes;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -158,6 +156,18 @@ public class GuideListener implements Listener {
             if(PluginItem.isPluginItem(item, Crux.key("soul_orb"))){
                 holder.completeAndClearCurrent();
             }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onCruxAdvancementGrantLowest(CruxAdvancementGrantEvent event) {
+        CruxAdvancement advancement = event.getAdvancement();
+        if(advancement.key().equals(GuideAdvances.ENTER_RESOURCE_OVERWORLD)){
+            UUID who = event.getWho();
+            Player p = Crux.getServer().getPlayer(who);
+            if(p == null) return;
+            if(!GuideUtil.hasGuideDisabled(p)) return;
+            event.setCancelled(true);
         }
     }
 

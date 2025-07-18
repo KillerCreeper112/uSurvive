@@ -69,7 +69,7 @@ public class StandardPlayerSettings {
         ),
         Map.of(
             StandardPlayerSettingSelections.ENABLED, "You will have a general guide to help you get started on the server at your own pace.",
-            StandardPlayerSettingSelections.DISABLED, "You will not have a general guide. Does not disable the first stage of the guide. This option is not recommended for new players."
+            StandardPlayerSettingSelections.DISABLED, "You will not have a general guide. This option is not recommended for new players."
         )
     ));
 
