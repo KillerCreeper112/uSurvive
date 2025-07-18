@@ -553,9 +553,21 @@ public class Lang {
                 "",
                 "",
                 "<dark_aqua><latinfont:Guide>",
-                "<yellow>TODO"
+                "<gold>Wow, you're really gullible. sknaht."
             ))
             .sound(CreateSound.sound(Sound.ENTITY_ENDERMAN_AMBIENT, .3f))
+            .build()
+    );
+    public static final Msg GUIDE_EIGHTEENTH_START_2 = create(
+        Communicator.builder()
+            .chat(List.of(
+                "",
+                "",
+                "<dark_aqua><latinfont:Guide>",
+                "<yellow>You did great! Hopefully you can get out of here safely, eh? But first, you got your Diamond or Rose Gold gear? You're going to need it to get Mouldite <hover:show_text:\"Click to use /help mouldite\"><click:run_command:\"/help mouldite\"><white><bold>(?)</bold></white></click></hover>. Mouldite is required to mine ancient debris to get netherite.",
+                "<yellow><white>Mouldite Crust</white> generate all the way down near the void... Good luck."
+            ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
 
