@@ -365,7 +365,7 @@ public class Lang {
                 "<dark_aqua><latinfont:Guide>",
                 "<yellow>Welcome to uSurvive!",
                 "<yellow>Nice to meet you, fella! My name is not important and I need your attention now!",
-                "<yellow>A meteor has fallen! Enter the <white>Resource Overworld</white> to find it <click:run_command:\"/rtp\"><hover:show_text:\"Click to run /rtp\"><white>(CLICK)</white></hover></click>."
+                "<yellow>A meteor has fallen! Enter the <white>Resource Overworld</white> to find it <click:run_command:\"/rtp\"><hover:show_text:\"Click to run /rtp\"><white><bold>(CLICK)</bold></white></hover></click>."
             ))
             .sound(CreateSound.sound(Sound.BLOCK_SNIFFER_EGG_PLOP, 1.2f))
             .build()
@@ -409,7 +409,7 @@ public class Lang {
                     "",
                     "",
                     "<dark_aqua><latinfont:Guide>",
-                    "<yellow>You have done great! It may be a good time to settle in and create a base so you can store all your goodies securely. Head to the <white>Main Overworld <hover:show_text:\"Click to use /rtp\"><click:run_command:\"/rtp\"><bold>CLICK</bold></click></hover></white>. It will never get reset so it is a perfect place to build a base and <white>Claim</white>!"
+                    "<yellow>You have done great! It may be a good time to settle in and create a base so you can store all your goodies securely. Head to the <white>Main Overworld <hover:show_text:\"Click to use /rtp\"><click:run_command:\"/rtp\"><bold>(CLICK)</bold></click></hover></white>. It will never get reset so it is a perfect place to build a base and <white>Claim</white>!"
                 ))
             .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
@@ -442,7 +442,8 @@ public class Lang {
                     "",
                     "",
                     "<dark_aqua><latinfont:Guide>",
-                    "<yellow>And that is a basic precept of some of the features that uSurvive has! If you need help, we have <hover:show_text:\"Click to use /guide\"><click:run_command:\"/guide\"><white>/guide</white></click></hover> and <hover:show_text:\"Click to use /discord\"><click:run_command:\"/discord\"><white>/discord</white></click></hover>. There are still many things to discover... including the Abyss Dimension! But first, get a full set of Diamond armor or Rose Gold <hover:show_text:\"Click to use /help rosegold\"><click:run_command:\"/help rosegold\"><white><bold>(?)</bold></white></click></hover> armor. Then we'll talk. Stay safe, you never know what's out there.."
+                    "<yellow>And that is a basic precept of some of the features that uSurvive has! If you need help, we have <hover:show_text:\"Click to use /guide\"><click:run_command:\"/guide\"><white>/guide</white></click></hover> and <hover:show_text:\"Click to use /discord\"><click:run_command:\"/discord\"><white>/discord</white></click></hover>.",
+                "<yellow>There are still many things to discover... including the Abyss Dimension! But first, get a full set of Diamond armor or Rose Gold <hover:show_text:\"Click to use /help rosegold\"><click:run_command:\"/help rosegold\"><white><bold>(?)</bold></white></click></hover> armor. Then we'll talk. Stay safe, you never know what's out there.."
                 ))
             .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
@@ -453,7 +454,8 @@ public class Lang {
                     "",
                     "",
                     "<dark_aqua><latinfont:Guide>",
-                    "<yellow>You have been doing a fantastic job! Have you been exploring and figuring things out on your own? Before thinking about entering the Abyss, it's best you gear up. It is a nasty place. Craft a Copper Staff, then we'll go from there. You can find the recipe if you use <hover:show_text:\"Click to use /recipes\"><click:run_command:\"/recipes\"><white>/recipes</white></click></hover>. I assume you've collected at least one copper ingot, eh?"
+                    "<yellow>You have been doing a fantastic job! Have you been exploring and figuring things out on your own? Before thinking about entering the Abyss, it's best you gear up. It is a nasty place.",
+                "<yellow>Craft a Copper Staff, then we'll go from there. You can find the recipe if you use <hover:show_text:\"Click to use /recipes\"><click:run_command:\"/recipes\"><white>/recipes</white></click></hover>. I assume you've collected at least one copper ingot, eh?"
                 ))
             .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
@@ -465,7 +467,8 @@ public class Lang {
                     "",
                     "",
                     "<dark_aqua><latinfont:Guide>",
-                    "<yellow>Great! But not so great is the copper staff by itself is quite weak and boring. However, you can apply spells to it! You're going to need some Soul Essence and soul sand first. Head into the Nether and dig around in soul sand or soul soil areas to find Spectral Soil- it has blue streaks in it. When looking for materials in general, it's best to look in the resource worlds since they reset periodically. To get to the Resource Nether, head to the Resource Overworld and enter a nether portal."
+                    "<yellow>Great! But not so great is the copper staff by itself is quite weak and boring. However, you can apply spells to it! You're going to need some Soul Essence and soul sand first. Head into the Nether and dig around in soul sand or soul soil areas to find Spectral Soil- it has blue streaks in it.",
+                "<yellow>When looking for materials in general, it's best to look in the resource worlds since they reset periodically. To get to the Resource Nether, head to the Resource Overworld and enter a nether portal."
                 ))
             .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
@@ -477,7 +480,8 @@ public class Lang {
                     "",
                     "",
                     "<dark_aqua><latinfont:Guide>",
-                    "<yellow>You got some Soul Essence- perfect! Now you need to make that into a Soul Orb. Again, the recipe can be found within <hover:show_text:\"Click to use /recipes\"><click:run_command:\"/recipes\"><white>/recipes</white></click></hover>. Pro tip: If you click on the result item while viewing a recipe in the custom recipe book, it'll automatically try to find a crafting table and place all the ingredients in it."
+                    "<yellow>You got some Soul Essence- perfect! Now you need to make that into a Soul Orb. Again, the recipe can be found within <hover:show_text:\"Click to use /recipes\"><click:run_command:\"/recipes\"><white>/recipes</white></click></hover>.",
+                "<yellow>Pro tip: If you click on the result item while viewing a recipe in the custom recipe book, it'll automatically try to find a crafting table and place all the ingredients in it."
                 ))
             .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
@@ -488,7 +492,8 @@ public class Lang {
                     "",
                     "",
                     "<dark_aqua><latinfont:Guide>",
-                    "<yellow>Here comes the tricky part. You're going to need to kill a certain mob while holding the Soul Orb in one of your hands. The goal is to consume the mob's soul. Each mob soul has a different spell attached to it. Not all mobs have been implemented though. Check <hover:show_text:\"Click to use /help copper_staff\"><click:run_command:\"/help copper_staff\"><white>/help copper_staff</white></click></hover> and navigate to Current Mobs to see all of the currently implemented mobs. You may need to kill a bunch of the same mob to extract a soul from them."
+                    "<yellow>Here comes the tricky part. You're going to need to kill a certain mob while holding the Soul Orb in one of your hands.",
+                "<yellow>The goal is to consume the mob's soul. Each mob soul has a different spell attached to it. Not all mobs have been implemented though. Check <hover:show_text:\"Click to use /help copper_staff\"><click:run_command:\"/help copper_staff\"><white>/help copper_staff</white></click></hover> and navigate to Current Mobs to see all of the currently implemented mobs. You may need to kill a bunch of the same mob to extract a soul from them."
                 ))
             .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
@@ -591,7 +596,7 @@ public class Lang {
                 "<dark_aqua><latinfont:Guide>",
                 "<yellow>Hm. I'm surprised you've made it this far. Interesting...",
                 "<yellow>Well, great! Now to upgrade your gear with Mouldite, you're going to need to mine for Mouldite. This item can be tricky to get.. What are the developers thinking? Two difficult to obtain items just to upgrade one item... Don't trust them, they are against us!",
-                "<yellow><white>Mouldite Crust generates all the way down near the void</white>... Good luck."
+                "<yellow>Mouldite Crust generates all the way down near the void... Good luck!"
             ))
             .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()

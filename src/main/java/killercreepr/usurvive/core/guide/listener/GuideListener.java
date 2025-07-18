@@ -69,7 +69,10 @@ public class GuideListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-        if(AdvanceUtil.hasAnyAdvancement(p, GuideAdvances.ENTER_RESOURCE_OVERWORLD)) return;
+        GuideHolder holder = getGuideHolder(p);
+        if(holder == null) return;
+        if(holder.isCompleted(FirstGuideProgression.KEY)) return;
+
         new BukkitRunnable(){
             byte tick = 0;
             @Override
@@ -81,6 +84,7 @@ public class GuideListener implements Listener {
                 tick++;
                 if(tick > 60){
                     cancel();
+                    if(AdvanceUtil.hasAnyAdvancement(p, GuideAdvances.ENTER_RESOURCE_OVERWORLD)) return;
                     Lang.GUIDE_FIRST_START.use(p);
                 }
             }
