@@ -66,7 +66,7 @@ public class GuideListener implements Listener {
         if(!(miner.getEntity() instanceof Player p)) return;
         if(!event.getBlock().key().equals(Crux.key("orbit_ore"))) return;
 
-        GuideHolder holder = getIfEnabled(p);
+        GuideHolder holder = getGuideHolder(p);
         if(holder == null) return;
         if(holder.getCurrentProgression() instanceof FirstGuideProgression){
             if(AdvanceUtil.hasAnyAdvancement(p, GuideAdvances.DISCOVER_GUIDE_METEOR)){
@@ -78,7 +78,7 @@ public class GuideListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         Player p = event.getPlayer();
-        GuideHolder holder = getIfEnabled(p);
+        GuideHolder holder = getGuideHolder(p);
         if(holder == null) return;
 
         if(holder.getCurrentProgression() instanceof FourthGuideProgression){
@@ -106,7 +106,7 @@ public class GuideListener implements Listener {
         Player p = event.getPlayer().getPlayer();
         if(p == null) return;
 
-        GuideHolder holder = getIfEnabled(p);
+        GuideHolder holder = getGuideHolder(p);
         if(holder == null) return;
         if(holder.getCurrentProgression() instanceof SecondGuideProgression){
             holder.completeAndClearCurrent();
@@ -116,7 +116,7 @@ public class GuideListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityPurchaseTraderTrade(EntityPurchaseTraderTradeEvent event) {
         if(!(event.getEntity() instanceof Player p)) return;
-        GuideHolder holder = getIfEnabled(p);
+        GuideHolder holder = getGuideHolder(p);
         if(holder == null) return;
         if(holder.getCurrentProgression() instanceof ThirdGuideProgression){
             holder.completeAndClearCurrent();
@@ -129,7 +129,7 @@ public class GuideListener implements Listener {
         Player p = claimer.getPlayer();
         if(p == null) return;
 
-        GuideHolder holder = getIfEnabled(p);
+        GuideHolder holder = getGuideHolder(p);
         if(holder == null) return;
         if(holder.getCurrentProgression() instanceof FifthGuideProgression){
             holder.completeAndClearCurrent();
@@ -142,7 +142,7 @@ public class GuideListener implements Listener {
         if(CruxItem.isEmpty(item)) return;
 
         Player p = event.getPlayer();
-        GuideHolder holder = getIfEnabled(p);
+        GuideHolder holder = getGuideHolder(p);
         if(holder == null) return;
         if(holder.getCurrentProgression() instanceof EighthGuideProgression){
             if(PluginItem.isPluginItem(item, Crux.key("copper_staff"))){
@@ -181,7 +181,7 @@ public class GuideListener implements Listener {
             Player p = Crux.getServer().getPlayer(who);
             if(p == null) return;
 
-            GuideHolder holder = getIfEnabled(p);
+            GuideHolder holder = getGuideHolder(p);
             if(holder != null){
                 if(holder.getCurrentProgression() instanceof SixthGuideProgression){
                     holder.completeAndClearCurrent();
@@ -197,7 +197,7 @@ public class GuideListener implements Listener {
             Player p = Crux.getServer().getPlayer(who);
             if(p == null) return;
 
-            GuideHolder holder = getIfEnabled(p);
+            GuideHolder holder = getGuideHolder(p);
             if(holder != null){
                 if(holder.getCurrentProgression() instanceof SeventhGuideProgression){
                     holder.completeAndClearCurrent();
@@ -209,7 +209,7 @@ public class GuideListener implements Listener {
             Player p = Crux.getServer().getPlayer(who);
             if(p == null) return;
 
-            GuideHolder holder = getIfEnabled(p);
+            GuideHolder holder = getGuideHolder(p);
             if(holder != null){
                 if(holder.getCurrentProgression() instanceof ThirteenthGuideProgression){
                     holder.completeAndClearCurrent();
@@ -267,23 +267,24 @@ public class GuideListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntitySoulOrbConsumeDamage(EntitySoulOrbConsumeDamageEvent event) {
         if(!(event.getEntity() instanceof Player p)) return;
-        GuideHolder holder = getIfEnabled(p);
+        GuideHolder holder = getGuideHolder(p);
         if(holder == null) return;
         if(holder.getCurrentProgression() instanceof EleventhGuideProgression){
             holder.completeAndClearCurrent();
         }
     }
 
-    public GuideHolder getIfEnabled(Player p){
-        GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
+    public GuideHolder getGuideHolder(Player p){
+        return EntityMemory.getDataHolder(p, GuideHolder.class);
+        /*GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
         if(holder == null) return null;
-        return GuideUtil.hasGuideDisabled(p) ? null : holder;
+        return GuideUtil.hasGuideDisabled(p) ? null : holder;*/
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onSoulOrbTransfer(SoulOrbTransferEvent event) {
         if(!(event.getKiller() instanceof Player p)) return;
-        GuideHolder holder = getIfEnabled(p);
+        GuideHolder holder = getGuideHolder(p);
         if(holder == null) return;
         if(holder.getCurrentProgression() instanceof TwelfthGuideProgression){
             holder.completeAndClearCurrent();
@@ -293,7 +294,7 @@ public class GuideListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityInfuseSpellOrbItem(EntityInfuseSpellOrbItemEvent event) {
         if(!(event.getEntity() instanceof Player p)) return;
-        GuideHolder holder = getIfEnabled(p);
+        GuideHolder holder = getGuideHolder(p);
         if(holder == null) return;
         if(holder.getCurrentProgression() instanceof FourteenthGuideProgression){
             holder.completeAndClearCurrent();
@@ -303,7 +304,7 @@ public class GuideListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onConsumableComponentUse(ConsumableComponentUseEvent event) {
         Player p = event.getContext().getPlayer();
-        GuideHolder holder = getIfEnabled(p);
+        GuideHolder holder = getGuideHolder(p);
         if(holder == null) return;
         if(holder.getCurrentProgression() instanceof FifteenthGuideProgression){
             holder.completeAndClearCurrent();

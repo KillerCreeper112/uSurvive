@@ -6,6 +6,7 @@ import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
 import killercreepr.usurvive.core.guide.GuideHolder;
+import killercreepr.usurvive.core.guide.GuideUtil;
 import killercreepr.usurvive.core.lang.Lang;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
@@ -40,6 +41,7 @@ public class FourthGuideProgression implements GuideProgression{
 
     @Override
     public void onStart(Player p, GuideHolder holder) {
+        if(GuideUtil.hasGuideDisabled(p)) return;
         Crux.scheduler().runTaskLater(() ->{
             Lang.GUIDE_FOURTH_START.use(p);
         }, 2L);

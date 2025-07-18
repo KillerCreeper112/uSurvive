@@ -7,6 +7,7 @@ import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
 import killercreepr.usurvive.core.guide.GuideAdvances;
 import killercreepr.usurvive.core.guide.GuideHolder;
+import killercreepr.usurvive.core.guide.GuideUtil;
 import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.util.AdvanceUtil;
 import net.kyori.adventure.key.Key;
@@ -47,6 +48,7 @@ public class TwelfthGuideProgression implements GuideProgression{
 
     @Override
     public void onStart(Player p, GuideHolder holder) {
+        if(GuideUtil.hasGuideDisabled(p)) return;
         Crux.scheduler().runTaskLater(() ->{
             Lang.GUIDE_TWELFTH_START.use(p);
         }, 2L);

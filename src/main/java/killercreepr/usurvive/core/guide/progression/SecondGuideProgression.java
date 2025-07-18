@@ -78,6 +78,7 @@ public class SecondGuideProgression implements GuideProgression{
 
     @Override
     public void onStart(Player p, GuideHolder holder) {
+        if(GuideUtil.hasGuideDisabled(p)) return;
         Crux.scheduler().runTaskLater(() ->{
             Lang.GUIDE_SECOND_START.use(p);
         }, 2L);

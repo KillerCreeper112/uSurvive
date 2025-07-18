@@ -48,7 +48,7 @@ public class GuideStructurePlacer {
                 } catch (InterruptedException | ExecutionException e) {
                     throw new RuntimeException(e);
                 } catch (TimeoutException e) {
-                    throw new RuntimeException(e);
+                    continue;
                 }
                 if(!stillValid.value()) return null;
                 alreadyChecked.add(key);
