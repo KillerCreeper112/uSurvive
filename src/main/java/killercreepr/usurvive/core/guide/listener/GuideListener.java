@@ -46,6 +46,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.SmithItemEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
@@ -380,4 +381,15 @@ public class GuideListener implements Listener {
             holder.completeAndClearCurrent();
         }
     }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onSmithItem(SmithItemEvent event) {
+        if(!(event.getWhoClicked() instanceof Player p)) return;
+        GuideHolder holder = getGuideHolder(p);
+        if(holder == null) return;
+        if(holder.getCurrentProgression() instanceof Guide22Progression){
+            holder.completeAndClearCurrent();
+        }
+    }
+
 }
