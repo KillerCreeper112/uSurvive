@@ -165,7 +165,7 @@ public class FirstGuideProgression implements GuideProgression{
     protected boolean stopTickDistance = false;
 
     private AdvancementHolder holder(@NotNull Entity p){
-        return EntityMemory.getDataHolder(p, AdvancementHolder.class);
+        return AdvancementHolder.holderIfLoaded(p);
     }
 
     protected final double maxParticleShowDistance = 16D*16D;

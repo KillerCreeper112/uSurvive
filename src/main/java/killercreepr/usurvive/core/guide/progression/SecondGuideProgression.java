@@ -92,10 +92,6 @@ public class SecondGuideProgression implements GuideProgression{
         tickStructureGuide(p);
     }
 
-    private AdvancementHolder holder(@NotNull Entity p){
-        return EntityMemory.getDataHolder(p, AdvancementHolder.class);
-    }
-
     public boolean isAtSpawn(World world){
         String spawn = USurvivePlugin.inst().values().SPAWN_WORLD().value();
         return world.getName().equals(spawn);

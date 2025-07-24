@@ -298,7 +298,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             m.getDataHolders().register(new MemoryPlayerSettingsHolder(m));
             m.getDataHolders().register(new EntityInfusedPotionsHolder(m));
             m.getDataHolders().register(new SleeperHolder(m, () -> (SleeperCfg) values()));
-            m.getDataHolders().register(new AdvancementLoaderHolder(m, cfgManagerLoader));
+            m.getDataHolders().register(new USurviveAdvancementLoaderHolder(m, cfgManagerLoader));
             m.getDataHolders().register(new AdvancementAutoSaveHolder(m, cfgManagerLoader));
             m.getDataHolders().register(new GuideHolder(m));
         });
@@ -613,7 +613,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player p = event.getPlayer();
-        AdvancementLoaderHolder holder = EntityMemory.getOrCreateDataHolder(p, AdvancementLoaderHolder.class);
+        USurviveAdvancementLoaderHolder holder = EntityMemory.getOrCreateDataHolder(p, USurviveAdvancementLoaderHolder.class);
         if(holder != null && !holder.isLoaded()){
             return;
         }

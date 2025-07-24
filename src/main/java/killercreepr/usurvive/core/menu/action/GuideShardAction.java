@@ -67,7 +67,7 @@ public class GuideShardAction extends SimpleMenuAction {
     }
 
     private AdvancementHolder holder(@NotNull Entity p){
-        return EntityMemory.getDataHolder(p, AdvancementHolder.class);
+        return AdvancementHolder.holderIfLoaded(p);
     }
 
     public ItemStack findItem(Key key, Inventory inventory){

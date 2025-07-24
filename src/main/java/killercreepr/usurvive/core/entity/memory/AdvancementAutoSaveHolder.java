@@ -22,7 +22,7 @@ public class AdvancementAutoSaveHolder extends PlayerDataHolder implements Loada
     }
 
     public boolean isLoaded() {
-        return parent.getDataHolder(AdvancementLoaderHolder.KEY) == null;
+        return parent.getDataHolder(USurviveAdvancementLoaderHolder.KEY) == null;
     }
 
     @Override
