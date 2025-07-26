@@ -78,7 +78,16 @@ public class ProjectileReflectListener implements Listener {
 
         int pierce = (int) CruxAttribute.get(proj, CruxAttribute.ATTACK_PIERCE);
 
+        Location loc = proj.getLocation();
+        EntityDamager dmger = EntityDamager.entityDamager(hit, proj)
+            .setHitPosition(loc)
+            .setSource(builder.withDamageLocation(loc).build());
+
         if(pierce < 1){
+            if(dmger.isDamageSourceBlocked()){
+                return;
+            }
+            dmger.attack();
             return;
         }
         int currentPierce = CruxPersist.PIERCED_ENTITIES_AMOUNT.get(proj, 0);
@@ -89,11 +98,6 @@ public class ProjectileReflectListener implements Listener {
         }
         CruxPersist.PIERCED_ENTITIES_AMOUNT.set(proj, currentPierce+1);
         event.setCancelled(true);
-
-        Location loc = proj.getLocation();
-        EntityDamager dmger = EntityDamager.entityDamager(hit, proj)
-            .setHitPosition(loc)
-            .setSource(builder.withDamageLocation(loc).build());
         dmger.attack();
     }
 
