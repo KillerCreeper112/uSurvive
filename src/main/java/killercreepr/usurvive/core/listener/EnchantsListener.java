@@ -7,9 +7,11 @@ import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.entity.CruxEntity;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
+import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.component.CruxComponents;
+import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
 import killercreepr.crux.core.util.GetEntityNear;
@@ -33,6 +35,8 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -44,6 +48,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
@@ -51,8 +56,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
-import java.util.Map;
-import java.util.UUID;
+import java.awt.*;
+import java.util.*;
+import java.util.List;
 
 public class EnchantsListener implements Listener {
     protected final Plugin plugin;
@@ -318,22 +324,38 @@ public class EnchantsListener implements Listener {
     public void burningThorns(EntityDamageByEntityEvent event,
                               LivingEntity victim, EntityEquipment victimEquip){
         int fireTicks = 0;
-        float chance = 0f;
+        double maxDmg = 0D;
+        Map<EquipmentSlot, Integer> levels = new HashMap<>();
         for(EquipmentSlot slot : AttributeBukkitAdaptor.ARMOR_SLOTS){
             if(!victim.canUseEquipmentSlot(slot)) continue;
             ItemStack item = victimEquip.getItem(slot);
             if(CruxItem.isEmpty(item)) continue;
             int level = item.getEnchantmentLevel(USurviveEnchant.BURNING_THORNS);
             if(level == 0) continue;
+            levels.put(slot,level);
             fireTicks += 80 * level;
-            chance += 3 * level;
+            maxDmg += level * 0.5D;
         }
-        if(fireTicks < 1) return;
+        if(fireTicks < 1 || levels.isEmpty()) return;
+        float chance = CruxCollection.getRandom(levels.values()) * 15f;
         if(!CruxMath.testChance(chance)) return;
         Entity dmger = event.getDamager();
         if(dmger.getFireTicks() >= fireTicks) return;
 
         dmger.setFireTicks(fireTicks);
+        double dmg = CruxMath.random(1D, maxDmg + 1D);
+        EntityDamager.entityDamager(dmger, victim)
+            .setSource(DamageSource.builder(DamageType.THORNS)
+                .withDirectEntity(victim).build())
+            .setCause(CruxEntityDamageEvent.DamageCause.fromBukkit(EntityDamageEvent.DamageCause.THORNS))
+            .attack(dmg, 8D);
+
+        EquipmentSlot slot = CruxCollection.getRandom(levels.keySet());
+        ItemStack item = victimEquip.getItem(slot);
+        Crux.handlers().item().damageItem(item, 1, victim);
+        if(!(victimEquip instanceof PlayerInventory)){
+            victimEquip.setItem(slot, item, true);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

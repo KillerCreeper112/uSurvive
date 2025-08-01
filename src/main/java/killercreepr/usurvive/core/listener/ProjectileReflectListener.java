@@ -1,6 +1,5 @@
 package killercreepr.usurvive.core.listener;
 
-import killercreepr.crux.api.entity.CruxEntity;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.persistence.CruxPersist;
@@ -10,12 +9,10 @@ import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeInstance;
-import killercreepr.cruxattributes.core.component.CruxAttributeComponents;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxentities.damage.type.CruxEntityDamageTypes;
 import killercreepr.usurvive.api.event.ProjectileRicochetEvent;
 import killercreepr.usurvive.core.entity.memory.PiercingProjectileHolder;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
