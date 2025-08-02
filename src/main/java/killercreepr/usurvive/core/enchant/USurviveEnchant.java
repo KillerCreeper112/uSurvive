@@ -19,6 +19,7 @@ public class USurviveEnchant {
     public static final Enchantment PENETRATE = get("penetrate");
     public static final Enchantment BRACED = get("braced");
     public static final Enchantment TRUESHOT = get("trueshot");
+    public static final Enchantment SPOREBURST = get("sporeburst");
 
     private static Enchantment get(String id){
         return RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT).get(Crux.key(id));

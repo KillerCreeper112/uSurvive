@@ -23,6 +23,7 @@ import killercreepr.cruxenchants.api.enchant.CruxEnchant;
 import killercreepr.cruxenchants.core.util.EnchantRegistererUtil;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemType;
@@ -282,6 +283,68 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .applicableItemGroup(ApplicableItemGroup.builder()
                     .add(ApplicableItemGroup.BOWS_N_CROSSBOWS)
                     .add(ApplicableItemType.TRIDENT)
+                    .build())
+        );
+        register(
+            "sporeburst", b -> b.description(Component.text("Sporeburst"))
+                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_WEAPON))
+                .anvilCost(1)
+                .maxLevel(5)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.MAINHAND),
+
+            crux -> crux.description("Killing an entity causes it to explode in a toxic cloud, poisoning nearby enemies")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemGroup.WEAPONS)
+                    .build())
+        );
+        register(
+            "mirrorstrike", b -> b.description(Component.text("Mirror Strike"))
+                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_WEAPON))
+                .anvilCost(1)
+                .maxLevel(3)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.MAINHAND),
+
+            crux -> crux.description("On hit, creates a faint strike after some time, that repeats part of the damage")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemGroup.WEAPONS)
+                    .build())
+        );
+        register(
+            "snare", b -> b.description(Component.text("Snare"))
+                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_WEAPON))
+                .anvilCost(1)
+                .maxLevel(4)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.MAINHAND),
+
+            crux -> crux.description("Occasionally roots attackers in place")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemGroup.WEAPONS)
+                    .build())
+        );
+        register(
+            "blooming_curse", b -> b.description(Component.text("Curse of Blooming", NamedTextColor.RED))
+                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_ARMOR))
+                .anvilCost(1)
+                .maxLevel(1)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.ARMOR),
+//+Strength and +Speed when below 50% HP.
+//
+//Drawback: Gradually takes max HP away each time triggered unless cured.
+            crux -> crux.description("Gain strength and speed when below 50% HP. However, gradually takes max HP away each time the effect is triggered")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemGroup.ARMOR)
                     .build())
         );
     }
