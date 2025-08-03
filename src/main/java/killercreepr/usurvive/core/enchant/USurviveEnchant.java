@@ -19,7 +19,27 @@ public class USurviveEnchant {
     public static final Enchantment PENETRATE = get("penetrate");
     public static final Enchantment BRACED = get("braced");
     public static final Enchantment TRUESHOT = get("trueshot");
+    //todo all of these enchants dude
     public static final Enchantment SPOREBURST = get("sporeburst");
+    public static final Enchantment MIRRORSTRIKE = get("mirrorstrike");
+    public static final Enchantment SNARE = get("snare");
+    public static final Enchantment BLOOMING_CURSE = get("blooming_curse");
+    public static final Enchantment STAGGER = get("stagger");
+    public static final Enchantment HOLLOWING_CURSE = get("hollowing_curse");
+    public static final Enchantment TETHER = get("tether");
+    public static final Enchantment FRENZY = get("frenzy");
+    public static final Enchantment SHATTER = get("shatter");
+    public static final Enchantment REAP = get("reap");
+    public static final Enchantment RICOCHET = get("ricochet");
+    public static final Enchantment CLING = get("cling");
+    public static final Enchantment FOCUS = get("focus");
+    public static final Enchantment CLEANSING = get("cleansing");
+    public static final Enchantment RESENTMENT_CURSE = get("resentment_curse");
+    public static final Enchantment SPOILAGE_CURSE = get("spoilage_curse");
+    public static final Enchantment BREAKING_CURSE = get("breaking_curse");
+
+    //may become a charm or something else
+    public static final Enchantment REMNANT = get("remnant");
 
     private static Enchantment get(String id){
         return RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT).get(Crux.key(id));

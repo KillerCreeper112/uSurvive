@@ -40,7 +40,9 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
     public static final TagKey<ItemType> SHARP_WEAPON_PICKAXE = TagKey.create(RegistryKey.ITEM, Key.key("crux", "sharp_weapon_pickaxe"));
     public static final TagKey<ItemType> SHARP_WEAPON_PICKAXE_HOE = TagKey.create(RegistryKey.ITEM, Key.key("crux", "sharp_weapon_pickaxe_hoe"));
     public static final TagKey<ItemType> BOW_CROSSBOW = TagKey.create(RegistryKey.ITEM, Key.key("crux", "bow_crossbow"));
+    public static final TagKey<ItemType> BOW_CROSSBOW_TRIDENT = TagKey.create(RegistryKey.ITEM, Key.key("crux", "bow_crossbow_trident"));
     public static final TagKey<ItemType> CHESTPLATE_LEGGINGS = TagKey.create(RegistryKey.ITEM, Key.key("crux", "chestplate_leggings"));
+    public static final TagKey<ItemType> WEAPONS_TOOLS_ARMOR = TagKey.create(RegistryKey.ITEM, Key.key("crux", "weapons_tools_armor"));
 
     public static void register(LifecycleEventManager<BootstrapContext> manager){
         manager.registerEventHandler(LifecycleEvents.TAGS.preFlatten(RegistryKey.ITEM), event -> {
@@ -61,9 +63,23 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_CROSSBOW, true)
             ));
 
+            registrar.setTag(BOW_CROSSBOW_TRIDENT, Set.of(
+                TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_BOW, true),
+                TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_CROSSBOW, true),
+                TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_TRIDENT, true)
+            ));
+
             registrar.setTag(CHESTPLATE_LEGGINGS, Set.of(
                 TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_CHEST_ARMOR, true),
                 TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_LEG_ARMOR, true)
+            ));
+            registrar.setTag(WEAPONS_TOOLS_ARMOR, Set.of(
+                TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_ARMOR, true),
+                TagEntry.tagEntry(ItemTypeTagKeys.ENCHANTABLE_WEAPON, true),
+                TagEntry.tagEntry(ItemTypeTagKeys.PICKAXES, true),
+                TagEntry.tagEntry(ItemTypeTagKeys.AXES, true),
+                TagEntry.tagEntry(ItemTypeTagKeys.SHOVELS, true),
+                TagEntry.tagEntry(ItemTypeTagKeys.HOES, true)
             ));
         });
 
@@ -339,12 +355,209 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
                 .activeSlots(EquipmentSlotGroup.ARMOR),
-//+Strength and +Speed when below 50% HP.
-//
-//Drawback: Gradually takes max HP away each time triggered unless cured.
             crux -> crux.description("Gain strength and speed when below 50% HP. However, gradually takes max HP away each time the effect is triggered")
                 .applicableItemGroup(ApplicableItemGroup.builder()
                     .add(ApplicableItemGroup.ARMOR)
+                    .build())
+        );
+        register(
+            "stagger", b -> b.description(Component.text("Stagger"))
+                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_WEAPON))
+                .anvilCost(1)
+                .maxLevel(2)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.MAINHAND),
+
+            crux -> crux.description("The first hit against an entity inflicts weakness and slowness")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemGroup.WEAPONS)
+                    .build())
+        );
+        register(
+            "hollowing_curse", b -> b.description(Component.text("Curse of Hollowing", NamedTextColor.RED))
+                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_ARMOR))
+                .anvilCost(1)
+                .maxLevel(3)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.ARMOR),
+            crux -> crux.description("User gains max health while in the abyss. Loses max health while anywhere else")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemGroup.ARMOR)
+                    .build())
+        );
+        register(
+            "tether", b -> b.description(Component.text("Tether"))
+                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_WEAPON))
+                .anvilCost(1)
+                .maxLevel(4)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.MAINHAND),
+            crux -> crux.description("Attacking an entity briefly links the user to the victim. Breaking the tether by moving far away will cause damage to the victim")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemGroup.WEAPONS)
+                    .build())
+        );
+        register(
+            "frenzy", b -> b.description(Component.text("Frenzy"))
+                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_WEAPON))
+                .anvilCost(1)
+                .maxLevel(3)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.MAINHAND),
+            crux -> crux.description("After each hit, gain extra attack speed for a short period of time, based on level. Stacks based on level")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemGroup.WEAPONS)
+                    .build())
+        );
+        register(
+            "shatter", b -> b.description(Component.text("Shatter"))
+                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_WEAPON))
+                .anvilCost(1)
+                .maxLevel(3)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.MAINHAND),
+            crux -> crux.description("Deals bonus damage to entities with shields, armor, or absorption")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemGroup.WEAPONS)
+                    .build())
+        );
+        register(
+            "reap", b -> b.description(Component.text("Reap"))
+                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_WEAPON))
+                .anvilCost(1)
+                .maxLevel(3)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.MAINHAND),
+            crux -> crux.description("Killing an entity releases a damaging shockwave if other entities are nearby")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemGroup.WEAPONS)
+                    .build())
+        );
+        register(
+            "ricochet", b -> b.description(Component.text("Ricochet"))
+                .supportedItems(event.getOrCreateTag(BOW_CROSSBOW_TRIDENT))
+                .anvilCost(1)
+                .maxLevel(3)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.MAINHAND),
+            crux -> crux.description("Projectiles bounce to multiple targets for reduced damage")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemGroup.BOWS_N_CROSSBOWS)
+                    .add(ApplicableItemType.TRIDENT)
+                    .build())
+        );
+        register(
+            "cling", b -> b.description(Component.text("Cling"))
+                .supportedItems(event.getOrCreateTag(BOW_CROSSBOW_TRIDENT))
+                .anvilCost(1)
+                .maxLevel(5)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.MAINHAND),
+            crux -> crux.description("Projectiles do damage over time")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemGroup.BOWS_N_CROSSBOWS)
+                    .build())
+        );
+        register(
+            "focus", b -> b.description(Component.text("Focus"))
+                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_BOW))
+                .anvilCost(1)
+                .maxLevel(4)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.MAINHAND),
+            crux -> crux.description("Fully drawn bow shots deal more damage based on time held")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemType.BOW)
+                    .build())
+        );
+        register(
+            "remnant", b -> b.description(Component.text("Remnant"))
+                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_ARMOR))
+                .anvilCost(1)
+                .maxLevel(5)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.ARMOR),
+            crux -> crux.description("When the user dies, a ghostly version of them remains for 15s and fights nearby enemies (One time use enchant)")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemGroup.ARMOR)
+                    .build())
+        );
+        register(
+            "cleansing", b -> b.description(Component.text("Cleansing"))
+                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_ARMOR))
+                .anvilCost(1)
+                .maxLevel(4)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.ARMOR),
+            crux -> crux.description("Inflicted weakness, slowness, and poison have shorter durations at the cost of item durability")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemGroup.ARMOR)
+                    .build())
+        );
+        register(
+            "resentment_curse", b -> b.description(Component.text("Curse of Resentment", NamedTextColor.RED))
+                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_ARMOR))
+                .anvilCost(1)
+                .maxLevel(1)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.ARMOR),
+            crux -> crux.description("Normally passive mobs will target the user if they get too close")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemGroup.ARMOR)
+                    .build())
+        );
+        register(
+            "spoilage_curse", b -> b.description(Component.text("Curse of Spoilage", NamedTextColor.RED))
+                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_ARMOR))
+                .anvilCost(1)
+                .maxLevel(1)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.ARMOR),
+            crux -> crux.description("Food restores less hunger")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemGroup.ARMOR)
+                    .build())
+        );
+        register(
+            "breaking_curse", b -> b.description(Component.text("Curse of Breaking", NamedTextColor.RED))
+                .supportedItems(event.getOrCreateTag(WEAPONS_TOOLS_ARMOR))
+                .anvilCost(1)
+                .maxLevel(1)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.ANY),
+            crux -> crux.description("Item takes more durability damage")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemGroup.ARMOR)
+                    .add(ApplicableItemGroup.WEAPONS)
+                    .add(ApplicableItemGroup.TOOLS)
                     .build())
         );
     }
