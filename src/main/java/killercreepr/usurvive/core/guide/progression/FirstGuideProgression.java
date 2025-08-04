@@ -1,6 +1,5 @@
 package killercreepr.usurvive.core.guide.progression;
 
-import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.loot.LootContext;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.Crux;

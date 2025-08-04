@@ -9,8 +9,11 @@ import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.api.item.CruxItem;
+import killercreepr.crux.api.math.CruxLocation;
+import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.component.CruxComponents;
+import killercreepr.crux.core.persistence.CruxPersist;
 import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
@@ -19,20 +22,22 @@ import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
 import killercreepr.cruxentities.api.combat.EntityDamager;
+import killercreepr.cruxform.api.scheduler.ShapeScheduler;
+import killercreepr.cruxform.api.shape.CreateSpiral;
 import killercreepr.cruxpotions.api.entity.PotionHolder;
 import killercreepr.cruxpotions.core.entity.memory.SimplePotionHolder;
 import killercreepr.cruxpotions.core.potions.inflictor.EntityInflictor;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.api.event.EntityTrampleEnchantEvent;
+import killercreepr.usurvive.core.damage.type.USurviveDamageTypes;
 import killercreepr.usurvive.core.data.entity.TrampleHolder;
 import killercreepr.usurvive.core.enchant.USurviveEnchant;
 import killercreepr.usurvive.core.enchant.logic.JoyWhirl;
+import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.potion.FrostbitePotion;
 import killercreepr.usurvive.core.potion.USurvivePotions;
-import org.bukkit.FluidCollisionMode;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import killercreepr.usurvive.core.potion.inflictor.UDamageEntityInflictor;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.damage.DamageSource;
@@ -56,9 +61,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
-import java.awt.*;
-import java.util.*;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class EnchantsListener implements Listener {
     protected final Plugin plugin;
@@ -231,6 +236,25 @@ public class EnchantsListener implements Listener {
         float multiplier = 1f + (level * .15f);
         droppedExp = (int) ((float) droppedExp * multiplier);
         event.setExpToDrop(droppedExp);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityDeathSporeburst(EntityDeathEvent event) {
+        LivingEntity victim = event.getEntity();
+        Player killer = victim.getKiller();
+        if(killer == null) return;
+        ItemStack item = killer.getInventory().getItemInMainHand();
+        if(CruxItem.isEmpty(item)) return;
+
+        int level = item.getEnchantmentLevel(USurviveEnchant.SPOREBURST);
+        if(level < 1) return;
+
+        float radius = 1.2f + ((level-1) * .8f);
+        victim.getWorld().spawn(victim.getLocation(), AreaEffectCloud.class, e ->{
+            e.addCustomEffect(new PotionEffect(PotionEffectType.POISON, 80 + (level*20),
+                level > 3 ? 1 : 0), true);
+            e.setRadius(radius);
+        });
     }
 
 
@@ -450,7 +474,30 @@ public class EnchantsListener implements Listener {
                 double multiplier = 1D + (level * 0.2);
                 event.setDamage(event.getDamage() * multiplier);
             }
+            if(enchants.containsKey(USurviveEnchant.MIRRORSTRIKE)){
+                int level = enchants.getOrDefault(USurviveEnchant.MIRRORSTRIKE, 0);
+                mirrorstrike(vic, victim, attacker, level, event);
+            }
         }
+    }
+
+    public void mirrorstrike(Entity vic, LivingEntity victim, Entity attacker, int level, EntityDamageByEntityEvent event){
+        double finalDmg = event.getFinalDamage();
+        if(victim != null){
+            double hp = victim.getHealth() - finalDmg;
+            if(hp <= 0D) return;
+        }
+        if(attacker instanceof HumanEntity h){
+            if(h.getAttackCooldown() <= .7f) return;
+        }
+        applyMirrorstrike(vic, attacker, level, finalDmg * .7);
+    }
+
+    public void applyMirrorstrike(Entity victim, Entity attacker, int level, double damage){
+        PotionHolder holder = PotionHolder.potionHolderOrCreate(victim);
+        if(holder == null) return;
+        int time = Math.max(10, 55 - ((level-1) * 10));
+        holder.addPotion(USurvivePotions.MIRRORSTRIKE.create(victim, time, level-1, new UDamageEntityInflictor(attacker, (float) damage)));
     }
 
     public boolean isBehind(Entity victim, Entity attacker) {

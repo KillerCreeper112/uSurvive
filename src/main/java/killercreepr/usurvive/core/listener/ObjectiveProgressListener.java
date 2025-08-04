@@ -1,6 +1,5 @@
 package killercreepr.usurvive.core.listener;
 
-import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.text.resolver.Tag;

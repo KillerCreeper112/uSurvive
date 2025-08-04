@@ -495,6 +495,18 @@ public class USurvivePotions {
             return Color.fromRGB(0xA8F7FF);
         }
     });
+    public static final CruxPotion MIRRORSTRIKE = register(new DescribedPotion(Crux.key("mirrorstrike"),
+        "Strike!") {
+        @Override
+        public @NotNull ActivePotion create(@NotNull Entity e, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
+            return new MirrorstrikePotion(this, e, duration, amplifier, inflictor);
+        }
+
+        @Override
+        public @NotNull Color getColor() {
+            return Color.fromRGB(0xA8F7FF);
+        }
+    });
 
     private static CruxPotion register(CruxPotion pot){
         return CruxPotionRegistries.POTION.register(pot);

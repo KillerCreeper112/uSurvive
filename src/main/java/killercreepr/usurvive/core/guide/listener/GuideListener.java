@@ -7,7 +7,6 @@ import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.util.CruxWorldUtil;
 import killercreepr.cruxabyss.api.event.AbyssAltarActivatePortalEvent;
 import killercreepr.cruxadvancements.api.advancement.CruxAdvancement;
 import killercreepr.cruxadvancements.api.advancement.flag.CruxAdvancementFlag;

@@ -41,6 +41,13 @@ public class USurviveBootstrapper implements PluginBootstrap {
                     .messageId("mob")
                     .damageScaling(DamageScaling.ALWAYS)
             );
+
+            event.registry().register(
+                RegistryKey.DAMAGE_TYPE.typedKey(Crux.key("mirrorstrike")),
+                builder -> builder.exhaustion(0.25f)
+                    .messageId("mob")
+                    .damageScaling(DamageScaling.ALWAYS)
+            );
         }));
 
 

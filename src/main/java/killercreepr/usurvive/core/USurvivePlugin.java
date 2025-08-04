@@ -56,6 +56,7 @@ import killercreepr.cruxmenus.core.menu.module.standard.SimplePagedMenuModule;
 import killercreepr.cruxparty.api.party.Party;
 import killercreepr.cruxparty.api.party.PartyHolder;
 import killercreepr.cruxparty.core.CruxPartyPlugin;
+import killercreepr.cruxpotions.core.config.CruxPotionCfgHandler;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.creator.CruxWorldModuleCreator;
 import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
@@ -113,6 +114,7 @@ import killercreepr.usurvive.core.menu.ItemPackMenu;
 import killercreepr.usurvive.core.menu.action.*;
 import killercreepr.usurvive.core.menu.module.CurrencyDepositModule;
 import killercreepr.usurvive.core.potion.USurvivePotions;
+import killercreepr.usurvive.core.potion.inflictor.UDamageEntityInflictor;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
 import killercreepr.usurvive.core.stat.USurviveStats;
 import killercreepr.usurvive.core.statistic.USurviveStatistics;
@@ -222,6 +224,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         CfgRegistries.FILE.forEach(this::registerCfgHandlers);
         CfgRegistries.SIMPLE_REGISTRY.forEach(this::registerSimpleCfgHandlers);
         CfgUSurviveComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());
+
+        CruxPotionCfgHandler.POTION_INFLICTOR.register(UDamageEntityInflictor.ID, new FileUDamageEntityInflictor());
 
         USurviveBlockComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());
 
