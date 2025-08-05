@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.potion;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.communication.CreateTitle;
 import killercreepr.crux.core.Crux;
@@ -13,6 +14,7 @@ import killercreepr.cruxpotions.core.potions.inflictor.EntityInflictor;
 import killercreepr.usurvive.core.damage.type.USurviveDamageTypes;
 import killercreepr.usurvive.core.menu.ClingEffectMenu;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.Entity;
@@ -107,10 +109,12 @@ public class ClingPotion extends InflictedPotion implements Listener {
     }
 
     public void damage(double dmg, int cooldown){
+        double width = entity.getWidth();
+        double height = entity.getHeight();
         Location loc = entity.getLocation().add(
-            CruxMath.random(-1, 1),
-            CruxMath.random(-1, 1),
-            CruxMath.random(-1, 1)
+            CruxMath.random(-width, width),
+            CruxMath.random(0, height),
+            CruxMath.random(-width, width)
         );
 
         var dmger = EntityDamager.entityDamager(entity)
@@ -128,6 +132,10 @@ public class ClingPotion extends InflictedPotion implements Listener {
             .attack(dmg);
         CreateSound.sound(Sound.ENTITY_PLAYER_ATTACK_STRONG, .4f, 2f)
             .playAt(entity);
+        new ParticleBuilder(Particle.CRIT)
+            .location(loc)
+            .extra(.1)
+            .spawn();
         //optimize for other entities
         if(!isPlayer) return;
 

@@ -464,7 +464,7 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
             "cling", b -> b.description(Component.text("Cling"))
                 .supportedItems(event.getOrCreateTag(BOW_CROSSBOW_TRIDENT))
                 .anvilCost(1)
-                .maxLevel(5)
+                .maxLevel(4)
                 .weight(1)
                 .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
