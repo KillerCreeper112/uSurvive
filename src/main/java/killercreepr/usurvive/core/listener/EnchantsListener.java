@@ -705,7 +705,7 @@ public class EnchantsListener implements Listener {
                 double hp = victim.getHealth() - event.getFinalDamage();
                 if(hp <= 0D){
                     int level = enchants.getOrDefault(USurviveEnchant.REAP, 0);
-                    reap(vic, attacker, level);
+                    reap(vic, attacker, level, mainHand);
                 }
             }
             if(enchants.containsKey(USurviveEnchant.SHATTER) && isValidShatterTarget(vic)){
@@ -724,7 +724,7 @@ public class EnchantsListener implements Listener {
     }
 
     public boolean reapCheckRay(World world, Entity e, Location visualLocation, double range) {
-        double[] locationOffsets = new double[]{0D, .65D, -.65D};
+        double[] locationOffsets = new double[]{0D, .4D, -.4D};
         double[] yOffsets;
         if(e instanceof LivingEntity living && living.getEyeLocation().getY() < visualLocation.getY()){
             yOffsets = new double[]{0, 0.5, 0.1, 1.0}; // Location, Mid-body, lower, head
@@ -735,6 +735,8 @@ public class EnchantsListener implements Listener {
         for (double offset : yOffsets) {
             for(double locationY : locationOffsets){
                 Location from = visualLocation.clone().add(0, locationY, 0);
+                if(from.getBlock().isSolid()) continue;
+
                 Location to = e.getLocation().add(0, e.getHeight() * offset, 0);
                 Vector direction = to.toVector().subtract(from.toVector()).normalize();
 
@@ -756,7 +758,7 @@ public class EnchantsListener implements Listener {
     }
 
 
-    public void reap(Entity victim, Entity dmger, int level){
+    public void reap(Entity victim, Entity dmger, int level, ItemStack item){
         double range = 3D + (level * 2.5D);
 
         UUID ownerUUID = EntityDamager.getOwnerUUID(dmger);
@@ -785,6 +787,10 @@ public class EnchantsListener implements Listener {
                 return true;
             });
 
+        if(!CruxEntityUtil.isNonSurvival(dmger)){
+            Crux.handlers().item().damageItem(item, level+1, dmger);
+        }
+
         CruxLocation visualLoc = CruxLocation.location(visualLocation, 0f, 0f);
         double damage = level * 4.5D;
         double kb = level * 8D;
@@ -810,8 +816,13 @@ public class EnchantsListener implements Listener {
                 ).setSource(sourceBuilder.build());
                 entityDamager.attack(damage, kb, upKb);
             },
-            8
+            10
         ).start(totalTicks);
+
+        new ParticleBuilder(Particle.TRIAL_OMEN)
+            .location(visualLocation)
+            .extra(.05)
+            .spawn();
     }
 
     public void mirrorstrike(Entity vic, LivingEntity victim, Entity attacker, int level, EntityDamageByEntityEvent event){
