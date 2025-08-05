@@ -412,7 +412,7 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
                 .activeSlots(EquipmentSlotGroup.MAINHAND),
-            crux -> crux.description("After each hit, gain extra attack speed for a short period of time, based on level. Stacks based on level")
+            crux -> crux.description("After each hit, gain extra attack speed for a short period of time. Stacks based on level")
                 .applicableItemGroup(ApplicableItemGroup.builder()
                     .add(ApplicableItemGroup.WEAPONS)
                     .build())

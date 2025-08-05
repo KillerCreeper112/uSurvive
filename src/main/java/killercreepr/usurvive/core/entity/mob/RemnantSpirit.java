@@ -2,8 +2,6 @@ package killercreepr.usurvive.core.entity.mob;
 
 import com.ticxo.modelengine.api.model.bone.BoneBehaviorTypes;
 import com.ticxo.modelengine.api.model.bone.ModelBone;
-import killercreepr.crux.core.util.CruxGoalUtil;
-import killercreepr.cruxclaims.core.entity.mob.goal.AstralProjectionGoal;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.modelengine.wrapper.ModelEntity;

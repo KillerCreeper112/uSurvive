@@ -36,6 +36,7 @@ import killercreepr.usurvive.core.data.entity.TrampleHolder;
 import killercreepr.usurvive.core.enchant.USurviveEnchant;
 import killercreepr.usurvive.core.enchant.logic.JoyWhirl;
 import killercreepr.usurvive.core.entity.memory.CleansingEnchantHolder;
+import killercreepr.usurvive.core.entity.memory.FrenzyHolder;
 import killercreepr.usurvive.core.entity.tickable.USurviveTickables;
 import killercreepr.usurvive.core.mechanics.Shockwave;
 import killercreepr.usurvive.core.potion.FrostbitePotion;
@@ -462,6 +463,14 @@ public class EnchantsListener implements Listener {
         });
     }
 
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityDeathMonitor(EntityDeathEvent event) {
+        Entity e = event.getEntity();
+        var data = EntityMemory.get(e);
+        if(data == null) return;
+        data.getDataHolders().remove(FrenzyHolder.KEY);
+    }
+
 
     @EventHandler(ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent event) {
@@ -711,8 +720,30 @@ public class EnchantsListener implements Listener {
             if(enchants.containsKey(USurviveEnchant.SHATTER) && isValidShatterTarget(vic)){
                 //todo shatter
             }
+            if(enchants.containsKey(USurviveEnchant.FRENZY)){
+                onFrenzy(attacker, vic, enchants.getOrDefault(USurviveEnchant.FRENZY, 0));
+            }
         }
     }
+
+    public void onFrenzy(Entity attacker, Entity vic, int level){
+        if(attacker instanceof HumanEntity h){
+            if(h.getAttackCooldown() < .75f) return;
+        }
+
+        FrenzyHolder holder = EntityMemory.getDataHolder(attacker, FrenzyHolder.class);
+        if(holder != null){
+            holder.onHit(attacker, vic, level);
+            return;
+        }
+
+        EntityMemory.getOrCreateDataHolder(attacker, FrenzyHolder.class, mem ->{
+            var newHolder = new FrenzyHolder(mem);
+            newHolder.onHit(attacker, vic, level);
+            return newHolder;
+        });
+    }
+
 
     public boolean isValidShatterTarget(Entity target){
         if(!(target instanceof LivingEntity victim)) return false;

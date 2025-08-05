@@ -1,6 +1,5 @@
 package killercreepr.usurvive.core.mechanics;
 
-import com.sun.jna.platform.win32.OaIdl;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.math.CruxLocation;
 import killercreepr.crux.core.util.CruxMath;
