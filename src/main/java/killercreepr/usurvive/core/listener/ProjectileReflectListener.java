@@ -13,6 +13,7 @@ import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxentities.damage.type.CruxEntityDamageTypes;
 import killercreepr.usurvive.api.event.ProjectileRicochetEvent;
 import killercreepr.usurvive.core.entity.memory.PiercingProjectileHolder;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -28,6 +29,9 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public class ProjectileReflectListener implements Listener {
@@ -49,10 +53,15 @@ public class ProjectileReflectListener implements Listener {
         Projectile proj = event.getEntity();
         Entity hit = event.getHitEntity();
         if(hit == null) return;
-        PiercingProjectileHolder holder = EntityMemory.getDataHolder(proj, PiercingProjectileHolder.class);
-        if(holder == null) return;
 
-        if(CruxMath.hasOccurredWithin(holder.getLastHit().getOrDefault(hit.getUniqueId(), 0L), 10L)){
+        PiercingProjectileHolder holder = EntityMemory.getDataHolder(proj, PiercingProjectileHolder.class);
+        if(holder != null){
+            if(CruxMath.hasOccurredWithin(holder.getLastHit().getOrDefault(hit.getUniqueId(), 0L), 10L)){
+                event.setCancelled(true);
+                return;
+            }
+        }
+        if(CruxPersist.hasIgnoreEntityWithin(proj, hit.getUniqueId(), 8)){
             event.setCancelled(true);
         }
     }
@@ -102,7 +111,7 @@ public class ProjectileReflectListener implements Listener {
     public void projectileHitEntity(Projectile proj, ProjectileHitEvent event){
         CruxAttributeInstance instance = CruxAttribute.getInstance(proj, CruxAttribute.PROJECTILE_RICOCHET_ENTITY);
         if(instance == null) return;
-        int reflected = CruxPersist.RICOCHET_BLOCK.get(proj, 0);
+        int reflected = CruxPersist.RICOCHET_ENTITY.get(proj, 0);
         int max = (int) instance.getValue();
         if(reflected >= (max-1)) return;
 
@@ -193,6 +202,19 @@ public class ProjectileReflectListener implements Listener {
             tag.set(x, reflected+1);
             CruxPersist.RICOCHET_LAST_HIT_BLOCK_TYPE.set(x, block == null ? null : Crux.handlers().block().getType(block));
             CruxPersist.RICOCHET_LAST_HIT_ENTITY_TYPE.set(x, entity == null ? null : Crux.handlers().entity().getType(entity));
+
+            if(entity != null){
+                List<UUID> ignoreList = CruxPersist.IGNORE_ENTITIES_LIST.get(x, null);
+                if(ignoreList == null || !ignoreList.contains(entity.getUniqueId())){
+                    if(ignoreList == null) ignoreList = new ArrayList<>();
+                    else ignoreList = new ArrayList<>(ignoreList);
+                    ignoreList.add(entity.getUniqueId());
+
+                    CruxPersist.IGNORE_ENTITIES_LIST.set(x, ignoreList);
+                    CruxPersist.IGNORE_ENTITIES_TIME.set(x, System.currentTimeMillis());
+                }
+            }
+
             if(newProjectileConsumer != null) newProjectileConsumer.accept(x);
         });
 

@@ -11,6 +11,7 @@ import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.component.CruxComponents;
+import killercreepr.crux.core.persistence.CruxPersist;
 import killercreepr.crux.core.util.*;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
@@ -157,26 +158,27 @@ public class EnchantsListener implements Listener {
     }
 
     public void onEnchantRicochet(Entity proj, ProjectileRicochetEvent event, int level){
-        Entity nearbyEnemy = findNearbyEnemy(proj.getLocation(), EntityDamager.getOwnerUUID(proj), EntityDamager.getOwner(proj), 16D);
+        Entity nearbyEnemy = findNearbyEnemy(proj.getLocation(), proj, EntityDamager.getOwnerUUID(proj), EntityDamager.getOwner(proj), 16D);
         if(nearbyEnemy == null) return;
 
         Vector original = event.getReflectDirection();
-        double speed = original.length(); // preserve original speed
+        double speed = original.length()*1.1; // preserve original speed
 
         Location from = proj.getLocation();
         Location to = nearbyEnemy.getLocation().add(0, nearbyEnemy.getHeight() * 0.5, 0);
         Vector dir = to.toVector().subtract(from.toVector()).normalize().multiply(speed);
 
-        dir.setY(dir.getY() + 0.2);
+        dir.setY(dir.getY() + 0.3);
 
         event.setReflectDirection(dir);
     }
 
-    public Entity findNearbyEnemy(Location center, UUID owner, Entity ownerEntity, double range){
+    public Entity findNearbyEnemy(Location center, Entity proj, UUID owner, Entity ownerEntity, double range){
         return new GetEntityNear<>(Entity.class)
             .center(center)
             .range(range)
             .filter(check ->{
+                if(CruxPersist.hasIgnoreEntity(proj, check.getUniqueId())) return false;
                 return owner == null || !isFriendly(check, owner, ownerEntity);
             })
             .operation(GetNear.Operation.NEAREST)
@@ -523,7 +525,7 @@ public class EnchantsListener implements Listener {
         if(level > 0){
             CruxAttribute.addModifier(
                 e, CruxAttribute.PROJECTILE_RICOCHET_ENTITY,
-                CruxAttributeModifier.addModifier(Crux.key("enchant/ricochet"), level)
+                CruxAttributeModifier.addModifier(Crux.key("enchant/ricochet"), level+2)
             );
         }
     }
