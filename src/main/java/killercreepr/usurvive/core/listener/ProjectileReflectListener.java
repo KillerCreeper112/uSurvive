@@ -172,7 +172,7 @@ public class ProjectileReflectListener implements Listener {
             x.setInvisible(proj.isInvisible());
             x.setNoPhysics(proj.hasNoPhysics());
 
-            x.setVisualFire(proj.isVisualFire());
+            x.setVisualFire(proj.getVisualFire());
             if(x instanceof ThrowableProjectile newSpawn && proj instanceof ThrowableProjectile old){
                 newSpawn.setItem(old.getItem());
                 newSpawn.setShooter(old.getShooter());

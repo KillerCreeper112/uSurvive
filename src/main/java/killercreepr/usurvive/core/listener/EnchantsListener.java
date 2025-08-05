@@ -11,10 +11,7 @@ import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.component.CruxComponents;
-import killercreepr.crux.core.util.CruxCollection;
-import killercreepr.crux.core.util.CruxMath;
-import killercreepr.crux.core.util.CruxTag;
-import killercreepr.crux.core.util.GetEntityNear;
+import killercreepr.crux.core.util.*;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxattributes.api.equipment.CruxSlot;
@@ -22,12 +19,15 @@ import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxpotions.api.entity.PotionHolder;
+import killercreepr.cruxpotions.api.potion.inflictor.PotionInflictor;
 import killercreepr.cruxpotions.core.entity.memory.SimplePotionHolder;
 import killercreepr.cruxpotions.core.potions.inflictor.EntityInflictor;
 import killercreepr.cruxtickables.api.entity.tickable.EntityTickableModifier;
 import killercreepr.cruxtickables.api.event.EntityTickablesCalculateEvent;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.api.event.EntityTrampleEnchantEvent;
+import killercreepr.usurvive.api.event.ProjectileRicochetEvent;
+import killercreepr.usurvive.core.component.USurviveComponents;
 import killercreepr.usurvive.core.data.entity.TrampleHolder;
 import killercreepr.usurvive.core.enchant.USurviveEnchant;
 import killercreepr.usurvive.core.enchant.logic.JoyWhirl;
@@ -142,6 +142,67 @@ public class EnchantsListener implements Listener {
                 return;
             }
         }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onProjectileRicochet(ProjectileRicochetEvent event) {
+        Entity proj = event.getNewProjectile();
+        Map<Enchantment, Integer> enchants = CruxEntity.entity(proj).get(CruxComponents.INHERITED_ENCHANTMENTS);
+        if(enchants == null || enchants.isEmpty()) return;
+
+        int level = enchants.getOrDefault(USurviveEnchant.RICOCHET, 0);
+        if(level > 0){
+            onEnchantRicochet(proj, event, level);
+        }
+    }
+
+    public void onEnchantRicochet(Entity proj, ProjectileRicochetEvent event, int level){
+        Entity nearbyEnemy = findNearbyEnemy(proj.getLocation(), EntityDamager.getOwnerUUID(proj), EntityDamager.getOwner(proj), 16D);
+        if(nearbyEnemy == null) return;
+
+        Vector original = event.getReflectDirection();
+        double speed = original.length(); // preserve original speed
+
+        Location from = proj.getLocation();
+        Location to = nearbyEnemy.getLocation().add(0, nearbyEnemy.getHeight() * 0.5, 0);
+        Vector dir = to.toVector().subtract(from.toVector()).normalize().multiply(speed);
+
+        dir.setY(dir.getY() + 0.2);
+
+        event.setReflectDirection(dir);
+    }
+
+    public Entity findNearbyEnemy(Location center, UUID owner, Entity ownerEntity, double range){
+        return new GetEntityNear<>(Entity.class)
+            .center(center)
+            .range(range)
+            .filter(check ->{
+                return owner == null || !isFriendly(check, owner, ownerEntity);
+            })
+            .operation(GetNear.Operation.NEAREST)
+            .findFirst();
+    }
+
+    public boolean isFriendly(Entity e, UUID owner, Entity ownerEntity){
+        if(e.getUniqueId().equals(owner)) return true;
+        if(e instanceof Tameable tame && owner.equals(tame.getOwnerUniqueId())){
+            return true;
+        }
+        UUID checkOwner = EntityDamager.getOwnerUUID(e);
+        if(owner.equals(checkOwner)) return true;
+
+        UPlayer uPlayer = UPlayer.getPlayer(owner);
+        if(uPlayer == null) return mobsIsFriendly(e, owner, ownerEntity);
+
+        if(uPlayer.hasFriend(e.getUniqueId()) || uPlayer.hasFriend(e.getUniqueId())) return true;
+        return false;
+    }
+
+    public boolean mobsIsFriendly(Entity e, UUID owner, Entity ownerEntity){
+        if(!(ownerEntity instanceof Mob mob)) return false;
+        if(mob instanceof Enemy && e instanceof Enemy) return true;
+        if(mob instanceof Animals && e instanceof Animals) return true;
+        return false;
     }
 
 
@@ -269,14 +330,14 @@ public class EnchantsListener implements Listener {
             Entity hit = event.getHitEntity();
             if(hit != null){
                 UUID owner = EntityDamager.getOwnerUUID(proj);
-                if(isFriendly(hit, owner)){
+                if(isFriendly(hit, owner, EntityDamager.getOwner(proj))){
                     event.setCancelled(true);
                 }
             }
         }
     }
 
-    public boolean isFriendly(Entity hit, UUID owner){
+    /*public boolean isFriendly(Entity hit, UUID owner){
         if(hit instanceof Tameable t && owner.equals(t.getOwnerUniqueId())) return true;
         if(hit instanceof Player){
             UPlayer player = UPlayer.getPlayer(owner);
@@ -285,7 +346,7 @@ public class EnchantsListener implements Listener {
             }
         }
         return false;
-    }
+    }*/
 
     @EventHandler(ignoreCancelled = true)
     public void onEntityEquipmentChanged(EntityEquipmentChangedEvent event) {
@@ -311,10 +372,25 @@ public class EnchantsListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onProjectileHit(ProjectileHitEvent event) {
+        Entity hit = event.getHitEntity();
         Entity e = event.getEntity();
         int level = CruxTag.get(e, "enchant/boomshot", PersistentDataType.INTEGER, 0);
         if(level > 0){
             explodeBoomshot(e, level);
+        }
+
+        if(hit == null) return;
+        Map<Enchantment, Integer> enchants = CruxEntity.entity(e).get(CruxComponents.INHERITED_ENCHANTMENTS);
+        if(enchants == null || enchants.isEmpty()) return;
+
+        level = enchants.getOrDefault(USurviveEnchant.CLING, 0);
+        if(level > 0){
+            PotionHolder holder = PotionHolder.potionHolderOrCreate(hit);
+            if(holder != null){
+                int duration = 300 + ((level-1) * 100);
+                PotionInflictor inflictor = new EntityInflictor(EntityDamager.getOwnerOrSelf(e));
+                holder.addPotion(USurvivePotions.CLING.create(hit, duration, level-1, inflictor));
+            }
         }
     }
 
@@ -442,6 +518,13 @@ public class EnchantsListener implements Listener {
                     arrow.setDamage(arrow.getDamage() * multiplier);
                 }
             }
+        }
+        level = item.getEnchantmentLevel(USurviveEnchant.RICOCHET);
+        if(level > 0){
+            CruxAttribute.addModifier(
+                e, CruxAttribute.PROJECTILE_RICOCHET_ENTITY,
+                CruxAttributeModifier.addModifier(Crux.key("enchant/ricochet"), level)
+            );
         }
     }
 

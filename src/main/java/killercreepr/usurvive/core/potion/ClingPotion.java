@@ -26,12 +26,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ClingPotion extends InflictedPotion implements Listener {
+    protected final boolean isPlayer;
     public ClingPotion(@NotNull CruxPotion potion, @NotNull Entity entity, int duration, int amplifier) {
         super(potion, entity, duration, amplifier);
+        isPlayer = entity instanceof HumanEntity;
     }
 
     public ClingPotion(@NotNull CruxPotion potion, @NotNull Entity entity, int duration, int amplifier, @Nullable PotionInflictor inflictor) {
         super(potion, entity, duration, amplifier, inflictor);
+        isPlayer = entity instanceof HumanEntity;
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -41,17 +44,23 @@ public class ClingPotion extends InflictedPotion implements Listener {
         event.setCancelled(true);
 
         var menu = new ClingEffectMenu(p, maxClicks, e ->{
-            setDuration(0, true);
+            duration = Math.max(0, duration - 600);
+            CreateSound.sound(Sound.ENTITY_PLAYER_LEVELUP, .35f, 2f).playAt(e);
         });
         menu.load();
         menu.open(p);
+        CreateSound.sound(Sound.ITEM_LEAD_BREAK, .5f, 2f).playAt(p);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         if(Menus.getOpened(entity) instanceof ClingEffectMenu){
-            if(entity instanceof HumanEntity h) h.closeInventory();
+            if(entity instanceof HumanEntity h){
+                Crux.scheduler().runTask(() ->{
+                    h.closeInventory();
+                });
+            }
         }
     }
 
@@ -119,8 +128,10 @@ public class ClingPotion extends InflictedPotion implements Listener {
             .attack(dmg);
         CreateSound.sound(Sound.ENTITY_PLAYER_ATTACK_STRONG, .4f, 2f)
             .playAt(entity);
+        //optimize for other entities
+        if(!isPlayer) return;
 
-        int fadeOutTicks = (int) (cooldown * .1f);
+        int fadeOutTicks = (int) Math.ceil(cooldown * .15f);
         int stayTicks = cooldown - fadeOutTicks;
 
         String spacing = "<crux_space:" + CruxMath.random(-100, 100) + ">";

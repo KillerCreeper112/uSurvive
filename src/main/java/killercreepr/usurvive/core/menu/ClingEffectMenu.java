@@ -9,6 +9,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -32,7 +33,7 @@ public class ClingEffectMenu extends BukkitMenu {
     @Override
     public void load() {
         super.load();
-        inventory = MenuType.GENERIC_3X3.create(viewer, Component.text("cling"))
+        inventory = MenuType.GENERIC_3X3.create(viewer, Component.text("ur in danger"))
             .getTopInventory();
         placeItemRandomly();
     }
@@ -41,17 +42,22 @@ public class ClingEffectMenu extends BukkitMenu {
     public void onMenuClick(@NotNull InventoryClickEvent event) {
         super.onMenuClick(event);
         ItemStack clicked = event.getCurrentItem();
-        if(CruxItem.isEmpty(clicked)) return;
+        HumanEntity who = event.getWhoClicked();
+        if(CruxItem.isEmpty(clicked)){
+            who.closeInventory();
+            CreateSound.sound(Sound.ENTITY_VILLAGER_NO, .35f, 1.2f).playAt(who);
+            return;
+        }
 
         times++;
         if(times >= maxTimes){
-            event.getWhoClicked().closeInventory();
-            onComplete.accept(event.getWhoClicked());
+            who.closeInventory();
+            onComplete.accept(who);
             return;
         }
 
         placeItemRandomly();
-        CreateSound.sound(Sound.UI_BUTTON_CLICK, .8f).playFor(event.getWhoClicked());
+        CreateSound.sound(Sound.UI_BUTTON_CLICK, .35f, .8f).playAt(who);
     }
 
     protected static final List<Material> ITEM_TYPES = List.of(

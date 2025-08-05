@@ -58,6 +58,18 @@ public class ProjectileRicochetEvent extends Event implements Cancellable {
         return hitEntity;
     }
 
+    public void setReflectedAmount(int reflectedAmount) {
+        this.reflectedAmount = reflectedAmount;
+    }
+
+    public void setReflectDirection(Vector reflectDirection) {
+        this.reflectDirection = reflectDirection;
+    }
+
+    public void setNewProjectile(Entity newProjectile) {
+        this.newProjectile = newProjectile;
+    }
+
     @Override
     public @NotNull HandlerList getHandlers() {
         return HANDLER_LIST;
