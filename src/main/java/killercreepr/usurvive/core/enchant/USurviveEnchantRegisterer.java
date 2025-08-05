@@ -454,7 +454,7 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
                 .activeSlots(EquipmentSlotGroup.MAINHAND),
-            crux -> crux.description("Projectiles bounce to multiple targets for reduced damage")
+            crux -> crux.description("Projectiles bounce to multiple targets")
                 .applicableItemGroup(ApplicableItemGroup.builder()
                     .add(ApplicableItemGroup.BOWS_N_CROSSBOWS)
                     .add(ApplicableItemType.TRIDENT)
@@ -469,7 +469,7 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
                 .activeSlots(EquipmentSlotGroup.MAINHAND),
-            crux -> crux.description("Projectiles do damage over time")
+            crux -> crux.description("Projectiles do damage over time while also preventing players from swapping their hands")
                 .applicableItemGroup(ApplicableItemGroup.builder()
                     .add(ApplicableItemGroup.BOWS_N_CROSSBOWS)
                     .build())
@@ -497,7 +497,7 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
                 .activeSlots(EquipmentSlotGroup.ARMOR),
-            crux -> crux.description("When the user dies, a ghostly version of them remains for 15s and fights nearby enemies (One time use enchant)")
+            crux -> crux.description("When the user dies, a ghostly version of them remains and fights nearby enemies (One time use enchant)")
                 .applicableItemGroup(ApplicableItemGroup.builder()
                     .add(ApplicableItemGroup.ARMOR)
                     .build())

@@ -38,4 +38,6 @@ public class USurviveMobs {
     public static final CruxMob BUZZROT_BEE = CruxEntityRegistries.ENTITIES.register(new BuzzrotBee(Crux.key("buzzrot_bee")));
 
     public static final CruxMob MIRRORSTRIKE = CruxEntityRegistries.ENTITIES.register(new Mirrorstrike(Crux.key("mirrorstrike")));
+
+    public static final RemnantSpirit REMNANT_SPIRIT = CruxEntityRegistries.ENTITIES.register(new RemnantSpirit(Crux.key("remnant_spirit")));
 }

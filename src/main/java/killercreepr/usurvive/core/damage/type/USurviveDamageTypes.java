@@ -17,4 +17,7 @@ public class USurviveDamageTypes {
 
     public static final DamageType CLING = RegistryAccess.registryAccess()
         .getRegistry(RegistryKey.DAMAGE_TYPE).get(Crux.key("cling"));
+
+    public static final DamageType REAP_SHOCKWAVE = RegistryAccess.registryAccess()
+        .getRegistry(RegistryKey.DAMAGE_TYPE).get(Crux.key("reap_shockwave"));
 }

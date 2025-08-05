@@ -9,6 +9,8 @@ import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.api.item.CruxItem;
+import killercreepr.crux.api.math.CruxLocation;
+import killercreepr.crux.api.valueproviders.number.NumberHolder;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.component.CruxComponents;
 import killercreepr.crux.core.persistence.CruxPersist;
@@ -19,6 +21,7 @@ import killercreepr.cruxattributes.api.equipment.CruxSlot;
 import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
 import killercreepr.cruxentities.api.combat.EntityDamager;
+import killercreepr.cruxform.api.shape.CreateCircle;
 import killercreepr.cruxpotions.api.entity.PotionHolder;
 import killercreepr.cruxpotions.api.potion.inflictor.PotionInflictor;
 import killercreepr.cruxpotions.core.entity.memory.SimplePotionHolder;
@@ -28,11 +31,13 @@ import killercreepr.cruxtickables.api.event.EntityTickablesCalculateEvent;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.api.event.EntityTrampleEnchantEvent;
 import killercreepr.usurvive.api.event.ProjectileRicochetEvent;
+import killercreepr.usurvive.core.damage.type.USurviveDamageTypes;
 import killercreepr.usurvive.core.data.entity.TrampleHolder;
 import killercreepr.usurvive.core.enchant.USurviveEnchant;
 import killercreepr.usurvive.core.enchant.logic.JoyWhirl;
 import killercreepr.usurvive.core.entity.memory.CleansingEnchantHolder;
 import killercreepr.usurvive.core.entity.tickable.USurviveTickables;
+import killercreepr.usurvive.core.mechanics.Shockwave;
 import killercreepr.usurvive.core.potion.FrostbitePotion;
 import killercreepr.usurvive.core.potion.USurvivePotions;
 import killercreepr.usurvive.core.potion.inflictor.UDamageEntityInflictor;
@@ -696,7 +701,117 @@ public class EnchantsListener implements Listener {
                 int level = enchants.getOrDefault(USurviveEnchant.MIRRORSTRIKE, 0);
                 mirrorstrike(vic, victim, attacker, level, event);
             }
+            if(enchants.containsKey(USurviveEnchant.REAP) && victim != null && event.getDamageSource().getDamageType() != USurviveDamageTypes.REAP_SHOCKWAVE){
+                double hp = victim.getHealth() - event.getFinalDamage();
+                if(hp <= 0D){
+                    int level = enchants.getOrDefault(USurviveEnchant.REAP, 0);
+                    reap(vic, attacker, level);
+                }
+            }
+            if(enchants.containsKey(USurviveEnchant.SHATTER) && isValidShatterTarget(vic)){
+                //todo shatter
+            }
         }
+    }
+
+    public boolean isValidShatterTarget(Entity target){
+        if(!(target instanceof LivingEntity victim)) return false;
+        if(victim.getAbsorptionAmount() > .5D) return true;
+        var instance = victim.getAttribute(Attribute.ARMOR);
+        if(instance != null && instance.getValue() > .5D) return true;
+        if(CruxEntityUtil.isBlocking(target)) return true;
+        return false;
+    }
+
+    public boolean reapCheckRay(World world, Entity e, Location visualLocation, double range) {
+        double[] locationOffsets = new double[]{0D, .65D, -.65D};
+        double[] yOffsets;
+        if(e instanceof LivingEntity living && living.getEyeLocation().getY() < visualLocation.getY()){
+            yOffsets = new double[]{0, 0.5, 0.1, 1.0}; // Location, Mid-body, lower, head
+        }else{
+            yOffsets = new double[]{0, 0.5, 0.1}; // no head check
+        }
+
+        for (double offset : yOffsets) {
+            for(double locationY : locationOffsets){
+                Location from = visualLocation.clone().add(0, locationY, 0);
+                Location to = e.getLocation().add(0, e.getHeight() * offset, 0);
+                Vector direction = to.toVector().subtract(from.toVector()).normalize();
+
+                RayTraceResult ray = world.rayTraceBlocks(
+                    from,
+                    direction,
+                    range,
+                    FluidCollisionMode.NEVER,
+                    true
+                );
+
+                if (ray == null || ray.getHitBlock() == null || !ray.getHitBlock().isSolid()) {
+                    return true; // Valid hit path to that body part
+                }
+            }
+        }
+
+        return false;
+    }
+
+
+    public void reap(Entity victim, Entity dmger, int level){
+        double range = 3D + (level * 2.5D);
+
+        UUID ownerUUID = EntityDamager.getOwnerUUID(dmger);
+        Entity owner = EntityDamager.getOwnerOrSelf(dmger);
+
+        Location center = victim.getLocation();
+        GetNear<Entity> getNear = new GetEntityNear<>(Entity.class)
+            .center(center)
+            .range(range)
+            .amount(1)
+            .filter(e ->{
+                if(e.equals(dmger)) return false;
+                return ownerUUID == null || !isFriendly(e, ownerUUID, owner);
+            });
+
+        if(getNear.find().isEmpty()) return;
+
+        Location visualLocation = center.clone().add(0, 0.2, 0);
+
+        World world = victim.getWorld();
+        getNear.amount((NumberHolder) null)
+            .filter(e ->{
+                if(ownerUUID != null && isFriendly(e, ownerUUID, owner)) return false;
+                if(e.equals(dmger)) return false;
+                if(!reapCheckRay(world, e, visualLocation, range)) return false;
+                return true;
+            });
+
+        CruxLocation visualLoc = CruxLocation.location(visualLocation, 0f, 0f);
+        double damage = level * 4.5D;
+        double kb = level * 8D;
+        double upKb = level * 2D;
+        int totalTicks = Math.max(60 - ((level-1) * 20), 0);
+        new Shockwave(
+            victim.getWorld(),
+            range,
+            () -> visualLoc,
+            CreateCircle.Type.WHOLE,
+            getNear,
+            hit ->{
+                var sourceBuilder = DamageSource.builder(USurviveDamageTypes.REAP_SHOCKWAVE)
+                    .withDirectEntity(dmger)
+                    .withDamageLocation(getNear.center().value());
+
+                if(!owner.equals(dmger)){
+                    sourceBuilder.withCausingEntity(owner);
+                }
+
+                var entityDamager = EntityDamager.entityDamager(
+                    hit, dmger
+                ).setSource(sourceBuilder.build());
+                entityDamager.attack(damage, kb, upKb);
+            },
+            8
+        ).start(totalTicks);
     }
 
     public void mirrorstrike(Entity vic, LivingEntity victim, Entity attacker, int level, EntityDamageByEntityEvent event){
