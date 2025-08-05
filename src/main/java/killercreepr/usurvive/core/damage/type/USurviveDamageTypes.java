@@ -14,4 +14,7 @@ public class USurviveDamageTypes {
 
     public static final DamageType MIRRORSTRIKE = RegistryAccess.registryAccess()
         .getRegistry(RegistryKey.DAMAGE_TYPE).get(Crux.key("mirrorstrike"));
+
+    public static final DamageType CLING = RegistryAccess.registryAccess()
+        .getRegistry(RegistryKey.DAMAGE_TYPE).get(Crux.key("cling"));
 }

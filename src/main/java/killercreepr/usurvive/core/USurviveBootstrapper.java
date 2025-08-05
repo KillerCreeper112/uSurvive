@@ -48,6 +48,13 @@ public class USurviveBootstrapper implements PluginBootstrap {
                     .messageId("mob")
                     .damageScaling(DamageScaling.ALWAYS)
             );
+
+            event.registry().register(
+                RegistryKey.DAMAGE_TYPE.typedKey(Crux.key("cling")),
+                builder -> builder.exhaustion(0.15f)
+                    .messageId("mob")
+                    .damageScaling(DamageScaling.ALWAYS)
+            );
         }));
 
 
@@ -59,6 +66,7 @@ public class USurviveBootstrapper implements PluginBootstrap {
                 DamageTypeTagKeys.NO_KNOCKBACK,
                 List.of(
                     TypedKey.create(RegistryKey.DAMAGE_TYPE, Crux.key("thornlash"))
+                    /*TypedKey.create(RegistryKey.DAMAGE_TYPE, Crux.key("cling"))*/
                 )
             );
 
