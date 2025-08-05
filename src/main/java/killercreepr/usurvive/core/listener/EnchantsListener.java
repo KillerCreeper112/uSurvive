@@ -113,7 +113,7 @@ public class EnchantsListener implements Listener {
             }
         }
 
-        int level = armorEnchants.get(USurviveEnchant.HOLLOWING_CURSE);
+        int level = armorEnchants.getOrDefault(USurviveEnchant.HOLLOWING_CURSE, 0);
         if(level > 0){
             event.addTickable(USurviveTickables.ENCHANT_HOLLOWING_CURSE.buildActive(
                 event.getEntity(), mainSlots.get(USurviveEnchant.HOLLOWING_CURSE),
@@ -122,7 +122,7 @@ public class EnchantsListener implements Listener {
             ));
         }
 
-        level = armorEnchants.get(USurviveEnchant.BLOOMING_CURSE);
+        level = armorEnchants.getOrDefault(USurviveEnchant.BLOOMING_CURSE, 0);
         if(level > 0){
             event.addTickable(USurviveTickables.ENCHANT_BLOOMING_CURSE.buildActive(
                 event.getEntity(), mainSlots.get(USurviveEnchant.BLOOMING_CURSE),
