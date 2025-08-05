@@ -5,19 +5,27 @@ import killercreepr.crux.api.communication.CreateTitle;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxentities.api.combat.EntityDamager;
+import killercreepr.cruxmenus.core.registries.Menus;
 import killercreepr.cruxpotions.api.potion.CruxPotion;
 import killercreepr.cruxpotions.api.potion.inflictor.PotionInflictor;
 import killercreepr.cruxpotions.core.potions.InflictedPotion;
 import killercreepr.cruxpotions.core.potions.inflictor.EntityInflictor;
 import killercreepr.usurvive.core.damage.type.USurviveDamageTypes;
+import killercreepr.usurvive.core.menu.ClingEffectMenu;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ClingPotion extends InflictedPotion {
+public class ClingPotion extends InflictedPotion implements Listener {
     public ClingPotion(@NotNull CruxPotion potion, @NotNull Entity entity, int duration, int amplifier) {
         super(potion, entity, duration, amplifier);
     }
@@ -26,14 +34,43 @@ public class ClingPotion extends InflictedPotion {
         super(potion, entity, duration, amplifier, inflictor);
     }
 
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
+        if(!event.getPlayer().equals(entity)) return;
+        Player p = event.getPlayer();
+        event.setCancelled(true);
+
+        var menu = new ClingEffectMenu(p, maxClicks, e ->{
+            setDuration(0, true);
+        });
+        menu.load();
+        menu.open(p);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(Menus.getOpened(entity) instanceof ClingEffectMenu){
+            if(entity instanceof HumanEntity h) h.closeInventory();
+        }
+    }
+
+    @Override
+    protected void onUpdate(int oldDuration, int oldAmplifier) {
+        super.onUpdate(oldDuration, oldAmplifier);
+        maxClicks = calculateMaxClicks();
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
         cooldown = calculateCooldown();
+        maxClicks = calculateMaxClicks();
     }
 
     protected int tick = 0;
     protected int cooldown;
+    protected int maxClicks;
     @Override
     protected void onTick() {
         super.onTick();
@@ -44,6 +81,13 @@ public class ClingPotion extends InflictedPotion {
         Crux.scheduler().runTask(() ->{
             damage(1D, cooldown);
         });
+    }
+
+    public int calculateMaxClicks(){
+        return CruxMath.random(
+            3 + (int) (amplifier*1.5f),
+            5 + (amplifier*2)
+        );
     }
 
     public int calculateCooldown(){

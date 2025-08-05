@@ -167,6 +167,10 @@ public class EnchantsListener implements Listener {
     public void onAddPotion(Entity e, PotionEffect oldEffect, PotionEffect newEffect, EntityPotionEffectEvent event){
         if(newEffect.isInfinite()) return;
         if(!(e instanceof LivingEntity living)) return;
+
+        PotionEffectType type = newEffect.getType();
+        if(type != PotionEffectType.POISON && type != PotionEffectType.SLOWNESS && type != PotionEffectType.WEAKNESS) return;
+
         int durationDifference;
         if(oldEffect != null && oldEffect.getType() == newEffect.getType() && !oldEffect.isInfinite()){
             durationDifference = newEffect.getDuration() - oldEffect.getDuration();
