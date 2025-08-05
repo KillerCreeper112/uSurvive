@@ -379,7 +379,7 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
             "hollowing_curse", b -> b.description(Component.text("Curse of Hollowing", NamedTextColor.RED))
                 .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_ARMOR))
                 .anvilCost(1)
-                .maxLevel(3)
+                .maxLevel(1)
                 .weight(1)
                 .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))

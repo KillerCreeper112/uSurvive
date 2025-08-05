@@ -282,6 +282,48 @@ public class USurviveTickables {
         }
     });
 
+    public static final EntityTickable ENCHANT_HOLLOWING_CURSE = register(new SimpleDataEntityTickable(Crux.key("enchant/hollowing_curse")) {
+        public static final PersistParser<?> DATA_PARSER = PersistTextParser.mapBuilder(Map.class)
+            .field("level", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("level")))
+            .apply(InputDecodeContext::get)
+            .createInput(Crux.key("data"));
+
+        @Override
+        public PersistParser<?> getDataParser() {
+            return DATA_PARSER;
+        }
+
+        @Override
+        public @Nullable ActiveEntityTickable buildActive(@NotNull Entity entity, @Nullable CruxSlot slot, @NotNull EntityTickableModifier mod) {
+            Map data = (Map) mod.getData();
+
+            return new ActiveHollowingCurseEnchantTickable(
+                entity, this, slot, (int) data.getOrDefault("level", 1)
+            );
+        }
+    });
+
+    public static final EntityTickable ENCHANT_BLOOMING_CURSE = register(new SimpleDataEntityTickable(Crux.key("enchant/blooming_curse")) {
+        public static final PersistParser<?> DATA_PARSER = PersistTextParser.mapBuilder(Map.class)
+            .field("level", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("level")))
+            .apply(InputDecodeContext::get)
+            .createInput(Crux.key("data"));
+
+        @Override
+        public PersistParser<?> getDataParser() {
+            return DATA_PARSER;
+        }
+
+        @Override
+        public @Nullable ActiveEntityTickable buildActive(@NotNull Entity entity, @Nullable CruxSlot slot, @NotNull EntityTickableModifier mod) {
+            Map data = (Map) mod.getData();
+
+            return new ActiveBloomingCurseEnchantTickable(
+                entity, this, slot, (int) data.getOrDefault("level", 1)
+            );
+        }
+    });
+
     private static EntityTickable register(EntityTickable tickable){
         return CruxTickableRegistries.ENTITY_TICKABLE.register(tickable);
     }

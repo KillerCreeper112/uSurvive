@@ -80,13 +80,56 @@ public class EnchantsListener implements Listener {
         this.plugin = plugin;
     }
 
+    protected final Enchantment[] armorTickableEnchants = new Enchantment[]{
+        USurviveEnchant.HOLLOWING_CURSE,
+        USurviveEnchant.BLOOMING_CURSE
+    };
     @EventHandler(ignoreCancelled = true)
     public void onEntityTickablesCalculate(EntityTickablesCalculateEvent event) {
         if(!(event.getEntity() instanceof LivingEntity e)) return;
         EntityEquipment equipment = e.getEquipment();
         if(equipment == null) return;
-        if(entityTickablesFocus(equipment.getItemInMainHand(), CruxSlot.MAIN_HAND, event)) return;
-        entityTickablesFocus(equipment.getItemInOffHand(), CruxSlot.OFF_HAND, event);
+        if(!entityTickablesFocus(equipment.getItemInMainHand(), CruxSlot.MAIN_HAND, event)){
+            entityTickablesFocus(equipment.getItemInOffHand(), CruxSlot.OFF_HAND, event);
+        }
+        Map<Enchantment, Integer> armorEnchants = new HashMap<>();
+        Map<Enchantment, CruxSlot> mainSlots = new HashMap<>();
+
+        for(CruxSlot slot : CruxSlotGroup.ARMOR){
+            EquipmentSlot bukkitSlot = AttributeBukkitAdaptor.adapt(slot);
+            if(bukkitSlot == null) continue;
+            if(!e.canUseEquipmentSlot(bukkitSlot)) continue;
+            ItemStack item = equipment.getItem(bukkitSlot);
+            if(CruxItem.isEmpty(item)) continue;
+
+            for(Enchantment ench : armorTickableEnchants){
+                int currentLevel = item.getEnchantmentLevel(ench);
+                if(currentLevel < 1) continue;
+                armorEnchants.compute(ench, (ignored, x) -> x == null ? currentLevel : (x + currentLevel));
+
+                if(mainSlots.get(ench) != CruxSlot.CHEST){
+                    mainSlots.put(ench, slot);
+                }
+            }
+        }
+
+        int level = armorEnchants.get(USurviveEnchant.HOLLOWING_CURSE);
+        if(level > 0){
+            event.addTickable(USurviveTickables.ENCHANT_HOLLOWING_CURSE.buildActive(
+                event.getEntity(), mainSlots.get(USurviveEnchant.HOLLOWING_CURSE),
+                EntityTickableModifier.modifier(Key.key("enchant/hollowing_curse"), USurviveTickables.ENCHANT_HOLLOWING_CURSE, CruxSlotGroup.ARMOR,
+                    null, Map.of("level", level))
+            ));
+        }
+
+        level = armorEnchants.get(USurviveEnchant.BLOOMING_CURSE);
+        if(level > 0){
+            event.addTickable(USurviveTickables.ENCHANT_BLOOMING_CURSE.buildActive(
+                event.getEntity(), mainSlots.get(USurviveEnchant.BLOOMING_CURSE),
+                EntityTickableModifier.modifier(Key.key("enchant/blooming_curse"), USurviveTickables.ENCHANT_BLOOMING_CURSE, CruxSlotGroup.ARMOR,
+                    null, Map.of("level", level))
+            ));
+        }
     }
 
     public boolean entityTickablesFocus(ItemStack item, CruxSlot slot, EntityTickablesCalculateEvent event){
