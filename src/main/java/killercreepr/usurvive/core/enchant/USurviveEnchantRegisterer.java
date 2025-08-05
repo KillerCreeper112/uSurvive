@@ -370,7 +370,7 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
                 .activeSlots(EquipmentSlotGroup.MAINHAND),
 
-            crux -> crux.description("The first hit against an entity inflicts weakness and slowness")
+            crux -> crux.description("Critical hits inflict weakness and slowness")
                 .applicableItemGroup(ApplicableItemGroup.builder()
                     .add(ApplicableItemGroup.WEAPONS)
                     .build())
@@ -506,7 +506,7 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
             "cleansing", b -> b.description(Component.text("Cleansing"))
                 .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_ARMOR))
                 .anvilCost(1)
-                .maxLevel(4)
+                .maxLevel(3)
                 .weight(1)
                 .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))

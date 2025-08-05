@@ -50,12 +50,18 @@ public class MirrorstrikePotion extends InflictedPotion {
         });
         ShapeScheduler.builder()
             .locationTick(ctx ->{
+                if(!e.isValid() || !CruxEntityUtil.isValid(entity)){
+                    ctx.setCancelled(true);
+                    return;
+                }
+
                 CruxPosition pos = ctx.getLocation();
                 Location loc = pos.toLocation(entity.getWorld());
                 loc.getWorld().spawnParticle(Particle.CRIT, loc, 0);
                 e.teleport(loc);
             })
             .endTask(() ->{
+                if(!CruxEntityUtil.isValid(entity)) return;
                 if(e.isValid()){
                     var builder = DamageSource.builder(USurviveDamageTypes.MIRRORSTRIKE)
                         .withDamageLocation(e.getLocation())

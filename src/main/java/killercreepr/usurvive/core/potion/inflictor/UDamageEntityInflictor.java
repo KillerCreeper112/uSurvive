@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public class UDamageEntityInflictor extends EntityInflictor {
     public static final String ID = "udamage_entity";
-    protected final float damage;
+    protected float damage;
     public UDamageEntityInflictor(@NotNull Entity e, float damage) {
         super(e);
         this.damage = damage;
@@ -18,6 +18,15 @@ public class UDamageEntityInflictor extends EntityInflictor {
 
     public UDamageEntityInflictor(@NotNull UUID uuid, @Nullable Key type, float damage) {
         super(uuid, type);
+        this.damage = damage;
+    }
+
+    public UDamageEntityInflictor addDamage(float amount){
+        this.damage += amount;
+        return this;
+    }
+
+    public void setDamage(float damage) {
         this.damage = damage;
     }
 

@@ -262,6 +262,26 @@ public class USurviveTickables {
         }
     });
 
+    public static final EntityTickable ENCHANT_FOCUS = register(new SimpleDataEntityTickable(Crux.key("enchant/focus")) {
+        public static final PersistParser<?> DATA_PARSER = PersistTextParser.mapBuilder(Map.class)
+            .apply(InputDecodeContext::get)
+            .createInput(Crux.key("data"));
+
+        @Override
+        public PersistParser<?> getDataParser() {
+            return DATA_PARSER;
+        }
+
+        @Override
+        public @Nullable ActiveEntityTickable buildActive(@NotNull Entity entity, @Nullable CruxSlot slot, @NotNull EntityTickableModifier mod) {
+            Map data = (Map) mod.getData();
+
+            return new ActiveFocusEnchantTickable(
+                entity, this, slot
+            );
+        }
+    });
+
     private static EntityTickable register(EntityTickable tickable){
         return CruxTickableRegistries.ENTITY_TICKABLE.register(tickable);
     }

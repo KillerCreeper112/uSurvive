@@ -9,34 +9,34 @@ import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.api.item.CruxItem;
-import killercreepr.crux.api.math.CruxLocation;
-import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.component.CruxComponents;
-import killercreepr.crux.core.persistence.CruxPersist;
 import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
 import killercreepr.crux.core.util.GetEntityNear;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
+import killercreepr.cruxattributes.api.equipment.CruxSlot;
+import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
 import killercreepr.cruxentities.api.combat.EntityDamager;
-import killercreepr.cruxform.api.scheduler.ShapeScheduler;
-import killercreepr.cruxform.api.shape.CreateSpiral;
 import killercreepr.cruxpotions.api.entity.PotionHolder;
 import killercreepr.cruxpotions.core.entity.memory.SimplePotionHolder;
 import killercreepr.cruxpotions.core.potions.inflictor.EntityInflictor;
+import killercreepr.cruxtickables.api.entity.tickable.EntityTickableModifier;
+import killercreepr.cruxtickables.api.event.EntityTickablesCalculateEvent;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.api.event.EntityTrampleEnchantEvent;
-import killercreepr.usurvive.core.damage.type.USurviveDamageTypes;
 import killercreepr.usurvive.core.data.entity.TrampleHolder;
 import killercreepr.usurvive.core.enchant.USurviveEnchant;
 import killercreepr.usurvive.core.enchant.logic.JoyWhirl;
-import killercreepr.usurvive.core.entity.USurviveMobs;
+import killercreepr.usurvive.core.entity.memory.CleansingEnchantHolder;
+import killercreepr.usurvive.core.entity.tickable.USurviveTickables;
 import killercreepr.usurvive.core.potion.FrostbitePotion;
 import killercreepr.usurvive.core.potion.USurvivePotions;
 import killercreepr.usurvive.core.potion.inflictor.UDamageEntityInflictor;
+import net.kyori.adventure.key.Key;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -49,6 +49,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
@@ -70,6 +71,121 @@ public class EnchantsListener implements Listener {
 
     public EnchantsListener(Plugin plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityTickablesCalculate(EntityTickablesCalculateEvent event) {
+        if(!(event.getEntity() instanceof LivingEntity e)) return;
+        EntityEquipment equipment = e.getEquipment();
+        if(equipment == null) return;
+        if(entityTickablesFocus(equipment.getItemInMainHand(), CruxSlot.MAIN_HAND, event)) return;
+        entityTickablesFocus(equipment.getItemInOffHand(), CruxSlot.OFF_HAND, event);
+    }
+
+    public boolean entityTickablesFocus(ItemStack item, CruxSlot slot, EntityTickablesCalculateEvent event){
+        if(CruxItem.isEmpty(item)) return false;
+        int level = item.getEnchantmentLevel(USurviveEnchant.FOCUS);
+        if(level > 0){
+            event.addTickable(USurviveTickables.ENCHANT_FOCUS.buildActive(
+                event.getEntity(), slot,
+                EntityTickableModifier.modifier(Key.key("enchant/focus"), USurviveTickables.ENCHANT_FOCUS, CruxSlotGroup.HAND)
+            ));
+            return true;
+        }
+        return false;
+    }
+
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onPlayerItemDamage(PlayerItemDamageEvent event) {
+        Player p = event.getPlayer();
+        ItemStack item = event.getItem();
+        int level = item.getEnchantmentLevel(USurviveEnchant.BREAKING_CURSE);
+        if(level > 0){
+            event.setDamage(event.getDamage() * (level * 7));
+        }
+    }
+
+    public int getArmorEnchantLevels(Entity e, Enchantment enchantment){
+        if(!(e instanceof HumanEntity p)) return 0;
+        int level = 0;
+        for(EquipmentSlot slot : AttributeBukkitAdaptor.ARMOR_SLOTS){
+            ItemStack item = p.getInventory().getItem(slot);
+            if(CruxItem.isEmpty(item)) continue;
+            level += item.getEnchantmentLevel(enchantment);
+        }
+        return level;
+    }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onFoodLevelChange(FoodLevelChangeEvent event) {
+        if(CruxItem.isEmpty(event.getItem())) return;
+
+        HumanEntity p = event.getEntity();
+        int level = getArmorEnchantLevels(p, USurviveEnchant.SPOILAGE_CURSE);
+        if(level > 0){
+            float multiplier = level * .20f;
+            event.setFoodLevel((int) ((float) event.getFoodLevel() * multiplier));
+        }
+    }
+
+    //failsafe
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityPotionEffectMonitor(EntityPotionEffectEvent event) {
+        Entity e = event.getEntity();
+        var mem = EntityMemory.get(e);
+        if(mem != null){
+            var holder = mem.getDataHolder(CleansingEnchantHolder.class);
+            if(holder != null && !holder.isRemove()){
+                holder.setRemove(true);
+                return;
+            }
+        }
+    }
+
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    public void onEntityPotionEffect(EntityPotionEffectEvent event) {
+        Entity e = event.getEntity();
+        PotionEffect newEffect = event.getNewEffect();
+        if(newEffect == null) return;
+        PotionEffect oldEffect = event.getOldEffect();
+
+        var mem = EntityMemory.get(e);
+        if(mem != null){
+            var holder = mem.getDataHolder(CleansingEnchantHolder.class);
+            if(holder != null && !holder.isRemove()){
+                holder.setRemove(true);
+                return;
+            }
+        }
+
+        onAddPotion(e, oldEffect, newEffect, event);
+    }
+
+    public void onAddPotion(Entity e, PotionEffect oldEffect, PotionEffect newEffect, EntityPotionEffectEvent event){
+        if(newEffect.isInfinite()) return;
+        if(!(e instanceof LivingEntity living)) return;
+        int durationDifference;
+        if(oldEffect != null && oldEffect.getType() == newEffect.getType() && !oldEffect.isInfinite()){
+            durationDifference = newEffect.getDuration() - oldEffect.getDuration();
+        }else durationDifference = newEffect.getDuration();
+
+        if(durationDifference < 1) return;
+
+        int level = getArmorEnchantLevels(e, USurviveEnchant.CLEANSING);
+        if(level < 1) return;
+
+        event.setCancelled(true);
+
+        int removeDuration = 10 + (level * 15);
+        int newDuration = Math.max(newEffect.getDuration() - removeDuration, (int) (newEffect.getDuration() * .5f));
+        if(newDuration < 1) return;
+        Crux.scheduler().runTask(() ->{
+            PotionEffect edited = newEffect.withDuration(newDuration);
+            EntityMemory.getOrCreateDataHolder(e, CleansingEnchantHolder.class, CleansingEnchantHolder::new);
+            living.addPotionEffect(edited);
+        });
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
@@ -311,6 +427,17 @@ public class EnchantsListener implements Listener {
                     level * 7D
                 ));
         }
+        level = item.getEnchantmentLevel(USurviveEnchant.FOCUS);
+        if(level > 0 && owner instanceof LivingEntity p && item.getType() == Material.BOW){
+            int usedTime = p.getActiveItemUsedTime();
+            int usedMore = usedTime - 20;
+            if(usedMore > 0){
+                float multiplier = usedTime / (50f + ((level-1) * 15f));
+                if(e instanceof AbstractArrow arrow){
+                    arrow.setDamage(arrow.getDamage() * multiplier);
+                }
+            }
+        }
     }
 
 
@@ -497,6 +624,10 @@ public class EnchantsListener implements Listener {
         PotionHolder holder = PotionHolder.potionHolderOrCreate(victim);
         if(holder == null) return;
         int time = Math.max(10, 55 - ((level-1) * 10));
+        if(holder.getPotion(USurvivePotions.MIRRORSTRIKE) instanceof UDamageEntityInflictor inflict){
+            inflict.addDamage((float) damage);
+        }
+
         holder.addPotion(USurvivePotions.MIRRORSTRIKE.create(victim, time, level-1, new UDamageEntityInflictor(attacker, (float) damage)));
     }
 
