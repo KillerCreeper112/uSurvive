@@ -28,7 +28,6 @@ import killercreepr.cruxtickables.api.event.EntityTickablesCalculateEvent;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.api.event.EntityTrampleEnchantEvent;
 import killercreepr.usurvive.api.event.ProjectileRicochetEvent;
-import killercreepr.usurvive.core.component.USurviveComponents;
 import killercreepr.usurvive.core.data.entity.TrampleHolder;
 import killercreepr.usurvive.core.enchant.USurviveEnchant;
 import killercreepr.usurvive.core.enchant.logic.JoyWhirl;
@@ -158,17 +157,18 @@ public class EnchantsListener implements Listener {
     }
 
     public void onEnchantRicochet(Entity proj, ProjectileRicochetEvent event, int level){
-        Entity nearbyEnemy = findNearbyEnemy(proj.getLocation(), proj, EntityDamager.getOwnerUUID(proj), EntityDamager.getOwner(proj), 16D);
+        Entity nearbyEnemy = findNearbyEnemy(proj.getLocation(), proj, EntityDamager.getOwnerUUID(proj), EntityDamager.getOwner(proj),
+            12D + (4D * (level-1)));
         if(nearbyEnemy == null) return;
 
         Vector original = event.getReflectDirection();
-        double speed = original.length()*1.1; // preserve original speed
+        double speed = original.length(); // preserve original speed
 
         Location from = proj.getLocation();
         Location to = nearbyEnemy.getLocation().add(0, nearbyEnemy.getHeight() * 0.5, 0);
         Vector dir = to.toVector().subtract(from.toVector()).normalize().multiply(speed);
 
-        dir.setY(dir.getY() + 0.3);
+        dir.setY(dir.getY() + 0.35);
 
         event.setReflectDirection(dir);
     }
@@ -178,6 +178,7 @@ public class EnchantsListener implements Listener {
             .center(center)
             .range(range)
             .filter(check ->{
+                if(CruxEntityUtil.isNonSurvival(check)) return false;
                 if(CruxPersist.hasIgnoreEntity(proj, check.getUniqueId())) return false;
                 return owner == null || !isFriendly(check, owner, ownerEntity);
             })

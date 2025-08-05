@@ -13,7 +13,6 @@ import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxentities.damage.type.CruxEntityDamageTypes;
 import killercreepr.usurvive.api.event.ProjectileRicochetEvent;
 import killercreepr.usurvive.core.entity.memory.PiercingProjectileHolder;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
