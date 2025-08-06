@@ -797,7 +797,7 @@ public class EnchantsListener implements Listener {
 
     public void onTether(Entity attacker, Entity vic, int level){
         TetherEnchantHolder holder = EntityMemory.getDataHolder(attacker, TetherEnchantHolder.class);
-        if(holder == null) return;
+        if(holder != null) return;
         int lifespan = 60 + ((level-1) * 20);
         double breakDistance = TetherEnchantHolder.getDistance(attacker, vic) + (14D - ((level-1) * 1.5D));
         EntityMemory.getOrCreateDataHolder(attacker, TetherEnchantHolder.class, mem ->{

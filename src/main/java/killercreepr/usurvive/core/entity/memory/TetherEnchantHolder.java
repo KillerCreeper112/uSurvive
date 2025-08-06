@@ -92,7 +92,9 @@ public class TetherEnchantHolder extends EntityTickedDataHolder {
             return;
         }
 
-        scheduler.scheduleAsync(0);
+        if(tick % 3 == 0){
+            scheduler.scheduleAsync(0);
+        }
 
         tick++;
         double distance = getDistance(entity);
@@ -104,11 +106,13 @@ public class TetherEnchantHolder extends EntityTickedDataHolder {
     public void onBreak(Entity entity){
         double dmg = 6D + ((level-1)*3D);
         double kb = 6D + ((level-1)*2D);
-        EntityDamager.entityDamager(target, entity)
-            .setSource(DamageSource.builder(USurviveDamageTypes.TETHER)
-                .withDirectEntity(entity)
-                .build())
-            .attack(dmg, kb);
+        Crux.scheduler().runTask(() ->{
+            EntityDamager.entityDamager(target, entity)
+                .setSource(DamageSource.builder(USurviveDamageTypes.TETHER)
+                    .withDirectEntity(entity)
+                    .build())
+                .attack(dmg, kb);
+        });
         CreateSound.sound(Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, 0.5f, 1.6f)
             .playAt(target);
     }
