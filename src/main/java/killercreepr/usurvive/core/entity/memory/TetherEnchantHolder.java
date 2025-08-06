@@ -48,7 +48,7 @@ public class TetherEnchantHolder extends EntityTickedDataHolder {
                 .end(() ->{
                     return CruxPosition.location(target.getLocation().add(0, target.getHeight()*.5, 0));
                 })
-                .spacing(.5D)
+                .spacing(1D)
                 .build())
             .buildCached();
     }
@@ -112,8 +112,9 @@ public class TetherEnchantHolder extends EntityTickedDataHolder {
                     .withDirectEntity(entity)
                     .build())
                 .attack(dmg, kb);
+            CreateSound.sound(Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, 0.5f, 1.6f)
+                .playAt(target)
+                .playAt(entity);
         });
-        CreateSound.sound(Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, 0.5f, 1.6f)
-            .playAt(target);
     }
 }
