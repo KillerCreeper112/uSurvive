@@ -62,6 +62,13 @@ public class USurviveBootstrapper implements PluginBootstrap {
                     .messageId("mob")
                     .damageScaling(DamageScaling.ALWAYS)
             );
+
+            event.registry().register(
+                RegistryKey.DAMAGE_TYPE.typedKey(Crux.key("tether")),
+                builder -> builder.exhaustion(0.2f)
+                    .messageId("mob")
+                    .damageScaling(DamageScaling.ALWAYS)
+            );
         }));
 
 

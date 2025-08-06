@@ -20,4 +20,7 @@ public class USurviveDamageTypes {
 
     public static final DamageType REAP_SHOCKWAVE = RegistryAccess.registryAccess()
         .getRegistry(RegistryKey.DAMAGE_TYPE).get(Crux.key("reap_shockwave"));
+
+    public static final DamageType TETHER = RegistryAccess.registryAccess()
+        .getRegistry(RegistryKey.DAMAGE_TYPE).get(Crux.key("tether"));
 }

@@ -39,6 +39,7 @@ import killercreepr.usurvive.core.enchant.logic.JoyWhirl;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.memory.CleansingEnchantHolder;
 import killercreepr.usurvive.core.entity.memory.FrenzyHolder;
+import killercreepr.usurvive.core.entity.memory.TetherEnchantHolder;
 import killercreepr.usurvive.core.entity.tickable.USurviveTickables;
 import killercreepr.usurvive.core.mechanics.Shockwave;
 import killercreepr.usurvive.core.potion.FrostbitePotion;
@@ -761,13 +762,6 @@ public class EnchantsListener implements Listener {
                 int level = enchants.getOrDefault(USurviveEnchant.MIRRORSTRIKE, 0);
                 mirrorstrike(vic, victim, attacker, level, event);
             }
-            if(enchants.containsKey(USurviveEnchant.REAP) && victim != null && event.getDamageSource().getDamageType() != USurviveDamageTypes.REAP_SHOCKWAVE){
-                double hp = victim.getHealth() - event.getFinalDamage();
-                if(hp <= 0D){
-                    int level = enchants.getOrDefault(USurviveEnchant.REAP, 0);
-                    reap(vic, attacker, level, mainHand);
-                }
-            }
             if(enchants.containsKey(USurviveEnchant.STAGGER) && event.isCritical() && victim != null){
                 int level = enchants.getOrDefault(USurviveEnchant.STAGGER, 0);
                 victim.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS,
@@ -783,7 +777,32 @@ public class EnchantsListener implements Listener {
             if(enchants.containsKey(USurviveEnchant.SNARE)){
                 onSnare(attacker, vic, enchants.getOrDefault(USurviveEnchant.SNARE, 0));
             }
+
+            if(enchants.containsKey(USurviveEnchant.TETHER) && victim != null){
+                double hp = victim.getHealth() - event.getFinalDamage();
+                if(hp > 0D){
+                    onTether(attacker, vic, enchants.getOrDefault(USurviveEnchant.TETHER, 0));
+                }
+            }
+
+            if(enchants.containsKey(USurviveEnchant.REAP) && victim != null && event.getDamageSource().getDamageType() != USurviveDamageTypes.REAP_SHOCKWAVE){
+                double hp = victim.getHealth() - event.getFinalDamage();
+                if(hp <= 0D){
+                    int level = enchants.getOrDefault(USurviveEnchant.REAP, 0);
+                    reap(vic, attacker, level, mainHand);
+                }
+            }
         }
+    }
+
+    public void onTether(Entity attacker, Entity vic, int level){
+        TetherEnchantHolder holder = EntityMemory.getDataHolder(attacker, TetherEnchantHolder.class);
+        if(holder == null) return;
+        int lifespan = 60 + ((level-1) * 20);
+        double breakDistance = TetherEnchantHolder.getDistance(attacker, vic) + (14D - ((level-1) * 1.5D));
+        EntityMemory.getOrCreateDataHolder(attacker, TetherEnchantHolder.class, mem ->{
+            return new TetherEnchantHolder(mem, vic, lifespan, breakDistance*breakDistance, level);
+        });
     }
 
     public void onSnare(Entity attacker, Entity vic, int level){
