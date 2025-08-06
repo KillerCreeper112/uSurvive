@@ -56,6 +56,8 @@ public class TetherEnchantHolder extends EntityTickedDataHolder {
         this(KEY, parent, target, lifespan, breakDistanceSquared, level);
     }
 
+
+
     @Override
     public boolean shouldRemoveFromMemory(@Nullable Entity e) {
         return cancel || tick >= lifespan || super.shouldRemoveFromMemory(e) || !isValid();

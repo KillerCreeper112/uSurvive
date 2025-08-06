@@ -778,7 +778,7 @@ public class EnchantsListener implements Listener {
                 onSnare(attacker, vic, enchants.getOrDefault(USurviveEnchant.SNARE, 0));
             }
 
-            if(enchants.containsKey(USurviveEnchant.TETHER) && victim != null){
+            if(enchants.containsKey(USurviveEnchant.TETHER) && victim != null && event.getDamageSource().getDamageType() != USurviveDamageTypes.TETHER){
                 double hp = victim.getHealth() - event.getFinalDamage();
                 if(hp > 0D){
                     onTether(attacker, vic, enchants.getOrDefault(USurviveEnchant.TETHER, 0));
