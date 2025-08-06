@@ -22,6 +22,8 @@ import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.cruxentities.entity.MobCategory;
+import killercreepr.cruxentities.persistence.CruxEntitiesPersist;
 import killercreepr.cruxform.api.shape.CreateCircle;
 import killercreepr.cruxpotions.api.entity.PotionHolder;
 import killercreepr.cruxpotions.api.potion.inflictor.PotionInflictor;
@@ -68,6 +70,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
@@ -512,12 +515,72 @@ public class EnchantsListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDeathMonitor(EntityDeathEvent event) {
-        Entity e = event.getEntity();
+        LivingEntity e = event.getEntity();
         var data = EntityMemory.get(e);
-        if(data == null) return;
-        data.getDataHolders().remove(FrenzyHolder.KEY);
+        if(data != null){
+            data.getDataHolders().remove(FrenzyHolder.KEY);
+        }
     }
 
+    public void onRemnant(LivingEntity e, Entity attacker){
+        if(CruxMob.is(e, USurviveMobs.REMNANT_SPIRIT)) return;
+        if(CruxMob.isInCategory(e, MobCategory.ETERNAL, MobCategory.OBJECT)) return;
+        EntityEquipment equipment = e.getEquipment();
+        if(equipment == null) return;
+
+        for(EquipmentSlot slot : AttributeBukkitAdaptor.ARMOR_SLOTS){
+            ItemStack item = equipment.getItem(slot);
+            if(CruxItem.isEmpty(item)) continue;
+            int level = item.getEnchantmentLevel(USurviveEnchant.REMNANT);
+            if(level < 1) continue;
+
+            if(level > 1){
+                item.addUnsafeEnchantment(USurviveEnchant.REMNANT, level-1);
+            }else{
+                item.removeEnchantment(USurviveEnchant.REMNANT);
+            }
+
+            spawnRemnant(e, attacker);
+            break;
+        }
+    }
+
+    public void spawnRemnant(Entity e, Entity attacker){
+        if(e instanceof Player p){
+            USurviveMobs.REMNANT_SPIRIT.spawn(p, p.getLocation(), x ->{
+
+            });
+            return;
+        }
+        if(!(e instanceof Mob)) return;
+
+        Entity newEntity = e.copy();
+        CruxEntitiesPersist.ENTITY.set(newEntity, USurviveMobs.REMNANT_SPIRIT.key());
+        newEntity.setInvisible(true);
+        if(newEntity instanceof Mob mob){
+            mob.setCanPickupItems(false);
+            for(EquipmentSlot slot : EquipmentSlot.values()){
+                mob.getEquipment().setDropChance(slot, 0f);
+            }
+            if(attacker instanceof LivingEntity living){
+                mob.setTarget(living);
+            }
+        }
+        if(newEntity instanceof LivingEntity living){
+            var instance = living.getAttribute(Attribute.GRAVITY);
+            if(instance != null){
+                instance.addModifier(new AttributeModifier(Crux.key("enchant/remnant"), -.65D, AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+            }
+        }
+        newEntity.spawnAt(e.getLocation());
+
+        Scoreboard board = plugin.getServer().getScoreboardManager().getNewScoreboard();
+        board.registerNewTeam("remnant");
+        var team = board.getTeam("remnant");
+        team.addEntities(e, newEntity);
+        team.setCanSeeFriendlyInvisibles(true);
+
+    }
 
     @EventHandler(ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent event) {
@@ -790,6 +853,12 @@ public class EnchantsListener implements Listener {
                 if(hp <= 0D){
                     int level = enchants.getOrDefault(USurviveEnchant.REAP, 0);
                     reap(vic, attacker, level, mainHand);
+                }
+            }
+            if(victim != null){
+                double hp = victim.getHealth() - event.getFinalDamage();
+                if(hp <= 0D){
+                    onRemnant(victim, attacker);
                 }
             }
         }

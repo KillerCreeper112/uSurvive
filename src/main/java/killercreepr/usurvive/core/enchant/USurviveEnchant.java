@@ -34,7 +34,7 @@ public class USurviveEnchant {
     public static final Enchantment CLING = get("cling");
     public static final Enchantment FOCUS = get("focus");
     public static final Enchantment CLEANSING = get("cleansing");
-    public static final Enchantment RESENTMENT_CURSE = get("resentment_curse");
+    //todo public static final Enchantment RESENTMENT_CURSE = get("resentment_curse");
     public static final Enchantment SPOILAGE_CURSE = get("spoilage_curse");
     public static final Enchantment BREAKING_CURSE = get("breaking_curse");
 
