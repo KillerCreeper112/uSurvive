@@ -540,14 +540,14 @@ public class EnchantsListener implements Listener {
                 item.removeEnchantment(USurviveEnchant.REMNANT);
             }
 
-            spawnRemnant(e, attacker);
+            spawnRemnant(e, attacker, level);
             break;
         }
     }
 
-    public void spawnRemnant(Entity e, Entity attacker){
+    public void spawnRemnant(Entity e, Entity attacker, int level){
         if(e instanceof Player p){
-            USurviveMobs.REMNANT_SPIRIT.spawn(p, p.getLocation(), x ->{
+            USurviveMobs.REMNANT_SPIRIT.spawn(level, p, p.getLocation(), x ->{
 
             });
             return;
@@ -556,6 +556,8 @@ public class EnchantsListener implements Listener {
 
         Entity newEntity = e.copy();
         CruxEntitiesPersist.ENTITY.set(newEntity, USurviveMobs.REMNANT_SPIRIT.key());
+        CruxPersist.DROP_ITEMS.set(newEntity, false);
+        CruxPersist.DROP_EXPERIENCE.set(newEntity, false);
         newEntity.setInvisible(true);
         if(newEntity instanceof Mob mob){
             mob.setCanPickupItems(false);
@@ -573,13 +575,6 @@ public class EnchantsListener implements Listener {
             }
         }
         newEntity.spawnAt(e.getLocation());
-
-        Scoreboard board = plugin.getServer().getScoreboardManager().getNewScoreboard();
-        board.registerNewTeam("remnant");
-        var team = board.getTeam("remnant");
-        team.addEntities(e, newEntity);
-        team.setCanSeeFriendlyInvisibles(true);
-
     }
 
     @EventHandler(ignoreCancelled = true)

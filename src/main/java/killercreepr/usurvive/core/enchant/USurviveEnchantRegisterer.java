@@ -498,7 +498,7 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
             "remnant", b -> b.description(Component.text("Remnant"))
                 .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_ARMOR))
                 .anvilCost(1)
-                .maxLevel(5)
+                .maxLevel(1)
                 .weight(1)
                 .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
