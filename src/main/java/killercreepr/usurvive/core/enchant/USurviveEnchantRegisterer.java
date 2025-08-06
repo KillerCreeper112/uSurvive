@@ -425,7 +425,13 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .weight(1)
                 .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
-                .activeSlots(EquipmentSlotGroup.MAINHAND),
+                .activeSlots(EquipmentSlotGroup.MAINHAND)
+                .exclusiveWith(RegistrySet.keySet(
+                    RegistryKey.ENCHANTMENT,
+                    minecraftTyped("smite"),
+                    minecraftTyped("bane_of_arthropods"),
+                    minecraftTyped("sharpness")
+                )),
             crux -> crux.description("Deals bonus damage to entities with shields, armor, or absorption")
                 .applicableItemGroup(ApplicableItemGroup.builder()
                     .add(ApplicableItemGroup.WEAPONS)
@@ -560,5 +566,9 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                     .add(ApplicableItemGroup.TOOLS)
                     .build())
         );
+    }
+
+    private TypedKey<Enchantment> minecraftTyped(String key){
+        return RegistryKey.ENCHANTMENT.typedKey(Key.key(key));
     }
 }

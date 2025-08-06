@@ -21,6 +21,7 @@ public class AttributesPotion extends ActiveEntityPotion<LivingEntity> {
     @Override
     protected void onUpdate(@NotNull LivingEntity e, int oldDuration, int oldAmplifier) {
         super.onUpdate(e, oldDuration, oldAmplifier);
+        if(oldAmplifier == amplifier) return;
         updateAttribute(e);
     }
 

@@ -21,6 +21,7 @@ import killercreepr.cruxattributes.api.equipment.CruxSlot;
 import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
 import killercreepr.cruxentities.api.combat.EntityDamager;
+import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxform.api.shape.CreateCircle;
 import killercreepr.cruxpotions.api.entity.PotionHolder;
 import killercreepr.cruxpotions.api.potion.inflictor.PotionInflictor;
@@ -35,6 +36,7 @@ import killercreepr.usurvive.core.damage.type.USurviveDamageTypes;
 import killercreepr.usurvive.core.data.entity.TrampleHolder;
 import killercreepr.usurvive.core.enchant.USurviveEnchant;
 import killercreepr.usurvive.core.enchant.logic.JoyWhirl;
+import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.memory.CleansingEnchantHolder;
 import killercreepr.usurvive.core.entity.memory.FrenzyHolder;
 import killercreepr.usurvive.core.entity.tickable.USurviveTickables;
@@ -65,6 +67,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
@@ -749,6 +752,11 @@ public class EnchantsListener implements Listener {
                 double multiplier = 1D + (level * 0.2);
                 event.setDamage(event.getDamage() * multiplier);
             }
+            if(enchants.containsKey(USurviveEnchant.SHATTER) && isValidShatterTarget(vic)){
+                int level = enchants.getOrDefault(USurviveEnchant.SHATTER, 0);
+                double addon = level * 2.75D;
+                event.setDamage(event.getDamage() + addon);
+            }
             if(enchants.containsKey(USurviveEnchant.MIRRORSTRIKE)){
                 int level = enchants.getOrDefault(USurviveEnchant.MIRRORSTRIKE, 0);
                 mirrorstrike(vic, victim, attacker, level, event);
@@ -760,13 +768,49 @@ public class EnchantsListener implements Listener {
                     reap(vic, attacker, level, mainHand);
                 }
             }
-            if(enchants.containsKey(USurviveEnchant.SHATTER) && isValidShatterTarget(vic)){
-                //todo shatter
+            if(enchants.containsKey(USurviveEnchant.STAGGER) && event.isCritical() && victim != null){
+                int level = enchants.getOrDefault(USurviveEnchant.STAGGER, 0);
+                victim.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS,
+                    30 + (level * 40),
+                    level-1, false, false, false));
+                victim.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS,
+                    20 + (level * 40),
+                    level-1, false, false, false));
             }
             if(enchants.containsKey(USurviveEnchant.FRENZY)){
                 onFrenzy(attacker, vic, enchants.getOrDefault(USurviveEnchant.FRENZY, 0));
             }
+            if(enchants.containsKey(USurviveEnchant.SNARE)){
+                onSnare(attacker, vic, enchants.getOrDefault(USurviveEnchant.SNARE, 0));
+            }
         }
+    }
+
+    public void onSnare(Entity attacker, Entity vic, int level){
+        double chance = level * 14D;
+        if(!CruxMath.testChance(chance)) return;
+
+        if(!CruxEntityUtil.isGrounded(vic)) return;
+
+        BoundingBox box = CruxedBoundingBox.boundingBox(vic.getLocation().toCenterLocation(), 1);
+        if(!vic.getWorld().getNearbyEntities(box, e -> CruxMob.is(e, USurviveMobs.SNARE_ENCHANT)).isEmpty()) return;
+
+        Crux.scheduler().runTask(() ->{
+            BoundingBox boundingBox = CruxedBoundingBox.boundingBox(vic.getLocation().toCenterLocation(), 1);
+            if(!vic.getWorld().getNearbyEntities(boundingBox, e -> CruxMob.is(e, USurviveMobs.SNARE_ENCHANT)).isEmpty()) return;
+            vic.setVelocity(new Vector());
+            Entity snare = USurviveMobs.SNARE_ENCHANT.spawn(vic.getLocation());
+            CreateSound.sound(Sound.ENTITY_CREAKING_ACTIVATE, net.kyori.adventure.sound.Sound.Source.HOSTILE,0.4f,1.7f)
+                .playAt(snare);
+
+            new ParticleBuilder(Particle.BLOCK)
+                .location(snare.getLocation().add(0, snare.getHeight()*.5, 0))
+                .offset(.1, .1, .1)
+                .extra(.15)
+                .count(CruxMath.random(13, 17))
+                .data(Material.DIRT.createBlockData())
+                .spawn();
+        });
     }
 
     public void onFrenzy(Entity attacker, Entity vic, int level){
