@@ -106,7 +106,7 @@ public class TetherEnchantHolder extends EntityTickedDataHolder {
     }
 
     public void onBreak(Entity entity){
-        double dmg = 6D + ((level-1)*3D);
+        double dmg = 6D + ((level-1)*4D);
         double kb = 6D + ((level-1)*2D);
         Crux.scheduler().runTask(() ->{
             EntityDamager.entityDamager(target, entity)
