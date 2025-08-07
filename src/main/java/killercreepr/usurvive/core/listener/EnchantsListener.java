@@ -677,7 +677,7 @@ public class EnchantsListener implements Listener {
             int usedTime = p.getActiveItemUsedTime();
             int usedMore = usedTime - 20;
             if(usedMore > 0){
-                float multiplier = usedTime / (50f + ((level-1) * 15f));
+                float multiplier = 1f + (usedTime / (50f + ((level-1) * 15f)));
                 if(e instanceof AbstractArrow arrow){
                     arrow.setDamage(arrow.getDamage() * multiplier);
                 }
