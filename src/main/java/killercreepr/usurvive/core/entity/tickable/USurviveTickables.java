@@ -324,6 +324,32 @@ public class USurviveTickables {
         }
     });
 
+    public static final EntityTickable CHAINSHOCK = register(new SimpleDataEntityTickable(Crux.key("chainshock")) {
+        public static final PersistParser<?> DATA_PARSER = PersistTextParser.mapBuilder(Map.class)
+            .field("max_links", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("max_links")))
+            .field("link_range", TextInputField.field(PersistTextParser.DOUBLE, e -> (Double) e.get("link_range")))
+            .field("display_type", TextInputField.field(PersistTextParser.KEY, e -> (Key) e.get("display_type")))
+            .apply(InputDecodeContext::get)
+            .createInput(Crux.key("data"));
+
+        @Override
+        public PersistParser<?> getDataParser() {
+            return DATA_PARSER;
+        }
+
+        @Override
+        public @Nullable ActiveEntityTickable buildActive(@NotNull Entity entity, @Nullable CruxSlot slot, @NotNull EntityTickableModifier mod) {
+            Map data = (Map) mod.getData();
+
+            return new ActiveChainshockTickable(
+                entity, this, slot,
+                (int) data.getOrDefault("max_links", 1),
+                (double) data.getOrDefault("link_range", 1D),
+                (Key) data.getOrDefault("display_type", Key.key("chain"))
+            );
+        }
+    });
+
     private static EntityTickable register(EntityTickable tickable){
         return CruxTickableRegistries.ENTITY_TICKABLE.register(tickable);
     }

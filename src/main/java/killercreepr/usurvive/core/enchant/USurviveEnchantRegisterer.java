@@ -566,6 +566,20 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                     .add(ApplicableItemGroup.TOOLS)
                     .build())
         );
+        register(
+            "chainshock", b -> b.description(Component.text("Chainshock"))
+                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_MACE))
+                .anvilCost(1)
+                .maxLevel(3)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.HAND),
+            crux -> crux.description("CHAIN WOOOSH")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemType.MACE)
+                    .build())
+        );
     }
 
     private TypedKey<Enchantment> minecraftTyped(String key){

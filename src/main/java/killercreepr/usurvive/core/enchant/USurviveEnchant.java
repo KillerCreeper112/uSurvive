@@ -37,6 +37,7 @@ public class USurviveEnchant {
     //todo public static final Enchantment RESENTMENT_CURSE = get("resentment_curse");
     public static final Enchantment SPOILAGE_CURSE = get("spoilage_curse");
     public static final Enchantment BREAKING_CURSE = get("breaking_curse");
+    public static final Enchantment CHAINSHOCK = get("chainshock");
 
     //may become a charm or something else
     public static final Enchantment REMNANT = get("remnant");

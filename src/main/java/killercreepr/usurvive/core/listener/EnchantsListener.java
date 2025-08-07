@@ -31,6 +31,7 @@ import killercreepr.cruxpotions.core.entity.memory.SimplePotionHolder;
 import killercreepr.cruxpotions.core.potions.inflictor.EntityInflictor;
 import killercreepr.cruxtickables.api.entity.tickable.EntityTickableModifier;
 import killercreepr.cruxtickables.api.event.EntityTickablesCalculateEvent;
+import killercreepr.cruxtickables.core.entity.memory.EntityTickablesHolder;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.api.event.EntityTrampleEnchantEvent;
 import killercreepr.usurvive.api.event.ProjectileRicochetEvent;
@@ -42,6 +43,7 @@ import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.memory.CleansingEnchantHolder;
 import killercreepr.usurvive.core.entity.memory.FrenzyHolder;
 import killercreepr.usurvive.core.entity.memory.TetherEnchantHolder;
+import killercreepr.usurvive.core.entity.tickable.ActiveChainshockTickable;
 import killercreepr.usurvive.core.entity.tickable.USurviveTickables;
 import killercreepr.usurvive.core.mechanics.Shockwave;
 import killercreepr.usurvive.core.potion.FrostbitePotion;
@@ -99,6 +101,8 @@ public class EnchantsListener implements Listener {
         if(!entityTickablesFocus(equipment.getItemInMainHand(), CruxSlot.MAIN_HAND, event)){
             entityTickablesFocus(equipment.getItemInOffHand(), CruxSlot.OFF_HAND, event);
         }
+        entityTickablesChainlink(equipment.getItemInMainHand(), CruxSlot.MAIN_HAND, event);
+
         Map<Enchantment, Integer> armorEnchants = new HashMap<>();
         Map<Enchantment, CruxSlot> mainSlots = new HashMap<>();
 
@@ -137,6 +141,26 @@ public class EnchantsListener implements Listener {
                     null, Map.of("level", level))
             ));
         }
+    }
+
+    public boolean entityTickablesChainlink(ItemStack item, CruxSlot slot, EntityTickablesCalculateEvent event){
+        if(CruxItem.isEmpty(item)) return false;
+        int level = item.getEnchantmentLevel(USurviveEnchant.CHAINSHOCK);
+        if(level > 0){
+            event.addTickable(USurviveTickables.CHAINSHOCK.buildActive(
+                event.getEntity(), slot,
+                EntityTickableModifier.modifier(Key.key("enchant/chainshock"),
+                    USurviveTickables.CHAINSHOCK, CruxSlotGroup.MAIN_HAND,
+                    null,
+                    Map.of(
+                        "max_links", 5,
+                        "link_range", 16D,
+                        "display_type", Key.key("chain")
+                    ))
+            ));
+            return true;
+        }
+        return false;
     }
 
     public boolean entityTickablesFocus(ItemStack item, CruxSlot slot, EntityTickablesCalculateEvent event){
@@ -854,6 +878,16 @@ public class EnchantsListener implements Listener {
                 double hp = victim.getHealth() - event.getFinalDamage();
                 if(hp <= 0D){
                     onRemnant(victim, attacker);
+                }else{
+                    if(enchants.containsKey(USurviveEnchant.CHAINSHOCK)){
+                        int level = enchants.get(USurviveEnchant.CHAINSHOCK);
+                        EntityTickablesHolder holder = EntityMemory.getDataHolder(attacker, EntityTickablesHolder.class);
+                        if(holder != null){
+                            if(holder.getTickable(USurviveTickables.CHAINSHOCK) instanceof ActiveChainshockTickable tickable){
+                                tickable.chainLinkEntities(vic);
+                            }
+                        }
+                    }
                 }
             }
         }
