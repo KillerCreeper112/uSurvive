@@ -44,6 +44,7 @@ import killercreepr.usurvive.core.entity.memory.CleansingEnchantHolder;
 import killercreepr.usurvive.core.entity.memory.FrenzyHolder;
 import killercreepr.usurvive.core.entity.memory.TetherEnchantHolder;
 import killercreepr.usurvive.core.entity.tickable.ActiveChainshockTickable;
+import killercreepr.usurvive.core.entity.tickable.ActiveFocusEnchantTickable;
 import killercreepr.usurvive.core.entity.tickable.USurviveTickables;
 import killercreepr.usurvive.core.mechanics.Shockwave;
 import killercreepr.usurvive.core.potion.FrostbitePotion;
@@ -674,10 +675,8 @@ public class EnchantsListener implements Listener {
         }
         level = item.getEnchantmentLevel(USurviveEnchant.FOCUS);
         if(level > 0 && owner instanceof LivingEntity p && item.getType() == Material.BOW){
-            int usedTime = p.getActiveItemUsedTime();
-            int usedMore = usedTime - 20;
-            if(usedMore > 0){
-                float multiplier = 1f + (usedTime / (50f + ((level-1) * 15f)));
+            float multiplier = ActiveFocusEnchantTickable.getMultiplier(p.getActiveItemUsedTime(), level);
+            if(multiplier > 1f){
                 if(e instanceof AbstractArrow arrow){
                     arrow.setDamage(arrow.getDamage() * multiplier);
                 }

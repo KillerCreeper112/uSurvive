@@ -1,34 +1,46 @@
 package killercreepr.usurvive.core.entity.tickable;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.communication.CreateTitle;
+import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.cruxattributes.api.equipment.CruxSlot;
 import killercreepr.cruxtickables.api.entity.tickable.EntityTickable;
 import killercreepr.cruxtickables.core.entity.tickable.SimpleActiveEntityTickable;
 import killercreepr.usurvive.core.enchant.USurviveEnchant;
+import killercreepr.usurvive.core.entity.memory.ParticleTrailHolder;
+import killercreepr.usurvive.core.entity.memory.StandardParticleTrailHolder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class ActiveFocusEnchantTickable extends SimpleActiveEntityTickable {
+public class ActiveFocusEnchantTickable extends SimpleActiveEntityTickable implements Listener {
     protected final HumanEntity p;
     public ActiveFocusEnchantTickable(Entity entity, EntityTickable tickable, CruxSlot slot) {
         super(entity, tickable, slot);
         p = (HumanEntity) entity;
     }
 
-    public float getMaxMultiplier(int level, float scale, float growth) {
+    public static float getMaxMultiplier(int level, float scale, float growth) {
         if (level <= 0) return 1f;
         return 1f + (scale * (float) Math.pow(level, growth));
     }
 
-    public float getMultiplier(int usedTime, int level, float exponent, float scale, float growth) {
+    public static float getMultiplier(int usedTime, int level){
+        return getMultiplier(usedTime, level, exponent, scale, growth);
+    }
+
+    public static float getMultiplier(int usedTime, int level, float exponent, float scale, float growth) {
         if (level <= 0) return 1f;
 
         int chargeTime = usedTime - 20;
@@ -48,7 +60,7 @@ public class ActiveFocusEnchantTickable extends SimpleActiveEntityTickable {
     protected int lastUsedTime = -2;
 
     protected int chargeLevel = 0;
-    protected int maxChargeLevel = 4;
+    protected static int maxChargeLevel = 4;
 
     public void resetCharge(){
         chargeLevel = 0;
@@ -73,9 +85,32 @@ public class ActiveFocusEnchantTickable extends SimpleActiveEntityTickable {
         CreateSound.sound(Sound.BLOCK_TRIAL_SPAWNER_OMINOUS_ACTIVATE, .5f, 2f - (level*.15f)).playAt(entity);
     }
 
-    protected float scale = 2f;
-    protected float growth = 1f;
-    protected float exponent = 2f;
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityShootBow(EntityShootBowEvent event) {
+        if(!event.getEntity().equals(entity)) return;
+
+        Entity projectile = event.getProjectile();
+        if(chargeLevel < 1) return;
+
+        ParticleBuilder particle = new ParticleBuilder(Particle.TRIAL_OMEN)
+            .extra(.05);
+        int tickRate = switch (chargeLevel){
+            case 2 -> 7;
+            case 3 -> 5;
+            case 4 -> 3;
+            default -> 10;
+        };
+        EntityMemory.getOrCreateDataHolder(projectile, StandardParticleTrailHolder.class, mem ->{
+            return new StandardParticleTrailHolder(mem, particle, tickRate);
+        });
+
+        CreateSound.sound(Sound.BLOCK_TRIAL_SPAWNER_SPAWN_MOB, .5f, 2f).playAt(entity);
+    }
+
+
+    protected static float scale = 2f;
+    protected static float growth = 1f;
+    protected static float exponent = 2f;
     @Override
     public void tick() {
         ItemStack item = p.getActiveItem();
@@ -89,7 +124,7 @@ public class ActiveFocusEnchantTickable extends SimpleActiveEntityTickable {
         lastUsedTime = usedTime;
 
         int level = item.getEnchantmentLevel(USurviveEnchant.FOCUS);
-        float multiplier = getMultiplier(usedTime,  level, exponent, scale, growth);
+        float multiplier = getMultiplier(usedTime,  level);
 
         chargeTick(multiplier, getMaxMultiplier(level, scale, growth));
 
