@@ -92,6 +92,24 @@ public class EnchantsListener implements Listener {
         USurviveEnchant.HOLLOWING_CURSE,
         USurviveEnchant.BLOOMING_CURSE
     };
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        event.getDrops().removeIf(drop ->{
+           if(CruxItem.isEmpty(drop)) return false;
+           int level = drop.getEnchantmentLevel(USurviveEnchant.SOULBOUND);
+           if(level > 0){
+               if(level == 1){
+                   drop.removeEnchantment(USurviveEnchant.SOULBOUND);
+               }else drop.addUnsafeEnchantment(USurviveEnchant.SOULBOUND, level-1);
+               event.getItemsToKeep().add(drop);
+               return true;
+           }
+           return false;
+        });
+    }
+
+
     @EventHandler(ignoreCancelled = true)
     public void onEntityTickablesCalculate(EntityTickablesCalculateEvent event) {
         if(!(event.getEntity() instanceof LivingEntity e)) return;
@@ -176,7 +194,6 @@ public class EnchantsListener implements Listener {
         }
         return false;
     }
-
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerItemDamage(PlayerItemDamageEvent event) {
