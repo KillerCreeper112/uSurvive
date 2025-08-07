@@ -50,7 +50,7 @@ public class ActiveFocusEnchantTickable extends ListenerActiveEntityTickable {
         int chargeTime = usedTime - 20;
         if (chargeTime <= 0) return 1f;
 
-        float baseTime = 100f;
+        float baseTime = 70f;
         float reductionPerLevel = 0f;
         float maxBonusTime = Math.max(10f, baseTime - ((level - 1) * reductionPerLevel));
 
@@ -113,7 +113,7 @@ public class ActiveFocusEnchantTickable extends ListenerActiveEntityTickable {
             level = item.getEnchantmentLevel(USurviveEnchant.FOCUS);
         }
 
-        double multiplier = 1f + (level * 0.03f);
+        double multiplier = 1f + (level * 0.007f);
         double x = 1.5D * ((float) chargeLevel / (float) maxChargeLevel);
 
         Vector vec = projectile.getVelocity();
