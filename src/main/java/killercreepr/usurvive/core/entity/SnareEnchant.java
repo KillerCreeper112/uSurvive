@@ -3,10 +3,8 @@ package killercreepr.usurvive.core.entity;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.cruxentities.entity.MobCategory;
-import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.usurvive.core.entity.mob.UCruxMob;
-import killercreepr.usurvive.core.entity.mob.goals.BuzzrotGoal;
 import killercreepr.usurvive.core.entity.mob.goals.SnareEnchantGoal;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
@@ -14,7 +12,6 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Pig;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

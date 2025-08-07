@@ -326,9 +326,11 @@ public class USurviveTickables {
 
     public static final EntityTickable CHAINSHOCK = register(new SimpleDataEntityTickable(Crux.key("chainshock")) {
         public static final PersistParser<?> DATA_PARSER = PersistTextParser.mapBuilder(Map.class)
+            .field("level", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("level")))
             .field("max_links", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("max_links")))
             .field("link_range", TextInputField.field(PersistTextParser.DOUBLE, e -> (Double) e.get("link_range")))
             .field("display_type", TextInputField.field(PersistTextParser.KEY, e -> (Key) e.get("display_type")))
+            .field("link_delay", TextInputField.field(PersistTextParser.INTEGER, e -> (Integer) e.get("link_delay")))
             .apply(InputDecodeContext::get)
             .createInput(Crux.key("data"));
 
@@ -345,7 +347,9 @@ public class USurviveTickables {
                 entity, this, slot,
                 (int) data.getOrDefault("max_links", 1),
                 (double) data.getOrDefault("link_range", 1D),
-                (Key) data.getOrDefault("display_type", Key.key("chain"))
+                (Key) data.getOrDefault("display_type", Key.key("chain")),
+                (int) data.getOrDefault("level", 1),
+                (int) data.getOrDefault("link_delay", 1)
             );
         }
     });

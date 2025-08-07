@@ -72,7 +72,6 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
@@ -153,9 +152,11 @@ public class EnchantsListener implements Listener {
                     USurviveTickables.CHAINSHOCK, CruxSlotGroup.MAIN_HAND,
                     null,
                     Map.of(
-                        "max_links", 5,
-                        "link_range", 16D,
-                        "display_type", Key.key("chain")
+                        "max_links", 1 + (level * 3),
+                        "link_range", 4D + (level * 4D),
+                        "display_type", Key.key("chain"),
+                        "level", level,
+                        "link_delay", 5
                     ))
             ));
             return true;
@@ -884,7 +885,9 @@ public class EnchantsListener implements Listener {
                         EntityTickablesHolder holder = EntityMemory.getDataHolder(attacker, EntityTickablesHolder.class);
                         if(holder != null){
                             if(holder.getTickable(USurviveTickables.CHAINSHOCK) instanceof ActiveChainshockTickable tickable){
-                                tickable.chainLinkEntities(vic);
+                                if(tickable.getLink() == null && tickable.getScheduledStarterLink() == null){
+                                    tickable.setScheduledStarterLink(vic);
+                                }
                             }
                         }
                     }
