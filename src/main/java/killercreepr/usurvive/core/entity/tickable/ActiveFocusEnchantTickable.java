@@ -5,9 +5,12 @@ import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.communication.CreateTitle;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.item.CruxItem;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxLoc;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxattributes.api.equipment.CruxSlot;
 import killercreepr.cruxtickables.api.entity.tickable.EntityTickable;
+import killercreepr.cruxtickables.core.entity.tickable.ListenerActiveEntityTickable;
 import killercreepr.cruxtickables.core.entity.tickable.SimpleActiveEntityTickable;
 import killercreepr.usurvive.core.enchant.USurviveEnchant;
 import killercreepr.usurvive.core.entity.memory.ParticleTrailHolder;
@@ -23,8 +26,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
-public class ActiveFocusEnchantTickable extends SimpleActiveEntityTickable implements Listener {
+public class ActiveFocusEnchantTickable extends ListenerActiveEntityTickable {
     protected final HumanEntity p;
     public ActiveFocusEnchantTickable(Entity entity, EntityTickable tickable, CruxSlot slot) {
         super(entity, tickable, slot);
@@ -82,7 +86,9 @@ public class ActiveFocusEnchantTickable extends SimpleActiveEntityTickable imple
         Location loc = CruxLoc.shift(p.getEyeLocation(), .5D, -.3D, .1D);
         loc.getWorld().spawnParticle(Particle.TRIAL_OMEN, loc, level);
 
-        CreateSound.sound(Sound.BLOCK_TRIAL_SPAWNER_OMINOUS_ACTIVATE, .5f, 2f - (level*.15f)).playAt(entity);
+        Crux.scheduler().runTask(() ->{
+            CreateSound.sound(Sound.BLOCK_TRIAL_SPAWNER_OMINOUS_ACTIVATE, .5f, 2f - (level*.15f)).playAt(entity);
+        });
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -100,6 +106,19 @@ public class ActiveFocusEnchantTickable extends SimpleActiveEntityTickable imple
             case 4 -> 3;
             default -> 10;
         };
+
+        int level = 1;
+        ItemStack item = event.getBow();
+        if(!CruxItem.isEmpty(item)){
+            level = item.getEnchantmentLevel(USurviveEnchant.FOCUS);
+        }
+
+        double multiplier = 1f + (level * 0.03f);
+        double x = 1.5D * ((float) chargeLevel / (float) maxChargeLevel);
+
+        Vector vec = projectile.getVelocity();
+        projectile.setVelocity(vec.multiply(multiplier * x));
+
         EntityMemory.getOrCreateDataHolder(projectile, StandardParticleTrailHolder.class, mem ->{
             return new StandardParticleTrailHolder(mem, particle, tickRate);
         });
@@ -116,6 +135,13 @@ public class ActiveFocusEnchantTickable extends SimpleActiveEntityTickable imple
         ItemStack item = p.getActiveItem();
         if(CruxItem.isEmpty(item)) return;
         int usedTime = p.getActiveItemUsedTime();
+
+        if(usedTime < 1){
+            if(chargeLevel > 0){
+                if(!CruxMath.hasOccurredWithin(lastUsedTime, 5)) resetCharge();
+            }
+            return;
+        }
 
         if(lastUsedTime != -2 && usedTime < lastUsedTime){
             resetCharge();
