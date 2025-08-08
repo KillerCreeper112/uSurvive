@@ -595,6 +595,20 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                     .add(ApplicableItemGroup.ARMOR)
                     .build())
         );
+        register(
+            "emotive", b -> b.description(Component.text("Emotive"))
+                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.HEAD_ARMOR))
+                .anvilCost(1)
+                .maxLevel(1)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.HEAD),
+            crux -> crux.description("Displays an emoji above the user's head depending on their health and hunger")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemType.HELMET)
+                    .build())
+        );
     }
 
     private TypedKey<Enchantment> minecraftTyped(String key){

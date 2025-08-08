@@ -44,6 +44,7 @@ import killercreepr.usurvive.core.enchant.USurviveEnchant;
 import killercreepr.usurvive.core.enchant.logic.JoyWhirl;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.memory.CleansingEnchantHolder;
+import killercreepr.usurvive.core.entity.memory.EmotiveMobHolder;
 import killercreepr.usurvive.core.entity.memory.FrenzyHolder;
 import killercreepr.usurvive.core.entity.memory.TetherEnchantHolder;
 import killercreepr.usurvive.core.entity.tickable.ActiveChainshockTickable;
@@ -91,7 +92,8 @@ public class EnchantsListener implements Listener {
 
     protected final Enchantment[] armorTickableEnchants = new Enchantment[]{
         USurviveEnchant.HOLLOWING_CURSE,
-        USurviveEnchant.BLOOMING_CURSE
+        USurviveEnchant.BLOOMING_CURSE,
+        USurviveEnchant.EMOTIVE
     };
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -156,6 +158,15 @@ public class EnchantsListener implements Listener {
             event.addTickable(USurviveTickables.ENCHANT_BLOOMING_CURSE.buildActive(
                 event.getEntity(), mainSlots.get(USurviveEnchant.BLOOMING_CURSE),
                 EntityTickableModifier.modifier(Key.key("enchant/blooming_curse"), USurviveTickables.ENCHANT_BLOOMING_CURSE, CruxSlotGroup.ARMOR,
+                    null, Map.of("level", level))
+            ));
+        }
+
+        level = armorEnchants.getOrDefault(USurviveEnchant.EMOTIVE, 0);
+        if(level > 0){
+            event.addTickable(USurviveTickables.EMOTIVE.buildActive(
+                event.getEntity(), mainSlots.get(USurviveEnchant.EMOTIVE),
+                EntityTickableModifier.modifier(Key.key("enchant/emotive"), USurviveTickables.EMOTIVE, CruxSlotGroup.ARMOR,
                     null, Map.of("level", level))
             ));
         }
@@ -482,6 +493,17 @@ public class EnchantsListener implements Listener {
         }
         return false;
     }*/
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityEquipmentChangedMonitor(EntityEquipmentChangedEvent event) {
+        LivingEntity e = event.getEntity();
+        if(e instanceof Mob mob){
+            var change = event.getEquipmentChanges().get(EquipmentSlot.HEAD);
+            if(change == null) return;
+            EntityMemory.getOrCreateDataHolder(mob, EmotiveMobHolder.class, EmotiveMobHolder::new);
+        }
+    }
+
 
     @EventHandler(ignoreCancelled = true)
     public void onEntityEquipmentChanged(EntityEquipmentChangedEvent event) {

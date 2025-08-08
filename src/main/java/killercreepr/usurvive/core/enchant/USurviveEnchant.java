@@ -38,6 +38,7 @@ public class USurviveEnchant {
     public static final Enchantment BREAKING_CURSE = get("breaking_curse");
     public static final Enchantment CHAINSHOCK = get("chainshock");
     public static final Enchantment SOULBOUND = get("soulbound");
+    public static final Enchantment EMOTIVE = get("emotive");
 
     //may become a charm or something else
     public static final Enchantment REMNANT = get("remnant");
