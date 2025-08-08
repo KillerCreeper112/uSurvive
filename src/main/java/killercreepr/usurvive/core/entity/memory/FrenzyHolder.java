@@ -6,6 +6,7 @@ import killercreepr.crux.core.entity.memory.EntityTickedDataHolder;
 import killercreepr.crux.core.util.CruxKey;
 import killercreepr.crux.core.util.CruxMath;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Entity;
@@ -29,11 +30,11 @@ public class FrenzyHolder extends EntityTickedDataHolder {
     }
 
     public boolean isLastHitExpired(){
-        return CruxMath.hasOccurredWithin(lastHit, calculateExpireTime());
+        return !CruxMath.hasOccurredWithin(lastHit, calculateExpireTime());
     }
 
     public int calculateExpireTime(){
-        return level * 100;
+        return level * 80;
     }
 
     @Override
@@ -76,7 +77,7 @@ public class FrenzyHolder extends EntityTickedDataHolder {
     }
 
     public double calculateMaxAttackSpeedMultiplier(){
-        return .2f + ((level-1) * .15f);
+        return .4f + ((level-1) * .15f);
     }
 
     protected int hits;

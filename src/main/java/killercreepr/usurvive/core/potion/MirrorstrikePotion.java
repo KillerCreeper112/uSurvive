@@ -97,6 +97,9 @@ public class MirrorstrikePotion extends InflictedPotion {
                         .attack(damage);
 
                     e.remove();
+
+                    Location loc = e.getLocation().add(0, e.getHeight()*.5, 0);
+                    loc.getWorld().spawnParticle(Particle.SWEEP_ATTACK, loc, 0);
                 }
             })
             .shape(CreateSpiral.builder()

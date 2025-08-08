@@ -2,6 +2,8 @@ package killercreepr.usurvive.core.listener;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import io.papermc.paper.event.entity.EntityEquipmentChangedEvent;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.entity.CruxEntity;
@@ -66,10 +68,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.*;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
@@ -77,6 +76,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -206,6 +206,19 @@ public class EnchantsListener implements Listener {
         }
     }
 
+    public @Nullable Multimap<ItemStack, Integer> getArmorEnchantLevelsMap(Entity e, Enchantment enchantment){
+        if(!(e instanceof HumanEntity p)) return null;
+        Multimap<ItemStack, Integer> map = HashMultimap.create();
+        for(EquipmentSlot slot : AttributeBukkitAdaptor.ARMOR_SLOTS){
+            ItemStack item = p.getInventory().getItem(slot);
+            if(CruxItem.isEmpty(item)) continue;
+            int x = item.getEnchantmentLevel(enchantment);
+            if(x < 1) continue;
+            map.put(item, x);
+        }
+        return map.isEmpty() ? null : map;
+    }
+
     public int getArmorEnchantLevels(Entity e, Enchantment enchantment){
         if(!(e instanceof HumanEntity p)) return 0;
         int level = 0;
@@ -226,6 +239,12 @@ public class EnchantsListener implements Listener {
         if(level > 0){
             float multiplier = level * .20f;
             event.setFoodLevel((int) ((float) event.getFoodLevel() * multiplier));
+
+            float chance = level * 15f;
+            if(CruxMath.testChance(chance)){
+                p.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER,
+                    400, level-1));
+            }
         }
     }
 
@@ -352,7 +371,21 @@ public class EnchantsListener implements Listener {
         Crux.scheduler().runTask(() ->{
             PotionEffect edited = newEffect.withDuration(newDuration);
             EntityMemory.getOrCreateDataHolder(e, CleansingEnchantHolder.class, CleansingEnchantHolder::new);
-            living.addPotionEffect(edited);
+            if(living.addPotionEffect(edited)){
+                EntityEquipment equipment = living.getEquipment();
+                if(equipment == null) return;
+                for(EquipmentSlot slot : AttributeBukkitAdaptor.ARMOR_SLOTS){
+                    if(!living.canUseEquipmentSlot(slot)) continue;
+                    ItemStack item = equipment.getItem(slot);
+                    if(CruxItem.isEmpty(item)) continue;
+                    if(item.getEnchantmentLevel(USurviveEnchant.CLEANSING) < 1) continue;
+                    Crux.handlers().item().damageItem(item, 2, living);
+
+                    if(!(equipment instanceof PlayerInventory)){
+                        equipment.setItem(slot, item, true);
+                    }
+                }
+            }
         });
     }
 
@@ -589,9 +622,31 @@ public class EnchantsListener implements Listener {
     }
 
     public void spawnRemnant(Entity e, Entity attacker, int level){
+        CreateSound.sound(Sound.ENTITY_ILLUSIONER_MIRROR_MOVE, .6f, 1.5f)
+            .playAt(e);
+        CreateSound.sound(Sound.ENTITY_VEX_CHARGE, .6f, 1.5f)
+            .playAt(e);
+
+        new ParticleBuilder(Particle.SOUL_FIRE_FLAME)
+            .location(e.getLocation().add(0, e.getHeight()*.5, 0))
+            .count(CruxMath.random(10, 15))
+            .extra(.1)
+            .offset(.25, .25, .25)
+            .spawn();
+        new ParticleBuilder(Particle.SOUL)
+            .location(e.getLocation().add(0, e.getHeight()*.5, 0))
+            .count(CruxMath.random(4, 6))
+            .extra(.05)
+            .offset(.1, .1, .1)
+            .spawn();
         if(e instanceof Player p){
             USurviveMobs.REMNANT_SPIRIT.spawn(level, p, p.getLocation(), x ->{
-
+                if(x instanceof LivingEntity living){
+                    var instance = living.getAttribute(Attribute.GRAVITY);
+                    if(instance != null){
+                        instance.addModifier(new AttributeModifier(Crux.key("enchant/remnant"), -.65D, AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+                    }
+                }
             });
             return;
         }
@@ -910,6 +965,16 @@ public class EnchantsListener implements Listener {
                 int level = enchants.getOrDefault(USurviveEnchant.SHATTER, 0);
                 double addon = level * 2.75D;
                 event.setDamage(event.getDamage() + addon);
+
+                double width = vic.getWidth();
+                double height = vic.getHeight();
+                new ParticleBuilder(Particle.ITEM)
+                    .data(ItemType.IRON_CHESTPLATE.createItemStack())
+                    .location(vic.getLocation().add(0, height*.5, 0))
+                    .count(CruxMath.random(6, 8))
+                    .extra(.05)
+                    .offset(.01 * width, .01 * height, .01 * width)
+                    .spawn();
             }
             if(enchants.containsKey(USurviveEnchant.MIRRORSTRIKE)){
                 int level = enchants.getOrDefault(USurviveEnchant.MIRRORSTRIKE, 0);
@@ -1126,6 +1191,12 @@ public class EnchantsListener implements Listener {
             },
             10
         ).start(totalTicks);
+        CreateSound.sound(Sound.ENTITY_IRON_GOLEM_ATTACK, .5f, .7f)
+            .playAt(visualLocation);
+        CreateSound.sound(Sound.ITEM_TRIDENT_THROW, .5f, .6f)
+            .playAt(visualLocation);
+        CreateSound.sound(Sound.ENTITY_ENDER_DRAGON_FLAP, .5f, .7f)
+            .playAt(visualLocation);
 
         new ParticleBuilder(Particle.TRIAL_OMEN)
             .location(visualLocation)
@@ -1148,7 +1219,7 @@ public class EnchantsListener implements Listener {
     public void applyMirrorstrike(Entity victim, Entity attacker, int level, double damage){
         PotionHolder holder = PotionHolder.potionHolderOrCreate(victim);
         if(holder == null) return;
-        int time = Math.max(20, 75 - ((level-1) * 10));
+        int time = Math.max(20, 80 - ((level-1) * 10));
         if(holder.getPotion(USurvivePotions.MIRRORSTRIKE) instanceof UDamageEntityInflictor inflict){
             inflict.addDamage((float) damage);
         }
