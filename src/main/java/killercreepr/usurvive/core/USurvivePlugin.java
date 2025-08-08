@@ -22,6 +22,8 @@ import killercreepr.crux.core.data.util.Pair;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.crux.core.plugin.module.StandardModules;
 import killercreepr.crux.core.registries.CruxRegistries;
+import killercreepr.crux.core.util.CruxCollection;
+import killercreepr.crux.core.util.CruxString;
 import killercreepr.cruxadvancements.core.config.loader.CfgCrazyAdvancementManagerCfgLoader;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.handler.BukkitCfgHandlers;
@@ -38,11 +40,18 @@ import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxcore.recipes.BrewingRecipeLoader;
 import killercreepr.cruxenchants.api.enchant.CruxEnchant;
 import killercreepr.cruxenchants.core.registries.CruxEnchantRegistries;
+import killercreepr.cruxenchantsoverhaul.CruxEnchantsOverhaul;
+import killercreepr.cruxenchantsoverhaul.api.enchant.EEnchant;
+import killercreepr.cruxenchantsoverhaul.registries.EnchantsRegistries;
 import killercreepr.cruxfriends.api.friend.FriendsHolder;
 import killercreepr.cruxfriends.core.CruxFriendsPlugin;
+import killercreepr.cruxitems.api.item.CruxedItem;
+import killercreepr.cruxitems.api.item.CruxedItemUpdater;
 import killercreepr.cruxitems.api.item.plugin.PluginItem;
 import killercreepr.cruxitems.core.config.CruxItemsConfigHook;
 import killercreepr.cruxitems.core.config.handler.FilePluginItemHandler;
+import killercreepr.cruxitems.core.item.CruxedItemUpdateContext;
+import killercreepr.cruxitems.core.registries.CruxItemRegistries;
 import killercreepr.cruxmenus.CruxMenusModule;
 import killercreepr.cruxmenus.api.menu.CfgMenu;
 import killercreepr.cruxmenus.api.menu.action.MenuAction;
@@ -138,6 +147,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -332,6 +342,38 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             Crux.tags().register(new ClaimProfileTags());
         }
         Crux.format().globalStringResolvers().register(new USurviveTag());
+
+        CruxItemRegistries.ITEM_UPDATERS.register(6, new CruxedItemUpdater() {
+            @Override
+            public void onUpdate(@NotNull CruxedItemUpdateContext ctx) {
+                CruxedItem item = ctx.getItem();
+                if(!(item.meta() instanceof EnchantmentStorageMeta meta)) return;
+                if(meta.getStoredEnchants().size() != 1) return;
+                String description;
+                Key key = CruxCollection.getFirst(meta.getStoredEnchants().keySet()).key();
+                CruxEnchant enchant = CruxEnchantRegistries.CRUX_ENCHANT.get(key);
+                if(enchant == null){
+                    EEnchant eEnchant = EnchantsRegistries.EENCHANT.get(key);
+                    if(eEnchant == null){
+                        return;
+                    }
+                    description = eEnchant.description();
+                }else{
+                    description = enchant.description();
+                }
+                if(description == null) return;
+                item.addLoreFromString(
+                    CruxString.buildDescription(description, CruxString.DEFAULT_DESCRIPTION_MAX_LENGTH,
+                        s -> "<gray>" + s)
+                );
+            }
+
+            @NotNull
+            @Override
+            public Key key() {
+                return USurvivePlugin.this.key("enchanted_books");
+            }
+        });
     }
 
     public void registerWorldData(CruxWorldManager worldManager){

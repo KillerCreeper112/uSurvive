@@ -81,7 +81,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-//todo make cool focus enchant effects
 public class EnchantsListener implements Listener {
     protected final Plugin plugin;
 

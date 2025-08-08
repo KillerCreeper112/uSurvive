@@ -19,7 +19,6 @@ public class USurviveEnchant {
     public static final Enchantment PENETRATE = get("penetrate");
     public static final Enchantment BRACED = get("braced");
     public static final Enchantment TRUESHOT = get("trueshot");
-    //todo all of these enchants dude
     public static final Enchantment SPOREBURST = get("sporeburst");
     public static final Enchantment MIRRORSTRIKE = get("mirrorstrike");
     public static final Enchantment SNARE = get("snare");
