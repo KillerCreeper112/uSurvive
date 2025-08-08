@@ -1193,7 +1193,7 @@ public class EnchantsListener implements Listener {
                         EntityTickablesHolder holder = EntityMemory.getDataHolder(attacker, EntityTickablesHolder.class);
                         if(holder != null){
                             if(holder.getTickable(USurviveTickables.CHAINSHOCK) instanceof ActiveChainshockTickable tickable){
-                                if(tickable.getLink() == null && tickable.getScheduledStarterLink() == null){
+                                if(!tickable.hasValidLink() && tickable.getScheduledStarterLink() == null){
                                     tickable.setScheduledStarterLink(vic);
                                 }
                             }

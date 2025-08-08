@@ -68,6 +68,10 @@ public class ActiveChainshockTickable extends ListenerActiveEntityTickable {
         }
     }
 
+    public boolean hasValidLink(){
+        return link != null && link.getHolding() != null;
+    }
+
     public LinkedEntity getLink() {
         return link;
     }
