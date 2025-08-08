@@ -169,6 +169,8 @@ public class ActiveEmotiveEnchantTickable extends ListenerActiveEntityTickable i
         return entity.getLocation().add(0, entity.getHeight()*1.1, 0);
     }
     public Component buildText(){
+        if(tempHPEmote != null) return tempHPEmote;
+
         double hp = living.getHealth();
         double hpPercent = hp / living.getAttribute(Attribute.MAX_HEALTH).getValue();
 
@@ -213,7 +215,6 @@ public class ActiveEmotiveEnchantTickable extends ListenerActiveEntityTickable i
     }
 
     public Component getFullHPEmote(double hpPercent){
-        if(tempHPEmote != null) return tempHPEmote;
         if(living.hasPotionEffect(PotionEffectType.WITHER)) return emoteC("%");//skull
         if(living.hasPotionEffect(PotionEffectType.POISON)) return emoteC("$");//sick
         if(living.getFireTicks() > 5) return emoteC("p");//hot
