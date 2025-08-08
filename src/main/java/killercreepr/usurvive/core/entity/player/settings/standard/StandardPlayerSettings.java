@@ -85,6 +85,18 @@ public class StandardPlayerSettings {
         )
     ));
 
+    public static final PlayerSetting CUSTOM_DEATH_RESPAWN = register(new SimplePlayerSetting(
+        Crux.key("custom_death_respawn"), StandardPlayerSettingSelections.ENABLED,
+        List.of(
+            StandardPlayerSettingSelections.ENABLED,
+            StandardPlayerSettingSelections.DISABLED
+        ),
+        Map.of(
+            StandardPlayerSettingSelections.ENABLED, "",
+            StandardPlayerSettingSelections.DISABLED, ""
+        )
+    ));
+
     public static PlayerSetting register(PlayerSetting s){
         return USurviveRegistries.PLAYER_SETTING.register(s);
     }
