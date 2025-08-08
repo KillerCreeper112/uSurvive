@@ -609,6 +609,20 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                     .add(ApplicableItemType.HELMET)
                     .build())
         );
+        register(
+            "yoink", b -> b.description(Component.text("Yoink"))
+                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_FISHING))
+                .anvilCost(1)
+                .maxLevel(3)
+                .weight(1)
+                .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+                .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+                .activeSlots(EquipmentSlotGroup.MAINHAND),
+            crux -> crux.description("Allows the fishing hook to fling solid blocks")
+                .applicableItemGroup(ApplicableItemGroup.builder()
+                    .add(ApplicableItemType.FISHING_ROD)
+                    .build())
+        );
     }
 
     private TypedKey<Enchantment> minecraftTyped(String key){

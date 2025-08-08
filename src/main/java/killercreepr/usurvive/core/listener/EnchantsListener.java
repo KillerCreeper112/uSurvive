@@ -28,6 +28,8 @@ import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.persistence.CruxEntitiesPersist;
 import killercreepr.cruxform.api.shape.CreateCircle;
+import killercreepr.cruxgeneration.util.CruxFastNoise;
+import killercreepr.cruxgeneration.util.CruxNoise;
 import killercreepr.cruxpotions.api.entity.PotionHolder;
 import killercreepr.cruxpotions.api.potion.inflictor.PotionInflictor;
 import killercreepr.cruxpotions.core.entity.memory.SimplePotionHolder;
@@ -58,6 +60,10 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
 import org.bukkit.enchantments.Enchantment;
@@ -66,7 +72,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.*;
@@ -79,9 +87,7 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class EnchantsListener implements Listener {
     protected final Plugin plugin;
@@ -399,6 +405,153 @@ public class EnchantsListener implements Listener {
             }
         });
     }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onBlockDropItem(BlockDropItemEvent event) {
+        Player p = event.getPlayer();
+        Block b = yoinkingBlock.get(p.getUniqueId());
+        if(event.getBlock().equals(b)){
+            event.setCancelled(true);
+        }
+    }
+
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onPlayerFish(PlayerFishEvent event) {
+        Player p = event.getPlayer();
+        FishHook hook = event.getHook();
+        if(event.getState() == PlayerFishEvent.State.REEL_IN || event.getState() == PlayerFishEvent.State.IN_GROUND){
+             if(event.getHand() == null) return;
+             ItemStack item = p.getInventory().getItem(event.getHand());
+             if(CruxItem.isEmpty(item)) return;
+             int level = item.getEnchantmentLevel(USurviveEnchant.YOINK);
+             if(level < 1) return;
+             onYoink(p, hook.getLocation(), p.getLocation(), level);
+        }
+    }
+
+    protected final Map<UUID, Block> yoinkingBlock = new HashMap<>();
+    public void onYoink(Player p, Location from, Location to, int level){
+        Collection<Block> blocks = new ArrayList<>();
+        if(level == 1){
+            Block b = null;
+            for(BlockFace face : YOINK_DIRECTIONS){
+                RayTraceResult result = from.getWorld().rayTraceBlocks(
+                    from, face.getDirection(), .15, FluidCollisionMode.NEVER,
+                    false
+                );
+                if(result != null && result.getHitBlock() != null){
+                    b = result.getHitBlock();
+                    break;
+                }
+            }
+            if(b == null) return;
+            blocks.add(b);
+        }else{
+            blocks.addAll(getNoisyBlockClump(from, level, 0.2f, 1.5f));
+        }
+
+        float speed = CruxMath.random(1.2f, 1.6f);
+        Vector direction = to.toVector().subtract(from.toVector()).normalize();
+
+        for(Block b : blocks){
+            if(b.isEmpty()) continue;
+            BlockState blockState = b.getState(true);
+            yoinkingBlock.put(p.getUniqueId(), b);
+            if(!p.breakBlock(b)){
+                yoinkingBlock.remove(p.getUniqueId());
+                continue;
+            }
+            yoinkingBlock.remove(p.getUniqueId());
+
+            Vector baseDir = direction.clone().normalize();
+
+            double maxAngle = Math.toRadians(15);
+
+            double yawOffset = CruxMath.random(-maxAngle, maxAngle);
+            double pitchOffset = CruxMath.random(-maxAngle, maxAngle);
+
+            Vector variedDir = rotateVector(baseDir, yawOffset, pitchOffset).normalize();
+
+            Vector flingDirection = variedDir.multiply(speed);
+            flingDirection.setY(flingDirection.getY() + CruxMath.random(.5, .8));
+
+
+            /*Vector flingDirection = direction.clone().add(new Vector(
+                CruxMath.random(-.1, .1),
+                CruxMath.random(-.1, .1),
+                CruxMath.random(-.1, .1)
+            )).multiply(speed);*/
+
+            b.getWorld().spawn(b.getLocation().toCenterLocation(), FallingBlock.class, e ->{
+                e.setBlockState(blockState);
+                e.setCancelDrop(false);
+                e.setDropItem(true);
+                e.setVelocity(flingDirection);
+            });
+        }
+    }
+
+    public static Vector rotateVector(Vector v, double yaw, double pitch) {
+        // Convert to spherical coordinates
+        double currentYaw = Math.atan2(v.getZ(), v.getX());
+        double currentPitch = Math.asin(v.getY() / v.length());
+
+        // Add the offsets
+        currentYaw += yaw;
+        currentPitch += pitch;
+
+        // Convert back to Cartesian
+        double x = Math.cos(currentPitch) * Math.cos(currentYaw);
+        double y = Math.sin(currentPitch);
+        double z = Math.cos(currentPitch) * Math.sin(currentYaw);
+
+        return new Vector(x, y, z);
+    }
+
+
+    public Set<Block> getNoisyBlockClump(Location center, int radius, float noiseScale, float threshold) {
+        Set<Block> blocks = new HashSet<>();
+
+        CruxNoise noise = CruxNoise.fast()
+            .seed((int) (Math.random() * Integer.MAX_VALUE))
+            .frequency(noiseScale)
+            .noiseType(CruxNoise.NoiseType.OpenSimplex2);
+
+        double cx = center.getX();
+        double cy = center.getY();
+        double cz = center.getZ();
+
+        for (int x = -radius; x <= radius; x++) {
+            for (int y = -radius; y <= radius; y++) {
+                for (int z = -radius; z <= radius; z++) {
+                    double dist = Math.sqrt(x * x + y * y + z * z);
+
+                    // Get noise for this block position
+                    float n = noise.noise((float) (cx + x), (float) (cy + y), (float) (cz + z));
+
+                    // Noise influences the radius threshold
+                    if (dist <= radius + (n * threshold)) {
+                        blocks.add(center.clone().add(x, y, z).getBlock());
+                    }
+                }
+            }
+        }
+
+        return blocks;
+    }
+
+
+
+    protected final static BlockFace[] YOINK_DIRECTIONS = new BlockFace[]{
+        BlockFace.DOWN,
+        BlockFace.UP,
+        BlockFace.NORTH,
+        BlockFace.EAST,
+        BlockFace.SOUTH,
+        BlockFace.WEST
+    };
+
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onPlayerMove(PlayerMoveEvent event) {
