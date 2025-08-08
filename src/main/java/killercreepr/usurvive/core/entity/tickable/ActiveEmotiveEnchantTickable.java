@@ -10,6 +10,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,6 +20,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -29,6 +31,17 @@ public class ActiveEmotiveEnchantTickable extends ListenerActiveEntityTickable i
         super(entity, tickable, slot);
         living = (LivingEntity) entity;
     }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onInventoryClose(InventoryCloseEvent event) {
+        if(!event.getPlayer().equals(entity)) return;
+        Location loc = event.getInventory().getLocation();
+        if(loc == null) return;
+        Block b = loc.getBlock();
+        if(b.getType() != Material.CHEST) return;
+        setTempHPEmote(emoteC("'"), 100);
+    }
+
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEntityDismount(EntityDismountEvent event) {
