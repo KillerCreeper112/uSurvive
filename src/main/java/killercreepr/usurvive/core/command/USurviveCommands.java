@@ -41,7 +41,6 @@ import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.command.argument.TargetPlayerDeathResolver;
 import killercreepr.usurvive.core.command.argument.USurviveArgs;
 import killercreepr.usurvive.core.config.Config;
-import killercreepr.usurvive.core.data.entity.SimplePlayerSettingHolder;
 import killercreepr.usurvive.core.death.PlayerDeath;
 import killercreepr.usurvive.core.lang.Lang;
 import net.kyori.adventure.key.Key;

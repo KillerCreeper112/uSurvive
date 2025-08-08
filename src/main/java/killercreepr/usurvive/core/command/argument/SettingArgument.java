@@ -3,7 +3,6 @@ package killercreepr.usurvive.core.command.argument;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import com.ticxo.modelengine.api.utils.ticker.PseudoThread;
 import killercreepr.crux.core.command.argument.CruxKeyedArgument;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.core.registries.USurviveRegistries;

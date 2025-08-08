@@ -40,7 +40,6 @@ import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxcore.recipes.BrewingRecipeLoader;
 import killercreepr.cruxenchants.api.enchant.CruxEnchant;
 import killercreepr.cruxenchants.core.registries.CruxEnchantRegistries;
-import killercreepr.cruxenchantsoverhaul.CruxEnchantsOverhaul;
 import killercreepr.cruxenchantsoverhaul.api.enchant.EEnchant;
 import killercreepr.cruxenchantsoverhaul.registries.EnchantsRegistries;
 import killercreepr.cruxfriends.api.friend.FriendsHolder;
