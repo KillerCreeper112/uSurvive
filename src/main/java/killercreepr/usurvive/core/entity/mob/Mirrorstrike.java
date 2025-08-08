@@ -28,7 +28,8 @@ public class Mirrorstrike extends UCruxMob {
             e.customName(Component.text("Mirrorstrike"));
             e.setCustomNameVisible(false);
             e.setAI(false);
-            e.getAttribute(Attribute.MAX_HEALTH).setBaseValue(4D);
+            e.setSilent(true);
+            e.getAttribute(Attribute.MAX_HEALTH).setBaseValue(1.5D);
             e.setHealth(e.getAttribute(Attribute.MAX_HEALTH).getValue());
             load(e);
             if(consumer != null) consumer.accept(e);

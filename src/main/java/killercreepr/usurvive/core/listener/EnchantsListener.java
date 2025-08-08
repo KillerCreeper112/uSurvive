@@ -14,6 +14,7 @@ import killercreepr.crux.api.valueproviders.number.NumberHolder;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.component.CruxComponents;
 import killercreepr.crux.core.persistence.CruxPersist;
+import killercreepr.crux.core.persistence.CruxPersistence;
 import killercreepr.crux.core.util.*;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
@@ -709,10 +710,17 @@ public class EnchantsListener implements Listener {
             if(level > 0){
                 if(isLowSecondWind(p, level)){
                     p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 40, level > 2 ? 1 : 0, false, false, true));
+                    p.getWorld().spawnParticle(
+                        Particle.DUST_COLOR_TRANSITION,
+                        p.getLocation().add(0, .1, 0),
+                        1,
+                        new Particle.DustTransition(Color.AQUA, Color.BLUE, 1f)
+                    );
                 }
             }
         }
     }
+
 
     public boolean isLowSecondWind(Player p, int level){
         double hp = p.getHealth();
@@ -757,7 +765,31 @@ public class EnchantsListener implements Listener {
         if(!(victimEquip instanceof PlayerInventory)){
             victimEquip.setItem(slot, item, true);
         }
+
+        new ParticleBuilder(Particle.FLAME)
+            .count(CruxMath.random(8, 12))
+            .location(victim.getLocation().add(0, victim.getHeight()*.5, 0))
+            .offset(.1, .1, .1)
+            .extra(.07)
+            .spawn();
     }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onEntityDamageLowest(EntityDamageEvent event) {
+        Entity e = event.getEntity();
+        if(CruxMob.is(e, USurviveMobs.MIRRORSTRIKE)){
+            if(!(event instanceof EntityDamageByEntityEvent dmgEvent)){
+                event.setCancelled(true);
+                return;
+            }
+            UUID target = CruxTag.get(e, "target", CruxPersistence.UUID, null);
+            if(target != null && !target.equals(dmgEvent.getDamager().getUniqueId())){
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
+
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event) {
@@ -783,6 +815,16 @@ public class EnchantsListener implements Listener {
         int amplifier = Math.min(withstandLevel / 3, 2);
         int duration = 60 + ((withstandLevel-1) * 30);
         e.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, duration, amplifier));
+
+        double width = e.getWidth();
+        new ParticleBuilder(Particle.ENCHANTED_HIT)
+            .location(e.getLocation().add(0, e.getHeight()*.5, 0))
+            .offset(width *.5, width *.5, width *.5)
+            .extra(.1)
+            .count(CruxMath.random(10, 15))
+            .spawn();
+        CreateSound.sound(Sound.BLOCK_ANVIL_LAND, net.kyori.adventure.sound.Sound.Source.PLAYER,
+            .5f, 2f).playAt(e);
     }
 
     public boolean tookLargeDamage(LivingEntity e, int withstandLevel, double damage){
@@ -850,6 +892,19 @@ public class EnchantsListener implements Listener {
                 int level = enchants.getOrDefault(USurviveEnchant.BACKSTAB, 0);
                 double multiplier = 1D + (level * 0.2);
                 event.setDamage(event.getDamage() * multiplier);
+
+                Location baseLoc = CruxEntityUtil.getEyeOrLocation(vic);
+                baseLoc.setPitch(0f);
+                double width = vic.getWidth();
+                double height = vic.getHeight();
+                Location backLoc = CruxLoc.shift(baseLoc, width * -.7, height * .7, 0D);
+
+                new ParticleBuilder(Particle.CRIT)
+                    .location(backLoc)
+                    .count(CruxMath.random(3, 5))
+                    .extra(.05)
+                    .offset(.05 * width, .05 * height, .05 * width)
+                    .spawn();
             }
             if(enchants.containsKey(USurviveEnchant.SHATTER) && isValidShatterTarget(vic)){
                 int level = enchants.getOrDefault(USurviveEnchant.SHATTER, 0);
@@ -1093,7 +1148,7 @@ public class EnchantsListener implements Listener {
     public void applyMirrorstrike(Entity victim, Entity attacker, int level, double damage){
         PotionHolder holder = PotionHolder.potionHolderOrCreate(victim);
         if(holder == null) return;
-        int time = Math.max(10, 55 - ((level-1) * 10));
+        int time = Math.max(20, 75 - ((level-1) * 10));
         if(holder.getPotion(USurvivePotions.MIRRORSTRIKE) instanceof UDamageEntityInflictor inflict){
             inflict.addDamage((float) damage);
         }

@@ -2,9 +2,12 @@ package killercreepr.usurvive.core.potion;
 
 import killercreepr.crux.api.math.CruxLocation;
 import killercreepr.crux.api.math.CruxPosition;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.persistence.CruxPersist;
+import killercreepr.crux.core.persistence.CruxPersistence;
 import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxform.api.scheduler.ShapeScheduler;
 import killercreepr.cruxform.api.shape.CreateSpiral;
@@ -41,9 +44,18 @@ public class MirrorstrikePotion extends InflictedPotion {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        if(e != null && e.isValid()){
+            Crux.scheduler().runTask(() -> e.remove());
+        }
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         e = USurviveMobs.MIRRORSTRIKE.spawn(entity.getLocation(), spawned ->{
+            CruxTag.set(spawned, "target", CruxPersistence.UUID, entity.getUniqueId());
             if(inflictor instanceof EntityInflictor inflict){
                 CruxPersist.OWNER.set(spawned, inflict.uuid());
             }
@@ -52,16 +64,18 @@ public class MirrorstrikePotion extends InflictedPotion {
             .locationTick(ctx ->{
                 if(!e.isValid() || !CruxEntityUtil.isValid(entity)){
                     ctx.setCancelled(true);
+                    duration = 0;
                     return;
                 }
 
                 CruxPosition pos = ctx.getLocation();
                 Location loc = pos.toLocation(entity.getWorld());
                 loc.getWorld().spawnParticle(Particle.CRIT, loc, 0);
-                e.teleport(loc);
+                e.teleport(loc.add(0, e.getHeight()*-.5, 0));
             })
             .endTask(() ->{
                 if(!CruxEntityUtil.isValid(entity)) return;
+                duration = 0;
                 if(e.isValid()){
                     var builder = DamageSource.builder(USurviveDamageTypes.MIRRORSTRIKE)
                         .withDamageLocation(e.getLocation())
@@ -95,6 +109,6 @@ public class MirrorstrikePotion extends InflictedPotion {
                 .invertX(CruxMath.random().nextBoolean())
                 .invertZ(CruxMath.random().nextBoolean())
                 .build())
-            .build().schedule(duration);
+            .buildCached().schedule(duration);
     }
 }
