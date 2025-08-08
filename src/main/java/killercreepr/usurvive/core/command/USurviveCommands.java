@@ -33,11 +33,15 @@ import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;
 import killercreepr.cruxteleport.core.component.TPMsgComponent;
 import killercreepr.cruxteleport.core.component.TeleporterComponents;
 import killercreepr.usurvive.api.entity.player.UPlayer;
+import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
+import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
+import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.command.argument.TargetPlayerDeathResolver;
 import killercreepr.usurvive.core.command.argument.USurviveArgs;
 import killercreepr.usurvive.core.config.Config;
+import killercreepr.usurvive.core.data.entity.SimplePlayerSettingHolder;
 import killercreepr.usurvive.core.death.PlayerDeath;
 import killercreepr.usurvive.core.lang.Lang;
 import net.kyori.adventure.key.Key;
@@ -283,6 +287,33 @@ public class USurviveCommands {
             commands.register(
                 Commands.literal("usurvive")
                     .requires(sender -> sender.getSender().hasPermission("usurvive.cmds.usurvive.use"))
+                    .then(
+                        Commands.literal("settings")
+                            .then(
+                                Commands.argument("targets", ArgumentTypes.players())
+                                    .then(
+                                        Commands.argument("setting", USurviveArgs.SETTING)
+                                            .then(
+                                                Commands.argument("selection", USurviveArgs.SETTING_SELECTION)
+                                                    .executes(ctx ->{
+                                                        var list = ctx.getArgument("targets", PlayerSelectorArgumentResolver.class)
+                                                            .resolve(ctx.getSource());
+                                                        var setting = ctx.getArgument("setting", PlayerSetting.class);
+                                                        var selection = ctx.getArgument("selection", PlayerSettingSelection.class);
+                                                        var sender = getExecutor(ctx.getSource());
+                                                        for (Player player : list) {
+                                                            PlayerSettingsHolder holder = plugin.getPlayerSettingsManager()
+                                                                .getPlayerSettingsHolder(player);
+                                                            if(holder == null) continue;
+                                                            holder.setSetting(setting, selection);
+                                                            sender.sendMessage("Changed setting " + setting.key().asString() + " for " + player.getName() + " to " + selection.key().asString());
+                                                        }
+                                                        return 1;
+                                                    })
+                                            )
+                                    )
+                            )
+                    )
                     .then(
                         Commands.literal("death")
                             .then(
