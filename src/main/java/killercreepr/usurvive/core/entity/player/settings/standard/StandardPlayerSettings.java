@@ -73,6 +73,18 @@ public class StandardPlayerSettings {
         )
     ));
 
+    public static final PlayerSetting SPAWN_GRAVESTONE = register(new SimplePlayerSetting(
+        Crux.key("spawn_gravestone"), StandardPlayerSettingSelections.ENABLED,
+        List.of(
+            StandardPlayerSettingSelections.ENABLED,
+            StandardPlayerSettingSelections.DISABLED
+        ),
+        Map.of(
+            StandardPlayerSettingSelections.ENABLED, "Gravestone will spawn upon death.",
+            StandardPlayerSettingSelections.DISABLED, "Gravestone will not spawn upon death."
+        )
+    ));
+
     public static PlayerSetting register(PlayerSetting s){
         return USurviveRegistries.PLAYER_SETTING.register(s);
     }

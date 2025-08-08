@@ -214,7 +214,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     public void onLoad() {
         instance = this;
         super.onLoad();
-        deathManager = new SimpleDeathManager(this, CruxCore.core().worldManager());
+        deathManager = new SimpleDeathManager(this, CruxCore.core().worldManager(), playerSettingsManager);
         USurviveMobCategory.register();
         USurviveComponents.register();
         StandardPlayerSettings.register();

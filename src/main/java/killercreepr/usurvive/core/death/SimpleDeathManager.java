@@ -13,6 +13,8 @@ import killercreepr.cruxworlds.api.world.creator.CruxWorldModuleCreator;
 import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
 import killercreepr.usurvive.api.death.DeathManager;
 import killercreepr.usurvive.api.entity.player.UPlayer;
+import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
+import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsManager;
 import killercreepr.usurvive.api.event.PlayerEchoDeathEvent;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.api.world.module.DeathWorldModule;
@@ -21,6 +23,8 @@ import killercreepr.usurvive.core.data.entity.DeathHolder;
 import killercreepr.usurvive.core.death.storage.WorldDeathStorage;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.mob.goals.EchoGoal;
+import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettingSelections;
+import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettings;
 import killercreepr.usurvive.core.stat.USurviveStats;
 import killercreepr.usurvive.core.world.module.SimpleDeathWorldModule;
 import net.kyori.adventure.key.Key;
@@ -54,10 +58,12 @@ import java.util.logging.Level;
 public class SimpleDeathManager implements DeathManager, Listener {
     protected final @NotNull Plugin plugin;
     protected final @NotNull CruxWorldManager worldManager;
+    protected final @NotNull PlayerSettingsManager settingsManager;
 
-    public SimpleDeathManager(@NotNull Plugin plugin, @NotNull CruxWorldManager worldManager) {
+    public SimpleDeathManager(@NotNull Plugin plugin, @NotNull CruxWorldManager worldManager, @NotNull PlayerSettingsManager settingsManager) {
         this.plugin = plugin;
         this.worldManager = worldManager;
+        this.settingsManager = settingsManager;
     }
 
     /*protected final MultiVerseDeathStorage deaths = new MultiVerseDeathStorage(
@@ -218,6 +224,11 @@ public class SimpleDeathManager implements DeathManager, Listener {
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player p = event.getPlayer();
         World deathWorld = p.getWorld();
+
+        PlayerSettingsHolder settings = settingsManager.getPlayerSettingsHolder(p);
+        if(settings != null){
+            if(settings.hasSetting(StandardPlayerSettings.SPAWN_GRAVESTONE, StandardPlayerSettingSelections.DISABLED)) return;
+        }
 
         int maxGravestones = (int) BukkitStatHolder.holder(p).getStatValue(USurviveStats.MAX_GRAVESTONES);
         if(maxGravestones < 1) return;
