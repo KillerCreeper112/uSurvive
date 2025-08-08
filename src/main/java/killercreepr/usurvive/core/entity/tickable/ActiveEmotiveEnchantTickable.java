@@ -1,7 +1,6 @@
 package killercreepr.usurvive.core.entity.tickable;
 
 import com.destroystokyo.paper.MaterialSetTag;
-import com.destroystokyo.paper.MaterialTags;
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxattributes.api.equipment.CruxSlot;
 import killercreepr.cruxtickables.api.entity.tickable.EntityTickable;
@@ -11,18 +10,18 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDismountEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 public class ActiveEmotiveEnchantTickable extends ListenerActiveEntityTickable implements Listener {
     protected final LivingEntity living;
@@ -54,6 +53,30 @@ public class ActiveEmotiveEnchantTickable extends ListenerActiveEntityTickable i
         if(!event.getPlayer().equals(entity)) return;
         if(event.getRightClicked() instanceof Tameable){
             setTempHPEmote(emoteC("|"), 40);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityExplode(EntityExplodeEvent event) {
+        Location explosionLoc = event.getLocation();
+        if(!explosionLoc.getWorld().equals(entity.getWorld())) return;
+        Location playerLoc = entity.getLocation();
+        double distance = explosionLoc.distanceSquared(playerLoc);
+        if(distance > (32*32)) return;
+
+        // Player's facing direction
+        Vector facing = playerLoc.getDirection().normalize();
+
+        // Vector from player to explosion
+        Vector toExplosion = explosionLoc.toVector().subtract(playerLoc.toVector()).normalize();
+
+        double dot = facing.dot(toExplosion);
+        double tolerance = 0.2; // allow ~100° cone behind the player
+
+        if (dot < tolerance) {
+            setTempHPEmote(emoteC(":"), 160);
+        } else {
+            //player.sendMessage("Explosion is in front of you!");
         }
     }
 
