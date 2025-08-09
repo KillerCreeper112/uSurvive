@@ -36,6 +36,7 @@ public class USurviveMobs {
     public static final CruxMob LURKSCALE = CruxEntityRegistries.ENTITIES.register(new Lurkscale(Crux.key("lurkscale")));
     public static final CruxMob BUZZROT = CruxEntityRegistries.ENTITIES.register(new Buzzrot(Crux.key("buzzrot")));
     public static final CruxMob BUZZROT_BEE = CruxEntityRegistries.ENTITIES.register(new BuzzrotBee(Crux.key("buzzrot_bee")));
+    public static final CruxMob ZOMBIE_EAT = CruxEntityRegistries.ENTITIES.register(new ZombieEat(Crux.key("zombie_eat")));
 
     public static final CruxMob MIRRORSTRIKE = CruxEntityRegistries.ENTITIES.register(new Mirrorstrike(Crux.key("mirrorstrike")));
 

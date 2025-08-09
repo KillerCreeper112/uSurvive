@@ -1144,7 +1144,7 @@ public class EnchantsListener implements Listener {
                 new ParticleBuilder(Particle.ITEM)
                     .data(ItemType.IRON_CHESTPLATE.createItemStack())
                     .location(vic.getLocation().add(0, height*.5, 0))
-                    .count(CruxMath.random(6, 8))
+                    .count(CruxMath.random(12, 15))
                     .extra(.05)
                     .offset(.01 * width, .01 * height, .01 * width)
                     .spawn();
