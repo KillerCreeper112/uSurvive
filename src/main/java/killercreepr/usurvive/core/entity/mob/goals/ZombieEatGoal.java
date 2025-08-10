@@ -11,17 +11,32 @@ import io.papermc.paper.datacomponent.item.consumable.ConsumeEffect;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import net.minecraft.Util;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.*;
+import org.bukkit.craftbukkit.entity.CraftMob;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.Field;
+import java.util.List;
 
 public class ZombieEatGoal extends CruxMobModeledGoal implements Listener {
     public ZombieEatGoal(@NotNull Mob mob) {
@@ -63,10 +78,30 @@ public class ZombieEatGoal extends CruxMobModeledGoal implements Listener {
         return getModel().getBone("right_item").get().getLocation();
     }
 
+    public void particles(){
+        if(mob.getActivePotionEffects().isEmpty()) return;
+
+        net.minecraft.world.entity.Mob mob = ((CraftMob) this.mob).getHandle();
+        int i = 4;
+        int i1 = 1;
+        if (mob.random.nextInt(i * i1) == 0) {
+            PotionEffect effect = CruxCollection.getRandom(this.mob.getActivePotionEffects());
+            this.mob.getWorld().spawnParticle(
+                Particle.ENTITY_EFFECT,
+                mob.getRandomX(0.5), mob.getRandomY(),
+                mob.getRandomZ(0.5), 0, 1.0, 1.0, 1.0,
+                effect.getType().getColor()
+            );
+            /*mob.level().addParticle(Util.getRandom(list, mob.random), mob.getRandomX(0.5), mob.getRandomY(),
+                mob.getRandomZ(0.5), 1.0, 1.0, 1.0);*/
+        }
+    }
+
     protected boolean wasEating = false;
     protected byte tick = 0;
     @Override
     public void tick() {
+        particles();
         if(isPlayingAnimation("eat")){
             tick++;
             if(!wasEating){
@@ -122,7 +157,6 @@ public class ZombieEatGoal extends CruxMobModeledGoal implements Listener {
                         consumable.consumeEffects().forEach(effect ->{
                             if(effect instanceof ConsumeEffect.ApplyStatusEffects e && CruxMath.testChance(e.probability()*100f)){
                                 mob.addPotionEffects(e.effects());
-                                Bukkit.broadcastMessage(e.effects() + "");
                             }
                         });
                     }

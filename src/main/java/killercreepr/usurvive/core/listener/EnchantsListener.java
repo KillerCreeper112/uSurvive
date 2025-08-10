@@ -186,7 +186,7 @@ public class EnchantsListener implements Listener {
                     USurviveTickables.CHAINSHOCK, CruxSlotGroup.MAIN_HAND,
                     null,
                     Map.of(
-                        "max_links", 1 + (level * 3),
+                        "max_links", Integer.MAX_VALUE,//1 + (level * 3),
                         "link_range", 4D + (level * 4D),
                         "display_type", Key.key("chain"),
                         "level", level,
