@@ -7,6 +7,7 @@ import com.google.common.collect.Multimap;
 import io.papermc.paper.event.entity.EntityEquipmentChangedEvent;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.entity.CruxEntity;
+import killercreepr.crux.api.entity.memory.DataHolder;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
@@ -739,7 +740,7 @@ public class EnchantsListener implements Listener {
         if(!CruxMath.testChance(chance)) return;
 
         float multiplier = 1f + (level * .15f);
-        droppedExp = (int) ((float) droppedExp * multiplier);
+        droppedExp = Math.round(droppedExp * multiplier)+1;
         event.setExpToDrop(droppedExp);
     }
 
@@ -1205,12 +1206,13 @@ public class EnchantsListener implements Listener {
     }
 
     public void onTether(Entity attacker, Entity vic, int level){
-        TetherEnchantHolder holder = EntityMemory.getDataHolder(attacker, TetherEnchantHolder.class);
+        Key key = Crux.key("enchant/tether/" + vic.getUniqueId());
+        DataHolder holder = EntityMemory.getDataHolder(attacker.getUniqueId(), key);
         if(holder != null) return;
         int lifespan = 60 + ((level-1) * 20);
         double breakDistance = TetherEnchantHolder.getDistance(attacker, vic) + (10D - ((level-1) * 1.5D));
-        EntityMemory.getOrCreateDataHolder(attacker, TetherEnchantHolder.class, mem ->{
-            return new TetherEnchantHolder(mem, vic, lifespan, breakDistance*breakDistance, level);
+        EntityMemory.getOrCreateDataHolder(attacker, key, mem ->{
+            return new TetherEnchantHolder(key, mem, vic, lifespan, breakDistance*breakDistance, level);
         });
     }
 
