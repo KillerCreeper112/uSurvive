@@ -4,10 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
+import io.papermc.paper.command.brigadier.argument.resolvers.selector.EntitySelectorArgumentResolver;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import killercreepr.crux.api.text.tags.container.TagContainer;
@@ -25,12 +27,14 @@ import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
 import killercreepr.cruxconfig.config.common.element.FileArray;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.usurvive.core.USurvivePlugin;
+import killercreepr.usurvive.core.listener.EnchantsListener;
 import killercreepr.usurvive.core.listener.MaintenanceListener;
 import killercreepr.usurvive.core.vanish.VanishHandler;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -155,6 +159,25 @@ public class DevCommands implements Listener {
                                 sender.sendMessage("Maintenance: " + MaintenanceListener.maintenance);
                                 return 1;
                             })
+                    )
+                    .then(
+                        Commands.literal("etether")
+                            .then(
+                                Commands.argument("targets", ArgumentTypes.entities())
+                                    .then(
+                                        Commands.argument("level", IntegerArgumentType.integer())
+                                            .executes(ctx ->{
+                                                if(!(getExecutor(ctx.getSource()) instanceof Entity sender)) return -1;
+                                                int level = ctx.getArgument("level", Integer.class);
+                                                ctx.getArgument("targets", EntitySelectorArgumentResolver.class)
+                                                    .resolve(ctx.getSource()).forEach(hit ->{
+                                                        if(hit.equals(sender)) return;
+                                                        EnchantsListener.onTether(sender, hit, level);
+                                                    });
+                                                return 1;
+                                            })
+                                    )
+                            )
                     )
                     .then(
                         Commands.literal("kickothers")

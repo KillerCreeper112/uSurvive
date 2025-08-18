@@ -74,6 +74,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.*;
@@ -1071,6 +1072,7 @@ public class EnchantsListener implements Listener {
         return true;
     }
 
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         Entity vic = event.getEntity();
@@ -1205,7 +1207,7 @@ public class EnchantsListener implements Listener {
         }
     }
 
-    public void onTether(Entity attacker, Entity vic, int level){
+    public static void onTether(Entity attacker, Entity vic, int level){
         Key key = Crux.key("enchant/tether/" + vic.getUniqueId());
         DataHolder holder = EntityMemory.getDataHolder(attacker.getUniqueId(), key);
         if(holder != null) return;
