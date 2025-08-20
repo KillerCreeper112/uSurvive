@@ -112,7 +112,7 @@ public class ResetWorldModule extends SimpleWorldModule implements Ticked {
         }
         forEachAllPlayers(Lang.RESOURCE_WORLD_RESETTING::use);
         resetting = true;
-        Crux.scheduler().runTask(() -> reset());
+        Crux.scheduler().runTask(this::reset);
     }
 
     public void teleportPlayersToSpawn(World world){

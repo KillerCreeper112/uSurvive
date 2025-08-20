@@ -17,6 +17,7 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.component.parser.TextDataComponentDecoder;
 import killercreepr.crux.core.data.util.MapBuilder;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementManager;
 import killercreepr.cruxadvancements.api.event.CruxAdvancementRewardEvent;
 import killercreepr.cruxadvancements.core.entity.memory.AdvancementHolder;
@@ -26,6 +27,10 @@ import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
 import killercreepr.cruxconfig.config.common.element.FileArray;
 import killercreepr.cruxconfig.config.common.element.FileObject;
+import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxworlds.api.world.CruxWorld;
+import killercreepr.cruxworlds.core.command.arguments.CruxWorldArgs;
+import killercreepr.cruxworlds.core.command.arguments.CruxWorldArgument;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.listener.EnchantsListener;
 import killercreepr.usurvive.core.listener.MaintenanceListener;
@@ -159,6 +164,24 @@ public class DevCommands implements Listener {
                                 sender.sendMessage("Maintenance: " + MaintenanceListener.maintenance);
                                 return 1;
                             })
+                    ).then(
+                        Commands.literal("world")
+                            .then(
+                                Commands.literal("resource")
+                                    .then(
+                                        Commands.argument("world", new CruxWorldArgument(CruxCore.core().worldManager()))
+                                            .then(
+                                                Commands.literal("reset")
+                                                    .executes(ctx ->{
+                                                        CruxWorld world = ctx.getArgument("world", CruxWorld.class);
+                                                        CruxTag.remove(world.toBukkitWorld(), "last_reset");
+                                                        getExecutor(ctx.getSource())
+                                                            .sendMessage(world.key() + " will reset next time it ticks");
+                                                        return 1;
+                                                    })
+                                            )
+                                    )
+                            )
                     )
                     .then(
                         Commands.literal("etether")

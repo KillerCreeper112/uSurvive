@@ -1,6 +1,7 @@
 package killercreepr.usurvive.core.world;
 
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
@@ -9,8 +10,10 @@ import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.USurvivePlugin;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Difficulty;
+import org.bukkit.GameRule;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -22,6 +25,8 @@ public class USurviveWorldTypes {
             World world = new WorldCreator(name.value()).createWorld();
             if(world==null) throw new IllegalStateException("Cannot generate world! " + key());
             world.setDifficulty(Difficulty.HARD);
+            world.setGameRule(GameRule.LOCATOR_BAR, false);
+            CruxTag.set(world, "last_reset", PersistentDataType.LONG, System.currentTimeMillis());
 
             ValuesProvider cfg = USurvivePlugin.inst().values();
 
@@ -52,6 +57,7 @@ public class USurviveWorldTypes {
             World world = new WorldCreator(name.value()).environment(World.Environment.NETHER).createWorld();
             if(world==null) throw new IllegalStateException("Cannot generate world! " + key());
             world.setDifficulty(Difficulty.HARD);
+            world.setGameRule(GameRule.LOCATOR_BAR, false);
 
             ValuesProvider cfg = USurvivePlugin.inst().values();
 

@@ -1212,7 +1212,7 @@ public class EnchantsListener implements Listener {
         DataHolder holder = EntityMemory.getDataHolder(attacker.getUniqueId(), key);
         if(holder != null) return;
         int lifespan = 60 + ((level-1) * 20);
-        double breakDistance = TetherEnchantHolder.getDistance(attacker, vic) + (10D - ((level-1) * 1.5D));
+        double breakDistance = TetherEnchantHolder.getDistance(attacker, vic) + Math.max((10D - ((level-1) * 1.5D)), 0.5D);
         EntityMemory.getOrCreateDataHolder(attacker, key, mem ->{
             return new TetherEnchantHolder(key, mem, vic, lifespan, breakDistance*breakDistance, level);
         });
