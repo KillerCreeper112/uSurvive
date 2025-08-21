@@ -25,6 +25,7 @@ import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxString;
 import killercreepr.cruxadvancements.core.config.loader.CfgCrazyAdvancementManagerCfgLoader;
+import killercreepr.cruxadvancements.core.config.loader.GlobalAdvancementManagerCfgLoader;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.handler.BukkitCfgHandlers;
 import killercreepr.cruxconfig.config.bukkit.standard.SimpleLangConfig;
@@ -208,6 +209,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     }
 
     protected final CfgCrazyAdvancementManagerCfgLoader cfgManagerLoader = new CfgCrazyAdvancementManagerCfgLoader(this);
+    protected final GlobalAdvancementManagerCfgLoader globalManagerLoader = new GlobalAdvancementManagerCfgLoader(this);
     protected DevCommands devCommands;
     @Override
     public void onLoad() {
@@ -509,6 +511,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         //deathManager.load();
 
         cfgManagerLoader.load();
+        globalManagerLoader.load();
 
         setupQuickShop();
 
@@ -675,6 +678,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         super.disabled();
         //deathManager.save();
         cfgManagerLoader.saveAndUnload(getServer().getOnlinePlayers());
+        globalManagerLoader.saveAndUnload(getServer().getOnlinePlayers());
         if(spawnListener != null) spawnListener.onDisable();
     }
 
@@ -691,6 +695,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         cfgManagerLoader.refresh(manager ->{
             KillMobAdvanceMaker.registerAll();
         });
+        globalManagerLoader.refresh();
     }
 
     public void registerSimpleCfgHandlers(@NotNull FileRegistry registry){
