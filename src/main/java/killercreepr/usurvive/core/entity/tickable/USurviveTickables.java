@@ -15,6 +15,7 @@ import killercreepr.cruxattributes.core.component.CruxAttributeCompParsers;
 import killercreepr.cruxtickables.api.entity.tickable.ActiveEntityTickable;
 import killercreepr.cruxtickables.api.entity.tickable.EntityTickable;
 import killercreepr.cruxtickables.api.entity.tickable.EntityTickableModifier;
+import killercreepr.cruxtickables.core.entity.tickable.AttributesTickable;
 import killercreepr.cruxtickables.core.entity.tickable.SimpleDataEntityTickable;
 import killercreepr.cruxtickables.core.registries.CruxTickableRegistries;
 import killercreepr.usurvive.api.mechanics.whip.Whip;
