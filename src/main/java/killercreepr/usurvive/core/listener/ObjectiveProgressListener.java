@@ -8,6 +8,7 @@ import killercreepr.cruxadvancements.api.advancement.ObjectiveAdvancement;
 import killercreepr.cruxadvancements.api.advancement.icon.CriterionDisplay;
 import killercreepr.cruxadvancements.api.event.CruxAdvancementGrantEvent;
 import killercreepr.cruxadvancements.api.event.objective.PostNumberObjectiveProgressChangeEvent;
+import killercreepr.cruxadvancements.core.advancement.objective.GlobalObjectiveAdvancement;
 import killercreepr.cruxadvancements.core.advancement.objective.NumberObjective;
 import killercreepr.cruxadvancements.core.entity.memory.AdvancementHolder;
 import killercreepr.cruxentities.api.combat.EntityDamager;
@@ -58,14 +59,34 @@ public class ObjectiveProgressListener implements Listener {
             ;
         NumberObjective objective = event.getObjective();
         if(display == null || display.getCriterionFormat(objective.getCriterion()) == null){
-            Lang.ADVANCEMENT_PROGRESS.use(p, tags);
+            if(advancement instanceof GlobalObjectiveAdvancement a){
+                tags.add(
+                    Tag.parsed("progress", a.getMainProgress().getCriteriaProgress() + "")
+                ).add(
+                    Tag.parsed("progress_percent", ((float)a.getMainProgress().getCriteriaProgress()/(float)a.getMainProgress().getCriteriaMaxProgress()) + "")
+                );
+                Lang.ADVANCEMENT_PROGRESS_CHALLENGE.use(p, tags);
+            }else{
+                Lang.ADVANCEMENT_PROGRESS.use(p, tags);
+            }
             return;
         }
-        tags.add(Tag.parsed("progress", event.getNewProgress() + ""))
-            .add(Tag.parsed("max", objective.getMaxProgress() + ""))
-            .add(Tag.parsed("format", display.getCriterionFormat(objective.getCriterion()) + ""));
 
-        Lang.ADVANCEMENT_PROGRESS_CRITERION_DISPLAY.use(p, tags);
+        if(advancement instanceof GlobalObjectiveAdvancement a){
+            tags.add(Tag.parsed("progress", a.getMainProgress().getCriteriaProgress() + ""))
+                .add(Tag.parsed("max", objective.getMaxProgress() + ""))
+                .add(Tag.parsed("format", display.getCriterionFormat(objective.getCriterion()) + ""))
+                .add(
+                    Tag.parsed("progress_percent", ((float)a.getMainProgress().getCriteriaProgress()/(float)a.getMainProgress().getCriteriaMaxProgress()) + "")
+                );
+            ;
+            Lang.ADVANCEMENT_PROGRESS_CRITERION_DISPLAY_CHALLENGE.use(p, tags);
+        }else{
+            tags.add(Tag.parsed("progress", event.getNewProgress() + ""))
+                .add(Tag.parsed("max", objective.getMaxProgress() + ""))
+                .add(Tag.parsed("format", display.getCriterionFormat(objective.getCriterion()) + ""));
+            Lang.ADVANCEMENT_PROGRESS_CRITERION_DISPLAY.use(p, tags);
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

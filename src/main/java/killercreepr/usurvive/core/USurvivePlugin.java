@@ -209,7 +209,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     }
 
     protected final CfgCrazyAdvancementManagerCfgLoader cfgManagerLoader = new CfgCrazyAdvancementManagerCfgLoader(this);
-    protected final GlobalAdvancementManagerCfgLoader globalManagerLoader = new GlobalAdvancementManagerCfgLoader(this);
+    protected final GlobalAdvancementManagerCfgLoader globalManagerLoader = new GlobalAdvancementManagerCfgLoader(this, "community_advancements");
     protected DevCommands devCommands;
     @Override
     public void onLoad() {
