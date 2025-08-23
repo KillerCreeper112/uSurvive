@@ -243,7 +243,8 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .weight(2)
                 .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
                 .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
-                .activeSlots(EquipmentSlotGroup.MAINHAND),
+                .activeSlots(EquipmentSlotGroup.MAINHAND)
+                .exclusiveWith(RegistrySet.keySet(RegistryKey.ENCHANTMENT, TypedKey.create(RegistryKey.ENCHANTMENT, Key.key("mending")))),
 
             crux -> crux.description("Chance to receive more exp from mining or killing mobs")
                 .applicableItemGroup(ApplicableItemGroup.builder()
