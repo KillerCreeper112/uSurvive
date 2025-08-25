@@ -25,7 +25,6 @@ public class USurviveWorldTypes {
             World world = new WorldCreator(name.value()).createWorld();
             if(world==null) throw new IllegalStateException("Cannot generate world! " + key());
             world.setDifficulty(Difficulty.HARD);
-            world.setGameRule(GameRule.LOCATOR_BAR, false);
             CruxTag.set(world, "last_reset", PersistentDataType.LONG, System.currentTimeMillis());
 
             ValuesProvider cfg = USurvivePlugin.inst().values();
@@ -57,7 +56,6 @@ public class USurviveWorldTypes {
             World world = new WorldCreator(name.value()).environment(World.Environment.NETHER).createWorld();
             if(world==null) throw new IllegalStateException("Cannot generate world! " + key());
             world.setDifficulty(Difficulty.HARD);
-            world.setGameRule(GameRule.LOCATOR_BAR, false);
 
             ValuesProvider cfg = USurvivePlugin.inst().values();
 

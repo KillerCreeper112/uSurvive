@@ -19,6 +19,7 @@ import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -125,6 +126,10 @@ public class SpawnListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
+
+        //todo something better than this
+        p.getAttribute(Attribute.WAYPOINT_TRANSMIT_RANGE).setBaseValue(0D);
+
         if(p.hasPlayedBefore()) return;
 
         MergedTagContainer tags = TagContainer.merged().hook(p);
