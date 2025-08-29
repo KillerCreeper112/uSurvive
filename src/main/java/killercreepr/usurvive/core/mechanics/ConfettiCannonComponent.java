@@ -4,6 +4,7 @@ import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeContainer;
@@ -21,6 +22,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.RayTraceResult;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -106,6 +108,15 @@ public class ConfettiCannonComponent implements ConsumableComponent {
                 );
             }
         ).start();
+
+        double forceBack = attributes.getValue(CruxAttribute.PUSHBACK);
+        double forceBackY = attributes.getValue(CruxAttribute.UPWARDS_PUSHBACK);
+        if(forceBack != 0D || forceBackY != 0D){
+            Vector force = CruxEntityUtil.getEyeOrLocation(user).getDirection().multiply(-1);
+            force.multiply(forceBack);
+            if(forceBackY != 0D) force.setY(force.getY()+forceBackY);
+            user.setVelocity(user.getVelocity().add(force));
+        }
     }
 
     @Override
