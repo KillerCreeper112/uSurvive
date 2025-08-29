@@ -11,6 +11,7 @@ import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import org.bukkit.craftbukkit.entity.CraftMob;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
+import org.bukkit.entity.Pose;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -97,12 +98,14 @@ public class UseRangedItemGoal extends CruxMobModeledGoal implements Listener {
 
     public void startUsingItem(){
         usingItem = true;
+        mob.setPose(Pose.SHOOTING, true);
         //mob.startUsingItem(getUsableItemSlot());
     }
 
     public void stopUsingItem(){
         usingItem = false;
         usingItemTicks = 0;
+        mob.setPose(Pose.SHOOTING, false);
     }
     public int getTicksUsingItem(){
         return usingItemTicks;//mob.getActiveItemUsedTime();
