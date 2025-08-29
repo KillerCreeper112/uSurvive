@@ -32,6 +32,8 @@ public class ConfettiCannonComponent implements ConsumableComponent {
     protected final int parAmount;
     protected final String particle;
     protected final CreateSound sound;
+    protected final double minAOE;
+    protected final double aoeDropOff;
 
     public double getSize() {
         return size;
@@ -41,12 +43,14 @@ public class ConfettiCannonComponent implements ConsumableComponent {
         return sound;
     }
 
-    public ConfettiCannonComponent(double force, double size, int parAmount, String particle, CreateSound sound) {
+    public ConfettiCannonComponent(double force, double size, int parAmount, String particle, CreateSound sound, double minAOE, double aoeDropOff) {
         this.force = force;
         this.size = size;
         this.parAmount = parAmount;
         this.particle = particle;
         this.sound = sound;
+        this.minAOE = minAOE;
+        this.aoeDropOff = aoeDropOff;
     }
 
     public double getForce() {
@@ -87,6 +91,9 @@ public class ConfettiCannonComponent implements ConsumableComponent {
             loc,
             (int) attributes.getValue(CruxAttribute.ATTACK_RANGE),
             attributes.getValue(CruxAttribute.ATTACK_SPEED),
+            attributes.getValueOrDefault(CruxAttribute.ATTACK_AOE, .1D),
+            minAOE,
+            aoeDropOff,
             attributes,
             e -> !e.equals(user),
             hit ->{
@@ -118,17 +125,24 @@ public class ConfettiCannonComponent implements ConsumableComponent {
         protected final Location loc;
         protected final int maxRange;
         protected final double speed;
+        protected final double startingAOE;
+        protected final double minAOE;
+        protected final double aoeDropOff;
         protected final CruxAttributeContainer attributes;
         protected final Predicate<Entity> entityFilter;
         protected final Consumer<Entity> entityHit;
 
-        public ShotRay(Location loc, int maxRange, double speed, CruxAttributeContainer attributes, Predicate<Entity> entityFilter, Consumer<Entity> entityHit) {
+        public ShotRay(Location loc, int maxRange, double speed, double startingAOE, double minAOE, double aoeDropOff, CruxAttributeContainer attributes, Predicate<Entity> entityFilter, Consumer<Entity> entityHit) {
             this.loc = loc;
             this.maxRange = maxRange;
             this.speed = speed;
+            this.startingAOE = startingAOE;
+            this.minAOE = minAOE;
+            this.aoeDropOff = aoeDropOff;
             this.attributes = attributes;
             this.entityFilter = entityFilter;
             this.entityHit = entityHit;
+            this.aoe = startingAOE;
         }
 
         public RayTraceResult hasHitBlock(EntityHit.Result result){
@@ -150,6 +164,7 @@ public class ConfettiCannonComponent implements ConsumableComponent {
 
         protected BukkitRunnable runnable;
         protected int range = 0;
+        protected double aoe;
         protected Location lastLoc;
         public void tick(){
             range++;
@@ -161,7 +176,7 @@ public class ConfettiCannonComponent implements ConsumableComponent {
             Location l = CruxLoc.shift(lastLoc, speed, 0D, 0D);
 
             var result = new EntityHit(
-                lastLoc, speed, attributes.getValueOrDefault(CruxAttribute.ATTACK_AOE, .1D),
+                lastLoc, speed, aoe,
                 (int) attributes.getValue(CruxAttribute.ATTACK_PIERCE) + 1,
                 false
             ).getHitEntities(entityFilter);
@@ -171,6 +186,7 @@ public class ConfettiCannonComponent implements ConsumableComponent {
                 stop();
                 l = hitBlock.getHitPosition().toLocation(l.getWorld());
             }
+            result.getHit().forEach(entityHit);
 
             ShapeScheduler.builder()
                 .shape(CreateLine.builder()
@@ -186,6 +202,8 @@ public class ConfettiCannonComponent implements ConsumableComponent {
                 })
                 .buildCached().scheduleAsync(0);
             lastLoc = l;
+
+            aoe = Math.max(aoe - aoeDropOff, minAOE);
         }
 
         public void stop(){

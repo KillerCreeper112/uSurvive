@@ -352,6 +352,8 @@ public class USurviveCompParsers {
             ctx.getOptional("size", 1D),
             ctx.getOptional("par_amount", 30),
             ctx.getOptional("particle", "confetti"),
-            ctx.getOptional("sound")
+            ctx.getOptional("sound"),
+            ctx.getOptional("aoe_min", 0.1D),
+            ctx.getOptional("aoe_drop_off", 0.1D)
         ));
 }
