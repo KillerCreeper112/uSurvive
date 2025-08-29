@@ -45,3 +45,5 @@ dependencies:
       required: false
     CruxAbyss:
       required: false
+    Comet:
+      required: false

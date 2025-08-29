@@ -340,4 +340,18 @@ public class USurviveCompParsers {
         .apply(ctx -> new ExecuteConsoleCommandsComponent(
             ctx.get("right_click_commands")
         ));
+
+    public static final PersistTextParser<ConfettiCannonComponent> CONFETTI_CANNON = PersistTextParser.mapBuilder(ConfettiCannonComponent.class)
+        .field("force", TextInputField.field(PersistTextParser.DOUBLE, ConfettiCannonComponent::getForce))
+        .field("size", TextInputField.field(PersistTextParser.DOUBLE, ConfettiCannonComponent::getSize))
+        .field("par_amount", TextInputField.field(PersistTextParser.INTEGER, ConfettiCannonComponent::getParAmount))
+        .field("particle", TextInputField.field(PersistTextParser.STRING, ConfettiCannonComponent::getParticle))
+        .field("sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND, ConfettiCannonComponent::getSound))
+        .apply(ctx -> new ConfettiCannonComponent(
+            ctx.getOptional("force", 1.5),
+            ctx.getOptional("size", 1),
+            ctx.getOptional("par_amount", 30),
+            ctx.getOptional("particle", "confetti"),
+            ctx.getOptional("sound")
+        ));
 }
