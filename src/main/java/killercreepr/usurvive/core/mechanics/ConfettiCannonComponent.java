@@ -1,13 +1,13 @@
 package killercreepr.usurvive.core.mechanics;
 
-import gg.aquatic.comet.api.CometEffectBuilder;
 import killercreepr.crux.api.communication.CreateSound;
-import killercreepr.crux.api.component.DataComponentAccessor;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.math.CruxPosition;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeContainer;
+import killercreepr.cruxattributes.core.component.CruxAttributeComponents;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxentities.combat.EntityHit;
 import killercreepr.cruxform.api.scheduler.ShapeScheduler;
@@ -15,17 +15,14 @@ import killercreepr.cruxform.api.shape.CreateLine;
 import killercreepr.cruxitems.api.item.component.ConsumableComponent;
 import killercreepr.cruxitems.api.item.consume.ItemConsumeContext;
 import killercreepr.cruxitems.api.item.consume.ItemConsumeResult;
-import killercreepr.usurvive.core.component.USurviveComponents;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.RayTraceResult;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -64,8 +61,16 @@ public class ConfettiCannonComponent implements ConsumableComponent {
         return particle;
     }
 
-    public void launch(Entity user, Location loc, DataComponentAccessor data){
-        new CometEffectBuilder(particle)
+    public void launch(Entity user, Location loc, CruxAttributeContainer attributes){
+
+        Crux.getServer().dispatchCommand(
+            Crux.getServer().getConsoleSender(),
+            "comet spawn " + particle + " " +
+                loc.getWorld().getName() + " " + loc.getX() + " " + loc.getY() + " " + loc.getZ() +
+                " {\"optimize\":false,\"force\":" + force + ",\"parAmount\":" + parAmount + ",\"pitch\":" + loc.getPitch() + ",\"yaw\":" + loc.getYaw() + "}"
+        );
+        //"comet spawn confetti ~ ~ ~ ~ {\"optimize\":false,\"force\":2.5,\"yaw\":-179.2,\"pitch\":-19.6,\"parAmount\":300}"
+        /*new CometEffectBuilder(particle)
             .location(loc)
             .data(Map.of(
                 "optimize", false,
@@ -74,10 +79,9 @@ public class ConfettiCannonComponent implements ConsumableComponent {
                 "pitch", loc.getPitch(),
                 "yaw", loc.getYaw()
             ))
-            .size(size).spawn();
+            .size(size).spawn();*/
         if(sound != null) sound.playAt(loc);
 
-        CruxAttributeContainer attributes = data.get(USurviveComponents.PROJECTILE_ATTRIBUTES);
         if(attributes == null) return;
         new ShotRay(
             loc,
@@ -101,7 +105,7 @@ public class ConfettiCannonComponent implements ConsumableComponent {
     public @NotNull ItemConsumeResult onConsume(@NotNull ItemConsumeContext ctx) {
         Player p = ctx.getPlayer();
         CruxItem crux = ctx.getItem();
-        launch(p, p.getEyeLocation(), crux);
+        launch(p, p.getEyeLocation(), crux.getOrDefaultData(CruxAttributeComponents.PROJECTILE_CRUX_ATTRIBUTES));
         return ItemConsumeResult.cancelled();
     }
 
@@ -141,6 +145,7 @@ public class ConfettiCannonComponent implements ConsumableComponent {
                     tick();
                 }
             };
+            runnable.runTaskTimer(Crux.getMainPlugin(), 0L, 1L);
         }
 
         protected BukkitRunnable runnable;
@@ -155,8 +160,6 @@ public class ConfettiCannonComponent implements ConsumableComponent {
             if(lastLoc == null) lastLoc = loc;
             Location l = CruxLoc.shift(lastLoc, speed, 0D, 0D);
 
-            Vector dir = l.toVector().subtract(lastLoc.toVector()).normalize();
-            lastLoc.setDirection(dir);
             var result = new EntityHit(
                 lastLoc, speed, attributes.getValueOrDefault(CruxAttribute.ATTACK_AOE, .1D),
                 (int) attributes.getValue(CruxAttribute.ATTACK_PIERCE) + 1,
@@ -171,7 +174,7 @@ public class ConfettiCannonComponent implements ConsumableComponent {
 
             ShapeScheduler.builder()
                 .shape(CreateLine.builder()
-                    .spacing(.5)
+                    .spacing(1)
                     .start(CruxPosition.precise(lastLoc))
                     .end(CruxPosition.precise(l))
                     .build())
@@ -182,6 +185,7 @@ public class ConfettiCannonComponent implements ConsumableComponent {
                     );
                 })
                 .buildCached().scheduleAsync(0);
+            lastLoc = l;
         }
 
         public void stop(){

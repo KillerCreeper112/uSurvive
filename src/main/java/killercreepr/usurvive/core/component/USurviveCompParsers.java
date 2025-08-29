@@ -348,8 +348,8 @@ public class USurviveCompParsers {
         .field("particle", TextInputField.field(PersistTextParser.STRING, ConfettiCannonComponent::getParticle))
         .field("sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND, ConfettiCannonComponent::getSound))
         .apply(ctx -> new ConfettiCannonComponent(
-            ctx.getOptional("force", 1.5),
-            ctx.getOptional("size", 1),
+            ctx.getOptional("force", 1.5D),
+            ctx.getOptional("size", 1D),
             ctx.getOptional("par_amount", 30),
             ctx.getOptional("particle", "confetti"),
             ctx.getOptional("sound")
