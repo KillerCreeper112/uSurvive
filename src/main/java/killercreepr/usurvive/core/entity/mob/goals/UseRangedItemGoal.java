@@ -39,22 +39,18 @@ public class UseRangedItemGoal extends CruxMobModeledGoal implements Listener {
     }
 
     protected final ItemPredicate usableItem;
-    private final double speedModifier;
-    private int attackIntervalMin;
-    private final float attackRadiusSqr;
-    private int attackTime = -1;
-    private int seeTime;
-    private boolean strafingClockwise;
-    private boolean strafingBackwards;
-    private int strafingTime = -1;
+    protected final double speedModifier;
+    protected int attackIntervalMin;
+    protected final float attackRadiusSqr;
+    protected int attackTime = -1;
+    protected int seeTime;
+    protected boolean strafingClockwise;
+    protected boolean strafingBackwards;
+    protected int strafingTime = -1;
 
     protected int usingItemTicks;
     protected boolean usingItem = false;
     protected final Consumer<UseRangedItemGoal> onUseItem;
-
-    public void setMinAttackInterval(int attackCooldown) {
-        this.attackIntervalMin = attackCooldown;
-    }
 
     public int getMaxUseTime(){
         ItemStack item = getUsableItem();
@@ -128,9 +124,11 @@ public class UseRangedItemGoal extends CruxMobModeledGoal implements Listener {
 
     @Override
     public void tick() {
-        super.tick();
-        LivingEntity target = getTarget();
+        //super.tick();
+        LivingEntity target = mob.getTarget();
         if(target == null) return;
+
+        if(!canUse()) return;
 
         double d = this.mob.getLocation().distanceSquared(target.getLocation());
         //double d = this.mob.distanceToSqr(target.getX(), target.getY(), target.getZ());
