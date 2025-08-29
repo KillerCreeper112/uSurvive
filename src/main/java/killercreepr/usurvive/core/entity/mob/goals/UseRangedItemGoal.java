@@ -111,6 +111,14 @@ public class UseRangedItemGoal extends CruxMobModeledGoal implements Listener {
         return usingItemTicks;//mob.getActiveItemUsedTime();
     }
 
+    public int getWarnAtTick(){
+        return (int) (getMaxUseTime() * .8f);
+    }
+
+    public void warn(){
+
+    }
+
     @Override
     public void stop() {
         super.stop();
@@ -180,6 +188,10 @@ public class UseRangedItemGoal extends CruxMobModeledGoal implements Listener {
                     performUseItem(ticksUsingItem);
                     stopUsingItem();
                     this.attackTime = this.attackIntervalMin;
+                }else{
+                    if(ticksUsingItem == getWarnAtTick()){
+                        warn();
+                    }
                 }
             }
         } else if (--this.attackTime <= 0 && this.seeTime >= -60) {
