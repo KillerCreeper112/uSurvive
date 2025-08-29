@@ -117,6 +117,9 @@ public class USurviveComponents {
     public static final DataComponentType<ConfettiCannonComponent> CONFETTI_CANNON = register("confetti_cannon", builder ->
         builder.persistTextParser(USurviveCompParsers.CONFETTI_CANNON.createInput(Crux.key("confetti_cannon"))));
 
+    public static final DataComponentType<BoneFluteComponent> BONE_FLUTE = register("bone_flute", builder ->
+        builder.persistTextParser(USurviveCompParsers.BONE_FLUTE.createInput(Crux.key("bone_flute"))));
+
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());
     }

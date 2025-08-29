@@ -18,6 +18,7 @@ import killercreepr.usurvive.core.component.impl.*;
 import killercreepr.usurvive.core.component.teleport.TeleportCheckInStructure;
 import killercreepr.usurvive.core.component.teleport.TeleportSetLastTP;
 import killercreepr.usurvive.core.mechanics.*;
+import killercreepr.usurvive.core.mechanics.bone_flute.FluteSoundSequence;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleDisplayGrapple;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleGrapple;
 import killercreepr.usurvive.core.mechanics.whip.SimpleDisplayWhip;
@@ -367,5 +368,43 @@ public class USurviveCompParsers {
             ctx.getOptional("aoe_drop_off", 0.1D),
             ctx.getOptional("attack_damage_drop_off", 1f),
             ctx.getOptional("par_life_span", NumberProvider.uniform(200, 190))
+        ));
+
+    public static final PersistTextParser<FluteSoundSequence.FluteSound> FLUTE_SOUND = PersistTextParser.mapBuilder(FluteSoundSequence.FluteSound.class)
+        .field("sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND,FluteSoundSequence.FluteSound::sound))
+        .field("wait_time", TextInputField.field(PersistTextParser.INTEGER, FluteSoundSequence.FluteSound::waitTime))
+        .apply(ctx -> new FluteSoundSequence.FluteSound.Simple(
+            ctx.get("sound"), ctx.getOptional("wait_time", 1)
+        ));
+
+
+    public static final PersistTextParser<List<FluteSoundSequence.FluteSound>> FLUTE_SOUND_LIST = PersistTextParser.list(FLUTE_SOUND);
+
+    public static final PersistTextParser<FluteSoundSequence> FLUTE_SOUND_SEQUENCE = PersistTextParser.mapBuilder(FluteSoundSequence.class)
+        .field("sounds", TextInputField.field(FLUTE_SOUND_LIST, FluteSoundSequence::sounds))
+        .apply(ctx -> new FluteSoundSequence.Simple(
+            ctx.get("sounds")
+        ));
+
+    public static final PersistTextParser<BoneFluteComponent.RayData> BONE_FLUTE_RAY_DATA = PersistTextParser.mapBuilder(BoneFluteComponent.RayData.class)
+        .field("yaw", TextInputField.field(ComponentInputParsers.NUMBER_PROVIDER, BoneFluteComponent.RayData::getYaw))
+        .field("pitch", TextInputField.field(ComponentInputParsers.NUMBER_PROVIDER, BoneFluteComponent.RayData::getPitch))
+        .field("attributes", TextInputField.field(CruxAttributeCompParsers.CRUX_ATTRIBUTE_CONTAINER, BoneFluteComponent.RayData::getAttributes))
+        .apply(ctx -> new BoneFluteComponent.RayData(
+            ctx.getOptional("yaw"),
+            ctx.getOptional("pitch"),
+            ctx.getOptional("attributes")
+        ));
+
+    public static final PersistTextParser<List<BoneFluteComponent.RayData>> BONE_FLUTE_RAY_DATA_LIST = PersistTextParser.list(BONE_FLUTE_RAY_DATA);
+
+    public static final PersistTextParser<BoneFluteComponent> BONE_FLUTE = PersistTextParser.mapBuilder(BoneFluteComponent.class)
+        .field("sound_sequence", TextInputField.field(FLUTE_SOUND_SEQUENCE,BoneFluteComponent::getSequence))
+        .field("rays", TextInputField.field(BONE_FLUTE_RAY_DATA_LIST,BoneFluteComponent::getRays))
+        .field("item_damage", TextInputField.field(PersistTextParser.INTEGER,BoneFluteComponent::getItemDamage))
+        .apply(ctx -> new BoneFluteComponent(
+            ctx.getOptional("sound_sequence"),
+            ctx.getOptional("rays"),
+            ctx.getOptional("item_damage", 1)
         ));
 }
