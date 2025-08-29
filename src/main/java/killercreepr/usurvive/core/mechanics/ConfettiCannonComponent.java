@@ -3,6 +3,7 @@ package killercreepr.usurvive.core.mechanics;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.math.CruxPosition;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxLoc;
@@ -25,6 +26,10 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.UUID;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -32,27 +37,61 @@ public class ConfettiCannonComponent implements ConsumableComponent {
     protected final double force;
     protected final double size;
     protected final int parAmount;
+    protected final int itemDamage;
     protected final String particle;
     protected final CreateSound sound;
+    protected final CreateSound secondSound;
+    protected final int secondSoundDelay;
     protected final double minAOE;
     protected final double aoeDropOff;
+    protected final float dmgDropOff;
+    protected final NumberProvider parLifeSpan;
 
     public double getSize() {
         return size;
+    }
+
+    public double getMinAOE() {
+        return minAOE;
+    }
+
+    public CreateSound getSecondSound() {
+        return secondSound;
+    }
+
+    public int getSecondSoundDelay() {
+        return secondSoundDelay;
+    }
+
+    public float getDmgDropOff() {
+        return dmgDropOff;
+    }
+
+    public double getAoeDropOff() {
+        return aoeDropOff;
+    }
+
+    public NumberProvider getParLifeSpan() {
+        return parLifeSpan;
     }
 
     public CreateSound getSound() {
         return sound;
     }
 
-    public ConfettiCannonComponent(double force, double size, int parAmount, String particle, CreateSound sound, double minAOE, double aoeDropOff) {
+    public ConfettiCannonComponent(double force, double size, int parAmount, int itemDamage, String particle, CreateSound sound, CreateSound secondSound, int secondSoundDelay, double minAOE, double aoeDropOff, float dmgDropOff, NumberProvider parLifeSpan) {
         this.force = force;
         this.size = size;
         this.parAmount = parAmount;
+        this.itemDamage = itemDamage;
         this.particle = particle;
         this.sound = sound;
+        this.secondSound = secondSound;
+        this.secondSoundDelay = secondSoundDelay;
         this.minAOE = minAOE;
         this.aoeDropOff = aoeDropOff;
+        this.dmgDropOff = dmgDropOff;
+        this.parLifeSpan = parLifeSpan;
     }
 
     public double getForce() {
@@ -61,6 +100,10 @@ public class ConfettiCannonComponent implements ConsumableComponent {
 
     public int getParAmount() {
         return parAmount;
+    }
+
+    public int getItemDamage() {
+        return itemDamage;
     }
 
     public String getParticle() {
@@ -73,7 +116,9 @@ public class ConfettiCannonComponent implements ConsumableComponent {
             Crux.getServer().getConsoleSender(),
             "comet spawn " + particle + " " +
                 loc.getWorld().getName() + " " + loc.getX() + " " + loc.getY() + " " + loc.getZ() +
-                " {\"optimize\":false,\"force\":" + force + ",\"parAmount\":" + parAmount + ",\"pitch\":" + loc.getPitch() + ",\"yaw\":" + loc.getYaw() + "}"
+                " {\"optimize\":false,\"force\":" + force + ",\"parAmount\":" + parAmount + ",\"pitch\":" + loc.getPitch() + ",\"yaw\":" + loc.getYaw()
+                + ",\"lifeSpanMin\":" + parLifeSpan.getMinValue().intValue() + ",\"lifeSpanMax\":" + parLifeSpan.getMaxValue().intValue()
+                + "}"
         );
         //"comet spawn confetti ~ ~ ~ ~ {\"optimize\":false,\"force\":2.5,\"yaw\":-179.2,\"pitch\":-19.6,\"parAmount\":300}"
         /*new CometEffectBuilder(particle)
@@ -87,8 +132,15 @@ public class ConfettiCannonComponent implements ConsumableComponent {
             ))
             .size(size).spawn();*/
         if(sound != null) sound.playAt(loc);
+        if(secondSound != null){
+            if(secondSoundDelay < 1){
+                secondSound.playAt(loc);
+            }else Crux.scheduler().runTaskLater(() -> secondSound.playAt(loc), secondSoundDelay);
+        }
 
         if(attributes == null) return;
+
+        Collection<UUID> alreadyHit = new HashSet<>();
         new ShotRay(
             loc,
             (int) attributes.getValue(CruxAttribute.ATTACK_RANGE),
@@ -97,12 +149,16 @@ public class ConfettiCannonComponent implements ConsumableComponent {
             minAOE,
             aoeDropOff,
             attributes,
-            e -> !e.equals(user),
-            hit ->{
+            e -> !e.equals(user) && !alreadyHit.contains(e.getUniqueId()),
+            (hit, progress) ->{
+                alreadyHit.add(hit.getUniqueId());
+
+                float dmgMultiplier = Math.max(0.2f, 1f - (dmgDropOff * progress));
+
                 EntityDamager.entityDamager(
                     hit, user
                 ).attack(
-                    attributes.getValue(CruxAttribute.ATTACK_DAMAGE),
+                    attributes.getValue(CruxAttribute.ATTACK_DAMAGE) * dmgMultiplier,
                     attributes.getValue(CruxAttribute.ATTACK_KNOCKBACK),
                     attributes.getValue(CruxAttribute.ATTACK_KNOCKBACK_UP)
                 );
@@ -124,6 +180,7 @@ public class ConfettiCannonComponent implements ConsumableComponent {
         Player p = ctx.getPlayer();
         CruxItem crux = ctx.getItem();
         launch(p, p.getEyeLocation(), crux.getOrDefaultData(CruxAttributeComponents.PROJECTILE_CRUX_ATTRIBUTES));
+        if(!CruxEntityUtil.isNonSurvival(p)) p.damageItemStack(ctx.getSlot(), itemDamage);
         return ItemConsumeResult.cancelled();
     }
 
@@ -141,9 +198,9 @@ public class ConfettiCannonComponent implements ConsumableComponent {
         protected final double aoeDropOff;
         protected final CruxAttributeContainer attributes;
         protected final Predicate<Entity> entityFilter;
-        protected final Consumer<Entity> entityHit;
+        protected final BiConsumer<Entity, Float> entityHit;
 
-        public ShotRay(Location loc, int maxRange, double speed, double startingAOE, double minAOE, double aoeDropOff, CruxAttributeContainer attributes, Predicate<Entity> entityFilter, Consumer<Entity> entityHit) {
+        public ShotRay(Location loc, int maxRange, double speed, double startingAOE, double minAOE, double aoeDropOff, CruxAttributeContainer attributes, Predicate<Entity> entityFilter, BiConsumer<Entity, Float> entityHit) {
             this.loc = loc;
             this.maxRange = maxRange;
             this.speed = speed;
@@ -173,9 +230,18 @@ public class ConfettiCannonComponent implements ConsumableComponent {
             runnable.runTaskTimer(Crux.getMainPlugin(), 0L, 1L);
         }
 
+        public double getDmg() {
+            return dmg;
+        }
+
+        public float getProgress(){
+            return (float) range / (float) maxRange;
+        }
+
         protected BukkitRunnable runnable;
         protected int range = 0;
         protected double aoe;
+        protected double dmg;
         protected Location lastLoc;
         public void tick(){
             range++;
@@ -187,7 +253,7 @@ public class ConfettiCannonComponent implements ConsumableComponent {
             Location l = CruxLoc.shift(lastLoc, speed, 0D, 0D);
 
             var result = new EntityHit(
-                lastLoc, speed, aoe,
+                lastLoc, speed+.05, aoe,
                 (int) attributes.getValue(CruxAttribute.ATTACK_PIERCE) + 1,
                 false
             ).getHitEntities(entityFilter);
@@ -197,7 +263,10 @@ public class ConfettiCannonComponent implements ConsumableComponent {
                 stop();
                 l = hitBlock.getHitPosition().toLocation(l.getWorld());
             }
-            result.getHit().forEach(entityHit);
+            float progress = getProgress();
+            result.getHit().forEach(e ->{
+                entityHit.accept(e, progress);
+            });
 
             ShapeScheduler.builder()
                 .shape(CreateLine.builder()

@@ -345,15 +345,27 @@ public class USurviveCompParsers {
         .field("force", TextInputField.field(PersistTextParser.DOUBLE, ConfettiCannonComponent::getForce))
         .field("size", TextInputField.field(PersistTextParser.DOUBLE, ConfettiCannonComponent::getSize))
         .field("par_amount", TextInputField.field(PersistTextParser.INTEGER, ConfettiCannonComponent::getParAmount))
+        .field("item_damage", TextInputField.field(PersistTextParser.INTEGER, ConfettiCannonComponent::getItemDamage))
         .field("particle", TextInputField.field(PersistTextParser.STRING, ConfettiCannonComponent::getParticle))
         .field("sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND, ConfettiCannonComponent::getSound))
+        .field("aoe_min", TextInputField.field(PersistTextParser.DOUBLE, ConfettiCannonComponent::getMinAOE))
+        .field("aoe_drop_off", TextInputField.field(PersistTextParser.DOUBLE, ConfettiCannonComponent::getAoeDropOff))
+        .field("par_life_span", TextInputField.field(ComponentInputParsers.NUMBER_PROVIDER, ConfettiCannonComponent::getParLifeSpan))
+        .field("attack_damage_drop_off", TextInputField.field(PersistTextParser.FLOAT, ConfettiCannonComponent::getDmgDropOff))
+        .field("second_sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND, ConfettiCannonComponent::getSecondSound))
+        .field("second_sound_delay", TextInputField.field(PersistTextParser.INTEGER, ConfettiCannonComponent::getSecondSoundDelay))
         .apply(ctx -> new ConfettiCannonComponent(
             ctx.getOptional("force", 1.5D),
             ctx.getOptional("size", 1D),
             ctx.getOptional("par_amount", 30),
+            ctx.getOptional("item_damage", 1),
             ctx.getOptional("particle", "confetti"),
             ctx.getOptional("sound"),
+            ctx.getOptional("second_sound"),
+            ctx.getOptional("second_sound_delay", 1),
             ctx.getOptional("aoe_min", 0.1D),
-            ctx.getOptional("aoe_drop_off", 0.1D)
+            ctx.getOptional("aoe_drop_off", 0.1D),
+            ctx.getOptional("attack_damage_drop_off", 1f),
+            ctx.getOptional("par_life_span", NumberProvider.uniform(200, 190))
         ));
 }
