@@ -146,6 +146,7 @@ public class ActiveEmotiveEnchantTickable extends ListenerActiveEntityTickable i
         super.stopped();
         if(display != null){
             Crux.scheduler().runTask(() ->{
+                if(display == null) return;
                 display.remove();
                 display = null;
             });
