@@ -43,4 +43,5 @@ public class USurviveMobs {
     public static final RemnantSpirit REMNANT_SPIRIT = CruxEntityRegistries.ENTITIES.register(new RemnantSpirit(Crux.key("remnant_spirit")));
     public static final CruxMob SNARE_ENCHANT = CruxEntityRegistries.ENTITIES.register(new SnareEnchant(Crux.key("snare_enchant")));
     public static final CruxMob CONFETTI_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new ConfettiZombie(Crux.key("confetti_zombie")));
+    public static final CruxMob GLITTER_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new GlitterZombie(Crux.key("glitter_zombie")));
 }

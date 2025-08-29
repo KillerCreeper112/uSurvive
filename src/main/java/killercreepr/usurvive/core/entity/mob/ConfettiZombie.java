@@ -32,7 +32,6 @@ public class ConfettiZombie extends UCruxMob {
     @Override
     protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
         return location.getWorld().spawn(location, Zombie.class, e ->{
-            e.setShouldBurnInDay(false);
             //e.setCustomNameVisible(false);
             //e.setSilent(true);
             load(e);
