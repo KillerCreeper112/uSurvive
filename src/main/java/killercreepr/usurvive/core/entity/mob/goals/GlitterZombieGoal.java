@@ -24,10 +24,11 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 public class GlitterZombieGoal extends CruxMobGoal implements Listener {
-    private float[] hues = new float[4]; // one hue per armor piece
+    private final float[] hues = new float[4]; // one hue per armor piece
 
     public GlitterZombieGoal(@NotNull Mob mob) {
         super(mob);
@@ -59,7 +60,7 @@ public class GlitterZombieGoal extends CruxMobGoal implements Listener {
             piece.setData(DataComponentTypes.DYED_COLOR, DyedItemColor.dyedItemColor(CruxColor.hsbToBukkitColor(hues[index] * 360f, 100f, 100f)));
             mob.getEquipment().setItem(slot, piece, true);
 
-            hues[index] += CruxMath.random(0.01f, 0.02f);
+            hues[index] += CruxMath.random(0.01f, 0.04f);
             if (hues[index] > 1f) hues[index] = 0f;
         }
     }
@@ -97,12 +98,19 @@ public class GlitterZombieGoal extends CruxMobGoal implements Listener {
             net.kyori.adventure.sound.Sound.Source.HOSTILE,
             2f, 1.5f).playAt(mob);
 
-        new ParticleBuilder(Particle.FIREWORK)
-            .location(mob.getLocation().add(0, mob.getHeight()*.5, 0))
-            .count(CruxMath.random(8, 10))
-            .extra(.1)
-            .offset(.1, .1, .1)
-            .spawn();
+        Vector dir = loc.getDirection();
+        int parCount = CruxMath.random(8, 10);
+        for(int i = 0; i < parCount; i++){
+            double angleX = Math.toRadians(CruxMath.random(-20, 20));
+            double angleZ = Math.toRadians(CruxMath.random(-20, 20));
+            Vector x = dir.clone().rotateAroundX(angleX).rotateAroundZ(angleZ);
+            new ParticleBuilder(Particle.FIREWORK)
+                .location(mob.getLocation().add(0, mob.getHeight()*.5, 0))
+                .count(0)
+                .extra(.35)
+                .offset(x.getX(), x.getY(), x.getZ())
+                .spawn();
+        }
 
         var data = CruxEntity.entity(mob).get(CruxAttributeComponents.PROJECTILE_CRUX_ATTRIBUTES);
         if(data == null) return;
