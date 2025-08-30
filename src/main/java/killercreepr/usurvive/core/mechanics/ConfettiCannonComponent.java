@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.mechanics;
 
+import io.papermc.paper.datacomponent.DataComponentTypes;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.math.CruxPosition;
@@ -30,7 +31,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class ConfettiCannonComponent implements ConsumableComponent {
@@ -181,6 +181,12 @@ public class ConfettiCannonComponent implements ConsumableComponent {
         CruxItem crux = ctx.getItem();
         launch(p, p.getEyeLocation(), crux.getOrDefaultData(CruxAttributeComponents.PROJECTILE_CRUX_ATTRIBUTES));
         if(!CruxEntityUtil.isNonSurvival(p)) p.damageItemStack(ctx.getSlot(), itemDamage);
+
+        var useCooldown = crux.item().getData(DataComponentTypes.USE_COOLDOWN);
+        if(useCooldown != null){
+            p.setCooldown(crux.item(), (int) (useCooldown.seconds() * 20f));
+        }
+
         return ItemConsumeResult.cancelled();
     }
 

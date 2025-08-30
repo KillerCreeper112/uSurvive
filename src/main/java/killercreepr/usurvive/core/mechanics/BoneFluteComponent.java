@@ -12,7 +12,6 @@ import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeContainer;
-import killercreepr.cruxattributes.core.component.CruxAttributeComponents;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxentities.combat.EntityHit;
 import killercreepr.cruxform.api.scheduler.ShapeScheduler;
@@ -245,7 +244,12 @@ public class BoneFluteComponent implements ConsumableComponent, InteractableComp
 
         launch(p, p.getEyeLocation());
 
+        CruxItem item = ctx.getItem();
         if(!CruxEntityUtil.isNonSurvival(p)) p.damageItemStack(ctx.getSlot(), itemDamage);
+        var useCooldown = item.item().getData(DataComponentTypes.USE_COOLDOWN);
+        if(useCooldown != null){
+            p.setCooldown(item.item(), (int) (useCooldown.seconds() * 20f));
+        }
         return ItemConsumeResult.cancelled();
     }
 

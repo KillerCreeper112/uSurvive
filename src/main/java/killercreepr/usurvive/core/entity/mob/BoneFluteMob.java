@@ -1,25 +1,20 @@
 package killercreepr.usurvive.core.entity.mob;
 
 import io.papermc.paper.datacomponent.DataComponentTypes;
-import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.item.predicate.ItemPredicate;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.crux.core.util.CruxLoc;
-import killercreepr.cruxattributes.core.component.CruxAttributeComponents;
 import killercreepr.usurvive.core.component.USurviveComponents;
 import killercreepr.usurvive.core.entity.mob.goals.UseRangedItemGoal;
 import killercreepr.usurvive.core.mechanics.BoneFluteComponent;
-import killercreepr.usurvive.core.mechanics.ConfettiCannonComponent;
 import killercreepr.usurvive.core.mechanics.bone_flute.FlutePlayer;
 import killercreepr.usurvive.core.mechanics.bone_flute.FluteSoundSequence;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
-import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
