@@ -4,6 +4,8 @@ import killercreepr.crux.core.Crux;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.registries.CruxEntityRegistries;
 import killercreepr.usurvive.core.entity.mob.*;
+import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.Zombie;
 
 public class USurviveMobs {
     public static void register(){}
@@ -42,6 +44,9 @@ public class USurviveMobs {
 
     public static final RemnantSpirit REMNANT_SPIRIT = CruxEntityRegistries.ENTITIES.register(new RemnantSpirit(Crux.key("remnant_spirit")));
     public static final CruxMob SNARE_ENCHANT = CruxEntityRegistries.ENTITIES.register(new SnareEnchant(Crux.key("snare_enchant")));
-    public static final CruxMob CONFETTI_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new ConfettiZombie(Crux.key("confetti_zombie")));
-    public static final CruxMob GLITTER_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new GlitterZombie(Crux.key("glitter_zombie")));
+    public static final CruxMob CONFETTI_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new ConfettiMob(Crux.key("confetti/zombie"), Zombie.class, 20, 15f));
+    public static final CruxMob GLITTER_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new GlitterMob(Crux.key("glitter/zombie"),Zombie.class));
+
+    public static final CruxMob BONE_FLUTE_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new BoneFluteMob(Crux.key("bone_flute/zombie"), Zombie.class, 20, 15f));
+    public static final CruxMob BONE_FLUTE_SKELETON = CruxEntityRegistries.ENTITIES.register(new BoneFluteMob(Crux.key("bone_flute/skeleton"), Skeleton.class, 20, 15f));
 }

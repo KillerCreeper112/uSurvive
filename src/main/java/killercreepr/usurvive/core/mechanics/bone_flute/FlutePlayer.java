@@ -10,11 +10,13 @@ import java.util.function.Supplier;
 public class FlutePlayer {
     protected final FluteSoundSequence sequence;
     protected final Consumer<FluteSoundSequence.FluteSound> onPlay;
+    protected final Consumer<FlutePlayer> onDone;
     protected final Supplier<Boolean> isValid;
 
-    public FlutePlayer(FluteSoundSequence sequence, Consumer<FluteSoundSequence.FluteSound> onPlay, Supplier<Boolean> isValid) {
+    public FlutePlayer(FluteSoundSequence sequence, Consumer<FluteSoundSequence.FluteSound> onPlay, Consumer<FlutePlayer> onDone, Supplier<Boolean> isValid) {
         this.sequence = sequence;
         this.onPlay = onPlay;
+        this.onDone = onDone;
         this.isValid = isValid;
     }
 
@@ -69,6 +71,7 @@ public class FlutePlayer {
 
                     if (!hasNext()) {
                         cancel();
+                        if(onDone != null) onDone.accept(FlutePlayer.this);
                         return;
                     }
                     next(scale);

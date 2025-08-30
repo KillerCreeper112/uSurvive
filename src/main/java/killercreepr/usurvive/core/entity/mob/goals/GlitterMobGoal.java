@@ -27,10 +27,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-public class GlitterZombieGoal extends CruxMobGoal implements Listener {
+public class GlitterMobGoal extends CruxMobGoal implements Listener {
     private final float[] hues = new float[4]; // one hue per armor piece
 
-    public GlitterZombieGoal(@NotNull Mob mob) {
+    public GlitterMobGoal(@NotNull Mob mob) {
         super(mob);
 
         // Initialize each hue to a different starting point

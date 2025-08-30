@@ -38,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class BoneFluteComponent implements ConsumableComponent, InteractableComponent {
@@ -87,47 +88,83 @@ public class BoneFluteComponent implements ConsumableComponent, InteractableComp
             FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 0.9f), 14)
         )),
 
-        // Ritual Echo (flute + ambient cave + click)
         FluteSoundSequence.fluteSoundSequence(List.of(
-            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.0f), 6),
-            FluteSoundSequence.fluteSound(sound(Sound.AMBIENT_CAVE), 12),
-            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.3f), 6),
-            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 0.9f), 8),
-            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_AMETHYST_BLOCK_CHIME), 10)
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_HARP, 1.0f), 6),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_BELL, 1.1f), 6),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.2f), 6),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_HARP, 1.3f), 6),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.4f), 6),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_BELL, 1.5f), 6)
         )),
 
-        // Ghostly Whispers (flute + warden/ambient)
-        FluteSoundSequence.fluteSoundSequence(List.of(
-            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.2f), 8),
-            FluteSoundSequence.fluteSound(sound(Sound.AMBIENT_SOUL_SAND_VALLEY_MOOD), 14),
-            FluteSoundSequence.fluteSound(sound(Sound.ENTITY_WARDEN_AMBIENT, 0.5f), 10),
-            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.0f), 6)
-        )),
-
-        // Jungle Spirits (flute + parrot + bamboo)
         FluteSoundSequence.fluteSoundSequence(List.of(
             FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.0f), 5),
-            FluteSoundSequence.fluteSound(sound(Sound.ENTITY_PARROT_AMBIENT, 0.8f), 12),
-            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_BAMBOO_HIT, 1.1f), 7),
-            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.4f), 5),
-            FluteSoundSequence.fluteSound(sound(Sound.ENTITY_PARROT_FLY, 0.8f), 8)
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 0.8f), 5),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 1.2f), 5),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.3f), 5),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 0.9f), 5),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.1f), 5)
         )),
 
-        // Haunted Chant (flute + ghast + amethyst)
         FluteSoundSequence.fluteSoundSequence(List.of(
-            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.0f), 6),
-            FluteSoundSequence.fluteSound(sound(Sound.ENTITY_GHAST_AMBIENT, 0.6f), 16),
-            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_AMETHYST_BLOCK_RESONATE, 1.2f), 10),
-            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.3f), 8)
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.4f), 3),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.6f), 3),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.8f), 4),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_BELL, 1.2f), 4),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 1.5f), 6)
         )),
 
-        // Abyssal Pulse (flute + sculk + warden thud)
         FluteSoundSequence.fluteSoundSequence(List.of(
-            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_SCULK_SENSOR_CLICKING), 5),
-            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 0.9f), 7),
-            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_SCULK_SHRIEKER_SHRIEK, 0.6f), 14),
-            FluteSoundSequence.fluteSound(sound(Sound.ENTITY_WARDEN_HEARTBEAT, 0.7f), 10),
-            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.1f), 8)
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_HARP, 0.9f), 10),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.2f), 12),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_BELL, 1.1f), 14),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_HARP, 1.0f), 16),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 0.8f), 12)
+        )),
+
+        FluteSoundSequence.fluteSoundSequence(List.of(
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f), 4),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_HARP, 1.2f), 4),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 1.4f), 4),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_BELL, 1.6f), 4),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.8f), 6),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_HARP, 2.0f), 6)
+        )),
+
+        FluteSoundSequence.fluteSoundSequence(List.of(
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.4f), 2),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.6f), 2),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.8f), 2),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_BELL, 1.5f), 2),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.7f), 2),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 2.0f), 2)
+        )),
+
+        FluteSoundSequence.fluteSoundSequence(List.of(
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.3f), 2),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 1.5f), 2),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.7f), 2),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.6f), 2),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_BELL, 1.8f), 2),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 2.0f), 2)
+        )),
+
+        FluteSoundSequence.fluteSoundSequence(List.of(
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_HARP, 1.0f), 1),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.2f), 1),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_BELL, 1.4f), 1),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 1.6f), 1),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.8f), 1),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_HARP, 2.0f), 2)
+        )),
+
+        FluteSoundSequence.fluteSoundSequence(List.of(
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.0f), 1),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_BELL, 1.5f), 1),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.2f), 1),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 1.4f), 1),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_FLUTE, 1.3f), 1),
+            FluteSoundSequence.fluteSound(sound(Sound.BLOCK_NOTE_BLOCK_BELL, 1.6f), 1)
         ))
     );
 
@@ -166,7 +203,7 @@ public class BoneFluteComponent implements ConsumableComponent, InteractableComp
         return rays;
     }
 
-    public void launch(Entity user, Location loc, CruxAttributeContainer attributes){
+    public void launch(Entity user, Location loc){
         List<Ray> rays = new ArrayList<>();
         Vector dir = loc.getDirection();
 
@@ -186,24 +223,26 @@ public class BoneFluteComponent implements ConsumableComponent, InteractableComp
                     EntityDamager.entityDamager(
                         hit, user
                     ).attack(
-                        attributes.getValue(CruxAttribute.ATTACK_DAMAGE) * potency,
-                        attributes.getValue(CruxAttribute.ATTACK_KNOCKBACK) * potency,
-                        attributes.getValue(CruxAttribute.ATTACK_KNOCKBACK_UP) * potency
+                        rayData.attributes.getValue(CruxAttribute.ATTACK_DAMAGE) * potency,
+                        rayData.attributes.getValue(CruxAttribute.ATTACK_KNOCKBACK) * potency,
+                        rayData.attributes.getValue(CruxAttribute.ATTACK_KNOCKBACK_UP) * potency
                     );
                 }
             );
             rays.add(ray);
         });
         new ShotRay(rays).start();
+        CreateSound.sound(Sound.ENTITY_BREEZE_WIND_BURST,
+                2.5f, 1.5f)
+            .playAt(loc);
     }
 
     @NotNull
     @Override
     public ItemConsumeResult onConsume(@NotNull ItemConsumeContext ctx) {
         var p = ctx.getPlayer();
-        var crux = ctx.getItem();
 
-        launch(p, p.getEyeLocation(), crux.getOrDefaultData(CruxAttributeComponents.PROJECTILE_CRUX_ATTRIBUTES));
+        launch(p, p.getEyeLocation());
 
         if(!CruxEntityUtil.isNonSurvival(p)) p.damageItemStack(ctx.getSlot(), itemDamage);
         return ItemConsumeResult.cancelled();
@@ -212,6 +251,21 @@ public class BoneFluteComponent implements ConsumableComponent, InteractableComp
     @Override
     public boolean isConsumable(@NotNull ItemConsumeContext ctx) {
         return true;
+    }
+
+    public static Consumer<FluteSoundSequence.FluteSound> genericPlaySound(Entity p){
+        return sound ->{
+            sound.sound().playAt(p);
+            Location loc = CruxLoc.shift(CruxEntityUtil.getEyeOrLocation(p), .5,
+                (p.getPitch() > 50 ? .2 : (p.getPitch() > 12 ? -.1 : -.5)), .2);
+
+            double note = CruxMath.random(1,24) / 24D;
+            loc.getWorld().spawnParticle(Particle.NOTE, loc, 0, note, 0, 0, 1);
+        };
+    }
+
+    public FluteSoundSequence sequenceOrDefault(){
+        return this.sequence == null ? CruxCollection.getRandom(SEQUENCES) : this.sequence;
     }
 
     @Override
@@ -227,16 +281,13 @@ public class BoneFluteComponent implements ConsumableComponent, InteractableComp
             consumeTime = (int) (data.consumeSeconds() * 20f);
         }
 
-        FluteSoundSequence sequence = this.sequence == null ? CruxCollection.getRandom(SEQUENCES) : this.sequence;
+        FluteSoundSequence sequence = sequenceOrDefault();
 
         new FlutePlayer(
             sequence,
-            sound ->{
-                sound.sound().playAt(p);
-            },
-            () ->{
-                return p.hasActiveItem() && p.getActiveItem().equals(item.item());
-            }
+            genericPlaySound(p),
+            null,
+            () -> p.hasActiveItem() && p.getActiveItem().equals(item.item())
         ).play(consumeTime);
         return ItemUseResult.empty();
     }
@@ -316,9 +367,11 @@ public class BoneFluteComponent implements ConsumableComponent, InteractableComp
             if(lastLoc == null) lastLoc = loc;
             Location l = CruxLoc.shift(lastLoc, speed, 0D, 0D);
 
+            float progress = getProgress();
+            float potency = Math.max(0.2f, 1f - (.7f * progress));
             var result = new EntityHit(
                 lastLoc, speed+.05,
-                attributes.getValue(CruxAttribute.ATTACK_AOE),
+                attributes.getValue(CruxAttribute.ATTACK_AOE) * potency,
                 (int) attributes.getValue(CruxAttribute.ATTACK_PIERCE) + 1,
                 false
             ).getHitEntities(entityFilter);
@@ -329,7 +382,6 @@ public class BoneFluteComponent implements ConsumableComponent, InteractableComp
                 stop = true;
                 l = hitBlock.getHitPosition().toLocation(l.getWorld());
             }
-            float progress = getProgress();
             result.getHit().forEach(e ->{
                 entityHit.accept(e, progress);
             });
@@ -347,6 +399,9 @@ public class BoneFluteComponent implements ConsumableComponent, InteractableComp
                     );
                 })
                 .buildCached().scheduleAsync(0);
+            CreateSound.sound(Sound.ENTITY_SHULKER_BULLET_HIT,
+                net.kyori.adventure.sound.Sound.Source.AMBIENT,
+                1.5f, 1.5f).playAt(l);
             lastLoc = l;
             return stop;
         }

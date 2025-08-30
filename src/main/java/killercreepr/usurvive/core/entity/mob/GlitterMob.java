@@ -1,21 +1,17 @@
 package killercreepr.usurvive.core.entity.mob;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
 import killercreepr.crux.api.entity.CruxEntity;
-import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeContainer;
-import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
 import killercreepr.cruxattributes.core.component.CruxAttributeComponents;
-import killercreepr.usurvive.core.entity.mob.goals.GlitterZombieGoal;
+import killercreepr.usurvive.core.entity.mob.goals.GlitterMobGoal;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
-import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -24,14 +20,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class GlitterZombie extends UCruxMob {
-    public GlitterZombie(@NotNull Key key) {
+public class GlitterMob extends UCruxMob {
+    protected final Class<? extends Mob> type;
+    public GlitterMob(@NotNull Key key, Class<? extends Mob> type) {
         super(key);
+        this.type = type;
     }
 
     @Override
     protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
-        return location.getWorld().spawn(location, Zombie.class, e ->{
+        return location.getWorld().spawn(location, type, e ->{
             //e.setCustomNameVisible(false);
             //e.setSilent(true);
             Map<EquipmentSlot, ItemStack> map = Map.of(
@@ -68,8 +66,8 @@ public class GlitterZombie extends UCruxMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
-        CruxGoalUtil.addIfNotPresent(mob, GlitterZombieGoal.class, 0, () ->
-            new GlitterZombieGoal(mob)
+        CruxGoalUtil.addIfNotPresent(mob, GlitterMobGoal.class, 0, () ->
+            new GlitterMobGoal(mob)
         );
     }
 }
