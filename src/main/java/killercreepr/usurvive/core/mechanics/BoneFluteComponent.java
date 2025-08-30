@@ -35,8 +35,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -209,6 +208,7 @@ public class BoneFluteComponent implements ConsumableComponent, InteractableComp
 
         Predicate<Entity> filter = e -> !e.equals(user);
 
+        Collection<UUID> alreadyHit = new HashSet<>();
         this.rays.forEach(rayData ->{
             Location l = loc.clone();
             l.setDirection(rayData.rotateDirection(dir));
@@ -223,10 +223,11 @@ public class BoneFluteComponent implements ConsumableComponent, InteractableComp
                     EntityDamager.entityDamager(
                         hit, user
                     ).attack(
-                        rayData.attributes.getValue(CruxAttribute.ATTACK_DAMAGE) * potency,
+                        alreadyHit.contains(hit.getUniqueId()) ? 0D : rayData.attributes.getValue(CruxAttribute.ATTACK_DAMAGE) * potency,
                         rayData.attributes.getValue(CruxAttribute.ATTACK_KNOCKBACK) * potency,
                         rayData.attributes.getValue(CruxAttribute.ATTACK_KNOCKBACK_UP) * potency
                     );
+                    alreadyHit.add(hit.getUniqueId());
                 }
             );
             rays.add(ray);
