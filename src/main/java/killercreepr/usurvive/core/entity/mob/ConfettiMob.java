@@ -20,17 +20,20 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class ConfettiMob extends UCruxMob {
     protected final Class<? extends Mob> type;
     protected final int attackIntervalMin;
     protected final float attackRadius;
-    public ConfettiMob(@NotNull Key key, Class<? extends Mob> type, int attackIntervalMin, float attackRadius) {
+    protected final BiConsumer<UseRangedItemGoal, Boolean> changePos;
+    public ConfettiMob(@NotNull Key key, Class<? extends Mob> type, int attackIntervalMin, float attackRadius, BiConsumer<UseRangedItemGoal, Boolean> changePos) {
         super(key);
         this.type = type;
         this.attackIntervalMin = attackIntervalMin;
         this.attackRadius = attackRadius;
+        this.changePos = changePos;
     }
 
     @Override
@@ -63,6 +66,15 @@ public class ConfettiMob extends UCruxMob {
                     data.launch(mob, loc, crux.getOrDefaultData(CruxAttributeComponents.PROJECTILE_CRUX_ATTRIBUTES));
                 }
             ){
+                @Override
+                public void changePose(boolean on) {
+                    if(changePos != null){
+                        changePos.accept(this, on);
+                        return;
+                    }
+                    super.changePose(on);
+                }
+
                 @Override
                 public void warn() {
                     CreateSound.sound(Sound.BLOCK_NOTE_BLOCK_HAT, net.kyori.adventure.sound.Sound.Source.HOSTILE,

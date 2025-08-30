@@ -94,14 +94,18 @@ public class UseRangedItemGoal extends CruxMobModeledGoal implements Listener {
 
     public void startUsingItem(){
         usingItem = true;
-        mob.setPose(Pose.SHOOTING, true);
+        changePose(true);
         //mob.startUsingItem(getUsableItemSlot());
+    }
+
+    public void changePose(boolean on){
+        mob.setPose(Pose.SHOOTING, on);
     }
 
     public void stopUsingItem(){
         usingItem = false;
         usingItemTicks = 0;
-        mob.setPose(Pose.SHOOTING, false);
+        changePose(false);
     }
     public int getTicksUsingItem(){
         return usingItemTicks;//mob.getActiveItemUsedTime();

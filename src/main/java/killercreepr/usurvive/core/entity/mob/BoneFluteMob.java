@@ -25,17 +25,20 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class BoneFluteMob extends UCruxMob {
     protected final Class<? extends Mob> type;
     protected final int attackIntervalMin;
     protected final float attackRadius;
-    public BoneFluteMob(@NotNull Key key, Class<? extends Mob> type, int attackIntervalMin, float attackRadius) {
+    protected final BiConsumer<UseRangedItemGoal, Boolean> changePos;
+    public BoneFluteMob(@NotNull Key key, Class<? extends Mob> type, int attackIntervalMin, float attackRadius, BiConsumer<UseRangedItemGoal, Boolean> changePos) {
         super(key);
         this.type = type;
         this.attackIntervalMin = attackIntervalMin;
         this.attackRadius = attackRadius;
+        this.changePos = changePos;
     }
 
     @Override
@@ -68,6 +71,15 @@ public class BoneFluteMob extends UCruxMob {
                     data.launch(mob, loc);
                 }
             ){
+                @Override
+                public void changePose(boolean on) {
+                    if(changePos != null){
+                        changePos.accept(this, on);
+                        return;
+                    }
+                    super.changePose(on);
+                }
+
                 @Override
                 public void startUsingItem() {
                     ItemStack item = mob.getEquipment().getItem(getUsableItemSlot());
