@@ -1,11 +1,14 @@
 package killercreepr.usurvive.core.entity.mob;
 
 import killercreepr.crux.api.entity.CruxEntity;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeContainer;
 import killercreepr.cruxattributes.core.component.CruxAttributeComponents;
+import killercreepr.cruxentities.component.CruxEntityComponents;
+import killercreepr.cruxentities.component.LaunchDrops;
 import killercreepr.usurvive.core.entity.mob.goals.GlitterMobGoal;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
@@ -58,6 +61,10 @@ public class GlitterMob extends UCruxMob {
                 CruxAttribute.ATTACK_KNOCKBACK, CruxMath.random(10D, 15D),
                 CruxAttribute.ATTACK_KNOCKBACK_UP, CruxMath.random(3D, 5D)
             )));
+            crux.set(CruxEntityComponents.LAUNCH_DROPS, new LaunchDrops(
+                NumberProvider.uniform(0.5, 0.7),
+                NumberProvider.uniform(0.1, 0.2)
+            ));
 
             load(e);
 
