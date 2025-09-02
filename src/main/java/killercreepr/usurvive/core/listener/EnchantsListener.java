@@ -327,6 +327,7 @@ public class EnchantsListener implements Listener {
         }
         UUID checkOwner = EntityDamager.getOwnerUUID(e);
         if(owner.equals(checkOwner)) return true;
+        if(CruxTeamComparer.teamComparer(false, team -> !team.allowFriendlyFire()).areOnSameTeam(e, owner)) return true;
 
         UPlayer uPlayer = UPlayer.getPlayer(owner);
         if(uPlayer == null) return mobsIsFriendly(e, owner, ownerEntity);

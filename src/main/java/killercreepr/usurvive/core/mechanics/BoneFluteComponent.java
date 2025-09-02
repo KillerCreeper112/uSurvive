@@ -6,10 +6,7 @@ import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.util.CruxCollection;
-import killercreepr.crux.core.util.CruxEntityUtil;
-import killercreepr.crux.core.util.CruxLoc;
-import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.*;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeContainer;
 import killercreepr.cruxentities.api.combat.EntityDamager;
@@ -29,6 +26,7 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.Team;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Contract;
@@ -205,9 +203,12 @@ public class BoneFluteComponent implements ConsumableComponent, InteractableComp
         List<Ray> rays = new ArrayList<>();
         Vector dir = loc.getDirection();
 
-        Predicate<Entity> filter = e -> !e.equals(user);
+        Map<UUID, Long> alreadyHit = new HashMap<>();
+        CruxTeamComparer teamComparer = CruxTeamComparer.teamComparer(false, team -> !team.allowFriendlyFire());
+        Predicate<Entity> filter = e -> !e.equals(user) &&
+            !CruxMath.hasOccurredWithin(alreadyHit.getOrDefault(e.getUniqueId(), 0L), 5) &&
+            !teamComparer.areOnSameTeam(user, e);
 
-        Collection<UUID> alreadyHit = new HashSet<>();
         this.rays.forEach(rayData ->{
             Location l = loc.clone();
             l.setDirection(rayData.rotateDirection(dir));
@@ -222,11 +223,12 @@ public class BoneFluteComponent implements ConsumableComponent, InteractableComp
                     EntityDamager.entityDamager(
                         hit, user
                     ).attack(
-                        alreadyHit.contains(hit.getUniqueId()) ? 0D : rayData.attributes.getValue(CruxAttribute.ATTACK_DAMAGE) * potency,
+                        CruxMath.hasOccurredWithin(alreadyHit.getOrDefault(hit.getUniqueId(), 0L), 10) ?
+                            0D : rayData.attributes.getValue(CruxAttribute.ATTACK_DAMAGE) * potency,
                         rayData.attributes.getValue(CruxAttribute.ATTACK_KNOCKBACK) * potency,
                         rayData.attributes.getValue(CruxAttribute.ATTACK_KNOCKBACK_UP) * potency
                     );
-                    alreadyHit.add(hit.getUniqueId());
+                    alreadyHit.put(hit.getUniqueId(), System.currentTimeMillis());
                 }
             );
             rays.add(ray);

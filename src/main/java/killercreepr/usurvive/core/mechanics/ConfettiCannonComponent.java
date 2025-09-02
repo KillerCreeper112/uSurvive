@@ -8,6 +8,7 @@ import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxLoc;
+import killercreepr.crux.core.util.CruxTeamComparer;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeContainer;
 import killercreepr.cruxattributes.core.component.CruxAttributeComponents;
@@ -23,6 +24,7 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.Team;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -143,6 +145,7 @@ public class ConfettiCannonComponent implements ConsumableComponent {
         if(attributes == null) return;
 
         Collection<UUID> alreadyHit = new HashSet<>();
+        CruxTeamComparer teamComparer = CruxTeamComparer.teamComparer(false, team -> !team.allowFriendlyFire());
         new ShotRay(
             loc,
             (int) attributes.getValue(CruxAttribute.ATTACK_RANGE),
@@ -151,7 +154,10 @@ public class ConfettiCannonComponent implements ConsumableComponent {
             minAOE,
             aoeDropOff,
             attributes,
-            e -> !e.equals(user) && !alreadyHit.contains(e.getUniqueId()),
+            e ->{
+                return !e.equals(user) && !alreadyHit.contains(e.getUniqueId()) &&
+                    !teamComparer.areOnSameTeam(e, user);
+            },
             (hit, progress) ->{
                 alreadyHit.add(hit.getUniqueId());
 
