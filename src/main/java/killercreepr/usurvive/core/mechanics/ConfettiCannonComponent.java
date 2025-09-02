@@ -128,9 +128,11 @@ public class ConfettiCannonComponent implements ConsumableComponent {
                 "force", force,
                 "parAmount", parAmount,
                 "pitch", loc.getPitch(),
-                "yaw", loc.getYaw()
+                "yaw", loc.getYaw(),
+                "lifeSpanMin", parLifeSpan.getMinValue().intValue(),
+                "lifeSpanMax", parLifeSpan.getMaxValue().intValue()
             ))
-            .size(size).spawn();*/
+            .spawn();*/
         if(sound != null) sound.playAt(loc);
         if(secondSound != null){
             if(secondSoundDelay < 1){

@@ -646,7 +646,7 @@ public class EnchantsListener implements Listener {
         return false;
     }*/
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    /*@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityEquipmentChangedMonitor(EntityEquipmentChangedEvent event) {
         LivingEntity e = event.getEntity();
         if(e instanceof Mob mob){
@@ -654,7 +654,7 @@ public class EnchantsListener implements Listener {
             if(change == null) return;
             EntityMemory.getOrCreateDataHolder(mob, EmotiveMobHolder.class, EmotiveMobHolder::new);
         }
-    }
+    }*/
 
 
     @EventHandler(ignoreCancelled = true)
