@@ -51,4 +51,7 @@ public class USurviveMobs {
 
     public static final CruxMob BONE_FLUTE_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new BoneFluteMob(Crux.key("bone_flute/zombie"), Zombie.class, 20, 15f, null));
     public static final CruxMob BONE_FLUTE_SKELETON = CruxEntityRegistries.ENTITIES.register(new BoneFluteMob(Crux.key("bone_flute/skeleton"), Skeleton.class, 20, 15f, (goal,b) ->{}));
+
+    public static final CruxMob TNT_TEMPEST_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new TNTTempestMob(Crux.key("tnt_tempest/zombie"), Zombie.class, 20, 15f, null));
+    public static final CruxMob TNT_TEMPEST_SKELETON = CruxEntityRegistries.ENTITIES.register(new TNTTempestMob(Crux.key("tnt_tempest/skeleton"), Skeleton.class, 20, 15f, (goal,b) ->{}));
 }

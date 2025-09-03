@@ -34,6 +34,12 @@ public class BlastTempestComponent implements ConsumableComponent, InteractableC
         this.itemDamage = itemDamage;
         this.launchSound = launchSound;
         this.lockOnSound = lockOnSound;
+        new ArrayList<>(rays).forEach(data ->{
+            if(data.dupeAmount < 1) return;
+            for(byte i = 0; i < data.dupeAmount; i++){
+                rays.add(data);
+            }
+        });
     }
 
     public CreateSound getLockOnSound() {

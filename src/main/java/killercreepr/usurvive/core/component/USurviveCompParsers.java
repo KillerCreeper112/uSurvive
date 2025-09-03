@@ -18,7 +18,6 @@ import killercreepr.usurvive.core.component.impl.*;
 import killercreepr.usurvive.core.component.teleport.TeleportCheckInStructure;
 import killercreepr.usurvive.core.component.teleport.TeleportSetLastTP;
 import killercreepr.usurvive.core.mechanics.*;
-import killercreepr.usurvive.core.mechanics.blast_tempest.BlastTempestPlayer;
 import killercreepr.usurvive.core.mechanics.bone_flute.FluteSoundSequence;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleDisplayGrapple;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleGrapple;
@@ -425,7 +424,7 @@ public class USurviveCompParsers {
 
     public static final PersistTextParser<List<BlastTempestComponent.RayData>> BLAST_TEMPEST_RAY_DATA_LIST = PersistTextParser.list(BLAST_TEMPEST_RAY_DATA);
 
-    public static final PersistTextParser<BlastTempestComponent> BLAST_TEMPEST = PersistTextParser.mapBuilder(BlastTempestComponent.class)
+    public static final PersistTextParser<BlastTempestComponent> TNT_TEMPEST = PersistTextParser.mapBuilder(BlastTempestComponent.class)
         .field("rays", TextInputField.field(BLAST_TEMPEST_RAY_DATA_LIST,BlastTempestComponent::getRays))
         .field("item_damage", TextInputField.field(PersistTextParser.INTEGER,BlastTempestComponent::getItemDamage))
         .field("range", TextInputField.field(PersistTextParser.DOUBLE,BlastTempestComponent::getRange))

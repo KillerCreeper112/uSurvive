@@ -4,6 +4,7 @@ import io.papermc.paper.datacomponent.DataComponentTypes;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.item.predicate.ItemPredicate;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.usurvive.core.component.USurviveComponents;
@@ -100,7 +101,7 @@ public class BoneFluteMob extends UCruxMob {
                         sequence,
                         BoneFluteComponent.genericPlaySound(mob),
                         null,
-                        () -> isUsingItem() && item.equals(mob.getEquipment().getItem(getUsableItemSlot()))
+                        () -> CruxEntityUtil.isValid(mob) && isUsingItem() && item.equals(mob.getEquipment().getItem(getUsableItemSlot()))
                     ).play(consumeTime);
                 }
             }
