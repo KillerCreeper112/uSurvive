@@ -120,6 +120,9 @@ public class USurviveComponents {
     public static final DataComponentType<BoneFluteComponent> BONE_FLUTE = register("bone_flute", builder ->
         builder.persistTextParser(USurviveCompParsers.BONE_FLUTE.createInput(Crux.key("bone_flute"))));
 
+    public static final DataComponentType<BlastTempestComponent> BLAST_TEMPEST = register("blast_tempest", builder ->
+        builder.persistTextParser(USurviveCompParsers.BLAST_TEMPEST.createInput(Crux.key("blast_tempest"))));
+
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());
     }

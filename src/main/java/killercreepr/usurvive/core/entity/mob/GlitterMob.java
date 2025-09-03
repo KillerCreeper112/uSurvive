@@ -2,6 +2,7 @@ package killercreepr.usurvive.core.entity.mob;
 
 import killercreepr.crux.api.entity.CruxEntity;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
@@ -13,6 +14,8 @@ import killercreepr.usurvive.core.entity.mob.goals.GlitterMobGoal;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.inventory.EquipmentSlot;
@@ -46,6 +49,13 @@ public class GlitterMob extends UCruxMob {
             );
             int armorPieces = CruxMath.random(1,4);
 
+            e.getAttribute(Attribute.MOVEMENT_SPEED).addModifier(new AttributeModifier(
+                Crux.key("base"), 0.25, AttributeModifier.Operation.MULTIPLY_SCALAR_1
+            ));
+            e.getAttribute(Attribute.MOVEMENT_EFFICIENCY).addModifier(new AttributeModifier(
+                Crux.key("base"), 0.25, AttributeModifier.Operation.ADD_NUMBER
+            ));
+
             List<EquipmentSlot> slots = new ArrayList<>(map.keySet());
             Collections.shuffle(slots);
 
@@ -62,8 +72,8 @@ public class GlitterMob extends UCruxMob {
                 CruxAttribute.ATTACK_KNOCKBACK_UP, CruxMath.random(3D, 5D)
             )));
             crux.set(CruxEntityComponents.LAUNCH_DROPS, new LaunchDrops(
-                NumberProvider.uniform(0.5, 0.7),
-                NumberProvider.uniform(0.1, 0.2)
+                NumberProvider.uniform(0.4, 0.6),
+                NumberProvider.uniform(0.5, 0.7)
             ));
 
             load(e);

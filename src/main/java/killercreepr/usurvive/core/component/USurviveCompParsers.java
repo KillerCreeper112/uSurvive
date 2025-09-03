@@ -18,6 +18,7 @@ import killercreepr.usurvive.core.component.impl.*;
 import killercreepr.usurvive.core.component.teleport.TeleportCheckInStructure;
 import killercreepr.usurvive.core.component.teleport.TeleportSetLastTP;
 import killercreepr.usurvive.core.mechanics.*;
+import killercreepr.usurvive.core.mechanics.blast_tempest.BlastTempestPlayer;
 import killercreepr.usurvive.core.mechanics.bone_flute.FluteSoundSequence;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleDisplayGrapple;
 import killercreepr.usurvive.core.mechanics.grapple.SimpleGrapple;
@@ -405,6 +406,32 @@ public class USurviveCompParsers {
         .apply(ctx -> new BoneFluteComponent(
             ctx.getOptional("sound_sequence"),
             ctx.getOptional("rays"),
+            ctx.getOptional("item_damage", 1)
+        ));
+
+    public static final PersistTextParser<BlastTempestComponent.RayData> BLAST_TEMPEST_RAY_DATA = PersistTextParser.mapBuilder(BlastTempestComponent.RayData.class)
+        .field("circle_radius", TextInputField.field(PersistTextParser.DOUBLE, e -> e.circleRadius))
+        .field("homing", TextInputField.field(PersistTextParser.BOOLEAN, e -> e.homing))
+        .field("attributes", TextInputField.field(CruxAttributeCompParsers.CRUX_ATTRIBUTE_CONTAINER, BlastTempestComponent.RayData::getAttributes))
+        .apply(ctx -> new BlastTempestComponent.RayData(
+            ctx.getOptional("attributes"),
+            ctx.getOptional("circle_radius", 2.5D),
+            ctx.getOptional("homing", false)
+        ));
+
+    public static final PersistTextParser<List<BlastTempestComponent.RayData>> BLAST_TEMPEST_RAY_DATA_LIST = PersistTextParser.list(BLAST_TEMPEST_RAY_DATA);
+
+    public static final PersistTextParser<BlastTempestComponent> BLAST_TEMPEST = PersistTextParser.mapBuilder(BlastTempestComponent.class)
+        .field("rays", TextInputField.field(BLAST_TEMPEST_RAY_DATA_LIST,BlastTempestComponent::getRays))
+        .field("item_damage", TextInputField.field(PersistTextParser.INTEGER,BlastTempestComponent::getItemDamage))
+        .field("range", TextInputField.field(PersistTextParser.DOUBLE,BlastTempestComponent::getRange))
+        .field("yaw_degrees", TextInputField.field(PersistTextParser.DOUBLE,BlastTempestComponent::getYawDegrees))
+        .field("pitch_degrees", TextInputField.field(PersistTextParser.DOUBLE,BlastTempestComponent::getPitchDegrees))
+        .apply(ctx -> new BlastTempestComponent(
+            ctx.getOptional("rays"),
+            ctx.getOptional("range", 16D),
+            ctx.getOptional("yaw_degrees", 50),
+            ctx.getOptional("pitch_degrees", 50),
             ctx.getOptional("item_damage", 1)
         ));
 }
