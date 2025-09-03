@@ -133,12 +133,14 @@ public class BlastTempestComponent implements ConsumableComponent, InteractableC
         public final String type;
         public final double circleRadius;
         public final boolean homing;
+        public final byte dupeAmount;
 
-        public RayData(CruxAttributeContainer attributes, String type, double circleRadius, boolean homing) {
+        public RayData(CruxAttributeContainer attributes, String type, double circleRadius, boolean homing, byte dupeAmount) {
             this.attributes = attributes;
             this.type = type;
             this.circleRadius = circleRadius;
             this.homing = homing;
+            this.dupeAmount = dupeAmount;
         }
 
         public CruxAttributeContainer getAttributes() {

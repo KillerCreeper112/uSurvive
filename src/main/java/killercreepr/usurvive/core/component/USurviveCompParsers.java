@@ -414,11 +414,13 @@ public class USurviveCompParsers {
         .field("type", TextInputField.field(PersistTextParser.STRING, e -> e.type))
         .field("homing", TextInputField.field(PersistTextParser.BOOLEAN, e -> e.homing))
         .field("attributes", TextInputField.field(CruxAttributeCompParsers.CRUX_ATTRIBUTE_CONTAINER, BlastTempestComponent.RayData::getAttributes))
+        .field("dupe_amount", TextInputField.field(PersistTextParser.BYTE, e -> e.dupeAmount))
         .apply(ctx -> new BlastTempestComponent.RayData(
             ctx.getOptional("attributes"),
             ctx.getOptional("type", "default"),
             ctx.getOptional("circle_radius", 2.5D),
-            ctx.getOptional("homing", false)
+            ctx.getOptional("homing", false),
+            ctx.getOptional("dupe_amount", (byte)0)
         ));
 
     public static final PersistTextParser<List<BlastTempestComponent.RayData>> BLAST_TEMPEST_RAY_DATA_LIST = PersistTextParser.list(BLAST_TEMPEST_RAY_DATA);

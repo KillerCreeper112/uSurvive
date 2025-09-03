@@ -2,10 +2,8 @@ package killercreepr.usurvive.core.mechanics.blast_tempest;
 
 import killercreepr.crux.core.Crux;
 import killercreepr.usurvive.core.mechanics.BlastTempestComponent;
-import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;

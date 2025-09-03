@@ -66,40 +66,44 @@ public class BlastTempestPlayer extends GenericBlastTempestPlayer {
         }
 
         gotAlready.values().forEach(ray ->{
+
+            byte dupeAmount = ray.rayData.dupeAmount == 0 ? 1 : ray.rayData.dupeAmount;
             double maxRange = ray.rayData.circleRadius * 0.5;
             double minRange = -maxRange;
-            Location loc = ray.location.value()
-                .clone()
-                .add(CruxMath.random(minRange, maxRange), 0, CruxMath.random(minRange, maxRange));
+            for(byte i = 0; i < dupeAmount; i++){
+                Location loc = ray.location.value()
+                    .clone()
+                    .add(CruxMath.random(minRange, maxRange), 0, CruxMath.random(minRange, maxRange));
 
-            USurviveMobs.SMALL_TNT.spawn(lookAt, e ->{
-                if(ray.rayData.attributes != null){
-                    ray.rayData.attributes.getAttributeInstances().forEach(instance ->{
-                        instance.getModifiers().forEach(mod ->{
-                            CruxAttribute.addModifier(e, instance.getAttribute(), mod);
+                USurviveMobs.SMALL_TNT.spawn(lookAt, e ->{
+                    if(ray.rayData.attributes != null){
+                        ray.rayData.attributes.getAttributeInstances().forEach(instance ->{
+                            instance.getModifiers().forEach(mod ->{
+                                CruxAttribute.addModifier(e, instance.getAttribute(), mod);
+                            });
                         });
-                    });
-                }
+                    }
 
-                int fuseTicks = (int) ray.rayData.attributes.getValueOrDefault(
-                    CruxAttribute.ATTACK_SPEED, 100D
-                );
-                CruxTag.set(e, "fuse_ticks", PersistentDataType.INTEGER, fuseTicks);
+                    int fuseTicks = (int) ray.rayData.attributes.getValueOrDefault(
+                        CruxAttribute.ATTACK_SPEED, 100D
+                    );
+                    CruxTag.set(e, "fuse_ticks", PersistentDataType.INTEGER, fuseTicks);
 
-                if(EntityMemory.get(e) instanceof SmallTNTMemory m){
-                    m.setFuseTicks(fuseTicks);
-                    m.setData(new StickyChargeComponent(0f, ray.rayData.attributes, fuseTicks, null));
-                }
+                    if(EntityMemory.get(e) instanceof SmallTNTMemory m){
+                        m.setFuseTicks(fuseTicks);
+                        m.setData(new StickyChargeComponent(0f, ray.rayData.attributes, fuseTicks, null));
+                    }
 
-                Vector dir = CruxMath.parabolicMotion(
-                    e.getLocation().toVector(), loc.toVector(),
-                    (int) ray.rayData.attributes.getValue(CruxAttribute.JUMP_STRENGTH),
-                    ray.rayData.attributes.getValueOrDefault(CruxAttribute.GRAVITY, 0.7)
-                );
-                e.setVelocity(dir);
-                CruxEntity crux = CruxEntity.entity(e);
-                crux.set(CruxAttributeComponents.CRUX_ATTRIBUTES, ray.rayData.attributes);
-            });
+                    Vector dir = CruxMath.parabolicMotion(
+                        e.getLocation().toVector(), loc.toVector(),
+                        (int) ray.rayData.attributes.getValue(CruxAttribute.JUMP_STRENGTH),
+                        ray.rayData.attributes.getValueOrDefault(CruxAttribute.GRAVITY, 0.7)
+                    );
+                    e.setVelocity(dir);
+                    CruxEntity crux = CruxEntity.entity(e);
+                    crux.set(CruxAttributeComponents.CRUX_ATTRIBUTES, ray.rayData.attributes);
+                });
+            }
         });
     }
 

@@ -162,7 +162,7 @@ public class SmallTNTMemory extends SimpleEntityMemoryMainThread {
     }
 
     public void onTick(){
-        if(Crux.getServer().getCurrentTick() % 5 == 0 && !CruxEntityUtil.isGrounded(entity.value())){
+        if(Crux.getServer().getCurrentTick() % 3 == 0 && !CruxEntityUtil.isGrounded(entity.value())){
             new ParticleBuilder(Particle.FIREWORK)
                 .location(entity.value().getLocation())
                 .offset(0D,0D,0D)
