@@ -12,16 +12,10 @@ import killercreepr.cruxitems.api.item.consume.ItemConsumeContext;
 import killercreepr.cruxitems.api.item.consume.ItemConsumeResult;
 import killercreepr.cruxitems.api.item.interaction.ItemUseContext;
 import killercreepr.cruxitems.api.item.interaction.ItemUseResult;
-import killercreepr.usurvive.core.listener.EnchantsListener;
 import killercreepr.usurvive.core.mechanics.blast_tempest.BlastTempestPlayer;
-import killercreepr.usurvive.core.mechanics.bone_flute.FluteSoundSequence;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 public class BlastTempestComponent implements ConsumableComponent, InteractableComponent {
     protected final List<RayData> rays;
@@ -83,17 +77,6 @@ public class BlastTempestComponent implements ConsumableComponent, InteractableC
         return true;
     }
 
-    public static Consumer<FluteSoundSequence.FluteSound> genericPlaySound(Entity p){
-        return sound ->{
-            sound.sound().playAt(p);
-            Location loc = CruxLoc.shift(CruxEntityUtil.getEyeOrLocation(p), .5,
-                (p.getPitch() > 50 ? .2 : (p.getPitch() > 12 ? -.1 : -.5)), .2);
-
-            double note = CruxMath.random(1,24) / 24D;
-            loc.getWorld().spawnParticle(Particle.NOTE, loc, 0, note, 0, 0, 1);
-        };
-    }
-
     @Override
     public @NotNull ItemUseResult onInteract(@NotNull ItemUseContext ctx) {
         var p = ctx.getPlayer();
@@ -116,7 +99,7 @@ public class BlastTempestComponent implements ConsumableComponent, InteractableC
             e ->{
                 if(e.equals(p)) return false;
                 if(!CruxMobGoal.UNDESIRED_BEHAVIOR.test(e)) return false;
-                if(!teamComparer.areOnSameTeam(p, e)) return false;
+                if(teamComparer.areOnSameTeam(p, e)) return false;
                 return true;
             },
             range,

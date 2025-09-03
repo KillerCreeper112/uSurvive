@@ -17,6 +17,7 @@ import killercreepr.cruxblocks.api.event.CustomEntityExplodeEvent;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.usurvive.core.entity.USurviveMobs;
+import killercreepr.usurvive.core.entity.memory.CruxEntityDamagerTesterHolder;
 import killercreepr.usurvive.core.entity.memory.ProjectileHitHolder;
 import net.minecraft.world.entity.item.PrimedTnt;
 import org.bukkit.Particle;
@@ -66,6 +67,7 @@ public class CustomEntityListener implements Listener {
         if(attributes == null) return;
         double range = attributes.getValue(CruxAttribute.ATTACK_RANGE);
         new GetEntityNear<>(LivingEntity.class)
+            .center(tnt)
             .filter(e ->{
                 if(tnt.equals(e)) return false;
                 return true;
@@ -102,9 +104,34 @@ public class CustomEntityListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onCruxEntityDamage(CruxEntityDamageEvent event) {
+        var dmger = event.getDamager();
+        var victim = event.getEntity();
+        String type = CruxTag.get(dmger, "blast_tempest", PersistentDataType.STRING, null);
+        if(type != null){
+            CruxEntityDamagerTesterHolder holder = EntityMemory.getOrCreateDataHolder(dmger, CruxEntityDamagerTesterHolder.class, CruxEntityDamagerTesterHolder::new);
+            if(holder != null){
+                holder.cruxDmged.put(victim.getUniqueId(), System.currentTimeMillis());
+            }
+        }
+    }
+
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         var dmger = event.getDamager();
         var victim = event.getEntity();
+        String type = CruxTag.get(dmger, "blast_tempest", PersistentDataType.STRING, null);
+        if(type != null){
+            CruxEntityDamagerTesterHolder holder = EntityMemory.getDataHolder(dmger, CruxEntityDamagerTesterHolder.class);
+            if(holder != null){
+                if(!holder.cruxDmgedWithin(victim, 5)){
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
+
         if(victim instanceof ArmorStand || !(victim instanceof LivingEntity)){
             if(CruxMob.is(dmger, USurviveMobs.GUST_TNT)){
                 event.setDamage(0D);
