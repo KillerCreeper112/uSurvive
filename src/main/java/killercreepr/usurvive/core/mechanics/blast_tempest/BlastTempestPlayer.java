@@ -34,18 +34,20 @@ public class BlastTempestPlayer extends GenericBlastTempestPlayer {
     protected final double range;
     protected final double yawDegrees;
     protected final double pitchDegrees;
+    protected final CreateSound launchSound;
     protected final CreateSound lockOnSound;
 
     protected boolean invalid = false;
     protected final Map<UUID, LockedRay> gotAlready = new HashMap<>();
 
-    public BlastTempestPlayer(List<BlastTempestComponent.RayData> rays, Consumer<GenericBlastTempestPlayer> onDone, Supplier<Boolean> isValid, int consumeTime, Holder<Location> lookAt, Predicate<Entity> filter, double range, double yawDegrees, double pitchDegrees, CreateSound lockOnSound) {
-        super(rays, onDone, isValid, consumeTime);
+    public BlastTempestPlayer(List<BlastTempestComponent.RayData> rays, Consumer<GenericBlastTempestPlayer> onDone,Consumer<GenericBlastTempestPlayer> onFail, Supplier<Boolean> isValid, int consumeTime, Holder<Location> lookAt, Predicate<Entity> filter, double range, double yawDegrees, double pitchDegrees, CreateSound launchSound, CreateSound lockOnSound) {
+        super(rays, onDone, onFail, isValid, consumeTime);
         this.lookAt = lookAt;
         this.filter = filter;
         this.range = range;
         this.yawDegrees = yawDegrees;
         this.pitchDegrees = pitchDegrees;
+        this.launchSound = launchSound;
         this.lockOnSound = lockOnSound;
     }
 
@@ -59,6 +61,10 @@ public class BlastTempestPlayer extends GenericBlastTempestPlayer {
     public void onDone() {
         super.onDone();
         Location lookAt = this.lookAt.value();
+        if(launchSound != null){
+            launchSound.playAt(lookAt);
+        }
+
         gotAlready.values().forEach(ray ->{
             double maxRange = ray.rayData.circleRadius * 0.5;
             double minRange = -maxRange;
@@ -88,7 +94,7 @@ public class BlastTempestPlayer extends GenericBlastTempestPlayer {
                 Vector dir = CruxMath.parabolicMotion(
                     e.getLocation().toVector(), loc.toVector(),
                     (int) ray.rayData.attributes.getValue(CruxAttribute.JUMP_STRENGTH),
-                    ray.rayData.attributes.getValueOrDefault(CruxAttribute.GRAVITY, 0.8)
+                    ray.rayData.attributes.getValueOrDefault(CruxAttribute.GRAVITY, 0.7)
                 );
                 e.setVelocity(dir);
                 CruxEntity crux = CruxEntity.entity(e);

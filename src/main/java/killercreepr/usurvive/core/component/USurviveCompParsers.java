@@ -429,6 +429,7 @@ public class USurviveCompParsers {
         .field("range", TextInputField.field(PersistTextParser.DOUBLE,BlastTempestComponent::getRange))
         .field("yaw_degrees", TextInputField.field(PersistTextParser.DOUBLE,BlastTempestComponent::getYawDegrees))
         .field("pitch_degrees", TextInputField.field(PersistTextParser.DOUBLE,BlastTempestComponent::getPitchDegrees))
+        .field("launch_sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND,BlastTempestComponent::getLaunchSound))
         .field("lock_on_sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND,BlastTempestComponent::getLockOnSound))
         .apply(ctx -> new BlastTempestComponent(
             ctx.getOptional("rays"),
@@ -436,6 +437,7 @@ public class USurviveCompParsers {
             ctx.getOptional("yaw_degrees", 50D),
             ctx.getOptional("pitch_degrees", 50D),
             ctx.getOptional("item_damage", 1),
+            ctx.getOptional("launch_sound"),
             ctx.getOptional("lock_on_sound")
         ));
 }

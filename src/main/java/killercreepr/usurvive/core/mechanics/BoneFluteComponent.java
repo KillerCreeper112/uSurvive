@@ -296,7 +296,7 @@ public class BoneFluteComponent implements ConsumableComponent, InteractableComp
             sequence,
             genericPlaySound(p),
             null,
-            () -> p.hasActiveItem() && p.getActiveItem().equals(item.item())
+            () -> CruxEntityUtil.isValid(p) && p.hasActiveItem() && p.getActiveItem().equals(item.item())
         ).play(consumeTime);
         return ItemUseResult.empty();
     }

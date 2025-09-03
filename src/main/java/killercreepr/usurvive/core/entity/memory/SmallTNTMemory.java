@@ -4,6 +4,7 @@ import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.entity.memory.EntityMemory;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.DataHolderRegistry;
 import killercreepr.crux.core.entity.memory.SimpleEntityMemoryMainThread;
 import killercreepr.crux.core.util.CruxEntityUtil;
@@ -161,6 +162,13 @@ public class SmallTNTMemory extends SimpleEntityMemoryMainThread {
     }
 
     public void onTick(){
+        if(Crux.getServer().getCurrentTick() % 5 == 0 && !CruxEntityUtil.isGrounded(entity.value())){
+            new ParticleBuilder(Particle.FIREWORK)
+                .location(entity.value().getLocation())
+                .offset(0D,0D,0D)
+                .extra(0D)
+                .spawn();
+        }
         if(fullCooldown > 0){
             fullCooldown--;
             if(fullCooldown < 1){

@@ -23,19 +23,25 @@ public class BlastTempestComponent implements ConsumableComponent, InteractableC
     protected final double yawDegrees;
     protected final double pitchDegrees;
     protected final int itemDamage;
+    protected final CreateSound launchSound;
     protected final CreateSound lockOnSound;
 
-    public BlastTempestComponent(List<RayData> rays, double range, double yawDegrees, double pitchDegrees, int itemDamage, CreateSound lockOnSound) {
+    public BlastTempestComponent(List<RayData> rays, double range, double yawDegrees, double pitchDegrees, int itemDamage, CreateSound launchSound, CreateSound lockOnSound) {
         this.rays = rays;
         this.range = range;
         this.yawDegrees = yawDegrees;
         this.pitchDegrees = pitchDegrees;
         this.itemDamage = itemDamage;
+        this.launchSound = launchSound;
         this.lockOnSound = lockOnSound;
     }
 
     public CreateSound getLockOnSound() {
         return lockOnSound;
+    }
+
+    public CreateSound getLaunchSound() {
+        return launchSound;
     }
 
     public double getRange() {
@@ -93,7 +99,13 @@ public class BlastTempestComponent implements ConsumableComponent, InteractableC
         CruxTeamComparer teamComparer = CruxTeamComparer.teamComparer(false, team -> !team.allowFriendlyFire());
         new BlastTempestPlayer(
             rays, null,
-            () -> p.hasActiveItem() && p.getActiveItem().equals(item.item()),
+            player ->{
+                var useCooldown = item.item().getData(DataComponentTypes.USE_COOLDOWN);
+                if(useCooldown != null){
+                    p.setCooldown(item.item(), (int) (useCooldown.seconds() * 20f));
+                }
+            },
+            () -> CruxEntityUtil.isValid(p) && p.hasActiveItem() && p.getActiveItem().equals(item.item()),
             consumeTime,
             () -> p.getEyeLocation(),
             e ->{
@@ -105,6 +117,7 @@ public class BlastTempestComponent implements ConsumableComponent, InteractableC
             range,
             yawDegrees,
             pitchDegrees,
+            launchSound,
             lockOnSound
         ).play();
         return ItemUseResult.empty();

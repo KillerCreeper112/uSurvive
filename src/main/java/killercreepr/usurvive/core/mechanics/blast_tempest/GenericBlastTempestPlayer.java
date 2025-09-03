@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 public abstract class GenericBlastTempestPlayer {
     protected final List<BlastTempestComponent.RayData> rays;
     protected final Consumer<GenericBlastTempestPlayer> onDone;
+    protected final Consumer<GenericBlastTempestPlayer> onFail;
     protected final Supplier<Boolean> isValid;
     protected final int consumeTime;
 
@@ -21,9 +22,10 @@ public abstract class GenericBlastTempestPlayer {
     protected int index = 0;
     protected int nextTarget = 0; // tick target for the next sound
 
-    public GenericBlastTempestPlayer(List<BlastTempestComponent.RayData> rays, Consumer<GenericBlastTempestPlayer> onDone, Supplier<Boolean> isValid, int consumeTime) {
+    public GenericBlastTempestPlayer(List<BlastTempestComponent.RayData> rays, Consumer<GenericBlastTempestPlayer> onDone, Consumer<GenericBlastTempestPlayer> onFail, Supplier<Boolean> isValid, int consumeTime) {
         this.rays = rays;
         this.onDone = onDone;
+        this.onFail = onFail;
         this.isValid = isValid;
         this.consumeTime = consumeTime;
     }
@@ -55,7 +57,9 @@ public abstract class GenericBlastTempestPlayer {
     }
 
     public void onDoneInvalid(){
-
+        if(onFail != null){
+            onFail.accept(this);
+        }
     }
 
     public int getDoneInTicks(){
