@@ -80,6 +80,7 @@ public class TNTTempestMob extends UCruxMob {
                     CruxItem crux = CruxItem.wrap(item);
                     var tempestData = crux.getOrDefaultData(USurviveComponents.TNT_TEMPEST);
                     if(tempestData == null) return;
+                    super.startUsingItem();
 
                     int consumeTime;
                     var data =  crux.item().getData(DataComponentTypes.CONSUMABLE);
@@ -90,7 +91,8 @@ public class TNTTempestMob extends UCruxMob {
 
                     CruxTeamComparer teamComparer = CruxTeamComparer.teamComparer(false, team -> !team.allowFriendlyFire());
                     new BlastTempestPlayer(
-                        tempestData.getRays(), null,
+                        tempestData.getRays(),
+                        null,
                         null,
                         () -> CruxEntityUtil.isValid(mob) && isUsingItem() && item.equals(mob.getEquipment().getItem(getUsableItemSlot())),
                         consumeTime,

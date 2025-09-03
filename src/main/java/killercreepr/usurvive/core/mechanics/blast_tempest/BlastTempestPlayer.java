@@ -149,7 +149,8 @@ public class BlastTempestPlayer extends GenericBlastTempestPlayer {
                 .radius(ray.rayData.circleRadius)
                 .center(() ->{
                     Location l = ray.location.value();
-                    return CruxLocation.location(l, l.getYaw(), 0f);
+                    return CruxLocation.location(l, l.getYaw(), 0f)
+                        .add(0, 0.15, 0);
                 })
                 .spacing(1D)
                 .type(CreateCircle.Type.HOLLOW)
