@@ -4,21 +4,22 @@ import com.destroystokyo.paper.ParticleBuilder;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.entity.CruxEntity;
+import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.math.CruxLocation;
-import killercreepr.crux.core.component.CruxComponents;
 import killercreepr.crux.core.location.DynamicLocation;
-import killercreepr.crux.core.persistence.CruxPersist;
 import killercreepr.crux.core.util.*;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.core.component.CruxAttributeComponents;
 import killercreepr.cruxform.api.scheduler.ShapeScheduler;
 import killercreepr.cruxform.api.shape.CreateCircle;
+import killercreepr.usurvive.core.entity.USurviveMobs;
+import killercreepr.usurvive.core.entity.memory.SmallTNTMemory;
 import killercreepr.usurvive.core.mechanics.BlastTempestComponent;
+import killercreepr.usurvive.core.mechanics.StickyChargeComponent;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.TNTPrimed;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
@@ -48,7 +49,6 @@ public class BlastTempestPlayer extends GenericBlastTempestPlayer {
         this.lockOnSound = lockOnSound;
     }
 
-
     @Override
     public void onDoneInvalid() {
         super.onDoneInvalid();
@@ -65,12 +65,30 @@ public class BlastTempestPlayer extends GenericBlastTempestPlayer {
             Location loc = ray.location.value()
                 .clone()
                 .add(CruxMath.random(minRange, maxRange), 0, CruxMath.random(minRange, maxRange));
-            lookAt.getWorld().spawn(lookAt, TNTPrimed.class, e ->{
-                CruxTag.set(e, "blast_tempest", PersistentDataType.STRING, ray.rayData.type);
+
+            USurviveMobs.SMALL_TNT.spawn(lookAt, e ->{
+                if(ray.rayData.attributes != null){
+                    ray.rayData.attributes.getAttributeInstances().forEach(instance ->{
+                        instance.getModifiers().forEach(mod ->{
+                            CruxAttribute.addModifier(e, instance.getAttribute(), mod);
+                        });
+                    });
+                }
+
+                int fuseTicks = (int) ray.rayData.attributes.getValueOrDefault(
+                    CruxAttribute.ATTACK_SPEED, 100D
+                );
+                CruxTag.set(e, "fuse_ticks", PersistentDataType.INTEGER, fuseTicks);
+
+                if(EntityMemory.get(e) instanceof SmallTNTMemory m){
+                    m.setFuseTicks(fuseTicks);
+                    m.setData(new StickyChargeComponent(0f, ray.rayData.attributes, fuseTicks, null));
+                }
+
                 Vector dir = CruxMath.parabolicMotion(
                     e.getLocation().toVector(), loc.toVector(),
                     (int) ray.rayData.attributes.getValue(CruxAttribute.JUMP_STRENGTH),
-                    ray.rayData.attributes.getValueOrDefault(CruxAttribute.GRAVITY, 0.08)
+                    ray.rayData.attributes.getValueOrDefault(CruxAttribute.GRAVITY, 0.8)
                 );
                 e.setVelocity(dir);
                 CruxEntity crux = CruxEntity.entity(e);
@@ -127,7 +145,7 @@ public class BlastTempestPlayer extends GenericBlastTempestPlayer {
                     Location l = ray.location.value();
                     return CruxLocation.location(l, l.getYaw(), 0f);
                 })
-                .spacing(.8D)
+                .spacing(1D)
                 .type(CreateCircle.Type.HOLLOW)
                 .build())
             .locationTick(ctx ->{

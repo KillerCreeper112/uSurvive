@@ -28,6 +28,7 @@ public class USurviveMobs {
 
     public static final CruxMob GUST_TNT = CruxEntityRegistries.ENTITIES.register(new GustTNT(Crux.key("gust_tnt")));
     public static final CruxMob STICKY_CHARGE = CruxEntityRegistries.ENTITIES.register(new StickyCharge(Crux.key("sticky_charge")));
+    public static final CruxMob SMALL_TNT = CruxEntityRegistries.ENTITIES.register(new SmallTNT(Crux.key("small_tnt")));
     public static final CruxMob GLOOMSTING_PROJECTILE = CruxEntityRegistries.ENTITIES.register(new GloomstingProjectile(Crux.key("gloomsting_projectile")));
 
     public static final CruxMob WHISPERSHADE = CruxEntityRegistries.ENTITIES.register(new Whispershade(Crux.key("whispershade")));

@@ -1,6 +1,7 @@
 package killercreepr.usurvive.core.listener;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import com.destroystokyo.paper.event.entity.EntityKnockbackByEntityEvent;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.entity.CruxEntity;
 import killercreepr.crux.api.entity.memory.EntityMemory;
@@ -116,6 +117,23 @@ public class CustomEntityListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onEntityKnockbackByEntity(EntityKnockbackByEntityEvent event) {
+        var dmger = event.getHitBy();
+        var victim = event.getEntity();
+        String type = CruxTag.get(dmger, "blast_tempest", PersistentDataType.STRING, null);
+        if(type != null){
+            CruxEntityDamagerTesterHolder holder = EntityMemory.getDataHolder(dmger, CruxEntityDamagerTesterHolder.class);
+            if(holder != null){
+                if(!holder.cruxDmgedWithin(victim, 5)){
+                    event.setCancelled(true);
+                    return;
+                }
+                return;
+            }
+        }
+    }
+
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
@@ -129,6 +147,7 @@ public class CustomEntityListener implements Listener {
                     event.setCancelled(true);
                     return;
                 }
+                return;
             }
         }
 
