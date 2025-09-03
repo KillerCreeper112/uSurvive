@@ -6,6 +6,7 @@ import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.entity.CruxEntity;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.math.CruxLocation;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.location.DynamicLocation;
 import killercreepr.crux.core.util.*;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
@@ -125,7 +126,7 @@ public class BlastTempestPlayer extends GenericBlastTempestPlayer {
     }
 
     public boolean onLockOnTick(LockedRay ray){
-        if(ray.particles != null){
+        if(ray.particles != null && Crux.getCurrentTick() % 3 == 0){
             ray.particles.scheduleAsync(0);
         }
         return false;

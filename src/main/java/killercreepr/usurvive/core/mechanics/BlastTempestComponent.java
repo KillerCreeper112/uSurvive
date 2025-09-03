@@ -104,7 +104,13 @@ public class BlastTempestComponent implements ConsumableComponent, InteractableC
 
         CruxTeamComparer teamComparer = CruxTeamComparer.teamComparer(false, team -> !team.allowFriendlyFire());
         new BlastTempestPlayer(
-            rays, null,
+            rays,
+            player ->{
+                var useCooldown = item.item().getData(DataComponentTypes.USE_COOLDOWN);
+                if(useCooldown != null){
+                    p.setCooldown(item.item(), (int) (useCooldown.seconds() * 20f));
+                }
+            },
             player ->{
                 var useCooldown = item.item().getData(DataComponentTypes.USE_COOLDOWN);
                 if(useCooldown != null){
