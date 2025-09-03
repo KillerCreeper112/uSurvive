@@ -1,15 +1,18 @@
 package killercreepr.usurvive.core.mechanics;
 
 import io.papermc.paper.datacomponent.DataComponentTypes;
+import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.core.util.*;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeContainer;
+import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxitems.api.item.component.ConsumableComponent;
 import killercreepr.cruxitems.api.item.component.InteractableComponent;
 import killercreepr.cruxitems.api.item.consume.ItemConsumeContext;
 import killercreepr.cruxitems.api.item.consume.ItemConsumeResult;
 import killercreepr.cruxitems.api.item.interaction.ItemUseContext;
 import killercreepr.cruxitems.api.item.interaction.ItemUseResult;
+import killercreepr.usurvive.core.listener.EnchantsListener;
 import killercreepr.usurvive.core.mechanics.blast_tempest.BlastTempestPlayer;
 import killercreepr.usurvive.core.mechanics.bone_flute.FluteSoundSequence;
 import org.bukkit.Location;
@@ -26,13 +29,19 @@ public class BlastTempestComponent implements ConsumableComponent, InteractableC
     protected final double yawDegrees;
     protected final double pitchDegrees;
     protected final int itemDamage;
+    protected final CreateSound lockOnSound;
 
-    public BlastTempestComponent(List<RayData> rays, double range, double yawDegrees, double pitchDegrees, int itemDamage) {
+    public BlastTempestComponent(List<RayData> rays, double range, double yawDegrees, double pitchDegrees, int itemDamage, CreateSound lockOnSound) {
         this.rays = rays;
         this.range = range;
         this.yawDegrees = yawDegrees;
         this.pitchDegrees = pitchDegrees;
         this.itemDamage = itemDamage;
+        this.lockOnSound = lockOnSound;
+    }
+
+    public CreateSound getLockOnSound() {
+        return lockOnSound;
     }
 
     public double getRange() {
@@ -98,6 +107,7 @@ public class BlastTempestComponent implements ConsumableComponent, InteractableC
             consumeTime = (int) (data.consumeSeconds() * 20f);
         }
 
+        CruxTeamComparer teamComparer = CruxTeamComparer.teamComparer(false, team -> !team.allowFriendlyFire());
         new BlastTempestPlayer(
             rays, null,
             () -> p.hasActiveItem() && p.getActiveItem().equals(item.item()),
@@ -105,11 +115,14 @@ public class BlastTempestComponent implements ConsumableComponent, InteractableC
             () -> p.getEyeLocation(),
             e ->{
                 if(e.equals(p)) return false;
+                if(!CruxMobGoal.UNDESIRED_BEHAVIOR.test(e)) return false;
+                if(!teamComparer.areOnSameTeam(p, e)) return false;
                 return true;
             },
             range,
             yawDegrees,
-            pitchDegrees
+            pitchDegrees,
+            lockOnSound
         ).play();
         return ItemUseResult.empty();
     }
@@ -121,11 +134,13 @@ public class BlastTempestComponent implements ConsumableComponent, InteractableC
 
     public static class RayData{
         public final CruxAttributeContainer attributes;
+        public final String type;
         public final double circleRadius;
         public final boolean homing;
 
-        public RayData(CruxAttributeContainer attributes, double circleRadius, boolean homing) {
+        public RayData(CruxAttributeContainer attributes, String type, double circleRadius, boolean homing) {
             this.attributes = attributes;
+            this.type = type;
             this.circleRadius = circleRadius;
             this.homing = homing;
         }

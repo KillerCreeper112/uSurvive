@@ -11,6 +11,8 @@ import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeContainer;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxentities.combat.EntityHit;
+import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxform.api.scheduler.ShapeScheduler;
 import killercreepr.cruxform.api.shape.CreateLine;
 import killercreepr.cruxitems.api.item.component.ConsumableComponent;
@@ -205,7 +207,7 @@ public class BoneFluteComponent implements ConsumableComponent, InteractableComp
 
         Map<UUID, Long> alreadyHit = new HashMap<>();
         CruxTeamComparer teamComparer = CruxTeamComparer.teamComparer(false, team -> !team.allowFriendlyFire());
-        Predicate<Entity> filter = e -> !e.equals(user) &&
+        Predicate<Entity> filter = e -> CruxMob.UNDESIRED_BEHAVIOR.test(e) && !e.equals(user) &&
             !CruxMath.hasOccurredWithin(alreadyHit.getOrDefault(e.getUniqueId(), 0L), 5) &&
             !teamComparer.areOnSameTeam(user, e);
 

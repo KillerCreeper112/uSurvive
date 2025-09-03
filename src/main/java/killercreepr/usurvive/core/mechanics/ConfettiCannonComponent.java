@@ -14,6 +14,7 @@ import killercreepr.cruxattributes.api.attribute.CruxAttributeContainer;
 import killercreepr.cruxattributes.core.component.CruxAttributeComponents;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxentities.combat.EntityHit;
+import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxform.api.scheduler.ShapeScheduler;
 import killercreepr.cruxform.api.shape.CreateLine;
 import killercreepr.cruxitems.api.item.component.ConsumableComponent;
@@ -155,6 +156,7 @@ public class ConfettiCannonComponent implements ConsumableComponent {
             aoeDropOff,
             attributes,
             e ->{
+                if(!CruxMob.UNDESIRED_BEHAVIOR.test(e)) return false;
                 return !e.equals(user) && !alreadyHit.contains(e.getUniqueId()) &&
                     !teamComparer.areOnSameTeam(e, user);
             },

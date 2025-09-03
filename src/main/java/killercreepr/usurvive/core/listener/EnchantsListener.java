@@ -320,7 +320,7 @@ public class EnchantsListener implements Listener {
             .findFirst();
     }
 
-    public boolean isFriendly(Entity e, UUID owner, Entity ownerEntity){
+    public static boolean isFriendly(Entity e, UUID owner, Entity ownerEntity){
         if(e.getUniqueId().equals(owner)) return true;
         if(e instanceof Tameable tame && owner.equals(tame.getOwnerUniqueId())){
             return true;
@@ -336,7 +336,7 @@ public class EnchantsListener implements Listener {
         return false;
     }
 
-    public boolean mobsIsFriendly(Entity e, UUID owner, Entity ownerEntity){
+    public static boolean mobsIsFriendly(Entity e, UUID owner, Entity ownerEntity){
         if(!(ownerEntity instanceof Mob mob)) return false;
         if(mob instanceof Enemy && e instanceof Enemy) return true;
         if(mob instanceof Animals && e instanceof Animals) return true;

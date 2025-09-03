@@ -1,13 +1,28 @@
 package killercreepr.usurvive.core.listener;
 
+import com.destroystokyo.paper.ParticleBuilder;
+import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.entity.CruxEntity;
 import killercreepr.crux.api.entity.memory.EntityMemory;
+import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxLoc;
+import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.CruxTag;
+import killercreepr.crux.core.util.GetEntityNear;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeContainer;
+import killercreepr.cruxattributes.core.component.CruxAttributeComponents;
 import killercreepr.cruxblocks.api.event.CustomEntityExplodeEvent;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.memory.ProjectileHitHolder;
+import net.minecraft.world.entity.item.PrimedTnt;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -15,8 +30,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.util.RayTraceResult;
 
 public class CustomEntityListener implements Listener {
     @EventHandler(ignoreCancelled = true)
@@ -29,9 +47,51 @@ public class CustomEntityListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onCustomEntityExplode(CustomEntityExplodeEvent event) {
-        if(CruxMob.is(event.getEntity(), USurviveMobs.GUST_TNT)){
+        Entity e = event.getEntity();
+        if(CruxMob.is(e, USurviveMobs.GUST_TNT)){
             event.clearBlocks();
         }
+
+        String type = CruxTag.get(e, "blast_tempest", PersistentDataType.STRING, null);
+        if(type != null){
+            event.setCancelled(true);
+            onBlastTempest(e, type);
+            e.remove();
+        }
+    }
+
+    public void onBlastTempest(Entity tnt, String type){
+        CruxEntity crux = CruxEntity.entity(tnt);
+        CruxAttributeContainer attributes = crux.get(CruxAttributeComponents.CRUX_ATTRIBUTES);
+        if(attributes == null) return;
+        double range = attributes.getValue(CruxAttribute.ATTACK_RANGE);
+        new GetEntityNear<>(LivingEntity.class)
+            .filter(e ->{
+                if(tnt.equals(e)) return false;
+                return true;
+            })
+            .amount(attributes.hasAttribute(CruxAttribute.ATTACK_PIERCE) ?
+                (int) (attributes.getValue(CruxAttribute.ATTACK_PIERCE)+1) : null)
+            .range(range)
+            .find().forEach(hit ->{
+                double potency = CruxMath.distanceFalloff(hit, tnt, range, 1.5D);
+
+                DamageSource source = DamageSource.builder(DamageType.EXPLOSION)
+                    .withDirectEntity(tnt)
+                    .build();
+                EntityDamager.entityDamager(hit, tnt)
+                    .setSource(source)
+                    .setCause(CruxEntityDamageEvent.DamageCause.fromBukkit(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION))
+                    .attackWithMultiplier(potency);
+            });
+        new ParticleBuilder(Particle.EXPLOSION)
+            .offset(range*.5, range*.5, range *.5)
+            .count(CruxMath.random(8,12))
+            .extra(.1)
+            .location(tnt.getLocation())
+            .spawn();
+        CreateSound.sound(Sound.ENTITY_GENERIC_EXPLODE, net.kyori.adventure.sound.Sound.Source.NEUTRAL, 2.3f, 1.2f)
+            .playAt(tnt);
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)

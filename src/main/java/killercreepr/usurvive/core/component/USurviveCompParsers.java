@@ -411,10 +411,12 @@ public class USurviveCompParsers {
 
     public static final PersistTextParser<BlastTempestComponent.RayData> BLAST_TEMPEST_RAY_DATA = PersistTextParser.mapBuilder(BlastTempestComponent.RayData.class)
         .field("circle_radius", TextInputField.field(PersistTextParser.DOUBLE, e -> e.circleRadius))
+        .field("type", TextInputField.field(PersistTextParser.STRING, e -> e.type))
         .field("homing", TextInputField.field(PersistTextParser.BOOLEAN, e -> e.homing))
         .field("attributes", TextInputField.field(CruxAttributeCompParsers.CRUX_ATTRIBUTE_CONTAINER, BlastTempestComponent.RayData::getAttributes))
         .apply(ctx -> new BlastTempestComponent.RayData(
             ctx.getOptional("attributes"),
+            ctx.getOptional("type", "default"),
             ctx.getOptional("circle_radius", 2.5D),
             ctx.getOptional("homing", false)
         ));
@@ -427,11 +429,13 @@ public class USurviveCompParsers {
         .field("range", TextInputField.field(PersistTextParser.DOUBLE,BlastTempestComponent::getRange))
         .field("yaw_degrees", TextInputField.field(PersistTextParser.DOUBLE,BlastTempestComponent::getYawDegrees))
         .field("pitch_degrees", TextInputField.field(PersistTextParser.DOUBLE,BlastTempestComponent::getPitchDegrees))
+        .field("lock_on_sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND,BlastTempestComponent::getLockOnSound))
         .apply(ctx -> new BlastTempestComponent(
             ctx.getOptional("rays"),
             ctx.getOptional("range", 16D),
-            ctx.getOptional("yaw_degrees", 50),
-            ctx.getOptional("pitch_degrees", 50),
-            ctx.getOptional("item_damage", 1)
+            ctx.getOptional("yaw_degrees", 50D),
+            ctx.getOptional("pitch_degrees", 50D),
+            ctx.getOptional("item_damage", 1),
+            ctx.getOptional("lock_on_sound")
         ));
 }

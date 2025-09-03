@@ -1,12 +1,16 @@
 package killercreepr.usurvive.core.mechanics.blast_tempest;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.data.Holder;
+import killercreepr.crux.api.entity.CruxEntity;
 import killercreepr.crux.api.math.CruxLocation;
+import killercreepr.crux.core.component.CruxComponents;
 import killercreepr.crux.core.location.DynamicLocation;
-import killercreepr.crux.core.util.CruxCollection;
-import killercreepr.crux.core.util.CruxEntityUtil;
-import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.persistence.CruxPersist;
+import killercreepr.crux.core.util.*;
+import killercreepr.cruxattributes.api.attribute.CruxAttribute;
+import killercreepr.cruxattributes.core.component.CruxAttributeComponents;
 import killercreepr.cruxform.api.scheduler.ShapeScheduler;
 import killercreepr.cruxform.api.shape.CreateCircle;
 import killercreepr.usurvive.core.mechanics.BlastTempestComponent;
@@ -15,6 +19,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
 import java.util.*;
@@ -28,17 +33,19 @@ public class BlastTempestPlayer extends GenericBlastTempestPlayer {
     protected final double range;
     protected final double yawDegrees;
     protected final double pitchDegrees;
+    protected final CreateSound lockOnSound;
 
     protected boolean invalid = false;
     protected final Map<UUID, LockedRay> gotAlready = new HashMap<>();
 
-    public BlastTempestPlayer(List<BlastTempestComponent.RayData> rays, Consumer<GenericBlastTempestPlayer> onDone, Supplier<Boolean> isValid, int consumeTime, Holder<Location> lookAt, Predicate<Entity> filter, double range, double yawDegrees, double pitchDegrees) {
+    public BlastTempestPlayer(List<BlastTempestComponent.RayData> rays, Consumer<GenericBlastTempestPlayer> onDone, Supplier<Boolean> isValid, int consumeTime, Holder<Location> lookAt, Predicate<Entity> filter, double range, double yawDegrees, double pitchDegrees, CreateSound lockOnSound) {
         super(rays, onDone, isValid, consumeTime);
         this.lookAt = lookAt;
         this.filter = filter;
         this.range = range;
         this.yawDegrees = yawDegrees;
         this.pitchDegrees = pitchDegrees;
+        this.lockOnSound = lockOnSound;
     }
 
 
@@ -53,10 +60,21 @@ public class BlastTempestPlayer extends GenericBlastTempestPlayer {
         super.onDone();
         Location lookAt = this.lookAt.value();
         gotAlready.values().forEach(ray ->{
-            Location loc = ray.location.value();
+            double maxRange = ray.rayData.circleRadius * 0.5;
+            double minRange = -maxRange;
+            Location loc = ray.location.value()
+                .clone()
+                .add(CruxMath.random(minRange, maxRange), 0, CruxMath.random(minRange, maxRange));
             lookAt.getWorld().spawn(lookAt, TNTPrimed.class, e ->{
-                Vector dir = CruxMath.parabolicMotion(e.getLocation().toVector(), loc.toVector(), 4, 0.09);
+                CruxTag.set(e, "blast_tempest", PersistentDataType.STRING, ray.rayData.type);
+                Vector dir = CruxMath.parabolicMotion(
+                    e.getLocation().toVector(), loc.toVector(),
+                    (int) ray.rayData.attributes.getValue(CruxAttribute.JUMP_STRENGTH),
+                    ray.rayData.attributes.getValueOrDefault(CruxAttribute.GRAVITY, 0.08)
+                );
                 e.setVelocity(dir);
+                CruxEntity crux = CruxEntity.entity(e);
+                crux.set(CruxAttributeComponents.CRUX_ATTRIBUTES, ray.rayData.attributes);
             });
         });
     }
@@ -70,12 +88,15 @@ public class BlastTempestPlayer extends GenericBlastTempestPlayer {
     }
 
     public Collection<Entity> getEntities() {
-        return CruxEntityUtil.getEntitiesInCone(
-            lookAt.value(), range, yawDegrees, pitchDegrees,
-            e ->{
-                if(gotAlready.containsKey(e.getUniqueId())) return false;
-                return filter == null || filter.test(e);
-            }
+        Location l = lookAt.value();
+        return CruxEntityUtil.filterEntityDistance(
+            CruxEntityUtil.getEntitiesInCone(
+                l, range, yawDegrees, pitchDegrees,
+                e ->{
+                    if(gotAlready.containsKey(e.getUniqueId())) return false;
+                    return filter == null || filter.test(e);
+                }
+            ), l, false
         );
     }
 
@@ -87,6 +108,9 @@ public class BlastTempestPlayer extends GenericBlastTempestPlayer {
     }
 
     public void lockOn(LockedRay ray){
+        if(lockOnSound != null){
+            lockOnSound.playAt(ray.location.value());
+        }
     }
 
     @Override
