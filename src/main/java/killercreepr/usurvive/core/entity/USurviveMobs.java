@@ -45,12 +45,12 @@ public class USurviveMobs {
 
     public static final RemnantSpirit REMNANT_SPIRIT = CruxEntityRegistries.ENTITIES.register(new RemnantSpirit(Crux.key("remnant_spirit")));
     public static final CruxMob SNARE_ENCHANT = CruxEntityRegistries.ENTITIES.register(new SnareEnchant(Crux.key("snare_enchant")));
-    public static final CruxMob CONFETTI_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new ConfettiMob(Crux.key("confetti/zombie"), Zombie.class, 20, 15f, null));
-    public static final CruxMob CONFETTI_SKELETON = CruxEntityRegistries.ENTITIES.register(new ConfettiMob(Crux.key("confetti/skeleton"), Skeleton.class, 20, 15f, (goal, b) ->{}));
+    public static final CruxMob CONFETTI_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new ConfettiMob(Crux.key("confetti/zombie"), Zombie.class, 20, 15f, -1f,null));
+    public static final CruxMob CONFETTI_SKELETON = CruxEntityRegistries.ENTITIES.register(new ConfettiMob(Crux.key("confetti/skeleton"), Skeleton.class, 20, 15f, -1f,(goal, b) ->{}));
     public static final CruxMob GLITTER_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new GlitterMob(Crux.key("glitter/zombie"),Zombie.class));
 
-    public static final CruxMob BONE_FLUTE_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new BoneFluteMob(Crux.key("bone_flute/zombie"), Zombie.class, 20, 15f, null));
-    public static final CruxMob BONE_FLUTE_SKELETON = CruxEntityRegistries.ENTITIES.register(new BoneFluteMob(Crux.key("bone_flute/skeleton"), Skeleton.class, 20, 15f, (goal,b) ->{}));
+    public static final CruxMob BONE_FLUTE_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new BoneFluteMob(Crux.key("bone_flute/zombie"), Zombie.class, 20, 15f, -1f,null));
+    public static final CruxMob BONE_FLUTE_SKELETON = CruxEntityRegistries.ENTITIES.register(new BoneFluteMob(Crux.key("bone_flute/skeleton"), Skeleton.class, 20, 15f, -1f,(goal,b) ->{}));
 
     public static final CruxMob TNT_TEMPEST_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new TNTTempestMob(Crux.key("tnt_tempest/zombie"), Zombie.class, 20, 15f, null));
     public static final CruxMob TNT_TEMPEST_SKELETON = CruxEntityRegistries.ENTITIES.register(new TNTTempestMob(Crux.key("tnt_tempest/skeleton"), Skeleton.class, 20, 15f, (goal,b) ->{}));
@@ -58,8 +58,8 @@ public class USurviveMobs {
     public static final CruxMob AGGRESSIVE_ZOMBIE_HORSE = CruxEntityRegistries.ENTITIES.register(new AggressiveZombieHorse(Crux.key("aggressive_zombie_horse")));
     public static final CruxMob AGGRESSIVE_SKELETON_HORSE = CruxEntityRegistries.ENTITIES.register(new AggressiveSkeletonHorse(Crux.key("aggressive_skeleton_horse")));
 
-    public static final CruxMob PARTY_POPPER_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new PartyPopperMob(Crux.key("party_popper/zombie"), Zombie.class, 20, 6f, null));
-    public static final CruxMob PARTY_POPPER_SKELETON = CruxEntityRegistries.ENTITIES.register(new PartyPopperMob(Crux.key("party_popper/skeleton"), Skeleton.class, 20, 6f, (goal, b) ->{}));
+    public static final CruxMob PARTY_POPPER_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new PartyPopperMob(Crux.key("party_popper/zombie"), Zombie.class, 20, 5f, 6f,null));
+    public static final CruxMob PARTY_POPPER_SKELETON = CruxEntityRegistries.ENTITIES.register(new PartyPopperMob(Crux.key("party_popper/skeleton"), Skeleton.class, 20, 5f,6f, (goal, b) ->{}));
 
     public static final CruxMob PARTY_BURST_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new PartyBurstMob(Crux.key("party_burst/zombie"), Zombie.class, 20, 12f, 7f, null));
     public static final CruxMob PARTY_BURST_SKELETON = CruxEntityRegistries.ENTITIES.register(new PartyBurstMob(Crux.key("party_burst/skeleton"), Skeleton.class, 20, 12f, 7f, null));

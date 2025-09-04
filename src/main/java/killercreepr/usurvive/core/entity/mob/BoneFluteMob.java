@@ -28,12 +28,14 @@ public class BoneFluteMob extends UCruxMob {
     protected final Class<? extends Mob> type;
     protected final int attackIntervalMin;
     protected final float attackRadius;
+    protected final float useItemRadius;
     protected final BiConsumer<UseRangedItemGoal, Boolean> changePos;
-    public BoneFluteMob(@NotNull Key key, Class<? extends Mob> type, int attackIntervalMin, float attackRadius, BiConsumer<UseRangedItemGoal, Boolean> changePos) {
+    public BoneFluteMob(@NotNull Key key, Class<? extends Mob> type, int attackIntervalMin, float attackRadius, float useItemRadius, BiConsumer<UseRangedItemGoal, Boolean> changePos) {
         super(key);
         this.type = type;
         this.attackIntervalMin = attackIntervalMin;
         this.attackRadius = attackRadius;
+        this.useItemRadius = useItemRadius;
         this.changePos = changePos;
     }
 
@@ -57,7 +59,7 @@ public class BoneFluteMob extends UCruxMob {
         CruxGoalUtil.addIfNotPresent(mob, UseRangedItemGoal.class, 0, () ->
             new UseRangedItemGoal(
                 mob, ItemPredicate.fromType(Crux.key("bone_flute")),
-                1D, attackIntervalMin, attackRadius,
+                1D, attackIntervalMin, attackRadius, useItemRadius,
                 goal ->{
                     ItemStack item = mob.getEquipment().getItem(goal.getUsableItemSlot());
                     CruxItem crux = CruxItem.wrap(item);

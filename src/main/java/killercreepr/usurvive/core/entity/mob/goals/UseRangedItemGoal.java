@@ -21,28 +21,30 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class UseRangedItemGoal extends CruxMobModeledGoal implements Listener {
-    public UseRangedItemGoal(@NotNull Mob mob, ItemPredicate usableItem, double speedModifier, int attackIntervalMin, float attackRadius, Consumer<UseRangedItemGoal> onUseItem) {
+    public UseRangedItemGoal(@NotNull Mob mob, ItemPredicate usableItem, double speedModifier, int attackIntervalMin, float attackRadius, float useItemRadius, Consumer<UseRangedItemGoal> onUseItem) {
         super(mob);
         this.usableItem = usableItem;
         this.speedModifier = speedModifier;
         this.attackIntervalMin = attackIntervalMin;
         this.attackRadiusSqr = attackRadius * attackRadius;
+        this.useItemDistanceSqr = useItemRadius == -1f ? -1f : (useItemRadius * useItemRadius);
         this.onUseItem = onUseItem;
     }
 
-    public UseRangedItemGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob, ItemPredicate usableItem, double speedModifier, int attackIntervalMin, float attackRadius, Consumer<UseRangedItemGoal> onUseItem) {
+    public UseRangedItemGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob, ItemPredicate usableItem, double speedModifier, int attackIntervalMin, float attackRadius, float useItemRadius, Consumer<UseRangedItemGoal> onUseItem) {
         super(key, mob);
         this.usableItem = usableItem;
         this.speedModifier = speedModifier;
         this.attackIntervalMin = attackIntervalMin;
         this.attackRadiusSqr = attackRadius * attackRadius;
+        this.useItemDistanceSqr = useItemRadius == -1f ? -1f : (useItemRadius * useItemRadius);
         this.onUseItem = onUseItem;
     }
-
     protected final ItemPredicate usableItem;
     protected final double speedModifier;
     protected int attackIntervalMin;
     protected final float attackRadiusSqr;
+    protected final float useItemDistanceSqr;
     protected int attackTime = -1;
     protected int seeTime;
     protected boolean strafingClockwise;
@@ -136,6 +138,10 @@ public class UseRangedItemGoal extends CruxMobModeledGoal implements Listener {
         this.attackTime = -1;
     }
 
+    public boolean isCloseEnoughToUse(double distanceSqr){
+        return distanceSqr <= useItemDistanceSqr;
+    }
+
     @Override
     public void tick() {
         //super.tick();
@@ -145,7 +151,6 @@ public class UseRangedItemGoal extends CruxMobModeledGoal implements Listener {
         if(!canUse()) return;
 
         double d = this.mob.getLocation().distanceSquared(target.getLocation());
-        //double d = this.mob.distanceToSqr(target.getX(), target.getY(), target.getZ());
         boolean hasLineOfSight = mob.hasLineOfSight(target);
         boolean flag = this.seeTime > 0;
         if (hasLineOfSight != flag) {

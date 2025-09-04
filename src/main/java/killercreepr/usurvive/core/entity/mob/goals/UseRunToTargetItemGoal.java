@@ -5,10 +5,8 @@ import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Consumable;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.item.predicate.ItemPredicate;
-import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
-import org.bukkit.craftbukkit.entity.CraftMob;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Pose;
@@ -47,7 +45,6 @@ public class UseRunToTargetItemGoal extends CruxMobModeledGoal implements Listen
     protected final float useItemDistanceSqr;
     protected int attackTime = -1;
     protected int seeTime;
-    protected int strafingTime = -1;
 
     protected int usingItemTicks;
     protected boolean usingItem = false;
@@ -152,11 +149,7 @@ public class UseRunToTargetItemGoal extends CruxMobModeledGoal implements Listen
             --this.seeTime;
         }
 
-        if (!(d > (double)this.attackRadiusSqr) && this.seeTime >= 20) {
-            this.mob.getPathfinder().stopPathfinding();
-        } else {
-            moveTo(target, this.speedModifier);
-        }
+        moveTo(target, this.speedModifier);
 
         if (isUsingItem()) {
             usingItemTicks++;

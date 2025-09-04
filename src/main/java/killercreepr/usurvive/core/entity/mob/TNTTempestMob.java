@@ -56,7 +56,7 @@ public class TNTTempestMob extends UCruxMob {
         CruxGoalUtil.addIfNotPresent(mob, UseRangedItemGoal.class, 0, () ->
             new UseRangedItemGoal(
                 mob, ItemPredicate.fromType(Crux.key("tnt_tempest")),
-                1D, attackIntervalMin, attackRadius,
+                1D, attackIntervalMin, attackRadius, -1f,
                 goal ->{
                 }
             ){
