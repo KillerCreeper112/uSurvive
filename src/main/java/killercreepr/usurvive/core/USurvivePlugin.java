@@ -375,6 +375,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
                 return USurvivePlugin.this.key("enchanted_books");
             }
         });
+        USurviveMobs.register();
     }
 
     public void registerWorldData(CruxWorldManager worldManager){
@@ -454,7 +455,6 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
         USurviveBlocks.register();
         USurviveItems.register();
-        USurviveMobs.register();
 
         if(CruxRegistries.MODULES.containsKey(StandardModules.CRUX_CONFIGS)){
             langProvider = new SimpleLangConfig(this, "lang", this::lang, Lang.class);
