@@ -146,9 +146,11 @@ public class PartyBurstComponent implements ConsumableComponent {
         double forceBack = attributes.getValue(CruxAttribute.PUSHBACK);
         double forceBackY = attributes.getValue(CruxAttribute.UPWARDS_PUSHBACK);
         if(forceBack != 0D || forceBackY != 0D){
-            user.setVelocity(user.getVelocity().add(
-                EntityDamager.calculateEntityVelocity(CruxLoc.shift(user.getLocation(), 1D, 0D, 0D), user, forceBack, forceBackY)
-            ));
+            try{
+                user.setVelocity(user.getVelocity().add(
+                    EntityDamager.calculateEntityVelocity(CruxLoc.shift(user.getLocation(), 1D, 0D, 0D), user, forceBack, forceBackY)
+                ));
+            }catch (IllegalArgumentException e){}
         }
     }
 

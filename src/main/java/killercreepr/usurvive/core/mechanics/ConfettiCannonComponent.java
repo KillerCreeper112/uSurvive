@@ -186,7 +186,9 @@ public class ConfettiCannonComponent implements ConsumableComponent {
             Vector force = CruxEntityUtil.getEyeOrLocation(user).getDirection().multiply(-1);
             force.multiply(forceBack);
             if(forceBackY != 0D) force.setY(force.getY()+forceBackY);
-            user.setVelocity(user.getVelocity().add(force));
+            try{
+                user.setVelocity(user.getVelocity().add(force));
+            }catch (IllegalArgumentException e){}
         }
     }
 
