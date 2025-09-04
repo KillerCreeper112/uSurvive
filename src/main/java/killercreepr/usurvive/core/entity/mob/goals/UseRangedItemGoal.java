@@ -139,7 +139,7 @@ public class UseRangedItemGoal extends CruxMobModeledGoal implements Listener {
     }
 
     public boolean isCloseEnoughToUse(double distanceSqr){
-        return useItemDistanceSqr == 1f || distanceSqr <= useItemDistanceSqr;
+        return useItemDistanceSqr == -1f || distanceSqr <= useItemDistanceSqr;
     }
 
     public boolean shouldStopUsingItem(double distanceSqr){
