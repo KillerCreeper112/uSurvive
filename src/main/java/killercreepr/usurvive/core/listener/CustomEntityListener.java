@@ -7,7 +7,6 @@ import killercreepr.crux.api.entity.CruxEntity;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.util.CruxLoc;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
 import killercreepr.crux.core.util.GetEntityNear;
@@ -20,7 +19,6 @@ import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.memory.CruxEntityDamagerTesterHolder;
 import killercreepr.usurvive.core.entity.memory.ProjectileHitHolder;
-import net.minecraft.world.entity.item.PrimedTnt;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.damage.DamageSource;
@@ -36,7 +34,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.util.RayTraceResult;
 
 public class CustomEntityListener implements Listener {
     @EventHandler(ignoreCancelled = true)

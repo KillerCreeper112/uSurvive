@@ -8,7 +8,6 @@ import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.usurvive.core.entity.memory.SmallTNTMemory;
-import killercreepr.usurvive.core.entity.memory.StickyChargeMemory;
 import killercreepr.usurvive.core.entity.mob.UCruxMob;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;

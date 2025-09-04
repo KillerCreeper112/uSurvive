@@ -46,7 +46,6 @@ import killercreepr.usurvive.core.enchant.USurviveEnchant;
 import killercreepr.usurvive.core.enchant.logic.JoyWhirl;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.memory.CleansingEnchantHolder;
-import killercreepr.usurvive.core.entity.memory.EmotiveMobHolder;
 import killercreepr.usurvive.core.entity.memory.FrenzyHolder;
 import killercreepr.usurvive.core.entity.memory.TetherEnchantHolder;
 import killercreepr.usurvive.core.entity.tickable.ActiveChainshockTickable;

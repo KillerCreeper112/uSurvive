@@ -9,7 +9,9 @@ import killercreepr.usurvive.core.entity.mob.goals.AggressiveZombieHorseGoal;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Mob;
+import org.bukkit.entity.ZombieHorse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

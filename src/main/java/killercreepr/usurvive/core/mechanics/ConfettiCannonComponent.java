@@ -25,7 +25,6 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Team;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +40,7 @@ public class ConfettiCannonComponent implements ConsumableComponent {
     protected final double size;
     protected final int parAmount;
     protected final int itemDamage;
+    protected final int itemRemoval;
     protected final String particle;
     protected final CreateSound sound;
     protected final CreateSound secondSound;
@@ -82,11 +82,12 @@ public class ConfettiCannonComponent implements ConsumableComponent {
         return sound;
     }
 
-    public ConfettiCannonComponent(double force, double size, int parAmount, int itemDamage, String particle, CreateSound sound, CreateSound secondSound, int secondSoundDelay, double minAOE, double aoeDropOff, float dmgDropOff, NumberProvider parLifeSpan) {
+    public ConfettiCannonComponent(double force, double size, int parAmount, int itemDamage, int itemRemoval, String particle, CreateSound sound, CreateSound secondSound, int secondSoundDelay, double minAOE, double aoeDropOff, float dmgDropOff, NumberProvider parLifeSpan) {
         this.force = force;
         this.size = size;
         this.parAmount = parAmount;
         this.itemDamage = itemDamage;
+        this.itemRemoval = itemRemoval;
         this.particle = particle;
         this.sound = sound;
         this.secondSound = secondSound;
@@ -95,6 +96,10 @@ public class ConfettiCannonComponent implements ConsumableComponent {
         this.aoeDropOff = aoeDropOff;
         this.dmgDropOff = dmgDropOff;
         this.parLifeSpan = parLifeSpan;
+    }
+
+    public int getItemRemoval() {
+        return itemRemoval;
     }
 
     public double getForce() {
@@ -197,7 +202,7 @@ public class ConfettiCannonComponent implements ConsumableComponent {
             p.setCooldown(crux.item(), (int) (useCooldown.seconds() * 20f));
         }
 
-        return ItemConsumeResult.cancelled();
+        return itemRemoval < 1 ? ItemConsumeResult.cancelled() : ItemConsumeResult.empty();
     }
 
     @Override

@@ -347,6 +347,7 @@ public class USurviveCompParsers {
         .field("size", TextInputField.field(PersistTextParser.DOUBLE, ConfettiCannonComponent::getSize))
         .field("par_amount", TextInputField.field(PersistTextParser.INTEGER, ConfettiCannonComponent::getParAmount))
         .field("item_damage", TextInputField.field(PersistTextParser.INTEGER, ConfettiCannonComponent::getItemDamage))
+        .field("item_removal", TextInputField.field(PersistTextParser.INTEGER, ConfettiCannonComponent::getItemRemoval))
         .field("particle", TextInputField.field(PersistTextParser.STRING, ConfettiCannonComponent::getParticle))
         .field("sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND, ConfettiCannonComponent::getSound))
         .field("aoe_min", TextInputField.field(PersistTextParser.DOUBLE, ConfettiCannonComponent::getMinAOE))
@@ -360,6 +361,7 @@ public class USurviveCompParsers {
             ctx.getOptional("size", 1D),
             ctx.getOptional("par_amount", 30),
             ctx.getOptional("item_damage", 1),
+            ctx.getOptional("item_removal", 0),
             ctx.getOptional("particle", "confetti"),
             ctx.getOptional("sound"),
             ctx.getOptional("second_sound"),
