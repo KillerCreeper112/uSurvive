@@ -2,6 +2,7 @@ package killercreepr.usurvive.core.mechanics;
 
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.data.ParticleBuilderSupplier;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
@@ -32,8 +33,9 @@ public class PartyBurstComponent implements ConsumableComponent {
     protected final int secondSoundDelay;
     protected final NumberProvider parLifeSpan;
     protected final CruxAttributeContainer attributes;
+    protected final ParticleBuilderSupplier vanillaParticle;
 
-    public PartyBurstComponent(double force, double size, int parAmount, int itemDamage, int itemRemoval, String particle, CreateSound sound, CreateSound secondSound, int secondSoundDelay, NumberProvider parLifeSpan, CruxAttributeContainer attributes) {
+    public PartyBurstComponent(double force, double size, int parAmount, int itemDamage, int itemRemoval, String particle, CreateSound sound, CreateSound secondSound, int secondSoundDelay, NumberProvider parLifeSpan, CruxAttributeContainer attributes, ParticleBuilderSupplier vanillaParticle) {
         this.force = force;
         this.size = size;
         this.parAmount = parAmount;
@@ -45,6 +47,11 @@ public class PartyBurstComponent implements ConsumableComponent {
         this.secondSoundDelay = secondSoundDelay;
         this.parLifeSpan = parLifeSpan;
         this.attributes = attributes;
+        this.vanillaParticle = vanillaParticle;
+    }
+
+    public ParticleBuilderSupplier getVanillaParticle() {
+        return vanillaParticle;
     }
 
     public double getSize() {
@@ -107,6 +114,9 @@ public class PartyBurstComponent implements ConsumableComponent {
                 secondSound.playAt(loc);
             }else Crux.scheduler().runTaskLater(() -> secondSound.playAt(loc), secondSoundDelay);
         }
+        if(vanillaParticle != null){
+            vanillaParticle.build().location(loc).spawn();
+        }
 
         if(attributes == null) return;
 
@@ -116,6 +126,7 @@ public class PartyBurstComponent implements ConsumableComponent {
         new GetEntityNear<>(LivingEntity.class)
             .center(user)
             .range(range)
+            .amount(attributes.hasAttribute(CruxAttribute.ATTACK_PIERCE) ? (int) attributes.getValue(CruxAttribute.ATTACK_PIERCE) : null)
             .filter(e ->{
                 if(!CruxMob.UNDESIRED_BEHAVIOR.test(e)) return false;
                 return !e.equals(user) && !teamComparer.areOnSameTeam(e, user);
@@ -136,10 +147,9 @@ public class PartyBurstComponent implements ConsumableComponent {
         double forceBack = attributes.getValue(CruxAttribute.PUSHBACK);
         double forceBackY = attributes.getValue(CruxAttribute.UPWARDS_PUSHBACK);
         if(forceBack != 0D || forceBackY != 0D){
-            Vector force = CruxEntityUtil.getEyeOrLocation(user).getDirection().multiply(-1);
-            force.multiply(forceBack);
-            if(forceBackY != 0D) force.setY(force.getY()+forceBackY);
-            user.setVelocity(user.getVelocity().add(force));
+            user.setVelocity(user.getVelocity().add(
+                EntityDamager.calculateEntityVelocity(CruxLoc.shift(user.getLocation(), 1D, 0D, 0D), user, forceBack, forceBackY)
+            ));
         }
     }
 

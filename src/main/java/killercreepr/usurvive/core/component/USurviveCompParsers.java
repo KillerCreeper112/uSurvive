@@ -454,6 +454,7 @@ public class USurviveCompParsers {
         .field("second_sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND, PartyBurstComponent::getSecondSound))
         .field("second_sound_delay", TextInputField.field(PersistTextParser.INTEGER, PartyBurstComponent::getSecondSoundDelay))
         .field("attributes", TextInputField.field(CruxAttributeCompParsers.CRUX_ATTRIBUTE_CONTAINER, PartyBurstComponent::getAttributes))
+        .field("vanilla_particles", TextInputField.field(ComponentInputParsers.PARTICLE_BUILDER_SUPPLIER, PartyBurstComponent::getVanillaParticle))
         .apply(ctx -> new PartyBurstComponent(
             ctx.getOptional("force", 1.5D),
             ctx.getOptional("size", 1D),
@@ -465,6 +466,7 @@ public class USurviveCompParsers {
             ctx.getOptional("second_sound"),
             ctx.getOptional("second_sound_delay", 1),
             ctx.getOptional("par_life_span", NumberProvider.uniform(200, 190)),
-            ctx.get("attributes")
+            ctx.get("attributes"),
+            ctx.get("vanilla_particles")
         ));
 }
