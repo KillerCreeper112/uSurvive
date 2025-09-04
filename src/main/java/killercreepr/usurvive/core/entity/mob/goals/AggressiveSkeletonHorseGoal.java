@@ -17,6 +17,11 @@ public class AggressiveSkeletonHorseGoal extends CruxMobGoal implements Listener
     }
 
     @Override
+    public double getDefaultMoveSpeedMultiplier() {
+        return target == null ? super.getDefaultMoveSpeedMultiplier() : 1.5D;
+    }
+
+    @Override
     public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
         return super.isValidNaturalTarget(target) && isValidNaturalTargetType(target);
     }
