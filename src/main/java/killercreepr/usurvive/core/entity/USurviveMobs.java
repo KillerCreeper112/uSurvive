@@ -54,4 +54,7 @@ public class USurviveMobs {
 
     public static final CruxMob TNT_TEMPEST_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new TNTTempestMob(Crux.key("tnt_tempest/zombie"), Zombie.class, 20, 15f, null));
     public static final CruxMob TNT_TEMPEST_SKELETON = CruxEntityRegistries.ENTITIES.register(new TNTTempestMob(Crux.key("tnt_tempest/skeleton"), Skeleton.class, 20, 15f, (goal,b) ->{}));
+
+    public static final CruxMob AGGRESSIVE_ZOMBIE_HORSE = CruxEntityRegistries.ENTITIES.register(new AggressiveZombieHorse(Crux.key("aggressive_zombie_horse")));
+    public static final CruxMob AGGRESSIVE_SKELETON_HORSE = CruxEntityRegistries.ENTITIES.register(new AggressiveZombieHorse(Crux.key("aggressive_skeleton_horse")));
 }
