@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class UseRangedItemGoal extends CruxMobModeledGoal implements Listener {
     public UseRangedItemGoal(@NotNull Mob mob, ItemPredicate usableItem, double speedModifier, int attackIntervalMin, float attackRadius, Consumer<UseRangedItemGoal> onUseItem) {
@@ -117,6 +118,15 @@ public class UseRangedItemGoal extends CruxMobModeledGoal implements Listener {
 
     public void warn(){
 
+    }
+
+    public boolean editHeldItem(Function<ItemStack, ItemStack> consumer){
+        EquipmentSlot slot = getUsableItemSlot();
+        if(slot == null) return false;
+        ItemStack item = mob.getEquipment().getItem(slot);
+        if(CruxItem.isEmpty(item)) return false;
+        mob.getEquipment().setItem(slot, consumer.apply(item), true);
+        return true;
     }
 
     @Override

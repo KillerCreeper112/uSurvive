@@ -64,6 +64,13 @@ public class ConfettiMob extends UCruxMob {
                     Location loc = mob.getEyeLocation();
                     loc = CruxLoc.lookAt(loc, mob.getTarget().getLocation().add(0, mob.getTarget().getHeight()*.5, 0));
                     data.launch(mob, loc, crux.getOrDefaultData(CruxAttributeComponents.PROJECTILE_CRUX_ATTRIBUTES));
+
+                    if(data.getItemRemoval() > 0){
+                        goal.editHeldItem(editItem ->{
+                            editItem.setAmount(editItem.getAmount()-data.getItemRemoval());
+                            return editItem;
+                        });
+                    }
                 }
             ){
                 @Override

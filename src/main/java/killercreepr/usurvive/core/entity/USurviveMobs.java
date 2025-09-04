@@ -57,4 +57,10 @@ public class USurviveMobs {
 
     public static final CruxMob AGGRESSIVE_ZOMBIE_HORSE = CruxEntityRegistries.ENTITIES.register(new AggressiveZombieHorse(Crux.key("aggressive_zombie_horse")));
     public static final CruxMob AGGRESSIVE_SKELETON_HORSE = CruxEntityRegistries.ENTITIES.register(new AggressiveSkeletonHorse(Crux.key("aggressive_skeleton_horse")));
+
+    public static final CruxMob PARTY_POPPER_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new PartyPopperMob(Crux.key("party_popper/zombie"), Zombie.class, 20, 6f, null));
+    public static final CruxMob PARTY_POPPER_SKELETON = CruxEntityRegistries.ENTITIES.register(new PartyPopperMob(Crux.key("party_popper/skeleton"), Skeleton.class, 20, 6f, (goal, b) ->{}));
+
+    public static final CruxMob PARTY_BURST_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new PartyBurstMob(Crux.key("party_burst/zombie"), Zombie.class, 20, 12f, 7f, null));
+    public static final CruxMob PARTY_BURST_SKELETON = CruxEntityRegistries.ENTITIES.register(new PartyBurstMob(Crux.key("party_burst/skeleton"), Skeleton.class, 20, 12f, 7f, null));
 }
