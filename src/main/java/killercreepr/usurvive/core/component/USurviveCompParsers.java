@@ -441,4 +441,30 @@ public class USurviveCompParsers {
             ctx.getOptional("launch_sound"),
             ctx.getOptional("lock_on_sound")
         ));
+
+    public static final PersistTextParser<PartyBurstComponent> PARTY_BURST = PersistTextParser.mapBuilder(PartyBurstComponent.class)
+        .field("force", TextInputField.field(PersistTextParser.DOUBLE, PartyBurstComponent::getForce))
+        .field("size", TextInputField.field(PersistTextParser.DOUBLE, PartyBurstComponent::getSize))
+        .field("par_amount", TextInputField.field(PersistTextParser.INTEGER, PartyBurstComponent::getParAmount))
+        .field("item_damage", TextInputField.field(PersistTextParser.INTEGER, PartyBurstComponent::getItemDamage))
+        .field("item_removal", TextInputField.field(PersistTextParser.INTEGER, PartyBurstComponent::getItemRemoval))
+        .field("particle", TextInputField.field(PersistTextParser.STRING, PartyBurstComponent::getParticle))
+        .field("sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND, PartyBurstComponent::getSound))
+        .field("par_life_span", TextInputField.field(ComponentInputParsers.NUMBER_PROVIDER, PartyBurstComponent::getParLifeSpan))
+        .field("second_sound", TextInputField.field(ComponentInputParsers.CREATE_SOUND, PartyBurstComponent::getSecondSound))
+        .field("second_sound_delay", TextInputField.field(PersistTextParser.INTEGER, PartyBurstComponent::getSecondSoundDelay))
+        .field("attributes", TextInputField.field(CruxAttributeCompParsers.CRUX_ATTRIBUTE_CONTAINER, PartyBurstComponent::getAttributes))
+        .apply(ctx -> new PartyBurstComponent(
+            ctx.getOptional("force", 1.5D),
+            ctx.getOptional("size", 1D),
+            ctx.getOptional("par_amount", 30),
+            ctx.getOptional("item_damage", 0),
+            ctx.getOptional("item_removal", 1),
+            ctx.getOptional("particle", "confetti"),
+            ctx.getOptional("sound"),
+            ctx.getOptional("second_sound"),
+            ctx.getOptional("second_sound_delay", 1),
+            ctx.getOptional("par_life_span", NumberProvider.uniform(200, 190)),
+            ctx.get("attributes")
+        ));
 }

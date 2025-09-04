@@ -123,6 +123,9 @@ public class USurviveComponents {
     public static final DataComponentType<BlastTempestComponent> TNT_TEMPEST = register("tnt_tempest", builder ->
         builder.persistTextParser(USurviveCompParsers.TNT_TEMPEST.createInput(Crux.key("tnt_tempest"))));
 
+    public static final DataComponentType<PartyBurstComponent> PARTY_BURST = register("party_burst", builder ->
+        builder.persistTextParser(USurviveCompParsers.PARTY_BURST.createInput(Crux.key("party_burst"))));
+
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());
     }
