@@ -139,7 +139,11 @@ public class UseRangedItemGoal extends CruxMobModeledGoal implements Listener {
     }
 
     public boolean isCloseEnoughToUse(double distanceSqr){
-        return distanceSqr <= useItemDistanceSqr;
+        return useItemDistanceSqr == 1f || distanceSqr <= useItemDistanceSqr;
+    }
+
+    public boolean shouldStopUsingItem(double distanceSqr){
+        return !isCloseEnoughToUse(distanceSqr);
     }
 
     @Override
@@ -197,7 +201,7 @@ public class UseRangedItemGoal extends CruxMobModeledGoal implements Listener {
 
         if (isUsingItem()) {
             usingItemTicks++;
-            if (!hasLineOfSight && this.seeTime < -60) {
+            if ((!hasLineOfSight && this.seeTime < -60) || shouldStopUsingItem(d)) {
                 stopUsingItem();
             } else if (hasLineOfSight) {
                 int ticksUsingItem = getTicksUsingItem();
@@ -211,7 +215,7 @@ public class UseRangedItemGoal extends CruxMobModeledGoal implements Listener {
                     }
                 }
             }
-        } else if (--this.attackTime <= 0 && this.seeTime >= -60) {
+        } else if (--this.attackTime <= 0 && this.seeTime >= -60 && isCloseEnoughToUse(d)) {
             startUsingItem();
         }
     }
