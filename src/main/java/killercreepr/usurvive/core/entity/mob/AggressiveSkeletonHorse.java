@@ -27,7 +27,6 @@ public class AggressiveSkeletonHorse extends SimpleCruxMob {
     @Override
     protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
         return location.getWorld().spawn(location, SkeletonHorse.class, e ->{
-            e.setSilent(true);
             load(e);
 
             double width = e.getWidth();
