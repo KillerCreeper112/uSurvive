@@ -4,11 +4,74 @@ import killercreepr.crux.core.Crux;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.registries.CruxEntityRegistries;
 import killercreepr.usurvive.core.entity.mob.*;
-import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.Zombie;
+import org.bukkit.entity.*;
+
+import java.util.function.Consumer;
 
 public class USurviveMobs {
-    public static void register(){}
+    public static void register(){
+        Class<? extends Mob>[] eventUndead = new Class[]{
+            Zombie.class, Stray.class, Husk.class, Bogged.class, Skeleton.class
+        };
+        registerVariants(
+            type ->{
+                CruxEntityRegistries.ENTITIES.register(
+                    new PartyBurstMob(Crux.key("party_burst/" + type.getSimpleName().toLowerCase()),
+                        type, 20, 12f, 7f, null)
+                );
+            },
+            eventUndead
+        );
+
+        registerVariants(
+            type ->{
+                CruxEntityRegistries.ENTITIES.register(
+                    new PartyPopperMob(Crux.key("party_popper/" + type.getSimpleName().toLowerCase()),
+                        type, 20, 5f, 6f,null)
+                );
+            },
+            eventUndead
+        );
+
+        registerVariants(
+            type ->{
+                CruxEntityRegistries.ENTITIES.register(
+                    new TNTTempestMob(Crux.key("tnt_tempest/" + type.getSimpleName().toLowerCase()),
+                        type, 20, 15f, null)
+                );
+            },
+            eventUndead
+        );
+
+        registerVariants(
+            type ->{
+                CruxEntityRegistries.ENTITIES.register(
+                    new BoneFluteMob(Crux.key("bone_flute/" + type.getSimpleName().toLowerCase()),
+                        type, 20, 15f, -1f,null)
+                );
+            },
+            eventUndead
+        );
+
+        registerVariants(
+            type ->{
+                CruxEntityRegistries.ENTITIES.register(
+                    new GlitterMob(Crux.key("glitter/" + type.getSimpleName().toLowerCase()), type)
+                );
+            },
+            eventUndead
+        );
+
+        registerVariants(
+            type ->{
+                CruxEntityRegistries.ENTITIES.register(
+                    new ConfettiMob(Crux.key("confetti/" + type.getSimpleName().toLowerCase()), type,
+                        20, 15f, -1f,null)
+                );
+            },
+            eventUndead
+        );
+    }
     public static final Echo ECHO = CruxEntityRegistries.ENTITIES.register(new Echo());
     public static final CruxMob SCULK_BLIGHT = CruxEntityRegistries.ENTITIES.register(new SculkBlight(Crux.key("sculk_blight")));
     public static final GrappleHookMob GRAPPLE_HOOK = CruxEntityRegistries.ENTITIES.register(new GrappleHookMob(Crux.key("grapple_hook")));
@@ -45,22 +108,13 @@ public class USurviveMobs {
 
     public static final RemnantSpirit REMNANT_SPIRIT = CruxEntityRegistries.ENTITIES.register(new RemnantSpirit(Crux.key("remnant_spirit")));
     public static final CruxMob SNARE_ENCHANT = CruxEntityRegistries.ENTITIES.register(new SnareEnchant(Crux.key("snare_enchant")));
-    public static final CruxMob CONFETTI_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new ConfettiMob(Crux.key("confetti/zombie"), Zombie.class, 20, 15f, -1f,null));
-    public static final CruxMob CONFETTI_SKELETON = CruxEntityRegistries.ENTITIES.register(new ConfettiMob(Crux.key("confetti/skeleton"), Skeleton.class, 20, 15f, -1f,(goal, b) ->{}));
-    public static final CruxMob GLITTER_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new GlitterMob(Crux.key("glitter/zombie"),Zombie.class));
-
-    public static final CruxMob BONE_FLUTE_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new BoneFluteMob(Crux.key("bone_flute/zombie"), Zombie.class, 20, 15f, -1f,null));
-    public static final CruxMob BONE_FLUTE_SKELETON = CruxEntityRegistries.ENTITIES.register(new BoneFluteMob(Crux.key("bone_flute/skeleton"), Skeleton.class, 20, 15f, -1f,(goal,b) ->{}));
-
-    public static final CruxMob TNT_TEMPEST_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new TNTTempestMob(Crux.key("tnt_tempest/zombie"), Zombie.class, 20, 15f, null));
-    public static final CruxMob TNT_TEMPEST_SKELETON = CruxEntityRegistries.ENTITIES.register(new TNTTempestMob(Crux.key("tnt_tempest/skeleton"), Skeleton.class, 20, 15f, (goal,b) ->{}));
 
     public static final CruxMob AGGRESSIVE_ZOMBIE_HORSE = CruxEntityRegistries.ENTITIES.register(new AggressiveZombieHorse(Crux.key("aggressive_zombie_horse")));
     public static final CruxMob AGGRESSIVE_SKELETON_HORSE = CruxEntityRegistries.ENTITIES.register(new AggressiveSkeletonHorse(Crux.key("aggressive_skeleton_horse")));
 
-    public static final CruxMob PARTY_POPPER_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new PartyPopperMob(Crux.key("party_popper/zombie"), Zombie.class, 20, 5f, 6f,null));
-    public static final CruxMob PARTY_POPPER_SKELETON = CruxEntityRegistries.ENTITIES.register(new PartyPopperMob(Crux.key("party_popper/skeleton"), Skeleton.class, 20, 5f,6f, (goal, b) ->{}));
-
-    public static final CruxMob PARTY_BURST_ZOMBIE = CruxEntityRegistries.ENTITIES.register(new PartyBurstMob(Crux.key("party_burst/zombie"), Zombie.class, 20, 12f, 7f, null));
-    public static final CruxMob PARTY_BURST_SKELETON = CruxEntityRegistries.ENTITIES.register(new PartyBurstMob(Crux.key("party_burst/skeleton"), Skeleton.class, 20, 12f, 7f, null));
+    private static void registerVariants(Consumer<Class<? extends Mob>> consumer, Class<? extends Mob>... types){
+        for(var clazz : types){
+            consumer.accept(clazz);
+        }
+    }
 }
