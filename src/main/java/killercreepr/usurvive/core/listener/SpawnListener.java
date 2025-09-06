@@ -59,29 +59,43 @@ public class SpawnListener implements Listener {
         return worldName != null && world.getName().equals(worldName);
     }
 
+    public void spawnAtSpawn(PlayerSpawnLocationEvent event){
+        String worldName = cfg.SPAWN_WORLD().value();
+        if(worldName == null) return;
+        World world = plugin.getServer().getWorld(worldName);
+        if(world == null){
+            Crux.logError("An error has occurred when spawning - " + worldName + " " + event.getPlayer().getName());
+            return;
+        }
+        event.setSpawnLocation(world.getSpawnLocation());
+    }
+
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerSpawnLocation(PlayerSpawnLocationEvent event) {
         Player p = event.getPlayer();
         if(!p.hasPlayedBefore()){
-            String worldName = cfg.SPAWN_WORLD().value();
-            if(worldName == null) return;
-            World world = plugin.getServer().getWorld(worldName);
-            if(world == null){
-                Communicator.chat("<red>An error has occurred - " + worldName).use(p);
-                return;
-            }
-            event.setSpawnLocation(world.getSpawnLocation());
+            spawnAtSpawn(event);
             return;
         }
         UPlayer uPlay = playerManager.getPlayer(p);
-        if(uPlay == null) return;
+        if(uPlay == null){
+            spawnAtSpawn(event);
+            return;
+        }
 
         Key worldKey = uPlay.getSavedLastKnownWorld();
-        if(worldKey == null) return;
+        if(worldKey == null){
+            spawnAtSpawn(event);
+            return;
+        }
         CruxLocation pos = uPlay.getSavedLastKnownPosition();
-        if(pos == null) return;
+        if(pos == null){
+            spawnAtSpawn(event);
+            return;
+        }
         World world = CruxWorldUtil.getOrLoadWorld(worldKey);
         if(world == null){
+            spawnAtSpawn(event);
             Crux.log(Level.WARNING, "World " + worldKey + " does not exist! " + p.getName() + " cannot spawn there.");
             return;
         }
