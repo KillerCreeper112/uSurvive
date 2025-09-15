@@ -108,6 +108,7 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg, Graveston
     public final NumCfgValue RESET_SET_RANDOM_TP_TIME = new NumCfgValue(12096000);
     public final NumCfgValue GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE = new NumCfgValue(NumberProvider.uniform(12,16));
     public final CfgValue<StructureGenerator> GUIDE_RESOURCE_WORLD_STRUCTURE = new CommonValue<>(){};
+    public final NumCfgValue ANIMAL_AGGRESSION_CHANCE = new NumCfgValue(28D);
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -436,6 +437,12 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg, Graveston
     @Override
     public Holder<NumberProvider> GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE() {
         return GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE;
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider ANIMAL_AGGRESSION_CHANCE() {
+        return ANIMAL_AGGRESSION_CHANCE.value();
     }
 
     @Override

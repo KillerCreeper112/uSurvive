@@ -10,6 +10,8 @@ import killercreepr.crux.core.util.GetEntityNear;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
+import killercreepr.usurvive.core.USurvivePlugin;
+import killercreepr.usurvive.core.config.Config;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
@@ -66,7 +68,9 @@ public class AnimalEnhancedGoal extends CruxMobGoal implements Listener {
     }
 
     public boolean testAggression(@NotNull LivingEntity target){
-        return CruxMath.testChance(28D);
+        return CruxMath.testChance(
+            USurvivePlugin.inst().values().ANIMAL_AGGRESSION_CHANCE().value().doubleValue()
+        );
     }
 
     public boolean testPersistentAnger(@NotNull LivingEntity target){

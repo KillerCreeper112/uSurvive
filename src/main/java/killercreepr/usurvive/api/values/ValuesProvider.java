@@ -80,4 +80,5 @@ public interface ValuesProvider extends Reloadable {
     Holder<Collection<CfgLootData>> BLOCK_DISPENSE_LOOT_DATA();
     Holder<StructureGenerator> GUIDE_RESOURCE_WORLD_STRUCTURE();
     Holder<NumberProvider> GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE();
+    @NotNull NumberProvider ANIMAL_AGGRESSION_CHANCE();
 }

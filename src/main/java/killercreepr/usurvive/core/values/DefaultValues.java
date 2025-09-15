@@ -278,4 +278,10 @@ public class DefaultValues implements ValuesProvider {
     public Holder<NumberProvider> GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE() {
         return null;
     }
+
+    @NotNull
+    @Override
+    public NumberProvider ANIMAL_AGGRESSION_CHANCE() {
+        return null;
+    }
 }
