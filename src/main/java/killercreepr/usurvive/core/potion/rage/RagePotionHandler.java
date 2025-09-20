@@ -3,10 +3,14 @@ package killercreepr.usurvive.core.potion.rage;
 import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import com.destroystokyo.paper.event.player.PlayerStartSpectatingEntityEvent;
 import com.destroystokyo.paper.event.player.PlayerStopSpectatingEntityEvent;
+import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.usurvive.core.potion.RagePotion;
+import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Vindicator;
@@ -34,7 +38,11 @@ public abstract class RagePotionHandler {
     }
 
     public void tick(){
+    }
 
+    public void spawnParticle(Entity at){
+        Location loc = at.getLocation().add(0, at.getHeight(), 0);
+        loc.getWorld().spawnParticle(Particle.ANGRY_VILLAGER, loc, 0);
     }
 
 

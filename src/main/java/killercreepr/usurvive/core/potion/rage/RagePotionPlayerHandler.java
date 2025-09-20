@@ -88,7 +88,7 @@ public class RagePotionPlayerHandler extends RagePotionHandler {
         super.tick();
         if(johnny != null && !johnny.isValid()){
             effect.setDuration(0, true);
-        }
+        }else if(johnny != null && Crux.getCurrentTick() % 5 == 0) spawnParticle(johnny);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.potion.rage;
 
+import killercreepr.crux.core.Crux;
 import killercreepr.usurvive.core.entity.mob.goals.RageGoal;
 import killercreepr.usurvive.core.potion.RagePotion;
 import org.bukkit.Bukkit;
@@ -19,6 +20,12 @@ public class RagePotionMobHandler extends RagePotionHandler {
         super.onEntityDismount(event);
         if(!event.getEntity().equals(entity)) return;
         event.setCancelled(true);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if(Crux.getCurrentTick() % 5 == 0) spawnParticle(mob);
     }
 
     @Override
