@@ -109,6 +109,7 @@ public class USurviveMobs {
     public static final RemnantSpirit REMNANT_SPIRIT = CruxEntityRegistries.ENTITIES.register(new RemnantSpirit(Crux.key("remnant_spirit")));
     public static final CruxMob SNARE_ENCHANT = CruxEntityRegistries.ENTITIES.register(new SnareEnchant(Crux.key("snare_enchant")));
     public static final CruxMob BIGER = CruxEntityRegistries.ENTITIES.register(new Biger(Crux.key("biger")));
+    public static final CruxMob NPC_CONTROL = CruxEntityRegistries.ENTITIES.register(new Biger(Crux.key("npc/control")));
 
     public static final CruxMob AGGRESSIVE_ZOMBIE_HORSE = CruxEntityRegistries.ENTITIES.register(new AggressiveZombieHorse(Crux.key("aggressive_zombie_horse")));
     public static final CruxMob AGGRESSIVE_SKELETON_HORSE = CruxEntityRegistries.ENTITIES.register(new AggressiveSkeletonHorse(Crux.key("aggressive_skeleton_horse")));

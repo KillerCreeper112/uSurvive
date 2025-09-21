@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -31,6 +32,7 @@ import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.core.command.arguments.CruxWorldArgument;
 import killercreepr.usurvive.core.USurvivePlugin;
+import killercreepr.usurvive.core.entity.memory.NPCControllerHolder;
 import killercreepr.usurvive.core.listener.EnchantsListener;
 import killercreepr.usurvive.core.listener.MaintenanceListener;
 import killercreepr.usurvive.core.vanish.VanishHandler;
@@ -39,6 +41,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -340,12 +343,61 @@ public class DevCommands implements Listener {
 
                             )
                     )
+                    .then(
+                        Commands.literal("npc_control")
+                            .then(
+                                Commands.literal("tp")
+                                    .executes(ctx ->{
+                                        var sender = getExecutor(ctx.getSource());
+                                        var entity = (Entity) sender;
+                                        NPCControllerHolder holder = NPCControllerHolder.holder(entity);
+                                        holder.performAction("tp", ctx);
+                                        return 1;
+                                    })
+                            ).then(
+                                Commands.literal("tickPath")
+                                    .then(
+                                        Commands.argument("value", BoolArgumentType.bool())
+                                            .executes(ctx ->{
+                                                var sender = getExecutor(ctx.getSource());
+                                                var entity = (Entity) sender;
+                                                NPCControllerHolder holder = NPCControllerHolder.holder(entity);
+                                                holder.performAction("tickPath", ctx);
+                                                return 1;
+                                            })
+                                    )
+                            ).then(
+                                Commands.literal("tick")
+                                    .then(
+                                        Commands.argument("value", BoolArgumentType.bool())
+                                            .executes(ctx ->{
+                                                var sender = getExecutor(ctx.getSource());
+                                                var entity = (Entity) sender;
+                                                NPCControllerHolder holder = NPCControllerHolder.holder(entity);
+                                                holder.performAction("tick", ctx);
+                                                return 1;
+                                            })
+                                    )
+                            ).then(
+                                Commands.literal("naturalTarget")
+                                    .then(
+                                        Commands.argument("value", BoolArgumentType.bool())
+                                            .executes(ctx ->{
+                                                var sender = getExecutor(ctx.getSource());
+                                                var entity = (Entity) sender;
+                                                NPCControllerHolder holder = NPCControllerHolder.holder(entity);
+                                                holder.performAction("naturalTarget", ctx);
+                                                return 1;
+                                            })
+                                    )
+                            )
+                    )
                     .build()
             );
         });
     }
 
-    public @NotNull CommandSender getExecutor(@NotNull CommandSourceStack source){
+    public static @NotNull CommandSender getExecutor(@NotNull CommandSourceStack source){
         return Objects.requireNonNullElse(source.getExecutor(), source.getSender());
     }
 
