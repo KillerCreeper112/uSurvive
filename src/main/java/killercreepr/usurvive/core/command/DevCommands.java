@@ -14,6 +14,7 @@ import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.EntitySelectorArgumentResolver;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import killercreepr.crux.api.entity.CruxEntity;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
@@ -31,9 +32,12 @@ import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
 import killercreepr.cruxconfig.config.common.element.FileArray;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxentities.command.argument.CruxEntitiesArguments;
+import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.core.command.arguments.CruxWorldArgument;
 import killercreepr.usurvive.core.USurvivePlugin;
+import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.memory.NPCControllerHolder;
 import killercreepr.usurvive.core.entity.mob.goals.NPCControlGoal;
 import killercreepr.usurvive.core.listener.EnchantsListener;
@@ -359,6 +363,15 @@ public class DevCommands implements Listener {
                                         return 1;
                                     })
                             ).then(
+                                Commands.literal("rotate")
+                                    .executes(ctx ->{
+                                        var sender = getExecutor(ctx.getSource());
+                                        var entity = (Entity) sender;
+                                        NPCControllerHolder holder = NPCControllerHolder.holder(entity);
+                                        holder.performAction("rotate", ctx);
+                                        return 1;
+                                    })
+                            ).then(
                                 Commands.literal("tickPath")
                                     .then(
                                         Commands.argument("value", BoolArgumentType.bool())
@@ -487,6 +500,46 @@ public class DevCommands implements Listener {
                                         }
                                         return 1;
                                     })
+                            ).then(
+                                Commands.literal("buildPath")
+                                    .executes(ctx ->{
+                                        var sender = getExecutor(ctx.getSource());
+                                        var entity = (Entity) sender;
+                                        NPCControllerHolder holder = NPCControllerHolder.holder(entity);
+                                        holder.performAction("buildPath", ctx);
+                                        return 1;
+                                    })
+                            ).then(
+                                Commands.literal("spawn")
+                                    .executes(ctx ->{
+                                        var sender = getExecutor(ctx.getSource());
+                                        var entity = (Entity) sender;
+                                        NPCControllerHolder holder = NPCControllerHolder.holder(entity);
+                                        CruxMob cruxEntity = USurviveMobs.NPC_CONTROL;
+                                        if(cruxEntity.spawn(entity.getLocation()) instanceof Mob mob){
+                                            if(Crux.getServer().getMobGoals().getGoal(mob, NPCControlGoal.defaultKey()) instanceof NPCControlGoal g){
+                                                holder.addSelectNPC(g);
+                                                sender.sendMessage("Spawned and selected " + mob.getName());
+                                            }
+                                        }
+                                        return 1;
+                                    })
+                                    .then(
+                                        Commands.argument("entity", CruxEntitiesArguments.cruxMob())
+                                            .executes(ctx ->{
+                                                var sender = getExecutor(ctx.getSource());
+                                                var entity = (Entity) sender;
+                                                NPCControllerHolder holder = NPCControllerHolder.holder(entity);
+                                                CruxMob cruxEntity = ctx.getArgument("entity", CruxMob.class);
+                                                if(cruxEntity.spawn(entity.getLocation()) instanceof Mob mob){
+                                                    if(Crux.getServer().getMobGoals().getGoal(mob, NPCControlGoal.defaultKey()) instanceof NPCControlGoal g){
+                                                        holder.addSelectNPC(g);
+                                                        sender.sendMessage("Spawned and selected " + mob.getName());
+                                                    }
+                                                }
+                                                return 1;
+                                            })
+                                    )
                             )
                     )
                     .build()

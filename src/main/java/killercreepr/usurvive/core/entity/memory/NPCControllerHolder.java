@@ -11,6 +11,7 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.data.util.MapBuilder;
 import killercreepr.crux.core.entity.memory.EntityDataHolder;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
+import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.usurvive.core.command.DevCommands;
 import killercreepr.usurvive.core.entity.mob.goals.NPCControlGoal;
 import net.kyori.adventure.key.Key;
@@ -85,6 +86,14 @@ public class NPCControllerHolder extends EntityDataHolder implements Listener {
                 });
             }
         })
+        .put("rotate", new Action() {
+            @Override
+            public void perform(Player p, NPCControllerHolder holder, CommandContext<CommandSourceStack> ctx) {
+                holder.forEachSelectedNPC(goal ->{
+                    goal.getMob().setRotation(p.getYaw(), p.getPitch());
+                });
+            }
+        })
         .put("tickPath", new Action() {
             @Override
             public void perform(Player p, NPCControllerHolder holder, CommandContext<CommandSourceStack> ctx) {
@@ -100,6 +109,14 @@ public class NPCControllerHolder extends EntityDataHolder implements Listener {
                 boolean value = ctx.getArgument("value", Boolean.class);
                 holder.forEachSelectedNPC(goal ->{
                     goal.tick = value;
+                });
+            }
+        })
+        .put("buildPath", new Action() {
+            @Override
+            public void perform(Player p, NPCControllerHolder holder, CommandContext<CommandSourceStack> ctx) {
+                holder.forEachSelectedNPC(goal ->{
+                    goal.setPath(GoalPath.goalPath(new ArrayList<>(goal.buildingPathNodes)));
                 });
             }
         })
@@ -127,7 +144,7 @@ public class NPCControllerHolder extends EntityDataHolder implements Listener {
                 try{
                     distance = ctx.getArgument("distance", Double.class);
                 } catch (IllegalArgumentException e) {
-                    distance = .5D;
+                    distance = 1.5D;
                 }
                 GoalNode node = GoalNode.distanceGoalNode(CruxPosition.location(
                     value.x(),
@@ -154,7 +171,7 @@ public class NPCControllerHolder extends EntityDataHolder implements Listener {
                 try{
                     distance = ctx.getArgument("distance", Double.class);
                 } catch (IllegalArgumentException e) {
-                    distance = .5D;
+                    distance = 1.5D;
                 }
                 GoalNode node = GoalNode.distanceGoalNode(CruxPosition.location(
                     value.x(),
