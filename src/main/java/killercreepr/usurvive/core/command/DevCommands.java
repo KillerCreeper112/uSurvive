@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -13,6 +14,7 @@ import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.EntitySelectorArgumentResolver;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.component.parser.TextDataComponentDecoder;
@@ -33,6 +35,7 @@ import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.core.command.arguments.CruxWorldArgument;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.entity.memory.NPCControllerHolder;
+import killercreepr.usurvive.core.entity.mob.goals.NPCControlGoal;
 import killercreepr.usurvive.core.listener.EnchantsListener;
 import killercreepr.usurvive.core.listener.MaintenanceListener;
 import killercreepr.usurvive.core.vanish.VanishHandler;
@@ -41,6 +44,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -390,6 +394,99 @@ public class DevCommands implements Listener {
                                                 return 1;
                                             })
                                     )
+                            ).then(
+                                Commands.literal("addNode")
+                                    .then(
+                                        Commands.argument("value", ArgumentTypes.finePosition())
+                                            .executes(ctx ->{
+                                                var sender = getExecutor(ctx.getSource());
+                                                var entity = (Entity) sender;
+                                                NPCControllerHolder holder = NPCControllerHolder.holder(entity);
+                                                holder.performAction("addNode", ctx);
+                                                return 1;
+                                            })
+                                            .then(
+                                                Commands.argument("distance", DoubleArgumentType.doubleArg())
+                                                    .executes(ctx ->{
+                                                        var sender = getExecutor(ctx.getSource());
+                                                        var entity = (Entity) sender;
+                                                        NPCControllerHolder holder = NPCControllerHolder.holder(entity);
+                                                        holder.performAction("addNode", ctx);
+                                                        return 1;
+                                                    })
+                                            )
+                                    )
+                            ).then(
+                                Commands.literal("setNode")
+                                    .then(
+                                        Commands.argument("value", ArgumentTypes.finePosition())
+                                            .executes(ctx ->{
+                                                var sender = getExecutor(ctx.getSource());
+                                                var entity = (Entity) sender;
+                                                NPCControllerHolder holder = NPCControllerHolder.holder(entity);
+                                                holder.performAction("setNode", ctx);
+                                                return 1;
+                                            })
+                                            .then(
+                                                Commands.argument("distance", DoubleArgumentType.doubleArg())
+                                                    .executes(ctx ->{
+                                                        var sender = getExecutor(ctx.getSource());
+                                                        var entity = (Entity) sender;
+                                                        NPCControllerHolder holder = NPCControllerHolder.holder(entity);
+                                                        holder.performAction("setNode", ctx);
+                                                        return 1;
+                                                    })
+                                            )
+                                    )
+                            ).then(
+                                Commands.literal("clearNodes")
+                                    .executes(ctx ->{
+                                        var sender = getExecutor(ctx.getSource());
+                                        var entity = (Entity) sender;
+                                        NPCControllerHolder holder = NPCControllerHolder.holder(entity);
+                                        holder.performAction("clearNodes", ctx);
+                                        return 1;
+                                    })
+                            ).then(
+                                Commands.literal("select")
+                                    .executes(ctx ->{
+                                        var sender = getExecutor(ctx.getSource());
+                                        var entity = (Player) sender;
+                                        NPCControllerHolder holder = NPCControllerHolder.holder(entity);
+                                        if(entity.getTargetEntity(10) instanceof Mob mob){
+                                            if(Crux.getServer().getMobGoals().getGoal(mob, NPCControlGoal.defaultKey()) instanceof NPCControlGoal g){
+                                                holder.deselectNPCs();
+                                                holder.addSelectNPC(g);
+                                                sender.sendMessage("Selected " + mob.getName());
+                                            }
+                                        }
+                                        return 1;
+                                    })
+                            ).then(
+                                Commands.literal("selectAdd")
+                                    .executes(ctx ->{
+                                        var sender = getExecutor(ctx.getSource());
+                                        var entity = (Player) sender;
+                                        NPCControllerHolder holder = NPCControllerHolder.holder(entity);
+                                        if(entity.getTargetEntity(10) instanceof Mob mob){
+                                            if(Crux.getServer().getMobGoals().getGoal(mob, NPCControlGoal.defaultKey()) instanceof NPCControlGoal g){
+                                                holder.addSelectNPC(g);
+                                                sender.sendMessage("Add selected " + mob.getName());
+                                            }
+                                        }
+                                        return 1;
+                                    })
+                            ).then(
+                                Commands.literal("clearSelection")
+                                    .executes(ctx ->{
+                                        var sender = getExecutor(ctx.getSource());
+                                        var entity = (Entity) sender;
+                                        var mem = EntityMemory.get(entity);
+                                        if(mem != null){
+                                            mem.getDataHolders().remove(NPCControllerHolder.KEY);
+                                        }
+                                        return 1;
+                                    })
                             )
                     )
                     .build()

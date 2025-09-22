@@ -1,11 +1,9 @@
 package killercreepr.usurvive.core.entity.mob;
 
-import com.ticxo.modelengine.api.model.ActiveModel;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
-import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
-import killercreepr.usurvive.core.entity.mob.goals.BuzzrotGoal;
 import killercreepr.usurvive.core.entity.mob.goals.NPCControlGoal;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -14,11 +12,9 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Pig;
-import org.bukkit.entity.Villager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class NPCControl extends UCruxMob {
@@ -61,9 +57,10 @@ public class NPCControl extends UCruxMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
-        CompletableFuture<ActiveModel> model = new DesignEntity(mob).setBaseEntityVisible(false).getOrAddModelAsync(key.value());
-        applyWhenCompleteModel(mob, model);
-        CruxGoalUtil.addIfNotPresent(mob, NPCControlGoal.class, 0, () -> new NPCControlGoal(mob).model(model));
+        Crux.getServer().getMobGoals().removeAllGoals(mob);
+        //CompletableFuture<ActiveModel> model = new DesignEntity(mob).setBaseEntityVisible(false).getOrAddModelAsync(key.value());
+        //applyWhenCompleteModel(mob, model);
+        CruxGoalUtil.addIfNotPresent(mob, NPCControlGoal.class, 0, () -> new NPCControlGoal(mob));
     }
 
     /*@Override

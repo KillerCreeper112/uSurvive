@@ -1,11 +1,16 @@
 package killercreepr.usurvive.core.entity.memory;
 
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.argument.resolvers.FinePositionResolver;
+import io.papermc.paper.math.FinePosition;
 import killercreepr.crux.api.entity.memory.EntityMemory;
+import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.data.util.MapBuilder;
 import killercreepr.crux.core.entity.memory.EntityDataHolder;
+import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
 import killercreepr.usurvive.core.command.DevCommands;
 import killercreepr.usurvive.core.entity.mob.goals.NPCControlGoal;
 import net.kyori.adventure.key.Key;
@@ -67,6 +72,7 @@ public class NPCControllerHolder extends EntityDataHolder implements Listener {
         Action action = ACTIONS.get(id);
         var entity = (Player) DevCommands.getExecutor(ctx.getSource());
         NPCControllerHolder holder = NPCControllerHolder.holder(entity);
+
         action.perform(entity, holder, ctx);
     }
 
@@ -103,6 +109,69 @@ public class NPCControllerHolder extends EntityDataHolder implements Listener {
                 boolean value = ctx.getArgument("value", Boolean.class);
                 holder.forEachSelectedNPC(goal ->{
                     goal.naturalTarget = value;
+                });
+            }
+        })
+        .put("addNode", new Action() {
+            @Override
+            public void perform(Player p, NPCControllerHolder holder, CommandContext<CommandSourceStack> ctx) {
+                FinePosition value;
+                try{
+                    value = ctx.getArgument("value", FinePositionResolver.class)
+                        .resolve(ctx.getSource());
+                } catch (CommandSyntaxException e) {
+                    e.printStackTrace();
+                    return;
+                }
+                double distance;
+                try{
+                    distance = ctx.getArgument("distance", Double.class);
+                } catch (IllegalArgumentException e) {
+                    distance = .5D;
+                }
+                GoalNode node = GoalNode.distanceGoalNode(CruxPosition.location(
+                    value.x(),
+                    value.y(),
+                    value.z()
+                ), distance);
+                holder.forEachSelectedNPC(goal ->{
+                    goal.buildingPathNodes.add(node);
+                });
+            }
+        })
+        .put("setNode", new Action() {
+            @Override
+            public void perform(Player p, NPCControllerHolder holder, CommandContext<CommandSourceStack> ctx) {
+                FinePosition value;
+                try{
+                    value = ctx.getArgument("value", FinePositionResolver.class)
+                        .resolve(ctx.getSource());
+                } catch (CommandSyntaxException e) {
+                    e.printStackTrace();
+                    return;
+                }
+                double distance;
+                try{
+                    distance = ctx.getArgument("distance", Double.class);
+                } catch (IllegalArgumentException e) {
+                    distance = .5D;
+                }
+                GoalNode node = GoalNode.distanceGoalNode(CruxPosition.location(
+                    value.x(),
+                    value.y(),
+                    value.z()
+                ), distance);
+                holder.forEachSelectedNPC(goal ->{
+                    goal.buildingPathNodes.clear();
+                    goal.buildingPathNodes.add(node);
+                });
+            }
+        })
+        .put("clearNodes", new Action() {
+            @Override
+            public void perform(Player p, NPCControllerHolder holder, CommandContext<CommandSourceStack> ctx) {
+                holder.forEachSelectedNPC(goal ->{
+                    goal.buildingPathNodes.clear();
                 });
             }
         })
