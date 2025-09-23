@@ -7,11 +7,12 @@ import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.usurvive.core.entity.mob.goals.NPCControlGoal;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import net.minecraft.world.entity.ai.control.LookControl;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Husk;
 import org.bukkit.entity.Mob;
-import org.bukkit.entity.Pig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +25,8 @@ public class NPCControl extends UCruxMob {
 
     @Override
     protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
-        return location.getWorld().spawn(location, Pig.class, e ->{
+        return location.getWorld().spawn(location, Husk.class, e ->{
+            e.setSilent(true);
             e.customName(Component.text("NPC Control"));
             e.setCustomNameVisible(false);
             load(e);
