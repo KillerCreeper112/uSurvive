@@ -57,7 +57,12 @@ public class NPCControl extends UCruxMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
-        Crux.getServer().getMobGoals().removeAllGoals(mob);
+        //Crux.getServer().getMobGoals().removeAllGoals(mob);
+        Crux.getServer().getMobGoals().getAllGoals(mob).forEach(goal ->{
+            if(!goal.getKey().getNamespacedKey().asString().equalsIgnoreCase("minecraft:random_look_around")){
+                Crux.getServer().getMobGoals().removeGoal(mob, goal);
+            }
+        });
         //CompletableFuture<ActiveModel> model = new DesignEntity(mob).setBaseEntityVisible(false).getOrAddModelAsync(key.value());
         //applyWhenCompleteModel(mob, model);
         CruxGoalUtil.addIfNotPresent(mob, NPCControlGoal.class, 0, () -> new NPCControlGoal(mob));

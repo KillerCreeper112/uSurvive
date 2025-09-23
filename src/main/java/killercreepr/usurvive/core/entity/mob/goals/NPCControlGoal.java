@@ -1,6 +1,7 @@
 package killercreepr.usurvive.core.entity.mob.goals;
 
 import com.destroystokyo.paper.entity.ai.GoalKey;
+import com.destroystokyo.paper.entity.ai.GoalType;
 import killercreepr.cruxentities.api.entity.mob.goal.PathTargetMobGoal;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 public class NPCControlGoal extends CruxMobGoal implements PathTargetMobGoal {
@@ -50,5 +52,10 @@ public class NPCControlGoal extends CruxMobGoal implements PathTargetMobGoal {
         super.tick();
         if(target != null) return;
         if(tickPath) this.pathTarget.tick();
+    }
+
+    @Override
+    public @NotNull EnumSet<GoalType> getTypes() {
+        return EnumSet.of(GoalType.LOOK, GoalType.TARGET, GoalType.MOVE, GoalType.JUMP);
     }
 }

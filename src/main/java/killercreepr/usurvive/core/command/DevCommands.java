@@ -510,6 +510,21 @@ public class DevCommands implements Listener {
                                         return 1;
                                     })
                             ).then(
+                                Commands.literal("player")
+                                    .then(
+                                        Commands.argument("name", StringArgumentType.string())
+                                            .then(
+                                                Commands.argument("skinToUse", StringArgumentType.string())
+                                                    .executes(ctx ->{
+                                                        var sender = getExecutor(ctx.getSource());
+                                                        var entity = (Entity) sender;
+                                                        NPCControllerHolder holder = NPCControllerHolder.holder(entity);
+                                                        holder.performAction("player", ctx);
+                                                        return 1;
+                                                    })
+                                            )
+                                    )
+                            ).then(
                                 Commands.literal("spawn")
                                     .executes(ctx ->{
                                         var sender = getExecutor(ctx.getSource());

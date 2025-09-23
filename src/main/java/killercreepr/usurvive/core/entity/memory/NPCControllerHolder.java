@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.entity.memory;
 
+import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -14,7 +15,10 @@ import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.usurvive.core.command.DevCommands;
 import killercreepr.usurvive.core.entity.mob.goals.NPCControlGoal;
+import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -91,6 +95,21 @@ public class NPCControllerHolder extends EntityDataHolder implements Listener {
             public void perform(Player p, NPCControllerHolder holder, CommandContext<CommandSourceStack> ctx) {
                 holder.forEachSelectedNPC(goal ->{
                     goal.getMob().setRotation(p.getYaw(), p.getPitch());
+                });
+            }
+        })
+        .put("player", new Action() {
+            @Override
+            public void perform(Player p, NPCControllerHolder holder, CommandContext<CommandSourceStack> ctx) {
+                holder.forEachSelectedNPC(goal ->{
+                    var disguise = new PlayerDisguise(
+                        ctx.getArgument("name", String.class),
+                        ctx.getArgument("skinToUse", String.class)
+                    );
+                    disguise.setName("");
+                    disguise.setNameVisible(false);
+
+                    DisguiseAPI.disguiseEntity(goal.getMob(), disguise);
                 });
             }
         })
