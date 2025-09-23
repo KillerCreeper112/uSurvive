@@ -23,6 +23,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -119,6 +121,22 @@ public class NPCControllerHolder extends EntityDataHolder implements Listener {
                 boolean value = ctx.getArgument("value", Boolean.class);
                 holder.forEachSelectedNPC(goal ->{
                     goal.tickPath = value;
+                });
+            }
+        })
+        .put("setEquipment", new Action() {
+            @Override
+            public void perform(Player p, NPCControllerHolder holder, CommandContext<CommandSourceStack> ctx) {
+                holder.forEachSelectedNPC(goal ->{
+                    for(EquipmentSlot slot : EquipmentSlot.values()){
+                        if(!p.canUseEquipmentSlot(slot)) continue;
+                        if(!goal.getMob().canUseEquipmentSlot(slot)) continue;
+                        var equip = goal.getMob().getEquipment();
+                        if(equip == null) continue;
+
+                        ItemStack item = p.getInventory().getItem(slot);
+                        equip.setItem(slot, item.clone(), true);
+                    }
                 });
             }
         })
