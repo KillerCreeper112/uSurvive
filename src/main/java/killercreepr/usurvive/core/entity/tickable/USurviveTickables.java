@@ -24,6 +24,8 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Entity;
+import org.bukkit.inventory.meta.BundleMeta;
+import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -371,6 +373,30 @@ public class USurviveTickables {
 
             return new ActiveEmotiveEnchantTickable(
                 entity, this, slot
+            );
+        }
+    });
+
+    public static final EntityTickable HOLLOW_LANTERN = register(new SimpleDataEntityTickable(Crux.key("hollow_lantern")) {
+        public static final PersistParser<?> DATA_PARSER = PersistTextParser.mapBuilder(Map.class)
+            .field("tick_rate", TextInputField.field(PersistTextParser.SHORT, e -> (Short) e.get("tick_rate")))
+            .field("potions", TextInputField.field(ComponentInputParsers.LIST.POTION_EFFECT, e -> (List<PotionEffect>) e.get("potions")))
+            .apply(InputDecodeContext::get)
+            .createInput(Crux.key("data"));
+
+        @Override
+        public PersistParser<?> getDataParser() {
+            return DATA_PARSER;
+        }
+
+        @Override
+        public @Nullable ActiveEntityTickable buildActive(@NotNull Entity entity, @Nullable CruxSlot slot, @NotNull EntityTickableModifier mod) {
+            Map data = (Map) mod.getData();
+
+            return new ActiveHollowLanternTickable(
+                entity, this, slot,
+                (short) data.getOrDefault("tick_rate", (short)20),
+                (Collection<PotionEffect>) data.get("potions")
             );
         }
     });
