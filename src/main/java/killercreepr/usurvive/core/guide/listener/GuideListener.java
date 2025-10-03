@@ -53,6 +53,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class GuideListener implements Listener {
     protected final ValuesProvider cfg;
@@ -289,9 +290,14 @@ public class GuideListener implements Listener {
 
         GuideStructurePlacer placer = new GuideStructurePlacer(p.getChunk(), 48, gen, GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE.value(),
             p::isOnline);
-        placer.placeStructure().orTimeout(15L, TimeUnit.SECONDS).whenComplete((loc, throwable) ->{
+        placer.placeStructure().orTimeout(90L, TimeUnit.SECONDS).whenComplete((loc, throwable) ->{
             if(throwable != null){
                 throwable.printStackTrace();
+                if(throwable instanceof TimeoutException){
+                    manager.revokeAdvancement(who, event.getAdvancement());
+                    p.sendMessage(Component.text("The Guide structure was not able to be placed in time. This is usually due to new chunks taking a long time to load in. Please go back to Spawn and re-travel to the Resource Overworld to try again! It's recommended that you fast travel to the same spot."));
+                    return;
+                }
                 p.sendMessage(Component.text("An error occurred. Contact developer. CODE 7392"));
                 return;
             }
