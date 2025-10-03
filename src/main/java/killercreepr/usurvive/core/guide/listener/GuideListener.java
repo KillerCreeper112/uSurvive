@@ -289,7 +289,7 @@ public class GuideListener implements Listener {
         if(gen == null) return;
 
         GuideStructurePlacer placer = new GuideStructurePlacer(p.getChunk(), 48, gen, GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE.value(),
-            p::isOnline);
+            () -> p.isOnline() && p.getWorld().equals(world));
         placer.placeStructure().orTimeout(90L, TimeUnit.SECONDS).whenComplete((loc, throwable) ->{
             if(throwable != null){
                 throwable.printStackTrace();
