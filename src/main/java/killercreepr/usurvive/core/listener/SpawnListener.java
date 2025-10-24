@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.listener;
 
+import io.papermc.paper.event.player.AsyncPlayerSpawnLocationEvent;
 import killercreepr.crux.api.communication.Communicator;
 import killercreepr.crux.api.math.CruxLocation;
 import killercreepr.crux.api.text.tags.container.MergedTagContainer;
@@ -30,11 +31,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
-import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class SpawnListener implements Listener {
@@ -59,25 +60,26 @@ public class SpawnListener implements Listener {
         return worldName != null && world.getName().equals(worldName);
     }
 
-    public void spawnAtSpawn(PlayerSpawnLocationEvent event){
+    public void spawnAtSpawn(AsyncPlayerSpawnLocationEvent event){
         String worldName = cfg.SPAWN_WORLD().value();
         if(worldName == null) return;
         World world = plugin.getServer().getWorld(worldName);
         if(world == null){
-            Crux.logError("An error has occurred when spawning - " + worldName + " " + event.getPlayer().getName());
+            Crux.logError("An error has occurred when spawning - " + worldName + " " + event.getConnection().getProfile().getName());
             return;
         }
         event.setSpawnLocation(world.getSpawnLocation());
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onPlayerSpawnLocation(PlayerSpawnLocationEvent event) {
-        Player p = event.getPlayer();
-        if(!p.hasPlayedBefore()){
+    public void onAsyncPlayerSpawnLocation(AsyncPlayerSpawnLocationEvent event) {
+        var p = event.getConnection();
+        UUID uuid = p.getProfile().getId();
+        /*if(!p.hasPlayedBefore()){
             spawnAtSpawn(event);
             return;
-        }
-        UPlayer uPlay = playerManager.getPlayer(p);
+        }*/
+        UPlayer uPlay = playerManager.getPlayer(uuid);
         if(uPlay == null){
             spawnAtSpawn(event);
             return;
@@ -96,7 +98,7 @@ public class SpawnListener implements Listener {
         World world = CruxWorldUtil.getOrLoadWorld(worldKey);
         if(world == null){
             spawnAtSpawn(event);
-            Crux.log(Level.WARNING, "World " + worldKey + " does not exist! " + p.getName() + " cannot spawn there.");
+            Crux.log(Level.WARNING, "World " + worldKey + " does not exist! " + uuid + " cannot spawn there.");
             return;
         }
         CruxWorld cruxWorld = CruxCore.core().worldManager().getWorld(world.key());
@@ -109,7 +111,7 @@ public class SpawnListener implements Listener {
                     if(worldName == null) return;
                     world = plugin.getServer().getWorld(worldName);
                     if(world == null){
-                        Communicator.chat("<red>An error has occurred 809 - " + worldName).use(p);
+                        Communicator.chat("<red>An error has occurred 809 - " + worldName).use(p.getAudience());
                         return;
                     }
                     event.setSpawnLocation(world.getSpawnLocation());

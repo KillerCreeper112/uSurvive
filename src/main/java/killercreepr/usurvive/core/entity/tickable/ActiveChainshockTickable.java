@@ -398,7 +398,7 @@ public class ActiveChainshockTickable extends ListenerActiveEntityTickable {
 
         center.getWorld().playSound(center, Sound.BLOCK_CHAIN_BREAK, 1f, 0.8f + (float)Math.random() * 0.4f);
 
-        center.getWorld().spawnParticle(Particle.ITEM, center, 20, 0.2, 0.2, 0.2, 0.05, new ItemStack(Material.CHAIN));
+        center.getWorld().spawnParticle(Particle.ITEM, center, 20, 0.2, 0.2, 0.2, 0.05, new ItemStack(Material.IRON_CHAIN));
         center.getWorld().spawnParticle(Particle.SMOKE, center, 10, 0.2, 0.2, 0.2, 0.01);
     }
 
