@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class SpawnListener implements Listener {
@@ -95,11 +97,24 @@ public class SpawnListener implements Listener {
             spawnAtSpawn(event);
             return;
         }
-        World world = CruxWorldUtil.getOrLoadWorld(worldKey);
+        World world = plugin.getServer().getWorld(worldKey);
         if(world == null){
-            spawnAtSpawn(event);
-            Crux.log(Level.WARNING, "World " + worldKey + " does not exist! " + uuid + " cannot spawn there.");
-            return;
+            CountDownLatch latch = new CountDownLatch(1);
+            Crux.scheduler().runTaskMain(() ->{
+                CruxWorldUtil.getOrLoadWorld(worldKey);
+                latch.countDown();
+            });
+            try{
+                latch.await(30, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            world = plugin.getServer().getWorld(worldKey);
+            if(world == null){
+                spawnAtSpawn(event);
+                Crux.log(Level.WARNING, "World " + worldKey + " does not exist! " + uuid + " cannot spawn there.");
+                return;
+            }
         }
         CruxWorld cruxWorld = CruxCore.core().worldManager().getWorld(world.key());
         if(cruxWorld != null){
