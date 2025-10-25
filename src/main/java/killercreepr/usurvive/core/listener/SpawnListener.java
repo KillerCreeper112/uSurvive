@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.listener;
 
+import com.destroystokyo.paper.event.player.PlayerConnectionCloseEvent;
 import io.papermc.paper.event.player.AsyncPlayerSpawnLocationEvent;
 import killercreepr.crux.api.communication.Communicator;
 import killercreepr.crux.api.math.CruxLocation;
@@ -32,10 +33,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -74,6 +72,15 @@ public class SpawnListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onPlayerConnectionClose(PlayerConnectionCloseEvent event) {
+        var latch = spawnConfigure.remove(event.getPlayerUniqueId());
+        if(latch == null) return;
+        latch.countDown();
+    }
+
+    protected final Map<UUID, CountDownLatch> spawnConfigure = new HashMap<>();
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onAsyncPlayerSpawnLocation(AsyncPlayerSpawnLocationEvent event) {
         var p = event.getConnection();
         UUID uuid = p.getProfile().getId();
@@ -104,11 +111,13 @@ public class SpawnListener implements Listener {
                 CruxWorldUtil.getOrLoadWorld(worldKey);
                 latch.countDown();
             });
+            spawnConfigure.put(uuid, latch);
             try{
                 latch.await(30, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            spawnConfigure.remove(uuid);
             world = plugin.getServer().getWorld(worldKey);
             if(world == null){
                 spawnAtSpawn(event);
