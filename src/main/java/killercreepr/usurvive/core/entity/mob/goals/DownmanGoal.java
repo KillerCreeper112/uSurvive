@@ -2,12 +2,22 @@ package killercreepr.usurvive.core.entity.mob.goals;
 
 import com.destroystokyo.paper.entity.Pathfinder;
 import com.destroystokyo.paper.entity.ai.GoalKey;
-import io.papermc.paper.event.entity.EntityMoveEvent;
+import com.ticxo.modelengine.api.ModelEngineAPI;
+import com.ticxo.modelengine.api.animation.ModelState;
+import com.ticxo.modelengine.api.animation.handler.AnimationHandler;
+import com.ticxo.modelengine.api.entity.Hitbox;
+import com.ticxo.modelengine.api.model.ActiveModel;
+import com.ticxo.modelengine.core.model.ModeledEntityImpl;
+import killercreepr.crux.api.event.CruxEntityDamageEvent;
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
+import killercreepr.usurvive.core.entity.mob.goals.data.MobAttackHandler;
+import killercreepr.usurvive.core.entity.mob.goals.data.StrongMobAttack;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
@@ -16,20 +26,47 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 
 public class DownmanGoal extends CruxMobModeledGoal {
     public static final GoalKey<Mob> KEY = GoalKey.of(Mob.class, Crux.key("downman"));
 
+    protected final MobAttackHandler attackHandler;
     public DownmanGoal(@NotNull Mob mob) {
         this(KEY, mob);
     }
 
     public DownmanGoal(@NotNull GoalKey<Mob> key, @NotNull Mob mob) {
         super(key, mob);
+
+        attackHandler = new MobAttackHandler(mob, this, List.of(
+            new StrongMobAttack(1) {
+                @Override
+                public void onUse() {
+                    CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, -0.05D, CruxAttribute.Operation.MULTIPLY));
+
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .4D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .2D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .1D, CruxAttribute.Operation.MULTIPLY));
+                    CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK,
+                        CruxAttributeModifier.modifier(STRONG_ATTACK_KEY, .4D, CruxAttribute.Operation.MULTIPLY));
+                }
+
+                @Override
+                public int getHitTime() {
+                    return 6;
+                }
+            }
+        ), List.of());
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -38,31 +75,34 @@ public class DownmanGoal extends CruxMobModeledGoal {
         playAnimation("hurt", true);
     }
 
-    protected int attackTime = 0;
     @Override
     public boolean preAttemptAttack() {
-        if(attackTime < 1){
-            attackTime = getAttackTimeMax();
-            playAnimation(getAttackAnimation(), true);
-            return false;
+        if(attackHandler.preAttemptAttack()){
+            return super.preAttemptAttack();
         }
-        return super.preAttemptAttack();
+        return false;
     }
 
-    public void attackTick(){
-        if(attackTime < 1) return;
-        attackTime--;
-        if(attackTime < 1){
-            attemptAttack();
-        }
+    @Override
+    public void attacked(@NotNull CruxEntityDamageEvent event) {
+        super.attacked(event);
+        if(attackHandler.isUsingStrongAttack()) return;
+        String id = generateAttackAnimationID();
+        if(id == null) return;
+        playAnimation(id, true);
+    }
+
+    public String generateAttackAnimationID(){
+        return "attack";
     }
 
     @Override
     public void tick() {
         super.tick();
-        attackTick();
+        attackHandler.tick();
 
         crawlCheckTick();
+        animationPropertyTick();
 
         double moveSpeed = CruxAttribute.get(mob, CruxAttribute.MOVEMENT_SPEED);
         mob.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(moveSpeed);
@@ -83,19 +123,6 @@ public class DownmanGoal extends CruxMobModeledGoal {
 
     public boolean shouldRun(){
         return target != null;
-    }
-
-    public void setRunning(boolean run){
-        String current = getCurrentRunAnimation();
-        String should = getRunAnimation();
-        if(Objects.equals(current, should)) return;
-        if(current != null) stopAnimation(current);
-        if(run){
-            playAnimation(should, true);
-            return;
-        }
-        if(current==null) return;
-        stopAnimation(current);
     }
 
     public boolean isPlayingCorrectRunAnimation(){
@@ -135,15 +162,48 @@ public class DownmanGoal extends CruxMobModeledGoal {
         return "attack";
     }
 
+    protected BoundingBox beforeBox;
+    protected double beforeEyeHeight;
     public void setCrawling(boolean crawl){
         if(crawl){
             if(isCrawling()) return;
             playAnimation("stand_to_crawl", true);
+            BoundingBox box = mob.getBoundingBox();
+            beforeBox = box.clone();
+            beforeEyeHeight = mob.getEyeHeight();
+            double width = box.getWidthX();
+            double depth = box.getWidthZ();
+            double height = box.getHeight() * 0.3;
+            double eye = mob.getEyeHeight() * 0.3;
+            Hitbox hitbox = new Hitbox(width, height, depth, eye);
+            getModeledEntity().getBase().getData().setCullHitbox(
+                hitbox
+            );
+            ModelEngineAPI.getEntityHandler().setHitbox(
+                mob,
+                hitbox
+            );
             return;
         }
         if(!isCrawling()) return;
         stopAnimation("crawl");
         stopAnimation("stand_to_crawl");
+        if(beforeBox != null){
+            Hitbox hitbox = new Hitbox(
+                beforeBox.getWidthX(),
+                beforeBox.getHeight(),
+                beforeBox.getWidthZ(),
+                beforeEyeHeight
+            );
+            getModeledEntity().getBase().getData().setCullHitbox(
+                hitbox
+            );
+            ModelEngineAPI.getEntityHandler().setHitbox(
+                mob,
+                hitbox
+            );
+            beforeBox = null;
+        }
     }
 
     public boolean isAttacking(){
@@ -163,19 +223,37 @@ public class DownmanGoal extends CruxMobModeledGoal {
         Location end = path.getFinalPoint();
         if(end==null) return false;
         Block endBlock = end.getBlock();
-        //Bukkit.broadcastMessage(endBlock.getRelative(BlockFace.UP) + " ");
         if(endBlock.getRelative(BlockFace.UP).isSolid()) return true;
         return false;
     }
 
-    @EventHandler(ignoreCancelled = true)
-    public void onEntityMove(EntityMoveEvent event) {
-        if(!event.getEntity().equals(mob)) return;
-        if(!event.hasExplicitlyChangedPosition() || !shouldRun()){
-            setRunning(false);
-            return;
+
+    protected final AnimationHandler.DefaultProperty WALK_NORMAL = new AnimationHandler.DefaultProperty(
+        ModelState.WALK, "walk", .2D, .2D, 1D
+    );
+    protected final AnimationHandler.DefaultProperty WALK_RUN = new AnimationHandler.DefaultProperty(
+        ModelState.WALK, "run", .2D, .2D, 1D
+    );
+    protected final AnimationHandler.DefaultProperty WALK_CRAWL_RUN = new AnimationHandler.DefaultProperty(
+        ModelState.WALK, "crawl_run", .2D, .2D, 1D
+    );
+    public AnimationHandler.DefaultProperty getDefaultWalk(){
+        if(target != null){
+            if(isCrawling()) return WALK_CRAWL_RUN;
+            return WALK_RUN;
         }
-        setRunning(true);
+        return WALK_NORMAL;
+    }
+
+    public void animationPropertyTick(){
+        ActiveModel model = getModel();
+        if(model ==null) return;
+        AnimationHandler.DefaultProperty current = model.getAnimationHandler().getDefaultProperty(ModelState.WALK);
+        AnimationHandler.DefaultProperty should = getDefaultWalk();
+        if(current.equals(should)) return;
+        stopAnimation(current.getAnimation());
+        model.getAnimationHandler().setDefaultProperty(should);
+        playAnimation(should.getAnimation(), false);
     }
 
     @Override

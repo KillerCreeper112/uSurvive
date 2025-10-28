@@ -20,7 +20,7 @@ dependencies {
         "E:\\Plugins\\YO\\CruxTeleport\\build\\libs\\CruxTeleport-1.0-all.jar",
         "E:\\Plugins\\YO\\CruxCore\\run\\plugins\\CrazyAdvancementsAPI-2.1.19.jar",
         "D:\\MythicMobs-5.6.2.jar",
-        "D:\\ModelEngine-4.0.7.jar",
+        "D:\\ModelEngine-R4.0.9.jar",
         "E:\\Plugins\\YO\\CruxCurrency\\build\\libs\\CruxCurrency-1.0.jar",
         "E:\\Plugins\\YO\\CruxClaims\\build\\libs\\CruxClaims-1.0-all.jar",
         "E:\\Plugins\\YO\\CruxFriends\\build\\libs\\CruxFriends-1.0-all.jar",
