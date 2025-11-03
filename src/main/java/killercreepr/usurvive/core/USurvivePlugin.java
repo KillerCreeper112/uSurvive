@@ -121,6 +121,7 @@ import killercreepr.usurvive.core.mechanics.grapple.standard.StandardGrappleHook
 import killercreepr.usurvive.core.mechanics.whip.standard.StandardWhipHooks;
 import killercreepr.usurvive.core.menu.ItemPackMenu;
 import killercreepr.usurvive.core.menu.action.*;
+import killercreepr.usurvive.core.menu.module.AdvancementShowcaseModule;
 import killercreepr.usurvive.core.menu.module.CurrencyDepositModule;
 import killercreepr.usurvive.core.potion.USurvivePotions;
 import killercreepr.usurvive.core.potion.inflictor.UDamageEntityInflictor;
@@ -280,6 +281,34 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
                 return Crux.key("currency_deposit");
             }
         });
+
+        CruxCore.inst().cruxMenus().menuModuleRegistry().register(new MenuModuleBuilder() {
+            @Override
+            public @Nullable MenuModule build(@NotNull FileContext<?> ctx, @NotNull FileElement e, @Nullable FileObject menuCtx) {
+                if(!(e instanceof FileObject o)) return null;
+                FileRegistry reg = ctx.getRegistry();
+                String id = o.getObject(String.class, "id");
+                return new AdvancementShowcaseModule(
+                    key(), id,
+                    reg.deserializeFromFile(new TypeToken<List<Key>>(){}.getType(), o.get("advancement_managers")),
+                    reg.deserializeFromFile(NumberProvider.class, o.get("advance_slots")),
+                    reg.deserializeFromFile(NumberProvider.class, o.get("advance_manager_slots")),
+                    reg.deserializeFromFile(NumberProvider.class, o.get("general_slot_offset")),
+                    reg.deserializeFromFile(NumberProvider.class, o.get("center_offset_x")),
+                    reg.deserializeFromFile(NumberProvider.class, o.get("center_offset_y")),
+                    reg.deserializeFromFile(new TypeToken<Map<String, String>>(){}.getType(), o.get("description_color")),
+                    reg.deserializeFromFile(DynamicItem.class, o.get("unknown_icon")),
+                    reg.deserializeFromFile(DynamicItem.class, o.get("empty_manager_icon")),
+                    reg.deserializeFromFile(NumberProvider.class, o.get("description_length")),
+                    reg.deserializeFromFile(new TypeToken<List<String>>(){}.getType(), o.get("completed_lore"))
+                );
+            }
+
+            @Override
+            public @NotNull Key key() {
+                return USurvivePlugin.this.key("advancement_showcase");
+            }
+        });
         CruxMenusModule menusModule = CruxCore.inst().cruxMenus();
         registerMenuModules(menusModule.menuRegistry().menuModule(), menusModule.menuModuleRegistry());
 
@@ -306,6 +335,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         menuActions.register(new ConfirmTPAAction(Crux.key("confirm_tpa")));
         menuActions.register(new CancelTPAAction(Crux.key("cancel_tpa")));
         menuActions.register(new GuideShardAction(Crux.key("guide_shard")));
+        menuActions.register(new AdvancementShowcaseAction(Crux.key("advancement_showcase")));
 
         EntityMemory.registerFunction(this, mem ->{
             if(!(mem instanceof PlayerMemory m)) return;
