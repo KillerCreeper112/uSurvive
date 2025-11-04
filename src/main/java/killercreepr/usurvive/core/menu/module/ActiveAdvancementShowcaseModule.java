@@ -1,23 +1,35 @@
 package killercreepr.usurvive.core.menu.module;
 
 import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.text.context.InputContext;
 import killercreepr.crux.api.text.context.TextParserContext;
+import killercreepr.crux.api.text.tags.TagParser;
+import killercreepr.crux.api.text.tags.container.MergedTagContainer;
+import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxString;
 import killercreepr.cruxadvancements.api.advancement.CruxAdvancement;
 import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementManager;
+import killercreepr.cruxadvancements.core.advancement.progress.NumberAdvancementProgress;
 import killercreepr.cruxadvancements.core.registries.AdvancementRegistries;
+import killercreepr.cruxadvancements.core.tags.CruxAdvancementIconTags;
 import killercreepr.cruxadvancements.crazy.advancement.CrazyAdvancementDisplay;
 import killercreepr.cruxadvancements.crazy.advancement.CrazyAdvancementManager;
 import killercreepr.cruxmenus.api.menu.CfgMenu;
 import killercreepr.cruxmenus.api.menu.Menu;
+import killercreepr.cruxmenus.api.menu.contex.MenuContext;
+import killercreepr.cruxmenus.api.menu.item.MenuItem;
 import killercreepr.cruxmenus.api.menu.slot.Slot;
 import killercreepr.cruxmenus.core.menu.module.SimpleActiveMenuModuled;
 import killercreepr.cruxmenus.core.menu.slot.SimpleFixedSlot;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -25,9 +37,13 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class ActiveAdvancementShowcaseModule extends SimpleActiveMenuModuled {
     protected final @NotNull AdvancementShowcaseModule module;
@@ -109,7 +125,7 @@ public class ActiveAdvancementShowcaseModule extends SimpleActiveMenuModuled {
                     @Override
                     public void onClick(@NotNull HumanEntity p, @NotNull InventoryClickEvent event) {
                         super.onClick(p, event);
-                        if(manager.key().equals(selectedManager.key())) return;
+                        if(manager.key().equals(selectedManager.key()) && x == 0 && y == 0) return;
                         selectedManager = manager;
                         setXY(0, 0);
                         update();
@@ -130,7 +146,7 @@ public class ActiveAdvancementShowcaseModule extends SimpleActiveMenuModuled {
         viewAdvancements();
     }
 
-
+    protected final Map<Integer, MenuItem> changedItems = new HashMap<>();
     public void viewAdvancements() {
         CruxAdvancementManager<?> manager = advancementManager();
         if (manager == null) return;
@@ -167,6 +183,7 @@ public class ActiveAdvancementShowcaseModule extends SimpleActiveMenuModuled {
         int viewWidth = 9; // always 9 columns in a chest GUI
         int viewHeight = size / 9; // number of visible rows
 
+        Map<Integer, MenuItem> changedItems = new HashMap<>();
         // The offset fields x/y now represent how far the player has scrolled
         // (positive x = move right, positive y = move down)
         for (Map.Entry<CruxAdvancement, float[]> entry : absolutePositions.entrySet()) {
@@ -177,23 +194,43 @@ public class ActiveAdvancementShowcaseModule extends SimpleActiveMenuModuled {
             int gridX = (int) Math.floor(pos[0]);
             int gridY = (int) Math.floor(pos[1]);
 
-            // Apply scrolling offset — this “moves” the camera
-            /*int finalX = gridX - this.x;
-            int finalY = gridY - this.y;*/
-
             int finalX = gridX - this.x - module.center_offset_x.value().intValue();
             int finalY = gridY - this.y - module.center_offset_y.value().intValue();
-
-            int slot = getRawSlotFromCoords(finalX, finalY) + getGeneralSlotOffset();
-            if (!validSlots.contains(slot)) continue;
 
             // Skip anything outside the visible GUI viewport
             if (finalX < 0 || finalX >= viewWidth || finalY < 0 || finalY >= viewHeight)
                 continue;
 
+            int slot = getRawSlotFromCoords(finalX, finalY) + getGeneralSlotOffset();
 
-            /*int slot = offsetSlot(getRawSlotFromCoords(finalX, finalY));
-            if (!validSlots.contains(slot)) continue;*/
+
+            if (!validSlots.contains(slot)){
+                var got = menu.getMenuItem(slot);
+                if(got == null || viewer == null) continue;
+                changedItems.put(slot, got);
+                MenuContext ctx = MenuContext.context(menu, DataExchange.empty(), TagContainer.merged(menu.getHolder().getRegistry().getFormat().tags()));
+                menu.setItem(slot, CruxItem.wrap(got.getBase().getDisplayItem(viewer, ctx).buildItem(viewer))
+                        .editThis(crux ->{
+                            ItemStack item = !isVisible(adv, viewer) ? module.unknown_icon.buildItem(inputCtx) : buildIcon(adv);
+                            if(CruxItem.isEmpty(item) || !item.hasItemMeta()) return;
+                            Component name = null;
+                            ItemMeta meta = item.getItemMeta();
+                            if(meta.hasDisplayName()) name = meta.displayName();
+                            else if(meta.hasItemName()) name = meta.itemName();
+
+                            crux.addLoreFromString(
+                                ""
+                            );
+                            if(name != null){
+                                crux.addLore(Component.empty().color(NamedTextColor.WHITE).append(name));
+                            }
+                            if(meta.hasLore()){
+                                crux.addLore(meta.lore());
+                            }
+                        })
+                    .item(), true);
+                continue;
+            }
 
             if(viewer != null){
                 if(!isVisible(adv, viewer)){
@@ -204,6 +241,12 @@ public class ActiveAdvancementShowcaseModule extends SimpleActiveMenuModuled {
 
             menu.setItem(slot, buildIcon(adv), true);
         }
+        this.changedItems.forEach((slot, menuItem) ->{
+            if(changedItems.containsKey(slot)) return;
+            menu.setItem(slot, menuItem, viewer, true);
+        });
+        this.changedItems.clear();
+        this.changedItems.putAll(changedItems);
     }
 
     // Gets absolute coordinates of a display (sum of its parents)
@@ -236,16 +279,21 @@ public class ActiveAdvancementShowcaseModule extends SimpleActiveMenuModuled {
             .editThis(crux ->{
                 var viewer = menu.info().get("viewer", Player.class);
                 if(adv.getIcon() instanceof CrazyAdvancementDisplay display){
-                    crux.customName(
-                        "<white><!italic>" + Crux.format().deserializeString(display.getTitle())
-                    );
                     crux.addFlags(ItemFlag.values());
                     String desc = display.getDescription();
+                    String nameAddon = "";
                     if(viewer != null){
                         if(adv.isGranted(viewer)){
                             crux.addLoreFromString(module.completed_lore);
                         }
+                        if(adv.getProgress(viewer) instanceof NumberAdvancementProgress progress && progress.getCriteriaMaxProgress() > 1){
+                            nameAddon = CruxMath.format(progress.getProgress()) + "/" + CruxMath.format(progress.getCriteriaMaxProgress());
+                        }
                     }
+
+                    crux.customName(
+                        "<white><!italic>" + Crux.format().deserializeString(display.getTitle() + " " + nameAddon)
+                    );
 
                     if(adv.parent() != null){
                         CruxAdvancement parent = advancementManager().getAdvancement(adv.parent());
@@ -268,7 +316,7 @@ public class ActiveAdvancementShowcaseModule extends SimpleActiveMenuModuled {
     }
 
     public boolean isVisible(CruxAdvancement adv, Player p){
-        if(adv.key().value().equalsIgnoreCase("root")) return true;
+        if(adv.key().value().endsWith("/root")) return true;
         if(!(adv.getIcon() instanceof CrazyAdvancementDisplay display)) return true;
         CrazyAdvancementManager<?> crazy = (CrazyAdvancementManager<?>) selectedManager;
         if(display.getVisibility().isVisible(p, crazy.getCrazyAdvancement(adv.key()))) return true;
