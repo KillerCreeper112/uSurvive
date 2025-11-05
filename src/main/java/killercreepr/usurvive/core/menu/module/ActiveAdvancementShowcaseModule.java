@@ -276,6 +276,7 @@ public class ActiveAdvancementShowcaseModule extends SimpleActiveMenuModuled {
     public ItemStack buildIcon(CruxAdvancement adv){
         ItemStack item = adv.getIcon().getItem().clone();
         return CruxItem.wrap(item)
+            .lore(null)
             .editThis(crux ->{
                 var viewer = menu.info().get("viewer", Player.class);
                 if(adv.getIcon() instanceof CrazyAdvancementDisplay display){

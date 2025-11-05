@@ -50,5 +50,4 @@ public class ClaimingListener implements Listener {
         if(p == null) return;
         Lang.CLAIM_SETTINGS_CHANGED_SET.use(p);
     }
-
 }
