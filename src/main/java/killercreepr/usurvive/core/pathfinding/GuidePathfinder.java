@@ -1,7 +1,5 @@
 package killercreepr.usurvive.core.pathfinding;
 
-import killercreepr.crux.core.util.CruxAttributeUtil;
-import net.minecraft.world.level.levelgen.VerticalAnchor;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;

@@ -20,7 +20,9 @@ import killercreepr.usurvive.core.data.DeathGuide;
 import killercreepr.usurvive.core.guide.GuideAdvances;
 import killercreepr.usurvive.core.guide.GuideHolder;
 import killercreepr.usurvive.core.guide.GuideUtil;
+import killercreepr.usurvive.core.guide.particle.TrailRenderer;
 import killercreepr.usurvive.core.lang.Lang;
+import killercreepr.usurvive.core.pathfinding.GuidePathfinder;
 import killercreepr.usurvive.core.util.AdvanceUtil;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
@@ -30,6 +32,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class FirstGuideProgression implements GuideProgression{
     public static final Key KEY = Crux.key("first");
@@ -72,6 +76,10 @@ public class FirstGuideProgression implements GuideProgression{
         int every = 30;//cfg.DEATH_GUIDE_TICK_EVERY().value().intValue();
         if(every==0) return;
         if(Crux.getCurrentTick() % every != 0) return;
+
+        List<Location> path = new GuidePathfinder(p).findPath(p.getLocation(), new Location(p.getWorld(), 6.5, 61.5, -27.5), 0.5D);
+        TrailRenderer.renderTrail(p, path);
+
         tickDistance(p);
         tickStructureGuide(p);
     }

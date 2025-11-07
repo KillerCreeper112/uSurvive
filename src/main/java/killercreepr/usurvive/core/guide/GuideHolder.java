@@ -99,12 +99,6 @@ public class GuideHolder extends PlayerTickedDataHolder implements AutoSavable, 
     @Override
     protected void onTick(@NotNull Player p) {
         super.onTick(p);
-        if(Crux.getCurrentTick() % 20 == 0){
-            List<Location> path = new GuidePathfinder(p).findPath(p.getLocation(), new Location(p.getWorld(), 6.5, 61.5, -27.5), 0.5D);
-            List<Location> smoothPath = PathSmoother.catmullRomSpline(path, 0.2);
-            TrailRenderer.renderTrail(p, path);
-            Bukkit.broadcastMessage(path.size() + "");
-        }
         if(currentProgression != null){
             currentProgression.onTick(p);
         }

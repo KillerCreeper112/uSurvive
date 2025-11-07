@@ -89,6 +89,7 @@ import killercreepr.usurvive.core.command.*;
 import killercreepr.usurvive.core.component.USurviveComponents;
 import killercreepr.usurvive.core.config.CfgHook;
 import killercreepr.usurvive.core.config.Config;
+import killercreepr.usurvive.core.config.UCfgContainer;
 import killercreepr.usurvive.core.config.component.CfgUSurviveComponents;
 import killercreepr.usurvive.core.config.handler.*;
 import killercreepr.usurvive.core.data.CfgLootData;
@@ -161,6 +162,12 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     protected DeathManager deathManager;
     public DeathManager getDeathManager() {
         return deathManager;
+    }
+
+    protected UCfgContainer cfgContainer;
+
+    public UCfgContainer cfgContainer() {
+        return cfgContainer;
     }
 
     protected ValuesProvider values;
@@ -482,6 +489,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         }else{
             values(new DefaultValues());
         }
+        cfgContainer = new UCfgContainer(this);
 
         USurviveBlocks.register();
         USurviveItems.register();
@@ -717,6 +725,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         super.reload();
         values.reload(this);
         langProvider.reload(this);
+
+        cfgContainer.reload();
 
         CruxCore.inst().cruxMenus().menuRegistry().loadConfiguration(
             new CruxFolder(this, "menus").file()
