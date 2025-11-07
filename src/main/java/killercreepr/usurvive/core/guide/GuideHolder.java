@@ -10,13 +10,19 @@ import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.common.file.DataFile;
 import killercreepr.usurvive.core.USurvivePlugin;
+import killercreepr.usurvive.core.guide.particle.PathSmoother;
+import killercreepr.usurvive.core.guide.particle.TrailRenderer;
 import killercreepr.usurvive.core.guide.progression.GuideProgression;
+import killercreepr.usurvive.core.pathfinding.GuidePathfinder;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GuideHolder extends PlayerTickedDataHolder implements AutoSavable, Loadable {
@@ -93,6 +99,12 @@ public class GuideHolder extends PlayerTickedDataHolder implements AutoSavable, 
     @Override
     protected void onTick(@NotNull Player p) {
         super.onTick(p);
+        if(Crux.getCurrentTick() % 20 == 0){
+            List<Location> path = new GuidePathfinder(p).findPath(p.getLocation(), new Location(p.getWorld(), 6.5, 61.5, -27.5), 0.5D);
+            List<Location> smoothPath = PathSmoother.catmullRomSpline(path, 0.2);
+            TrailRenderer.renderTrail(p, path);
+            Bukkit.broadcastMessage(path.size() + "");
+        }
         if(currentProgression != null){
             currentProgression.onTick(p);
         }
