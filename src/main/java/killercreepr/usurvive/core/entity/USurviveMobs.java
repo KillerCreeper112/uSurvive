@@ -4,6 +4,7 @@ import killercreepr.crux.core.Crux;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.registries.CruxEntityRegistries;
 import killercreepr.usurvive.core.entity.mob.*;
+import killercreepr.usurvive.core.entity.mob.guide.Guide1NPC;
 import org.bukkit.entity.*;
 
 import java.util.function.Consumer;
@@ -113,6 +114,8 @@ public class USurviveMobs {
 
     public static final CruxMob AGGRESSIVE_ZOMBIE_HORSE = CruxEntityRegistries.ENTITIES.register(new AggressiveZombieHorse(Crux.key("aggressive_zombie_horse")));
     public static final CruxMob AGGRESSIVE_SKELETON_HORSE = CruxEntityRegistries.ENTITIES.register(new AggressiveSkeletonHorse(Crux.key("aggressive_skeleton_horse")));
+
+    public static final CruxMob GUIDE_1_NPC = CruxEntityRegistries.ENTITIES.register(new Guide1NPC(Crux.key("guide/1")));
 
     private static void registerVariants(Consumer<Class<? extends Mob>> consumer, Class<? extends Mob>... types){
         for(var clazz : types){

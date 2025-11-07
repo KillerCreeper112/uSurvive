@@ -1,6 +1,8 @@
 package killercreepr.usurvive.core.config;
 
+import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.data.Reloadable;
+import killercreepr.crux.api.data.WorldLocation;
 import killercreepr.crux.api.data.WorldPosition;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.cruxconfig.config.bukkit.file.Cfg;
@@ -16,7 +18,9 @@ import java.util.List;
 
 @killercreepr.cruxconfig.config.common.annotations.Config(autoUpdate = true)
 public class GuideConfig extends Cfg implements GuideCfg, Reloadable {
+    public final CfgValue<WorldLocation> GUIDE_1_SPAWN = new CommonValue<>(){};
     public final CfgValue<List<WorldPosition>> GUIDE_1_POINTS = new CommonValue<>(){};
+    public final CfgValue<List<String>> GUIDE_1_DIALOG = new CommonValue<>(){};
 
     public GuideConfig(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
@@ -31,8 +35,18 @@ public class GuideConfig extends Cfg implements GuideCfg, Reloadable {
     }
 
     @Override
-    public CfgValue<List<WorldPosition>> GUIDE_1_POINTS() {
+    public Holder<WorldLocation> GUIDE_1_SPAWN() {
+        return GUIDE_1_SPAWN;
+    }
+
+    @Override
+    public Holder<List<WorldPosition>> GUIDE_1_POINTS() {
         return GUIDE_1_POINTS;
+    }
+
+    @Override
+    public Holder<List<String>> GUIDE_1_DIALOG() {
+        return GUIDE_1_DIALOG;
     }
 
     @Override

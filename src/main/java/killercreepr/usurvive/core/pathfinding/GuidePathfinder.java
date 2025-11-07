@@ -12,7 +12,7 @@ import java.util.*;
 
 public class GuidePathfinder {
 
-    private static final int MAX_NODES = 3000;
+    private static final int MAX_NODES = 6000;
     private static final double MAX_DISTANCE = 120;
 
     public record Node(Block block, Node parent, double gCost, double hCost) {
@@ -30,7 +30,7 @@ public class GuidePathfinder {
         this.entity = entity;
     }
 
-    private List<Location> generateDensePath(List<Node> nodePath, double spacing) {
+    private List<Location> generateDensePath(List<Node> nodePath, double spacing, int maxAmount) {
         List<Location> densePath = new ArrayList<>();
         if (nodePath.isEmpty()) return densePath;
 
@@ -60,6 +60,7 @@ public class GuidePathfinder {
                 Block below = stepPoint.getBlock().getRelative(BlockFace.DOWN);
                 if (canPass(below) || isClimbable(below)) {
                     densePath.add(stepPoint);
+                    if(densePath.size() > maxAmount) break;
                 }
 
                 traveled += spacing;
@@ -67,6 +68,7 @@ public class GuidePathfinder {
 
             densePath.add(current);
             lastPoint = current;
+            if(densePath.size() > maxAmount) break;
         }
         return densePath;
     }
@@ -88,7 +90,7 @@ public class GuidePathfinder {
     }
 
 
-    public List<Location> findPath(Location start, Location target, double spacing) {
+    public List<Location> findPath(Location start, Location target, double spacing, int maxLocations) {
         if (!start.getWorld().equals(target.getWorld())) return List.of();
 
         Block startBlock = start.getBlock();
@@ -142,12 +144,8 @@ public class GuidePathfinder {
         List<Node> nodePath = new ArrayList<>();
         for (Node n = found; n != null; n = n.parent()) nodePath.add(n);
 
-// generate a dense path for particles or movement
-        List<Location> densePath = generateDensePath(nodePath, spacing);
+        List<Location> densePath = generateDensePath(nodePath, spacing, maxLocations);
         return densePath;
-
-        /*// Line-of-sight pruning
-        return prunePath(path);*/
     }
 
     // --- utilities ---
