@@ -19,6 +19,7 @@ import java.util.List;
 @killercreepr.cruxconfig.config.common.annotations.Config(autoUpdate = true)
 public class GuideConfig extends Cfg implements GuideCfg, Reloadable {
     public final CfgValue<WorldLocation> GUIDE_1_SPAWN = new CommonValue<>(){};
+    public final CfgValue<WorldPosition> GUIDE_1_NPC_SPAWN = new CommonValue<>(){};
     public final CfgValue<List<WorldPosition>> GUIDE_1_POINTS = new CommonValue<>(){};
     public final CfgValue<List<String>> GUIDE_1_DIALOG = new CommonValue<>(){};
 
@@ -37,6 +38,11 @@ public class GuideConfig extends Cfg implements GuideCfg, Reloadable {
     @Override
     public Holder<WorldLocation> GUIDE_1_SPAWN() {
         return GUIDE_1_SPAWN;
+    }
+
+    @Override
+    public Holder<WorldPosition> GUIDE_1_NPC_SPAWN() {
+        return GUIDE_1_NPC_SPAWN;
     }
 
     @Override

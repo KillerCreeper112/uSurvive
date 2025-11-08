@@ -2,19 +2,25 @@ package killercreepr.usurvive.core.entity.mob.goals.guide;
 
 import com.destroystokyo.paper.entity.ai.GoalKey;
 import killercreepr.cruxentities.api.entity.mob.goal.PathTargetMobGoal;
+import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mannequin;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
 public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
-    protected final PathTargetMobGoal pathTarget = PathTargetMobGoal.pathTargetMobGoal(this, 0.5);
+    protected final PathTargetMobGoal pathTarget = PathTargetMobGoal.pathTargetMobGoal(this, 1);
     public GuidePathGoal(@NotNull Mob mob) {
         super(mob);
     }
@@ -99,7 +105,50 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
             dialogTick();
             return;
         }
+
+        if(!userDistanceCheck()){
+            mob.getPathfinder().stopPathfinding();
+            if(user.getWorld().equals(mob.getWorld())) mob.lookAt(user);
+            return;
+        }
+
         this.pathTarget.tick();
+    }
+
+    public boolean userDistanceCheck(){
+        if(user == null) return true;
+        if(!user.getWorld().equals(mob.getWorld())) return false;
+        double distanceFromUser = user.getLocation().distanceSquared(mob.getLocation());
+        if(distanceFromUser <= (8*8)) return true;
+
+        int goalIndex = pathTarget.getPath() == null ? 0 : pathTarget.getPath().getCurrentNodeIndex();
+        NavigableMap<Double, Integer> closestPath = getUserCloseToPath();
+        int index = 0;
+        for (Map.Entry<Double, Integer> entry : closestPath.entrySet()) {
+            index++;
+            if(entry.getValue() >= goalIndex) return true;
+
+            if(index > 1) break;
+        }
+        return false;
+    }
+
+    public NavigableMap<Double, Integer> getUserCloseToPath(){
+        if(pathTarget.getPath() == null) return new TreeMap<>();
+        NavigableMap<Double, Integer> map = new TreeMap<>();
+        int index = -1;
+        for (GoalNode node : pathTarget.getPath().getNodes()) {
+            index++;
+            Location loc = new Location(mob.getWorld(), node.x(), node.y(), node.z());
+            double distance = loc.distanceSquared(user.getLocation());
+            map.put(distance, index);
+        }
+        return map;
+    }
+
+    public boolean isUserClose(double distance){
+        distance = distance * distance;
+        return user.getLocation().distanceSquared(mob.getLocation()) <= distance;
     }
 
     @Override

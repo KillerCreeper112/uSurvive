@@ -81,7 +81,7 @@ public class FirstGuideProgression implements GuideProgression{
         WorldPosition spawn = cfg().GUIDE_1_SPAWN().value();
         p.teleport(spawn.toLocation());
 
-        Mob npc = (Mob) USurviveMobs.GUIDE_1_NPC.spawn(p.getLocation());
+        Mob npc = (Mob) USurviveMobs.GUIDE_1_NPC.spawn(cfg().GUIDE_1_NPC_SPAWN().value().toLocation());
         var goal = CruxGoalUtil.getGoal(npc, GuidePathGoal.class);
         List<GoalNode> nodes = new ArrayList<>();
 
