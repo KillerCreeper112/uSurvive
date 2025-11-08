@@ -1,23 +1,21 @@
 package killercreepr.usurvive.core.entity.mob.goals.guide;
 
 import com.destroystokyo.paper.entity.ai.GoalKey;
+import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxString;
 import killercreepr.cruxentities.api.entity.mob.goal.PathTargetMobGoal;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
+import killercreepr.usurvive.api.entity.mob.goal.path.GuidePathGoalNode;
+import killercreepr.usurvive.api.guide.GuidePoint;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mannequin;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.TreeMap;
+import java.util.*;
 
 public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
     protected final PathTargetMobGoal pathTarget = PathTargetMobGoal.pathTargetMobGoal(this, 1);
@@ -37,7 +35,59 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
         this.user = user;
     }
 
+    protected TextDisplay dialogDisplay;
+
+    public TextDisplay dialogDisplay(){
+        if(dialogDisplay != null) return dialogDisplay;
+        Location loc = getDialogLocation();
+        TextDisplay text = loc.getWorld().spawn(loc, TextDisplay.class, e ->{
+            e.setSeeThrough(true);
+            e.setBillboard(Display.Billboard.CENTER);
+        });
+        return dialogDisplay = text;
+    }
+
+    public Location getDialogLocation(){
+        return mob.getLocation().add(0, 0.5 + mob.getHeight(), 0);
+    }
+
+    public void updateText(TextDisplay display, String msg){
+        if(msg == null || msg.isEmpty()){
+            display.text(null);
+            return;
+        }
+        StringBuilder builder = new StringBuilder();
+        CruxString.buildDescription(
+            msg, line ->{
+                builder.append(line);
+            },
+            line ->{
+                builder.append("\n");
+            },
+            30
+        );
+        display.text(Crux.format().deserialize(
+            builder.toString()
+        ));
+    }
+
+    @Override
+    public boolean isValidTarget(@NotNull LivingEntity target) {
+        return false;
+    }
+
+    protected GuidePoint nextGuidePoint;
+
+    public GuidePoint getNextGuidePoint() {
+        return nextGuidePoint;
+    }
+
+    public void setNextGuidePoint(GuidePoint nextGuidePoint) {
+        this.nextGuidePoint = nextGuidePoint;
+    }
+
     protected Player user;
+    protected GuidePoint guidePoint;
     protected List<String> dialog;
     protected String currentDialogLine;
     protected String[] currentDialogSplit;
@@ -50,15 +100,14 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
     public void setDialog(List<String> dialog) {
         this.dialog = dialog;
         this.dialogIndex = 0;
+        this.dialogSplitIndex = 0;
+        this.currentDialogLine = null;
+        this.currentDialogSplit = null;
     }
 
     protected int dialogIndex = 0;
     protected int dialogSplitIndex = 0;
-
-    @Override
-    public boolean isValidTarget(@NotNull LivingEntity target) {
-        return false;
-    }
+    protected int dialogSplitSpeed = 1;
 
     public void dialogTick(){
         if(dialog == null) return;
@@ -66,44 +115,112 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
         if(dialogWait > 0){
             dialogWait--;
             if(currentDialogLine != null){
-                user.sendActionBar(currentDialogLine);
+                user.sendActionBar(Crux.format().deserialize(currentDialogLine));
             }
             return;
         }
 
         String dialog = getToSendDialogLine();
-        user.sendActionBar(dialog);
+        if(dialog == null) return;
+        user.sendActionBar(Crux.format().deserialize(dialog));
         user.playSound(user, Sound.BLOCK_WOOD_BREAK, .5f, 1f);
+        updateText(dialogDisplay(), dialog);
     }
 
-    public String getToSendDialogLine(){
-        if(currentDialogLine == null){
-            if(dialogIndex >= dialog.size()){
+    public String getToSendDialogLine() {
+        if (currentDialogLine == null) {
+            if (dialogIndex >= dialog.size()) {
                 setDialog(null);
                 return null;
             }
-            currentDialogSplit = dialog.get(dialogIndex).split(" ");
+
+            // Split into characters including formatting tags
+            List<String> split = getDialogStrings();
+            currentDialogSplit = split.toArray(new String[0]);
             currentDialogLine = currentDialogSplit[0];
+            dialogSplitIndex = 0; // reset index
             return currentDialogLine;
         }
+
         dialogSplitIndex++;
-        if(dialogSplitIndex >= currentDialogSplit.length){
+
+        if (dialogSplitIndex >= currentDialogSplit.length) {
             dialogSplitIndex = 0;
             dialogIndex++;
             currentDialogLine = null;
             dialogWait = 10;
             return null;
         }
-        dialogWait = 1;
-        currentDialogLine += " " + currentDialogSplit[dialogSplitIndex];
+
+        String nextPart = currentDialogSplit[dialogSplitIndex];
+
+        // Immediately append formatting tags
+        while (nextPart.startsWith("<") && nextPart.endsWith(">")) {
+            currentDialogLine += nextPart;
+            dialogSplitIndex++;
+            if (dialogSplitIndex >= currentDialogSplit.length) {
+                currentDialogLine = null;
+                dialogIndex++;
+                dialogWait = 10;
+                return null;
+            }
+            nextPart = currentDialogSplit[dialogSplitIndex];
+        }
+
+        currentDialogLine += nextPart;
+        //dialogWait = 1;
         return currentDialogLine;
+    }
+
+    @NotNull
+    private List<String> getDialogStrings() {
+        String line = dialog.get(dialogIndex);
+        List<String> split = new ArrayList<>();
+        for (int i = 0; i < line.length(); ) {
+            if (line.charAt(i) == '<') {
+                // Capture the entire tag
+                int end = line.indexOf('>', i);
+                if (end != -1) {
+                    split.add(line.substring(i, end + 1));
+                    i = end + 1;
+                    continue;
+                }
+            }
+            // Regular character
+            split.add(String.valueOf(line.charAt(i)));
+            i++;
+        }
+        return split;
     }
 
     @Override
     public void tick() {
         if(dialog != null){
             dialogTick();
-            return;
+            if(dialogDisplay != null){
+                dialogDisplay.teleport(getDialogLocation());
+            }
+            if(guidePoint == null || !guidePoint.keepMoving()) return;
+
+            if(nextGuidePoint != null){
+                if(this.pathTarget.hasPath() && this.pathTarget.getPath().getNextNode() instanceof GuidePathGoalNode n && n.guidePoint().dialog() != null){
+                    return;
+                }
+            }
+        }else{
+            if(dialogDisplay != null){
+                dialogDisplay.remove();
+                dialogDisplay = null;
+            }
+
+            if(nextGuidePoint != null){
+                guidePoint = nextGuidePoint;
+                nextGuidePoint = null;
+
+
+                if(guidePoint.dialog() != null) setDialog(guidePoint.dialog());
+                return;
+            }
         }
 
         if(!userDistanceCheck()){

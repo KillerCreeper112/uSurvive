@@ -19,6 +19,8 @@ import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.core.component.CruxWorldsComponents;
+import killercreepr.usurvive.api.entity.mob.goal.path.GuidePathGoalNode;
+import killercreepr.usurvive.api.guide.GuidePoint;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.advancement.objective.GuideDiscoverMeteorObjective;
 import killercreepr.usurvive.core.data.DeathGuide;
@@ -82,11 +84,16 @@ public class FirstGuideProgression implements GuideProgression{
         p.teleport(spawn.toLocation());
 
         Mob npc = (Mob) USurviveMobs.GUIDE_1_NPC.spawn(cfg().GUIDE_1_NPC_SPAWN().value().toLocation());
+        npc.setVisibleByDefault(false);
+        p.showEntity(Crux.getMainPlugin(), npc);
         var goal = CruxGoalUtil.getGoal(npc, GuidePathGoal.class);
         List<GoalNode> nodes = new ArrayList<>();
 
         cfg().GUIDE_1_POINTS().valueOr(List.of()).forEach(pos ->{
-            nodes.add(GoalNode.distanceGoalNode(pos.toLocation(), 1.5D));
+            nodes.add(GuidePathGoalNode.guidePathGoalNode(
+                GoalNode.distanceGoalNode(pos.pos().toLocation(), 1.5D),
+                pos
+            ));
         });
 
         goal.setUser(p);
@@ -176,9 +183,9 @@ public class FirstGuideProgression implements GuideProgression{
         if(every==0) return;
         if(Crux.getCurrentTick() % every != 0) return;
 
-        WorldPosition nearest = CruxCollection.getLast(cfg().GUIDE_1_POINTS().value());
+        GuidePoint nearest = CruxCollection.getLast(cfg().GUIDE_1_POINTS().value());
         if(nearest != null){
-            List<Location> path = new GuidePathfinder(p).findPath(p.getLocation(), nearest.toLocation(), 0.5D, 20);
+            List<Location> path = new GuidePathfinder(p).findPath(p.getLocation(), nearest.pos().toLocation(), 0.5D, 20);
             TrailRenderer.renderTrail(p, path);
         }
 

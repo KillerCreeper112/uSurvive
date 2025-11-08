@@ -9,6 +9,7 @@ import killercreepr.cruxconfig.config.bukkit.file.Cfg;
 import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
 import killercreepr.cruxconfig.config.bukkit.value.CfgValue;
 import killercreepr.cruxconfig.config.bukkit.value.CommonValue;
+import killercreepr.usurvive.api.guide.GuidePoint;
 import killercreepr.usurvive.api.values.GuideCfg;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +21,7 @@ import java.util.List;
 public class GuideConfig extends Cfg implements GuideCfg, Reloadable {
     public final CfgValue<WorldLocation> GUIDE_1_SPAWN = new CommonValue<>(){};
     public final CfgValue<WorldPosition> GUIDE_1_NPC_SPAWN = new CommonValue<>(){};
-    public final CfgValue<List<WorldPosition>> GUIDE_1_POINTS = new CommonValue<>(){};
+    public final CfgValue<List<GuidePoint>> GUIDE_1_POINTS = new CommonValue<>(){};
     public final CfgValue<List<String>> GUIDE_1_DIALOG = new CommonValue<>(){};
 
     public GuideConfig(@NotNull Plugin plugin, @NotNull String path) {
@@ -46,7 +47,7 @@ public class GuideConfig extends Cfg implements GuideCfg, Reloadable {
     }
 
     @Override
-    public Holder<List<WorldPosition>> GUIDE_1_POINTS() {
+    public Holder<List<GuidePoint>> GUIDE_1_POINTS() {
         return GUIDE_1_POINTS;
     }
 

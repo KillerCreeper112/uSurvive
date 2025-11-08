@@ -77,6 +77,7 @@ import killercreepr.usurvive.api.entity.player.data.RandomTPData;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsManager;
+import killercreepr.usurvive.api.guide.GuidePoint;
 import killercreepr.usurvive.api.tpa.TPAManager;
 import killercreepr.usurvive.api.values.SleeperCfg;
 import killercreepr.usurvive.api.values.ValuesProvider;
@@ -751,6 +752,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new AutoFileHandler<>(PremiumRank.class),
             new AutoFileHandler<>(CfgLootData.class)
         );
+        registry.registerFileHandler(GuidePoint.class, new FileGuidePoint());
     }
 
     public void registerCfgHandlers(@NotNull FileRegistry registry){
