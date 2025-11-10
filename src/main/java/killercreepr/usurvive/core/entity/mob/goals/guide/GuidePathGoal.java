@@ -7,8 +7,10 @@ import killercreepr.cruxentities.api.entity.mob.goal.PathTargetMobGoal;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
+import killercreepr.usurvive.api.dialog.DialogPlayer;
 import killercreepr.usurvive.api.entity.mob.goal.path.GuidePathGoalNode;
 import killercreepr.usurvive.api.guide.GuidePoint;
+import killercreepr.usurvive.core.dialog.SimpleDialogPlayer;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.*;
@@ -43,7 +45,9 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
         TextDisplay text = loc.getWorld().spawn(loc, TextDisplay.class, e ->{
             e.setSeeThrough(true);
             e.setBillboard(Display.Billboard.CENTER);
+            e.setVisibleByDefault(false);
         });
+        if(user != null) user.showEntity(Crux.getMainPlugin(), text);
         return dialogDisplay = text;
     }
 
@@ -71,6 +75,10 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
         ));
     }
 
+    public boolean isSpeaking(){
+        return dialogPlayer.getDialog() != null;
+    }
+
     @Override
     public boolean isValidTarget(@NotNull LivingEntity target) {
         return false;
@@ -86,116 +94,39 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
         this.nextGuidePoint = nextGuidePoint;
     }
 
+    public DialogPlayer getDialogPlayer() {
+        return dialogPlayer;
+    }
+
     protected Player user;
     protected GuidePoint guidePoint;
-    protected List<String> dialog;
-    protected String currentDialogLine;
-    protected String[] currentDialogSplit;
-    protected int dialogWait;
+    protected DialogPlayer dialogPlayer = new SimpleDialogPlayer(){
+        @Override
+        public void onDialogTicking(Player... user) {
+            super.onDialogTicking(user);
+            mob.lookAt(user[0]);
+        }
 
-    public List<String> getDialog() {
-        return dialog;
-    }
+        @Override
+        public void onDialogSpeaking(Player... user) {
+            super.onDialogSpeaking(user);
+            updateText(dialogDisplay(), currentDialogLine);
+        }
 
-    public void setDialog(List<String> dialog) {
-        this.dialog = dialog;
-        this.dialogIndex = 0;
-        this.dialogSplitIndex = 0;
-        this.currentDialogLine = null;
-        this.currentDialogSplit = null;
-    }
-
-    protected int dialogIndex = 0;
-    protected int dialogSplitIndex = 0;
-    protected int dialogSplitSpeed = 1;
+        @Override
+        public void onDialogDisplaySpeaking(Player user) {
+            super.onDialogDisplaySpeaking(user);
+            user.playSound(user, Sound.BLOCK_WOOD_BREAK, .5f, 1f);
+        }
+    };
 
     public void dialogTick(){
-        if(dialog == null) return;
-        mob.lookAt(user);
-        if(dialogWait > 0){
-            dialogWait--;
-            if(currentDialogLine != null){
-                user.sendActionBar(Crux.format().deserialize(currentDialogLine));
-            }
-            return;
-        }
-
-        String dialog = getToSendDialogLine();
-        if(dialog == null) return;
-        user.sendActionBar(Crux.format().deserialize(dialog));
-        user.playSound(user, Sound.BLOCK_WOOD_BREAK, .5f, 1f);
-        updateText(dialogDisplay(), dialog);
-    }
-
-    public String getToSendDialogLine() {
-        if (currentDialogLine == null) {
-            if (dialogIndex >= dialog.size()) {
-                setDialog(null);
-                return null;
-            }
-
-            // Split into characters including formatting tags
-            List<String> split = getDialogStrings();
-            currentDialogSplit = split.toArray(new String[0]);
-            currentDialogLine = currentDialogSplit[0];
-            dialogSplitIndex = 0; // reset index
-            return currentDialogLine;
-        }
-
-        dialogSplitIndex++;
-
-        if (dialogSplitIndex >= currentDialogSplit.length) {
-            dialogSplitIndex = 0;
-            dialogIndex++;
-            currentDialogLine = null;
-            dialogWait = 10;
-            return null;
-        }
-
-        String nextPart = currentDialogSplit[dialogSplitIndex];
-
-        // Immediately append formatting tags
-        while (nextPart.startsWith("<") && nextPart.endsWith(">")) {
-            currentDialogLine += nextPart;
-            dialogSplitIndex++;
-            if (dialogSplitIndex >= currentDialogSplit.length) {
-                currentDialogLine = null;
-                dialogIndex++;
-                dialogWait = 10;
-                return null;
-            }
-            nextPart = currentDialogSplit[dialogSplitIndex];
-        }
-
-        currentDialogLine += nextPart;
-        //dialogWait = 1;
-        return currentDialogLine;
-    }
-
-    @NotNull
-    private List<String> getDialogStrings() {
-        String line = dialog.get(dialogIndex);
-        List<String> split = new ArrayList<>();
-        for (int i = 0; i < line.length(); ) {
-            if (line.charAt(i) == '<') {
-                // Capture the entire tag
-                int end = line.indexOf('>', i);
-                if (end != -1) {
-                    split.add(line.substring(i, end + 1));
-                    i = end + 1;
-                    continue;
-                }
-            }
-            // Regular character
-            split.add(String.valueOf(line.charAt(i)));
-            i++;
-        }
-        return split;
+        dialogPlayer.dialogTick(user);
     }
 
     @Override
     public void tick() {
-        if(dialog != null){
+        if(dialogPlayer.getDialog() != null){
             dialogTick();
             if(dialogDisplay != null){
                 dialogDisplay.teleport(getDialogLocation());
@@ -218,7 +149,7 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
                 nextGuidePoint = null;
 
 
-                if(guidePoint.dialog() != null) setDialog(guidePoint.dialog());
+                if(guidePoint.dialog() != null) dialogPlayer.setDialog(guidePoint.dialog());
                 return;
             }
         }

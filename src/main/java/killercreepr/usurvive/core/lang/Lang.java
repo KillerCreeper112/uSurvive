@@ -378,6 +378,11 @@ public class Lang {
             ))
             .build()
     );
+    public static final Msg GUIDE_1_CANNOT_USE_COMMANDS = create(
+        Communicator.builder()
+            .chat("<red>You cannot use commands until you enter the <blue>Resource Overworld</blue>.")
+            .build()
+    );
     public static final Msg GUIDE_FIRST_START = create(
         Communicator.builder()
             .chat(List.of(

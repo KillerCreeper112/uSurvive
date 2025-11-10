@@ -6,6 +6,7 @@ import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
+import killercreepr.usurvive.api.dialog.DialogLine;
 import killercreepr.usurvive.api.guide.GuidePoint;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +36,7 @@ public class FileGuidePoint implements FileObjectHandler<GuidePoint> {
         if(pos == null) return null;
         return GuidePoint.guidePoint(
             pos,
-            r.deserializeFromFile(new TypeToken<List<String>>(){}.getType(), o.get("dialog")),
+            r.deserializeFromFile(new TypeToken<List<DialogLine>>(){}.getType(), o.get("dialog")),
             r.deserializeFromFileOrDefault(Boolean.class, o.get("keep_moving"), false)
         );
     }

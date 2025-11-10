@@ -10,19 +10,15 @@ import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.common.file.DataFile;
 import killercreepr.usurvive.core.USurvivePlugin;
-import killercreepr.usurvive.core.guide.particle.PathSmoother;
-import killercreepr.usurvive.core.guide.particle.TrailRenderer;
+import killercreepr.usurvive.core.guide.progression.FirstGuideProgression;
 import killercreepr.usurvive.core.guide.progression.GuideProgression;
-import killercreepr.usurvive.core.pathfinding.GuidePathfinder;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class GuideHolder extends PlayerTickedDataHolder implements AutoSavable, Loadable {
@@ -39,6 +35,14 @@ public class GuideHolder extends PlayerTickedDataHolder implements AutoSavable, 
     protected void removingFromMemory(@Nullable Player e) {
         super.removingFromMemory(e);
         save();
+    }
+
+    @Override
+    public void onMemoryUnload(@NotNull Entity e) {
+        super.onMemoryUnload(e);
+        if(e instanceof Player p){
+            if(currentProgression != null) currentProgression.onMemoryUnload(p);
+        }
     }
 
     public DataFile getSaveFile(boolean createIfNeeded){
@@ -62,9 +66,20 @@ public class GuideHolder extends PlayerTickedDataHolder implements AutoSavable, 
         return currentProgression;
     }
 
-    public void setCurrentProgression(GuideProgression currentProgression) {
+    public void setCurrentProgression(GuideProgression currentProgression){
+        setCurrentProgression(currentProgression, false);
+    }
+
+    public void setCurrentProgression(GuideProgression currentProgression, boolean silent) {
+        if(!silent && this.currentProgression != null){
+            this.currentProgression.onEnd(parent.value(), this);
+        }
         this.currentProgression = currentProgression;
         if(currentProgression != null) currentProgression.onStart(parent.value(), this);
+    }
+
+    public void onLoaded(Player p){
+        if(currentProgression != null) currentProgression.onLoaded(p);
     }
 
     protected GuideProgression currentProgression;
@@ -92,8 +107,9 @@ public class GuideHolder extends PlayerTickedDataHolder implements AutoSavable, 
         if(currentProgression == null) return;
         complete(currentProgression.key());
         var prog = this.currentProgression;
-        setCurrentProgression(null);
+        setCurrentProgression(null, true);
         prog.onComplete(parent.value(), this);
+        prog.onEnd(parent.value(), this);
     }
 
     @Override
@@ -115,10 +131,17 @@ public class GuideHolder extends PlayerTickedDataHolder implements AutoSavable, 
     @Override
     public void load() {
         DataFile cfg = getSaveFile(false);
-        if(cfg == null) return;
+        if(cfg == null){
+            setCurrentProgression(new FirstGuideProgression());
+            return;
+        }
         setCurrentProgression(cfg.deserialize("current_progression", GuideProgression.class));
         completed.clear();
         completed.putAll(cfg.deserializeOrDefault("completed", new TypeToken<Map<Key, Long>>(){}.getType(), Map.of()));
         cfg.close();
+
+        if(currentProgression == null && !isCompleted(FirstGuideProgression.KEY)){
+            setCurrentProgression(new FirstGuideProgression());
+        }
     }
 }

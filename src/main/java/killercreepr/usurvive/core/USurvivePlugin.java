@@ -72,6 +72,8 @@ import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
 import killercreepr.cruxworlds.api.world.module.WorldModule;
 import killercreepr.cruxworlds.core.registries.WorldsRegistries;
 import killercreepr.usurvive.api.death.DeathManager;
+import killercreepr.usurvive.api.dialog.DialogAction;
+import killercreepr.usurvive.api.dialog.DialogLine;
 import killercreepr.usurvive.api.entity.player.UPlayerManager;
 import killercreepr.usurvive.api.entity.player.data.RandomTPData;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
@@ -753,6 +755,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new AutoFileHandler<>(CfgLootData.class)
         );
         registry.registerFileHandler(GuidePoint.class, new FileGuidePoint());
+        registry.registerFileHandler(DialogLine.class, new FileDialogLine());
+        registry.registerFileHandler(DialogAction.class, new FileDialogAction());
     }
 
     public void registerCfgHandlers(@NotNull FileRegistry registry){

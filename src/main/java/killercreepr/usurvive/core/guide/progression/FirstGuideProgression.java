@@ -40,13 +40,17 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FirstGuideProgression implements GuideProgression{
+public class FirstGuideProgression implements GuideProgression, Listener {
     public static final Key KEY = Crux.key("first");
 
     public static class Loader implements FileObjectHandler<FirstGuideProgression>{
@@ -57,6 +61,7 @@ public class FirstGuideProgression implements GuideProgression{
             o.add("fallen_meteor_location", r.serializeToFile(object.fallenMeteorLocation));
             o.add("fallen_meteor_world_created_at", r.serializeToFile(object.fallenMeteorWorldCreatedAt));
             o.add("fallen_meteor_world", r.serializeToFile(object.fallenMeteorWorld));
+            o.addProperty("entered_resource_overworld", object.enteredResourceOverworld);
             return o;
         }
 
@@ -69,6 +74,7 @@ public class FirstGuideProgression implements GuideProgression{
             progression.fallenMeteorLocation = r.deserializeFromFile(BlockPos.class, o.get("fallen_meteor_location"));
             progression.fallenMeteorWorldCreatedAt = r.deserializeFromFileOrDefault(Long.class, o.get("fallen_meteor_world_created_at"), 0L);
             progression.fallenMeteorWorld = r.deserializeFromFile(Key.class, o.get("fallen_meteor_world"));
+            progression.enteredResourceOverworld = r.deserializeFromFileOrDefault(Key.class, o.get("entered_resource_overworld"), false);
             return progression;
         }
     }
@@ -79,11 +85,17 @@ public class FirstGuideProgression implements GuideProgression{
     }
 
     @Override
-    public void onStart(Player p, GuideHolder holder) {
-        WorldPosition spawn = cfg().GUIDE_1_SPAWN().value();
-        p.teleport(spawn.toLocation());
+    public void onMemoryUnload(Player p) {
+        GuideProgression.super.onMemoryUnload(p);
+        if(npc != null){
+            npc.remove();
+        }
+    }
 
-        Mob npc = (Mob) USurviveMobs.GUIDE_1_NPC.spawn(cfg().GUIDE_1_NPC_SPAWN().value().toLocation());
+    protected Mob npc;
+
+    public void setupNPC(Player p){
+        npc = (Mob) USurviveMobs.GUIDE_1_NPC.spawn(cfg().GUIDE_1_POINTS().value().getFirst().pos().toLocation());
         npc.setVisibleByDefault(false);
         p.showEntity(Crux.getMainPlugin(), npc);
         var goal = CruxGoalUtil.getGoal(npc, GuidePathGoal.class);
@@ -97,85 +109,25 @@ public class FirstGuideProgression implements GuideProgression{
         });
 
         goal.setUser(p);
-        goal.setDialog(cfg().GUIDE_1_DIALOG().value());
+        //goal.setDialog(cfg().GUIDE_1_DIALOG().value());
         goal.setPath(GoalPath.goalPath(nodes));
     }
 
-    /*protected int lastPathIndex = 0;
+    @Override
+    public void onLoaded(Player p) {
+        GuideProgression.super.onLoaded(p);
+        if(npc != null) return;
+        setupNPC(p);
+    }
 
-    public WorldPosition findNearestPos(Location loc) {
-        List<WorldPosition> points = cfg().GUIDE_1_POINTS().valueOr(List.of());
-        if (points.isEmpty()) return null;
-
-        double reachRadius = 2.5;
-        double reachRadiusSq = reachRadius * reachRadius;
-
-        // Make sure we're in the right world
-        Key worldKey = loc.getWorld().key();
-        points = points.stream().filter(p -> p.worldKey().equals(worldKey)).toList();
-        if (points.isEmpty()) return null;
-
-        // Safety clamp lastPathIndex to list bounds
-        if (lastPathIndex >= points.size()) lastPathIndex = points.size() - 1;
-        if (lastPathIndex < 0) lastPathIndex = 0;
-
-        // Current active target
-        WorldPosition current = points.get(lastPathIndex);
-        double distSq = current.toLocation().distanceSquared(loc);
-
-        // If player reached or passed the current point
-        if (distSq <= reachRadiusSq) {
-            // Advance until we find the next *unreached* point
-            while (lastPathIndex + 1 < points.size()) {
-                WorldPosition next = points.get(lastPathIndex + 1);
-                if (next.toLocation().distanceSquared(loc) > reachRadiusSq) {
-                    lastPathIndex++;
-                    return next;
-                }
-                lastPathIndex++;
-            }
-            // Path finished
-            return null;
-        }
-
-        // If player is too far (skipped ahead or got lost)
-        // Detect if they're closer to a *future* point — allows recovery without pathfinding
-        double currentDistSq = distSq;
-        for (int i = lastPathIndex + 1; i < points.size(); i++) {
-            double d = points.get(i).toLocation().distanceSquared(loc);
-            if (d < currentDistSq) {
-                // Player has skipped ahead — snap to this index
-                lastPathIndex = i;
-                return (i + 1 < points.size()) ? points.get(i + 1) : null;
-            }
-        }
-
-        // Otherwise, keep targeting the current one
-        return current;
-    }*/
-
-
-    /*public WorldPosition findNearestPos(Location loc){
-        List<WorldPosition> points = cfg().GUIDE_1_POINTS().valueOr(List.of());
-        if (points.isEmpty()) return null;
-
-        WorldPosition nearest = null;
-        double nearestDistSq = Double.MAX_VALUE;
-
-        for (WorldPosition pos : points) {
-            if(!pos.worldKey().equals(loc.getWorld().key())) continue;
-
-            Location pointLoc = pos.toLocation();
-            double distSq = pointLoc.distanceSquared(loc);
-
-            if (distSq < nearestDistSq) {
-                nearestDistSq = distSq;
-                nearest = pos;
-            }
-        }
-
-        return nearest;
-    }*/
+    protected Player p;
+    @Override
+    public void onStart(Player p, GuideHolder holder) {
+        this.p = p;
+        GuideProgression.super.onStart(p, holder);
+        WorldPosition spawn = cfg().GUIDE_1_SPAWN().value();
+        p.teleport(spawn.toLocation());
+    }
 
     @Override
     public void onTick(Player p) {
@@ -185,7 +137,8 @@ public class FirstGuideProgression implements GuideProgression{
 
         GuidePoint nearest = CruxCollection.getLast(cfg().GUIDE_1_POINTS().value());
         if(nearest != null){
-            List<Location> path = new GuidePathfinder(p).findPath(p.getLocation(), nearest.pos().toLocation(), 0.5D, 20);
+            List<Location> path = new GuidePathfinder(p).findPath(p.getLocation(), nearest.pos().toLocation(), 0.5D,
+                cfg().GUIDE_1_MAX_PARTICLE_POINTS().value().value().intValue());
             TrailRenderer.renderTrail(p, path);
         }
 
@@ -196,6 +149,7 @@ public class FirstGuideProgression implements GuideProgression{
     protected Key fallenMeteorWorld;
     protected BlockPos fallenMeteorLocation;
     protected long fallenMeteorWorldCreatedAt;
+    protected boolean enteredResourceOverworld;
 
     public BlockPos getFallenMeteorLocation() {
         return fallenMeteorLocation;
@@ -304,6 +258,23 @@ public class FirstGuideProgression implements GuideProgression{
             cfg.DEATH_GUIDE_PARTICLE_SHIFT(),
             Particle.FLAME
         ).setStarted();
+    }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+        Player p = event.getPlayer();
+        if(!p.equals(this.p)) return;
+        if(!hasEnteredResourceOverworld()) return;
+        event.setCancelled(true);
+        Lang.GUIDE_1_CANNOT_USE_COMMANDS.use(p);
+    }
+
+    public boolean hasEnteredResourceOverworld() {
+        return enteredResourceOverworld;
+    }
+
+    public void setEnteredResourceOverworld(boolean enteredResourceOverworld) {
+        this.enteredResourceOverworld = enteredResourceOverworld;
     }
 
     @NotNull

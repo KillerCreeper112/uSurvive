@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.guide.listener;
 
+import io.papermc.paper.event.player.PlayerClientLoadedWorldEvent;
 import io.papermc.paper.event.player.PlayerInventorySlotChangeEvent;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.entity.memory.EntityMemory;
@@ -40,6 +41,7 @@ import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.util.AdvanceUtil;
 import killercreepr.usurvive.core.world.USurviveWorldTypes;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -66,6 +68,14 @@ public class GuideListener implements Listener {
         GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE = guideResourceWorldStructureChunkDistance;
     }
 
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerClientLoadedWorld(PlayerClientLoadedWorldEvent event) {
+        Player p = event.getPlayer();
+        GuideHolder holder = getOrCreateGuideHolder(p);
+        if(holder == null) return;
+        holder.onLoaded(p);
+    }
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
@@ -73,7 +83,7 @@ public class GuideListener implements Listener {
         if(holder == null) return;
         if(holder.isCompleted(FirstGuideProgression.KEY)) return;
 
-        new BukkitRunnable(){
+        /*new BukkitRunnable(){
             byte tick = 0;
             @Override
             public void run() {
@@ -88,7 +98,7 @@ public class GuideListener implements Listener {
                     Lang.GUIDE_FIRST_START.use(p);
                 }
             }
-        }.runTaskTimer(Crux.getMainPlugin(), 0L, 1L);
+        }.runTaskTimer(Crux.getMainPlugin(), 0L, 1L);*/
     }
 
 
@@ -112,6 +122,9 @@ public class GuideListener implements Listener {
         Player p = event.getPlayer();
         GuideHolder holder = getGuideHolder(p);
         if(holder == null) return;
+        if(holder.getCurrentProgression() != null){
+            holder.getCurrentProgression().onPlayerChangedWorldEvent(p, event);
+        }
         if(holder.getCurrentProgression() instanceof Guide21Progression){
             CruxWorld world = CruxCore.core().worldManager().getWorld(event.getFrom().key());
             if(world != null){
@@ -288,6 +301,19 @@ public class GuideListener implements Listener {
         StructureGenerator gen = GUIDE_RESOURCE_WORLD_STRUCTURE.value();
         if(gen == null) return;
 
+        GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
+        if(holder == null){
+            manager.revokeAdvancement(who, event.getAdvancement());
+            p.sendMessage(Component.text("An error occurred. Contact developer. CODE 7391"));
+            return;
+        }
+        if(!(holder.getCurrentProgression() instanceof FirstGuideProgression first)){
+            p.sendMessage(Component.text("An error occurred. Contact developer. CODE 73933-1"));
+            Crux.logError(p.getName() + "' guide progression is " + holder.getCurrentProgression() + " but expected FirstGuideProgression 73933-1");
+            return;
+        }
+        first.setEnteredResourceOverworld(true);
+
         GuideStructurePlacer placer = new GuideStructurePlacer(p.getChunk(), 48, gen, GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE.value(),
             () -> p.isOnline() && p.getWorld().equals(world));
         placer.placeStructure().orTimeout(90L, TimeUnit.SECONDS).whenComplete((loc, throwable) ->{
@@ -312,12 +338,11 @@ public class GuideListener implements Listener {
                 return;
             }
 
-            GuideHolder holder = EntityMemory.getOrCreateDataHolder(p, GuideHolder.class, mem -> new GuideHolder((PlayerMemory) mem));
-            if(holder == null || !holder.hasProgressOrNull(FirstGuideProgression.class)){
-                p.sendMessage(Component.text("An error occurred. Contact developer. CODE 7391"));
+            if(!(holder.getCurrentProgression() instanceof FirstGuideProgression prog)){
+                p.sendMessage(Component.text("An error occurred. Contact developer. CODE 73933"));
+                Crux.logError(p.getName() + "' guide progression is " + holder.getCurrentProgression() + " but expected FirstGuideProgression 73933");
                 return;
             }
-            FirstGuideProgression prog = new FirstGuideProgression();
             prog.setFallenMeteorLocation(loc);
             holder.setCurrentProgression(prog);
             Lang.GUIDE_STRUCTURE_PLACED.use(p);
@@ -332,6 +357,10 @@ public class GuideListener implements Listener {
         if(holder.getCurrentProgression() instanceof EleventhGuideProgression){
             holder.completeAndClearCurrent();
         }
+    }
+
+    public GuideHolder getOrCreateGuideHolder(Player p){
+        return EntityMemory.getOrCreateDataHolder(p, GuideHolder.class);
     }
 
     public GuideHolder getGuideHolder(Player p){
