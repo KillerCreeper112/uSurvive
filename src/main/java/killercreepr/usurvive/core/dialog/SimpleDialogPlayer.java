@@ -1,6 +1,7 @@
 package killercreepr.usurvive.core.dialog;
 
 import killercreepr.crux.core.Crux;
+import killercreepr.usurvive.api.dialog.DialogAction;
 import killercreepr.usurvive.api.dialog.DialogLine;
 import killercreepr.usurvive.api.dialog.DialogPlayer;
 import org.bukkit.entity.Player;
@@ -25,6 +26,12 @@ public class SimpleDialogPlayer implements DialogPlayer {
         this.dialogSplitIndex = 0;
         this.currentDialogLine = null;
         this.currentDialogSplit = null;
+        this.lastLine = null;
+    }
+
+    @Override
+    public void onNextLine(DialogLine line) {
+
     }
 
     protected int dialogWaitTime = 10;
@@ -110,6 +117,7 @@ public class SimpleDialogPlayer implements DialogPlayer {
         this.dialogWaitTime = time;
     }
 
+    protected DialogLine lastLine;
     public String getToSendDialogLine() {
         if (currentDialogLine == null) {
             if (dialogIndex >= dialog.size()) {
@@ -119,9 +127,18 @@ public class SimpleDialogPlayer implements DialogPlayer {
 
             // Split into characters including formatting tags
             var line = dialog.get(dialogIndex);
-            line.actions().forEach(action ->{
-                action.onStart(this);
-            });
+            if(!line.equals(lastLine)){
+                onNextLine(line);
+                line.actions().forEach(action ->{
+                    action.onStart(this);
+                });
+                //if any actions change the wait time
+                if(dialogWait > 0){
+                    lastLine = line;
+                    return null;
+                }
+            }
+            lastLine = line;
             List<String> split = getDialogStrings();
             if(split.isEmpty()){
                 return null;
@@ -139,6 +156,14 @@ public class SimpleDialogPlayer implements DialogPlayer {
             dialogSplitIndex++;
 
             if (dialogSplitIndex >= currentDialogSplit.length) {
+                if(i != 0){
+                    currentDialogLine = builder.toString();
+                    var line = dialog.get(dialogIndex);
+                    line.actions().forEach(action ->{
+                        action.onSpeak(this);
+                    });
+                    return currentDialogLine;
+                }
                 var line = dialog.get(dialogIndex);
 
                 dialogSplitIndex = 0;

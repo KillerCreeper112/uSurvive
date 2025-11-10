@@ -7,6 +7,8 @@ import java.util.List;
 public interface DialogPlayer {
     List<DialogLine> getDialog();
     void setDialog(List<DialogLine> dialog);
+    void onNextLine(DialogLine line);
+
     void onDialogDisplay(Player user);
     void dialogTick(Player... user);
     String getCurrentDialogLine();

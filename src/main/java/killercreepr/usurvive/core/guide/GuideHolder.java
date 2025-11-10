@@ -132,7 +132,7 @@ public class GuideHolder extends PlayerTickedDataHolder implements AutoSavable, 
     public void load() {
         DataFile cfg = getSaveFile(false);
         if(cfg == null){
-            setCurrentProgression(new FirstGuideProgression());
+            if(currentProgression == null) setCurrentProgression(new FirstGuideProgression());
             return;
         }
         setCurrentProgression(cfg.deserialize("current_progression", GuideProgression.class));

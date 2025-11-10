@@ -97,6 +97,20 @@ public class StandardPlayerSettings {
         )
     ));
 
+    public static final PlayerSetting DIALOG_SPEED = register(new SimplePlayerSetting(
+        Crux.key("dialog_speed"), StandardPlayerSettingSelections.NORMAL,
+        List.of(
+            StandardPlayerSettingSelections.SLOW,
+            StandardPlayerSettingSelections.NORMAL,
+            StandardPlayerSettingSelections.FAST
+        ),
+        Map.of(
+            StandardPlayerSettingSelections.SLOW, "Slow dialog speed",
+            StandardPlayerSettingSelections.NORMAL, "Normal dialog speed",
+            StandardPlayerSettingSelections.FAST, "Fast dialog speed"
+        )
+    ));
+
     public static PlayerSetting register(PlayerSetting s){
         return USurviveRegistries.PLAYER_SETTING.register(s);
     }

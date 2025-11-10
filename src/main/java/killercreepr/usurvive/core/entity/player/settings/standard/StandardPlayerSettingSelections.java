@@ -28,6 +28,10 @@ public class StandardPlayerSettingSelections {
     public static final PlayerSettingSelection SIMPLE = register(PlayerSettingSelection.playerSettingSelection(Crux.key("simple")));
     public static final PlayerSettingSelection ADVANCED = register(PlayerSettingSelection.playerSettingSelection(Crux.key("advanced")));
 
+    public static final PlayerSettingSelection SLOW = register(PlayerSettingSelection.playerSettingSelection(Crux.key("slow")));
+    public static final PlayerSettingSelection FAST = register(PlayerSettingSelection.playerSettingSelection(Crux.key("fast")));
+    public static final PlayerSettingSelection INSTANT = register(PlayerSettingSelection.playerSettingSelection(Crux.key("instant")));
+
     public static PlayerSettingSelection register(PlayerSettingSelection s){
         return USurviveRegistries.PLAYER_SETTING_SELECTION.register(s);
     }

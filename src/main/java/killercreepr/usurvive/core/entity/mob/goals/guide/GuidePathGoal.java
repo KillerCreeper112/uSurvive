@@ -7,10 +7,16 @@ import killercreepr.cruxentities.api.entity.mob.goal.PathTargetMobGoal;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
+import killercreepr.usurvive.api.dialog.DialogLine;
 import killercreepr.usurvive.api.dialog.DialogPlayer;
 import killercreepr.usurvive.api.entity.mob.goal.path.GuidePathGoalNode;
+import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
+import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsManager;
 import killercreepr.usurvive.api.guide.GuidePoint;
+import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.dialog.SimpleDialogPlayer;
+import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettingSelections;
+import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettings;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.*;
@@ -117,6 +123,24 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
         public void onDialogDisplaySpeaking(Player user) {
             super.onDialogDisplaySpeaking(user);
             user.playSound(user, Sound.BLOCK_WOOD_BREAK, .5f, 1f);
+        }
+
+        @Override
+        public void onNextLine(DialogLine line) {
+            super.onNextLine(line);
+            if(user == null) return;
+
+            var holder = USurvivePlugin.inst().getPlayerSettingsManager().getPlayerSettingsHolder(user);
+            if(holder == null) return;
+            var setting = holder.getSetting(StandardPlayerSettings.DIALOG_SPEED);
+            int speed;
+            if(setting == StandardPlayerSettingSelections.SLOW){
+                speed = 1;
+            }else if(setting == StandardPlayerSettingSelections.FAST){
+                speed = 3;
+            }else speed = 2;
+            if(getDialogSplitSpeed() == speed) return;
+            setDialogSplitSpeed(speed);
         }
     };
 
