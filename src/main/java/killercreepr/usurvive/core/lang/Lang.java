@@ -346,6 +346,17 @@ public class Lang {
             .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
+    public static final Msg GUIDE_DIALOG_LINE_COMPLETE = create(
+        Communicator.builder()
+            .chat(List.of(
+                "",
+                "",
+                "<dark_aqua><latinfont:Guide>",
+                "<yellow><line>"
+            ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 0.5f, 1.8f))
+            .build()
+    );
     public static final Msg GUIDE_STRUCTURE_NEARBY = create(
         Communicator.builder()
             .chat(List.of(

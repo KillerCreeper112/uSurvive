@@ -1,16 +1,16 @@
 package killercreepr.usurvive.core.dialog;
 
 import killercreepr.crux.core.Crux;
-import killercreepr.usurvive.api.dialog.DialogAction;
 import killercreepr.usurvive.api.dialog.DialogLine;
 import killercreepr.usurvive.api.dialog.DialogPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class SimpleDialogPlayer implements DialogPlayer {
+    protected Queue<List<DialogLine>> queue = new LinkedList<>();
+
     protected List<DialogLine> dialog;
     protected String currentDialogLine;
     protected String[] currentDialogSplit;
@@ -34,10 +34,22 @@ public class SimpleDialogPlayer implements DialogPlayer {
 
     }
 
+    @Override
+    public void queueDialog(List<DialogLine> dialog) {
+        if(dialog == null || dialog.isEmpty()) return;
+        if(this.dialog == null){
+            setDialog(dialog);
+        }else queue.add(dialog);
+    }
+
     protected int dialogWaitTime = 10;
     protected int dialogIndex = 0;
     protected int dialogSplitIndex = 0;
     protected int dialogSplitSpeed = 1;
+
+    public void onDialogCompleteLine(DialogLine line){
+
+    }
 
     public void onDialogDisplay(Player user){
         if(currentDialogLine == null) return;
@@ -64,7 +76,11 @@ public class SimpleDialogPlayer implements DialogPlayer {
     }
 
     public void dialogTick(Player... user){
-        if(dialog == null) return;
+        if(dialog == null){
+            if(queue.isEmpty()) return;
+            setDialog(queue.poll());
+            return;
+        }
         onDialogTicking(user);
         if(dialogWait > 0){
             dialogWait--;
@@ -77,9 +93,6 @@ public class SimpleDialogPlayer implements DialogPlayer {
         String dialog = getToSendDialogLine();
         if(dialog == null) return;
         onDialogSpeaking(user);
-        /*user.sendActionBar(Crux.format().deserialize(dialog));
-        user.playSound(user, Sound.BLOCK_WOOD_BREAK, .5f, 1f);
-        updateText(dialogDisplay(), dialog);*/
     }
 
     @Override
@@ -165,6 +178,7 @@ public class SimpleDialogPlayer implements DialogPlayer {
                     return currentDialogLine;
                 }
                 var line = dialog.get(dialogIndex);
+                onDialogCompleteLine(line);
 
                 dialogSplitIndex = 0;
                 dialogIndex++;

@@ -19,11 +19,14 @@ import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.core.component.CruxWorldsComponents;
+import killercreepr.usurvive.api.dialog.DialogPlayer;
 import killercreepr.usurvive.api.entity.mob.goal.path.GuidePathGoalNode;
 import killercreepr.usurvive.api.guide.GuidePoint;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.advancement.objective.GuideDiscoverMeteorObjective;
 import killercreepr.usurvive.core.data.DeathGuide;
+import killercreepr.usurvive.core.dialog.SimpleDialogPlayer;
+import killercreepr.usurvive.core.dialog.UserDialogPlayer;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.mob.goals.guide.GuidePathGoal;
 import killercreepr.usurvive.core.guide.GuideAdvances;
@@ -93,6 +96,7 @@ public class FirstGuideProgression implements GuideProgression, Listener {
     }
 
     protected Mob npc;
+    protected UserDialogPlayer dialogPlayer = new UserDialogPlayer();
 
     public void setupNPC(Player p){
         npc = (Mob) USurviveMobs.GUIDE_1_NPC.spawn(cfg().GUIDE_1_POINTS().value().getFirst().pos().toLocation());
@@ -115,9 +119,15 @@ public class FirstGuideProgression implements GuideProgression, Listener {
 
     @Override
     public void onLoaded(Player p) {
+        dialogPlayer.setUser(p);
         GuideProgression.super.onLoaded(p);
+        if(hasEnteredResourceOverworld()) return;
         if(npc != null) return;
         setupNPC(p);
+    }
+
+    public UserDialogPlayer getDialogPlayer() {
+        return dialogPlayer;
     }
 
     protected Player p;
@@ -131,15 +141,18 @@ public class FirstGuideProgression implements GuideProgression, Listener {
 
     @Override
     public void onTick(Player p) {
+        dialogPlayer.dialogTick(p);
         int every = 30;//cfg.DEATH_GUIDE_TICK_EVERY().value().intValue();
         if(every==0) return;
         if(Crux.getCurrentTick() % every != 0) return;
 
-        GuidePoint nearest = CruxCollection.getLast(cfg().GUIDE_1_POINTS().value());
-        if(nearest != null){
-            List<Location> path = new GuidePathfinder(p).findPath(p.getLocation(), nearest.pos().toLocation(), 0.5D,
-                cfg().GUIDE_1_MAX_PARTICLE_POINTS().value().value().intValue());
-            TrailRenderer.renderTrail(p, path);
+        if(!hasEnteredResourceOverworld() && p.getWorld().key().equals(cfg().GUIDE_1_POINTS().value().getFirst().pos().worldKey())){
+            GuidePoint nearest = CruxCollection.getLast(cfg().GUIDE_1_POINTS().value());
+            if(nearest != null){
+                List<Location> path = new GuidePathfinder(p).findPath(p.getLocation(), nearest.pos().toLocation(), 0.5D,
+                    cfg().GUIDE_1_MAX_PARTICLE_POINTS().value().value().intValue());
+                TrailRenderer.renderTrail(p, path);
+            }
         }
 
         tickDistance(p);
@@ -149,7 +162,7 @@ public class FirstGuideProgression implements GuideProgression, Listener {
     protected Key fallenMeteorWorld;
     protected BlockPos fallenMeteorLocation;
     protected long fallenMeteorWorldCreatedAt;
-    protected boolean enteredResourceOverworld;
+    protected boolean enteredResourceOverworld = false;
 
     public BlockPos getFallenMeteorLocation() {
         return fallenMeteorLocation;
@@ -249,7 +262,7 @@ public class FirstGuideProgression implements GuideProgression, Listener {
 
         var cfg = USurvivePlugin.inst().values();
         //Location startingPoint = CruxLoc.shiftToward(p.getEyeLocation(), pos, 1D);
-        new DeathGuide(p, p.getLocation().add(0, p.getHeight()/2, 0), pos,
+        new DeathGuide(p, p.getLocation().add(0, p.getHeight()*.65, 0), pos,
             cfg.DEATH_GUIDE_PARTICLE_AMOUNT().value().intValue(),
             cfg.DEATH_GUIDE_PARTICLE_SHIFT_START(),
             cfg.DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER(),
@@ -264,7 +277,7 @@ public class FirstGuideProgression implements GuideProgression, Listener {
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         Player p = event.getPlayer();
         if(!p.equals(this.p)) return;
-        if(!hasEnteredResourceOverworld()) return;
+        if(hasEnteredResourceOverworld()) return;
         event.setCancelled(true);
         Lang.GUIDE_1_CANNOT_USE_COMMANDS.use(p);
     }
@@ -273,7 +286,15 @@ public class FirstGuideProgression implements GuideProgression, Listener {
         return enteredResourceOverworld;
     }
 
+    public void onEnteredResourceOverworld(){
+        if(p == null) return;
+        dialogPlayer.queueDialog(cfg().GUIDE_1_ENTER_RESOURCE_WORLD_DIALOG().value());
+    }
+
     public void setEnteredResourceOverworld(boolean enteredResourceOverworld) {
+        if(!this.enteredResourceOverworld && enteredResourceOverworld){
+            onEnteredResourceOverworld();
+        }
         this.enteredResourceOverworld = enteredResourceOverworld;
     }
 

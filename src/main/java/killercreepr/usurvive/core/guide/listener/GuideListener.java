@@ -4,7 +4,6 @@ import io.papermc.paper.event.player.PlayerClientLoadedWorldEvent;
 import io.papermc.paper.event.player.PlayerInventorySlotChangeEvent;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.entity.memory.EntityMemory;
-import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
@@ -41,7 +40,6 @@ import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.util.AdvanceUtil;
 import killercreepr.usurvive.core.world.USurviveWorldTypes;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -51,7 +49,6 @@ import org.bukkit.event.inventory.SmithItemEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -344,7 +341,7 @@ public class GuideListener implements Listener {
                 return;
             }
             prog.setFallenMeteorLocation(loc);
-            holder.setCurrentProgression(prog);
+            prog.getDialogPlayer().queueDialog(prog.cfg().GUIDE_1_STRUCTURE_SUCCESS_DIALOG().value());
             Lang.GUIDE_STRUCTURE_PLACED.use(p);
         });
     }

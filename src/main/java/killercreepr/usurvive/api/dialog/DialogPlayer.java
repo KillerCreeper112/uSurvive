@@ -9,6 +9,8 @@ public interface DialogPlayer {
     void setDialog(List<DialogLine> dialog);
     void onNextLine(DialogLine line);
 
+    void queueDialog(List<DialogLine> dialog);
+
     void onDialogDisplay(Player user);
     void dialogTick(Player... user);
     String getCurrentDialogLine();

@@ -10,11 +10,10 @@ import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.usurvive.api.dialog.DialogLine;
 import killercreepr.usurvive.api.dialog.DialogPlayer;
 import killercreepr.usurvive.api.entity.mob.goal.path.GuidePathGoalNode;
-import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
-import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsManager;
 import killercreepr.usurvive.api.guide.GuidePoint;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.dialog.SimpleDialogPlayer;
+import killercreepr.usurvive.core.dialog.UserDialogPlayer;
 import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettingSelections;
 import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettings;
 import org.bukkit.Location;
@@ -41,6 +40,9 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
 
     public void setUser(Player user) {
         this.user = user;
+        if(dialogPlayer instanceof UserDialogPlayer i){
+            i.setUser(user);
+        }
     }
 
     protected TextDisplay dialogDisplay;
@@ -106,10 +108,11 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
 
     protected Player user;
     protected GuidePoint guidePoint;
-    protected DialogPlayer dialogPlayer = new SimpleDialogPlayer(){
+    protected DialogPlayer dialogPlayer = new UserDialogPlayer(){
         @Override
         public void onDialogTicking(Player... user) {
             super.onDialogTicking(user);
+            if(!user[0].getWorld().equals(mob.getWorld())) return;
             mob.lookAt(user[0]);
         }
 
@@ -145,13 +148,20 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
     };
 
     public void dialogTick(){
+        if(user == null) return;
         dialogPlayer.dialogTick(user);
     }
 
     @Override
+    protected void onRemovalOrDeath(boolean died) {
+        super.onRemovalOrDeath(died);
+        if(dialogDisplay != null) dialogDisplay.remove();
+    }
+
+    @Override
     public void tick() {
+        dialogTick();
         if(dialogPlayer.getDialog() != null){
-            dialogTick();
             if(dialogDisplay != null){
                 dialogDisplay.teleport(getDialogLocation());
             }
@@ -173,7 +183,7 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
                 nextGuidePoint = null;
 
 
-                if(guidePoint.dialog() != null) dialogPlayer.setDialog(guidePoint.dialog());
+                if(guidePoint.dialog() != null) dialogPlayer.queueDialog(guidePoint.dialog());
                 return;
             }
         }
