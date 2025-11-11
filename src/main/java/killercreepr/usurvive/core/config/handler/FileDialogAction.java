@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.config.handler;
 
+import com.google.common.reflect.TypeToken;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
@@ -10,12 +11,15 @@ import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
 import killercreepr.cruxconfig.config.common.handler.GetterFileHandler;
 import killercreepr.usurvive.api.dialog.DialogAction;
+import killercreepr.usurvive.core.dialog.action.ConsoleCommandDialogAction;
+import killercreepr.usurvive.core.dialog.action.PlayerCommandDialogAction;
 import killercreepr.usurvive.core.dialog.action.SetWaitingDialogAction;
 import killercreepr.usurvive.core.dialog.action.SoundDialogAction;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Map;
 
 public class FileDialogAction implements FileObjectHandler<DialogAction> {
@@ -47,6 +51,36 @@ public class FileDialogAction implements FileObjectHandler<DialogAction> {
                     r.deserializeFromFile(CreateSound.class, o.get("start")),
                     r.deserializeFromFile(CreateSound.class, o.get("end")),
                     r.deserializeFromFile(CreateSound.class, o.get("speak"))
+                );
+            }
+        })
+        .put(Crux.key("player_commands"), new GetterFileHandler<>() {
+            @Nullable
+            @Override
+            public DialogAction deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement ele) {
+                var r = ctx.getRegistry();
+                if(!(ele instanceof FileObject o)){
+                    return null;
+                }
+                return new PlayerCommandDialogAction(
+                    r.deserializeFromFile(new TypeToken<List<String>>(){}.getType(), o.get("start")),
+                    r.deserializeFromFile(new TypeToken<List<String>>(){}.getType(), o.get("end")),
+                    r.deserializeFromFile(new TypeToken<List<String>>(){}.getType(), o.get("speak"))
+                );
+            }
+        })
+        .put(Crux.key("console_commands"), new GetterFileHandler<>() {
+            @Nullable
+            @Override
+            public DialogAction deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement ele) {
+                var r = ctx.getRegistry();
+                if(!(ele instanceof FileObject o)){
+                    return null;
+                }
+                return new ConsoleCommandDialogAction(
+                    r.deserializeFromFile(new TypeToken<List<String>>(){}.getType(), o.get("start")),
+                    r.deserializeFromFile(new TypeToken<List<String>>(){}.getType(), o.get("end")),
+                    r.deserializeFromFile(new TypeToken<List<String>>(){}.getType(), o.get("speak"))
                 );
             }
         })
