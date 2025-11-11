@@ -44,6 +44,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,7 +52,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FirstGuideProgression implements GuideProgression, Listener {
+public class FirstGuideProgression extends GenericGuideProgression implements Listener {
     public static final Key KEY = Crux.key("first");
 
     public static class Loader implements FileObjectHandler<FirstGuideProgression>{
@@ -87,14 +88,14 @@ public class FirstGuideProgression implements GuideProgression, Listener {
 
     @Override
     public void onMemoryUnload(Player p) {
-        GuideProgression.super.onMemoryUnload(p);
+        super.onMemoryUnload(p);
         if(npc != null){
             npc.remove();
+            npc = null;
         }
     }
 
     protected Mob npc;
-    protected UserDialogPlayer dialogPlayer = new UserDialogPlayer();
 
     public void setupNPC(Player p){
         npc = (Mob) USurviveMobs.GUIDE_1_NPC.spawn(cfg().GUIDE_1_POINTS().value().getFirst().pos().toLocation());
@@ -117,29 +118,25 @@ public class FirstGuideProgression implements GuideProgression, Listener {
 
     @Override
     public void onLoaded(Player p) {
-        dialogPlayer.addAudience(p);
-        GuideProgression.super.onLoaded(p);
+        super.onLoaded(p);
         if(hasEnteredResourceOverworld()) return;
         if(npc != null) return;
         setupNPC(p);
-    }
-
-    public UserDialogPlayer getDialogPlayer() {
-        return dialogPlayer;
     }
 
     protected Player p;
     @Override
     public void onStart(Player p, GuideHolder holder) {
         this.p = p;
-        GuideProgression.super.onStart(p, holder);
+        super.onStart(p, holder);
+        if(hasEnteredResourceOverworld() || !p.getWorld().key().equals(cfg().GUIDE_1_POINTS().value().getFirst().pos().worldKey())) return;
         WorldPosition spawn = cfg().GUIDE_1_SPAWN().value();
         p.teleport(spawn.toLocation());
     }
 
     @Override
     public void onTick(Player p) {
-        if(Crux.getCurrentTick() % 2 == 0) dialogPlayer.dialogTick(p);
+        super.onTick(p);
         int every = 30;//cfg.DEATH_GUIDE_TICK_EVERY().value().intValue();
         if(every==0) return;
         if(Crux.getCurrentTick() % every != 0) return;
@@ -270,6 +267,17 @@ public class FirstGuideProgression implements GuideProgression, Listener {
             Particle.FLAME
         ).setStarted();
     }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
+        Player p = event.getPlayer();
+        if(!p.equals(this.p)) return;
+        if(npc != null){
+            npc.remove();
+            npc = null;
+        }
+    }
+
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {

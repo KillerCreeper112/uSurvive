@@ -1,18 +1,22 @@
 package killercreepr.usurvive.core.guide.progression;
 
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.usurvive.api.guide.GuidePoint;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.block.ActiveOrbitConduit;
 import killercreepr.usurvive.core.data.DeathGuide;
 import killercreepr.usurvive.core.guide.GuideHolder;
 import killercreepr.usurvive.core.guide.GuideUtil;
+import killercreepr.usurvive.core.guide.particle.TrailRenderer;
 import killercreepr.usurvive.core.lang.Lang;
+import killercreepr.usurvive.core.pathfinding.GuidePathfinder;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -22,7 +26,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class SecondGuideProgression implements GuideProgression{
+import java.util.List;
+
+public class SecondGuideProgression extends GenericGuideProgression{
     public static final Key KEY = Crux.key("second");
 
     public static class Loader implements FileObjectHandler<SecondGuideProgression>{
@@ -83,6 +89,7 @@ public class SecondGuideProgression implements GuideProgression{
 
     @Override
     public void onTick(Player p) {
+        super.onTick(p);
         int every = 30;
         if(every==0) return;
         if(Crux.getCurrentTick() % every != 0) return;
@@ -106,7 +113,11 @@ public class SecondGuideProgression implements GuideProgression{
         if(!conduit.getWorld().equals(p.getWorld())) return;
         Location pos =  conduit.getLocation();
 
-        var cfg = USurvivePlugin.inst().values();
+        List<Location> path = new GuidePathfinder(p).findPath(p.getLocation(), pos, 0.5D,
+            cfg().GUIDE_1_MAX_PARTICLE_POINTS().value().value().intValue());
+        TrailRenderer.renderTrail(p, path);
+
+        /*var cfg = USurvivePlugin.inst().values();
         new DeathGuide(p, p.getLocation().add(0, p.getHeight()/2, 0), pos,
             cfg.DEATH_GUIDE_PARTICLE_AMOUNT().value().intValue(),
             cfg.DEATH_GUIDE_PARTICLE_SHIFT_START(),
@@ -115,7 +126,7 @@ public class SecondGuideProgression implements GuideProgression{
             cfg.DEATH_GUIDE_PARTICLE_OFFSET_SIDE(),
             cfg.DEATH_GUIDE_PARTICLE_SHIFT(),
             Particle.FLAME
-        ).setStarted();
+        ).setStarted();*/
     }
 
     @NotNull
