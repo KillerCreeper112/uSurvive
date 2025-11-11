@@ -1,6 +1,5 @@
 package killercreepr.usurvive.core.entity.memory;
 
-import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -18,7 +17,6 @@ import killercreepr.usurvive.core.entity.mob.goals.NPCControlGoal;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;

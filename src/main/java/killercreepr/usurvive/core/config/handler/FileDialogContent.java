@@ -1,0 +1,56 @@
+package killercreepr.usurvive.core.config.handler;
+
+import com.google.common.reflect.TypeToken;
+import killercreepr.crux.api.data.DataExchange;
+import killercreepr.cruxconfig.config.common.FileContext;
+import killercreepr.cruxconfig.config.common.element.FileElement;
+import killercreepr.cruxconfig.config.common.element.FileObject;
+import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
+import killercreepr.usurvive.api.dialog.DialogAction;
+import killercreepr.usurvive.api.dialog.DialogContent;
+import killercreepr.usurvive.api.dialog.DialogLine;
+import killercreepr.usurvive.api.dialog.Dialoger;
+import killercreepr.usurvive.core.dialog.SimpleDialogContent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+
+public class FileDialogContent implements FileObjectHandler<DialogContent> {
+    @Override
+    public @NotNull FileElement serializeToFile(@NotNull FileContext<?> ctx, @NotNull DialogContent guidePoint) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public DialogContent deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement ele) {
+        var r = ctx.getRegistry();
+        if(!(ele instanceof FileObject o)){
+            return new SimpleDialogContent(r.deserializeFromFile(new TypeToken<List<DialogLine>>(){}.getType(), ele), List.of(), DataExchange.empty());
+        }
+
+        Dialoger parent = r.deserializeFromFile(Dialoger.class, o.get("parent"));
+        DataExchange info = DataExchange.empty();
+        if(parent != null){
+            info = info.append(parent.info());
+        }
+        info = info.append(
+            r.deserializeFromFileOrDefault(
+                DataExchange.class,
+                o.get("info"), DataExchange.empty()
+            )
+        );
+        return new SimpleDialogContent(
+            r.deserializeFromFileOrDefault(
+                new TypeToken<List<DialogLine>>(){}.getType(),
+                o.get("dialog"), List.of()
+            ),
+            r.deserializeFromFileOrDefault(
+                new TypeToken<List<DialogAction>>(){}.getType(),
+                o.get("actions"), List.of()
+            ),
+            info
+        );
+    }
+}

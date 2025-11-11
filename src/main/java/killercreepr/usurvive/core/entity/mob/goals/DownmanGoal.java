@@ -16,7 +16,6 @@ import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.modelengine.entity.mob.goal.CruxMobModeledGoal;
 import killercreepr.usurvive.core.entity.mob.goals.data.MobAttackHandler;
 import killercreepr.usurvive.core.entity.mob.goals.data.StrongMobAttack;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -35,7 +34,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 public class DownmanGoal extends CruxMobModeledGoal implements Listener {
     public static final GoalKey<Mob> KEY = GoalKey.of(Mob.class, Crux.key("downman"));

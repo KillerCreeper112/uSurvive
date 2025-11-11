@@ -12,7 +12,6 @@ import killercreepr.usurvive.api.dialog.DialogPlayer;
 import killercreepr.usurvive.api.entity.mob.goal.path.GuidePathGoalNode;
 import killercreepr.usurvive.api.guide.GuidePoint;
 import killercreepr.usurvive.core.USurvivePlugin;
-import killercreepr.usurvive.core.dialog.SimpleDialogPlayer;
 import killercreepr.usurvive.core.dialog.UserDialogPlayer;
 import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettingSelections;
 import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettings;
@@ -22,7 +21,9 @@ import org.bukkit.entity.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
 public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
     protected final PathTargetMobGoal pathTarget = PathTargetMobGoal.pathTargetMobGoal(this, 1);
@@ -39,9 +40,12 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
     }
 
     public void setUser(Player user) {
+        if(this.user != null){
+            dialogPlayer.removeAudience(this.user);
+        }
         this.user = user;
-        if(dialogPlayer instanceof UserDialogPlayer i){
-            i.setUser(user);
+        if(user != null){
+            dialogPlayer.addAudience(user);
         }
     }
 
@@ -129,8 +133,8 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
         }
 
         @Override
-        public void onNextLine(DialogLine line) {
-            super.onNextLine(line);
+        public void onDialogStartLine(DialogLine line) {
+            super.onDialogStartLine(line);
             if(user == null) return;
 
             var holder = USurvivePlugin.inst().getPlayerSettingsManager().getPlayerSettingsHolder(user);

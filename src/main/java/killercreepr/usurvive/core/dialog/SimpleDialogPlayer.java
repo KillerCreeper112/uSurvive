@@ -1,26 +1,28 @@
 package killercreepr.usurvive.core.dialog;
 
 import killercreepr.crux.core.Crux;
+import killercreepr.usurvive.api.dialog.DialogContent;
 import killercreepr.usurvive.api.dialog.DialogLine;
 import killercreepr.usurvive.api.dialog.DialogPlayer;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 public class SimpleDialogPlayer implements DialogPlayer {
-    protected Queue<List<DialogLine>> queue = new LinkedList<>();
-
-    protected List<DialogLine> dialog;
+    protected Queue<DialogContent> queue = new LinkedList<>();
+    protected DialogContent dialog;
     protected String currentDialogLine;
     protected String[] currentDialogSplit;
     protected int dialogWait;
+    protected final Collection<Audience> audience = new HashSet<>();
 
-    public List<DialogLine> getDialog() {
+    public DialogContent getDialog() {
         return dialog;
     }
 
-    public void setDialog(List<DialogLine> dialog) {
+    public void setDialog(DialogContent dialog) {
         this.dialog = dialog;
         this.dialogIndex = 0;
         this.dialogSplitIndex = 0;
@@ -30,13 +32,13 @@ public class SimpleDialogPlayer implements DialogPlayer {
     }
 
     @Override
-    public void onNextLine(DialogLine line) {
+    public void onDialogStartLine(DialogLine line) {
 
     }
 
     @Override
-    public void queueDialog(List<DialogLine> dialog) {
-        if(dialog == null || dialog.isEmpty()) return;
+    public void queueDialog(DialogContent dialog) {
+        if(dialog == null) return;
         if(this.dialog == null){
             setDialog(dialog);
         }else queue.add(dialog);
@@ -130,18 +132,41 @@ public class SimpleDialogPlayer implements DialogPlayer {
         this.dialogWaitTime = time;
     }
 
+    @Override
+    public void addAudience(Audience... audiences) {
+        this.audience.addAll(Arrays.asList(audiences));
+    }
+
+    @Override
+    public void removeAudience(Audience... audiences) {
+        this.audience.removeAll(Arrays.asList(audiences));
+    }
+
+    @Override
+    public boolean hasAudience(Audience audience) {
+        return this.audience.contains(audience);
+    }
+
+    @Override
+    public Collection<Audience> audience() {
+        return audience;
+    }
+
     protected DialogLine lastLine;
     public String getToSendDialogLine() {
         if (currentDialogLine == null) {
-            if (dialogIndex >= dialog.size()) {
+            if (dialogIndex >= dialog.dialog().size()) {
                 setDialog(null);
                 return null;
             }
 
             // Split into characters including formatting tags
-            var line = dialog.get(dialogIndex);
+            var line = dialog.dialog().get(dialogIndex);
             if(!line.equals(lastLine)){
-                onNextLine(line);
+                this.onDialogStartLine(line);
+                dialog.actions().forEach(action ->{
+                    action.onStart(this);
+                });
                 line.actions().forEach(action ->{
                     action.onStart(this);
                 });
@@ -171,13 +196,16 @@ public class SimpleDialogPlayer implements DialogPlayer {
             if (dialogSplitIndex >= currentDialogSplit.length) {
                 if(i != 0){
                     currentDialogLine = builder.toString();
-                    var line = dialog.get(dialogIndex);
+                    var line = dialog.dialog().get(dialogIndex);
+                    dialog.actions().forEach(action ->{
+                        action.onSpeak(this);
+                    });
                     line.actions().forEach(action ->{
                         action.onSpeak(this);
                     });
                     return currentDialogLine;
                 }
-                var line = dialog.get(dialogIndex);
+                var line = dialog.dialog().get(dialogIndex);
                 onDialogCompleteLine(line);
 
                 dialogSplitIndex = 0;
@@ -185,6 +213,9 @@ public class SimpleDialogPlayer implements DialogPlayer {
                 currentDialogLine = null;
                 dialogWait = getDialogWaitTime();
 
+                dialog.actions().forEach(action ->{
+                    action.onEnd(this);
+                });
                 line.actions().forEach(action ->{
                     action.onEnd(this);
                 });
@@ -212,7 +243,10 @@ public class SimpleDialogPlayer implements DialogPlayer {
         }
         //dialogWait = 1;
         currentDialogLine = builder.toString();
-        var line = dialog.get(dialogIndex);
+        var line = dialog.dialog().get(dialogIndex);
+        dialog.actions().forEach(action ->{
+            action.onSpeak(this);
+        });
         line.actions().forEach(action ->{
             action.onSpeak(this);
         });
@@ -221,7 +255,7 @@ public class SimpleDialogPlayer implements DialogPlayer {
 
     @NotNull
     private List<String> getDialogStrings() {
-        String line = dialog.get(dialogIndex).line();
+        String line = dialog.dialog().get(dialogIndex).line();
         if(line == null) return List.of();
         List<String> split = new ArrayList<>();
         for (int i = 0; i < line.length(); ) {

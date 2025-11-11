@@ -3,7 +3,6 @@ package killercreepr.usurvive.core.config;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.data.Reloadable;
 import killercreepr.crux.api.data.WorldLocation;
-import killercreepr.crux.api.data.WorldPosition;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.plugin.CruxPlugin;
 import killercreepr.cruxconfig.config.bukkit.file.Cfg;
@@ -11,7 +10,7 @@ import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
 import killercreepr.cruxconfig.config.bukkit.value.CfgValue;
 import killercreepr.cruxconfig.config.bukkit.value.CommonValue;
 import killercreepr.cruxconfig.config.bukkit.value.NumCfgValue;
-import killercreepr.usurvive.api.dialog.DialogLine;
+import killercreepr.usurvive.api.dialog.DialogContent;
 import killercreepr.usurvive.api.guide.GuidePoint;
 import killercreepr.usurvive.api.values.GuideCfg;
 import org.bukkit.plugin.Plugin;
@@ -25,8 +24,8 @@ public class GuideConfig extends Cfg implements GuideCfg, Reloadable {
     public final CfgValue<WorldLocation> GUIDE_1_SPAWN = new CommonValue<>(){};
     public final CfgValue<List<GuidePoint>> GUIDE_1_POINTS = new CommonValue<>(){};
     public final NumCfgValue GUIDE_1_MAX_PARTICLE_POINTS = new NumCfgValue(NumberProvider.constant(15));
-    public final CfgValue<List<DialogLine>> GUIDE_1_ENTER_RESOURCE_WORLD_DIALOG = new CommonValue<>(){};
-    public final CfgValue<List<DialogLine>> GUIDE_1_STRUCTURE_SUCCESS_DIALOG = new CommonValue<>(){};
+    public final CfgValue<DialogContent> GUIDE_1_ENTER_RESOURCE_WORLD_DIALOG = new CommonValue<>(){};
+    public final CfgValue<DialogContent> GUIDE_1_STRUCTURE_SUCCESS_DIALOG = new CommonValue<>(){};
 
     public GuideConfig(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
@@ -56,12 +55,12 @@ public class GuideConfig extends Cfg implements GuideCfg, Reloadable {
     }
 
     @Override
-    public Holder<List<DialogLine>> GUIDE_1_ENTER_RESOURCE_WORLD_DIALOG() {
+    public Holder<DialogContent> GUIDE_1_ENTER_RESOURCE_WORLD_DIALOG() {
         return GUIDE_1_ENTER_RESOURCE_WORLD_DIALOG;
     }
 
     @Override
-    public Holder<List<DialogLine>> GUIDE_1_STRUCTURE_SUCCESS_DIALOG() {
+    public Holder<DialogContent> GUIDE_1_STRUCTURE_SUCCESS_DIALOG() {
         return GUIDE_1_STRUCTURE_SUCCESS_DIALOG;
     }
 

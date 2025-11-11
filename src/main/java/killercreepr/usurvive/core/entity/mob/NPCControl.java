@@ -7,7 +7,6 @@ import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.usurvive.core.entity.mob.goals.NPCControlGoal;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
-import net.minecraft.world.entity.ai.control.LookControl;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;

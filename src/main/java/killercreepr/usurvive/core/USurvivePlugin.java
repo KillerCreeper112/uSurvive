@@ -9,6 +9,7 @@ import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.entity.memory.PlayerMemory;
 import killercreepr.crux.api.item.dynamic.DynamicItem;
+import killercreepr.crux.api.loot.item.ItemLootTable;
 import killercreepr.crux.api.registry.KeyedRegistry;
 import killercreepr.crux.api.registry.Registry;
 import killercreepr.crux.api.text.tags.container.MergedTagContainer;
@@ -28,11 +29,14 @@ import killercreepr.cruxadvancements.core.config.loader.CfgCrazyAdvancementManag
 import killercreepr.cruxadvancements.core.config.loader.GlobalAdvancementManagerCfgLoader;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.handler.BukkitCfgHandlers;
+import killercreepr.cruxconfig.config.bukkit.loader.CfgLoader;
+import killercreepr.cruxconfig.config.bukkit.loader.LootTableLoader;
 import killercreepr.cruxconfig.config.bukkit.standard.SimpleLangConfig;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
+import killercreepr.cruxconfig.config.common.file.DataFile;
 import killercreepr.cruxconfig.config.common.handler.AutoFileHandler;
 import killercreepr.cruxconfig.config.common.handler.AutoFileOptions;
 import killercreepr.cruxconfig.config.common.handler.FileConvertHandler;
@@ -72,8 +76,7 @@ import killercreepr.cruxworlds.api.world.manager.CruxWorldManager;
 import killercreepr.cruxworlds.api.world.module.WorldModule;
 import killercreepr.cruxworlds.core.registries.WorldsRegistries;
 import killercreepr.usurvive.api.death.DeathManager;
-import killercreepr.usurvive.api.dialog.DialogAction;
-import killercreepr.usurvive.api.dialog.DialogLine;
+import killercreepr.usurvive.api.dialog.*;
 import killercreepr.usurvive.api.entity.player.UPlayerManager;
 import killercreepr.usurvive.api.entity.player.data.RandomTPData;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
@@ -157,6 +160,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.logging.Level;
 
 public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider {
     private static USurvivePlugin instance;
@@ -377,7 +381,10 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new PlayerSettingTags(),
             new ItemStackTags(),
             new WorldTags(),
-            new SleeperHolderTags()
+            new SleeperHolderTags(),
+            new DialogContentLinePairTags(),
+            new DialogLineTags(),
+            new DialogContentTags()
         ));
         if(getServer().getPluginManager().getPlugin("CruxClaims") != null){
             Crux.tags().register(new ClaimProfileTags());
@@ -726,6 +733,29 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     @Override
     public void reload() {
         super.reload();
+        new CfgLoader() {
+            public void loadConfiguration(@NotNull DataFile cfg, @Nullable String path) {
+                Dialoger table;
+                if (path == null) {
+                    table = cfg.deserialize("", Dialoger.class);
+                } else {
+                    FileElement var5 = cfg.getRoot();
+                    if (!(var5 instanceof FileObject root)) {
+                        return;
+                    }
+
+                    table = FileDialoger.FILE_DIALOGER.deserializeFromFile(new FileContext<>(cfg.fileRegistry()), root, Crux.key(path));
+                }
+
+                if (table instanceof KeyedDialoger keyed) {
+                    Crux.log(Level.INFO, "Registered dialoger: " + keyed.key());
+                    USurviveRegistries.DIALOGER.register(keyed);
+                }
+            }
+        }.loadConfiguration(
+            new CruxFolder(this, "npcs").file()
+        );
+
         values.reload(this);
         langProvider.reload(this);
 
@@ -757,6 +787,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         registry.registerFileHandler(GuidePoint.class, new FileGuidePoint());
         registry.registerFileHandler(DialogLine.class, new FileDialogLine());
         registry.registerFileHandler(DialogAction.class, new FileDialogAction());
+        registry.registerFileHandler(DialogContent.class, new FileDialogContent());
+        registry.registerFileHandler(Dialoger.class, FileDialoger.FILE_DIALOGER);
     }
 
     public void registerCfgHandlers(@NotNull FileRegistry registry){

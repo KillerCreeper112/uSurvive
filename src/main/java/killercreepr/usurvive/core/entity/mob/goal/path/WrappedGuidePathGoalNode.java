@@ -1,6 +1,5 @@
 package killercreepr.usurvive.core.entity.mob.goal.path;
 
-import killercreepr.cruxentities.api.entity.mob.goal.PathTargetMobGoal;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
 import killercreepr.usurvive.api.entity.mob.goal.path.GuidePathGoalNode;
 import killercreepr.usurvive.api.guide.GuidePoint;

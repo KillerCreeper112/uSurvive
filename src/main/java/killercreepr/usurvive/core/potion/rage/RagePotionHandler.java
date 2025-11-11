@@ -3,7 +3,6 @@ package killercreepr.usurvive.core.potion.rage;
 import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import com.destroystokyo.paper.event.player.PlayerStartSpectatingEntityEvent;
 import com.destroystokyo.paper.event.player.PlayerStopSpectatingEntityEvent;
-import killercreepr.crux.core.util.CruxEntityUtil;
 import killercreepr.usurvive.core.potion.RagePotion;
 import org.bukkit.Location;
 import org.bukkit.Particle;

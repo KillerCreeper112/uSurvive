@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.config.handler;
 
+import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.data.util.MapBuilder;
@@ -10,6 +11,7 @@ import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
 import killercreepr.cruxconfig.config.common.handler.GetterFileHandler;
 import killercreepr.usurvive.api.dialog.DialogAction;
 import killercreepr.usurvive.core.dialog.action.SetWaitingDialogAction;
+import killercreepr.usurvive.core.dialog.action.SoundDialogAction;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +32,21 @@ public class FileDialogAction implements FileObjectHandler<DialogAction> {
                     r.deserializeFromFile(NumberProvider.class, o.get("start")),
                     r.deserializeFromFile(NumberProvider.class, o.get("end")),
                     r.deserializeFromFile(NumberProvider.class, o.get("speak"))
+                );
+            }
+        })
+        .put(Crux.key("sound"), new GetterFileHandler<>() {
+            @Nullable
+            @Override
+            public DialogAction deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement ele) {
+                var r = ctx.getRegistry();
+                if(!(ele instanceof FileObject o)){
+                    return null;
+                }
+                return new SoundDialogAction(
+                    r.deserializeFromFile(CreateSound.class, o.get("start")),
+                    r.deserializeFromFile(CreateSound.class, o.get("end")),
+                    r.deserializeFromFile(CreateSound.class, o.get("speak"))
                 );
             }
         })

@@ -19,13 +19,11 @@ import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.core.component.CruxWorldsComponents;
-import killercreepr.usurvive.api.dialog.DialogPlayer;
 import killercreepr.usurvive.api.entity.mob.goal.path.GuidePathGoalNode;
 import killercreepr.usurvive.api.guide.GuidePoint;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.advancement.objective.GuideDiscoverMeteorObjective;
 import killercreepr.usurvive.core.data.DeathGuide;
-import killercreepr.usurvive.core.dialog.SimpleDialogPlayer;
 import killercreepr.usurvive.core.dialog.UserDialogPlayer;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.mob.goals.guide.GuidePathGoal;
@@ -119,7 +117,7 @@ public class FirstGuideProgression implements GuideProgression, Listener {
 
     @Override
     public void onLoaded(Player p) {
-        dialogPlayer.setUser(p);
+        dialogPlayer.addAudience(p);
         GuideProgression.super.onLoaded(p);
         if(hasEnteredResourceOverworld()) return;
         if(npc != null) return;

@@ -2,6 +2,7 @@ package killercreepr.usurvive.core.guide.particle;
 
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
+
 import java.util.ArrayList;
 import java.util.List;
 

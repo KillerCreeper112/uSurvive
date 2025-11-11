@@ -1,6 +1,7 @@
 package killercreepr.usurvive.core.config.handler;
 
 import com.google.common.reflect.TypeToken;
+import killercreepr.crux.api.data.DataExchange;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
@@ -26,13 +27,17 @@ public class FileDialogLine implements FileObjectHandler<DialogLine> {
     public DialogLine deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement ele) {
         var r = ctx.getRegistry();
         if(!(ele instanceof FileObject o)){
-            return new SimpleDialogLine(ele.getAsString(), List.of());
+            return new SimpleDialogLine(ele.getAsString(), List.of(), DataExchange.empty());
         }
         return new SimpleDialogLine(
             r.deserializeFromFile(String.class, o.get("line")),
             r.deserializeFromFileOrDefault(
                 new TypeToken<List<DialogAction>>(){}.getType(),
                 o.get("actions"), List.of()
+            ),
+            r.deserializeFromFileOrDefault(
+                DataExchange.class,
+                o.get("info"), DataExchange.empty()
             )
         );
     }

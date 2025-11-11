@@ -11,7 +11,6 @@ import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.usurvive.core.USurvivePlugin;
-import killercreepr.usurvive.core.config.Config;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;

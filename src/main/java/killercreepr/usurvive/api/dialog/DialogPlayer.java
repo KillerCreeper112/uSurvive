@@ -1,15 +1,16 @@
 package killercreepr.usurvive.api.dialog;
 
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.entity.Player;
 
-import java.util.List;
+import java.util.Collection;
 
 public interface DialogPlayer {
-    List<DialogLine> getDialog();
-    void setDialog(List<DialogLine> dialog);
-    void onNextLine(DialogLine line);
+    DialogContent getDialog();
+    void setDialog(DialogContent dialog);
+    void onDialogStartLine(DialogLine line);
 
-    void queueDialog(List<DialogLine> dialog);
+    void queueDialog(DialogContent dialog);
 
     void onDialogDisplay(Player user);
     void dialogTick(Player... user);
@@ -24,4 +25,8 @@ public interface DialogPlayer {
 
     void setDialogWaitTime(int time);
 
+    void addAudience(Audience... audiences);
+    void removeAudience(Audience... audiences);
+    boolean hasAudience(Audience audience);
+    Collection<Audience> audience();
 }

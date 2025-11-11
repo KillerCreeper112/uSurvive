@@ -3,10 +3,7 @@ package killercreepr.usurvive.core.menu.module;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.item.CruxItem;
-import killercreepr.crux.api.text.context.InputContext;
 import killercreepr.crux.api.text.context.TextParserContext;
-import killercreepr.crux.api.text.tags.TagParser;
-import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
@@ -15,7 +12,6 @@ import killercreepr.cruxadvancements.api.advancement.CruxAdvancement;
 import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementManager;
 import killercreepr.cruxadvancements.core.advancement.progress.NumberAdvancementProgress;
 import killercreepr.cruxadvancements.core.registries.AdvancementRegistries;
-import killercreepr.cruxadvancements.core.tags.CruxAdvancementIconTags;
 import killercreepr.cruxadvancements.crazy.advancement.CrazyAdvancementDisplay;
 import killercreepr.cruxadvancements.crazy.advancement.CrazyAdvancementManager;
 import killercreepr.cruxmenus.api.menu.CfgMenu;
@@ -29,7 +25,6 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -39,11 +34,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 public class ActiveAdvancementShowcaseModule extends SimpleActiveMenuModuled {
     protected final @NotNull AdvancementShowcaseModule module;

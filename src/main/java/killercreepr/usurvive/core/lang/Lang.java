@@ -346,13 +346,12 @@ public class Lang {
             .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
-    public static final Msg GUIDE_DIALOG_LINE_COMPLETE = create(
+    public static final Msg DIALOG_LINE_COMPLETE = create(
         Communicator.builder()
             .chat(List.of(
                 "",
-                "",
-                "<dark_aqua><latinfont:Guide>",
-                "<yellow><line>"
+                "{add_if:\"IF(<dialog_pair_has_info:prefix> == true, true, false)\":\"<dark_aqua><dialog_pair_info:prefix_color:\"\"><latinfont:\"<dialog_pair_info:prefix>\">\"}",
+                "<yellow><dialog_pair_info:line_color:\"\"><dialog_pair_line/line>"
             ))
             .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 0.5f, 1.8f))
             .build()

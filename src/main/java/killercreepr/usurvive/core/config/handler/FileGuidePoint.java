@@ -1,17 +1,14 @@
 package killercreepr.usurvive.core.config.handler;
 
-import com.google.common.reflect.TypeToken;
 import killercreepr.crux.api.data.WorldPosition;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
-import killercreepr.usurvive.api.dialog.DialogLine;
+import killercreepr.usurvive.api.dialog.DialogContent;
 import killercreepr.usurvive.api.guide.GuidePoint;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class FileGuidePoint implements FileObjectHandler<GuidePoint> {
     @Override
@@ -36,7 +33,7 @@ public class FileGuidePoint implements FileObjectHandler<GuidePoint> {
         if(pos == null) return null;
         return GuidePoint.guidePoint(
             pos,
-            r.deserializeFromFile(new TypeToken<List<DialogLine>>(){}.getType(), o.get("dialog")),
+            r.deserializeFromFile(DialogContent.class, o.get("content")),
             r.deserializeFromFileOrDefault(Boolean.class, o.get("keep_moving"), false)
         );
     }
