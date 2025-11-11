@@ -35,6 +35,19 @@ public class DialogContentLinePairTags implements SimpleObjectTag<DialogContentL
                     });
                 }) + "";
             }))
+            .add(Tag.string("info_closed", (args, ctx) ->{
+                String id = ctx.deserializeString(args.get(0));
+                String got = object.getSecond().info().getWithDefault(id, info ->{
+                    return object.getFirst().info().getWithDefault(id, subInfo ->{
+                        return args.has(1) ? ctx.deserializeString(args.get(1)) : "";
+                    });
+                }) + "";
+                if(got.isBlank()) return got;
+                if(got.startsWith("<")){
+                    return "</" + got.substring(1);
+                }
+                return got;
+            }))
             .add(Tag.string("has_info", (args, ctx) ->{
                 String id = ctx.deserializeString(args.get(0));
                 return (object.getSecond().info().getWithDefault(id, info ->{

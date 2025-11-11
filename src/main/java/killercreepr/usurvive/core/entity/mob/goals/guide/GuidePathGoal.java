@@ -141,7 +141,10 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
             super.onDialogTicking();
             if(user == null) return;
             if(!user.getWorld().equals(mob.getWorld())) return;
-            mob.lookAt(user);
+
+            if(getInfoOrDefault("look_at", (info, id) -> info.info().getOrDefault(id, Boolean.class, !mob.getPathfinder().hasPath()), !mob.getPathfinder().hasPath())){
+                mob.lookAt(user);
+            }
         }
 
         @Override
@@ -179,13 +182,22 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
             if(dialogDisplay != null){
                 dialogDisplay.teleport(getDialogLocation());
             }
-            if(guidePoint == null || !guidePoint.keepMoving()) return;
+            if(!dialogPlayer.getInfoOrDefault("keep_moving",
+                (holder, id) -> holder.info().getOrDefault(id, Boolean.class, false),
+                false)){
+                return;
+            }
+            if(nextGuidePoint != null){
+                if(nextGuidePoint.dialog() != null) return;
+            }
+            /*if(guidePoint == null) return;
 
             if(nextGuidePoint != null){
-                if(this.pathTarget.hasPath() && this.pathTarget.getPath().getNextNode() instanceof GuidePathGoalNode n && n.guidePoint().dialog() != null){
-                    return;
-                }
+                //if(nextGuidePoint.dialog() != null) return;
             }
+            if(this.pathTarget.hasPath() && this.pathTarget.getPath().getNextNode() instanceof GuidePathGoalNode n && n.guidePoint().dialog() != null){
+                return;
+            }*/
         }else{
             if(dialogDisplay != null){
                 dialogDisplay.remove();

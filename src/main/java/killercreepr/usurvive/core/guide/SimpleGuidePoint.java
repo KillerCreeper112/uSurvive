@@ -7,12 +7,10 @@ import killercreepr.usurvive.api.guide.GuidePoint;
 public class SimpleGuidePoint implements GuidePoint {
     protected final WorldPosition pos;
     protected final DialogContent dialog;
-    protected final boolean keepMoving;
 
-    public SimpleGuidePoint(WorldPosition pos, DialogContent dialog, boolean keepMoving) {
+    public SimpleGuidePoint(WorldPosition pos, DialogContent dialog) {
         this.pos = pos;
         this.dialog = dialog;
-        this.keepMoving = keepMoving;
     }
 
     @Override
@@ -23,10 +21,5 @@ public class SimpleGuidePoint implements GuidePoint {
     @Override
     public DialogContent dialog() {
         return dialog;
-    }
-
-    @Override
-    public boolean keepMoving() {
-        return keepMoving;
     }
 }

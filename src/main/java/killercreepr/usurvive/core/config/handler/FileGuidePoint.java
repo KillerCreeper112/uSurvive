@@ -33,8 +33,7 @@ public class FileGuidePoint implements FileObjectHandler<GuidePoint> {
         if(pos == null) return null;
         return GuidePoint.guidePoint(
             pos,
-            r.deserializeFromFile(DialogContent.class, o.get("content")),
-            r.deserializeFromFileOrDefault(Boolean.class, o.get("keep_moving"), false)
+            r.deserializeFromFile(DialogContent.class, o.get("content"))
         );
     }
 }

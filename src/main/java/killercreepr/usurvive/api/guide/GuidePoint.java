@@ -5,11 +5,8 @@ import killercreepr.usurvive.api.dialog.DialogContent;
 import killercreepr.usurvive.core.guide.SimpleGuidePoint;
 
 public interface GuidePoint {
-    static GuidePoint guidePoint(WorldPosition pos, DialogContent dialog, boolean keepMoving){
-        return new SimpleGuidePoint(pos, dialog, keepMoving);
-    }
     static GuidePoint guidePoint(WorldPosition pos, DialogContent dialog){
-        return guidePoint(pos, dialog, false);
+        return new SimpleGuidePoint(pos, dialog);
     }
     static GuidePoint guidePoint(WorldPosition pos){
         return guidePoint(pos, null);
@@ -17,5 +14,4 @@ public interface GuidePoint {
 
     WorldPosition pos();
     DialogContent dialog();
-    boolean keepMoving();
 }

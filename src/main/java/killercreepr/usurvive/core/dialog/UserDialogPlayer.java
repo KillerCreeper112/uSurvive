@@ -13,7 +13,7 @@ public class UserDialogPlayer extends SimpleDialogPlayer{
     public void onDialogCompleteLine(DialogLine line) {
         super.onDialogCompleteLine(line);
         audience().forEach(audience ->{
-            Lang.DIALOG_LINE_COMPLETE.use(audience, parserContext(audience));
+            Lang.DIALOG_LINE_COMPLETE.use(audience, audienceParserContext(audience));
         });
     }
 

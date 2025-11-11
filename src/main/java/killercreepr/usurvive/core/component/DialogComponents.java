@@ -9,6 +9,7 @@ import java.util.function.UnaryOperator;
 public class DialogComponents {
     public static void register(){};
     public static final DataComponentType<Boolean> PRE_PARSE_FOR_SINGLE_AUDIENCE = register("pre_parse_for_single_audience", builder -> builder);
+    public static final DataComponentType<Boolean> PRE_PARSE_GLOBAL = register("pre_parse_global", builder -> builder);
 
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key("dialog/" + id), builderOperator.apply(DataComponentType.builder()).build());

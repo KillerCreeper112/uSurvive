@@ -1,17 +1,23 @@
 package killercreepr.usurvive.api.dialog;
 
 import killercreepr.crux.api.component.DataComponentHandler;
+import killercreepr.crux.api.data.holder.DataInfoHolder;
 import killercreepr.crux.api.text.context.TextParserContext;
 import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import net.kyori.adventure.audience.Audience;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public interface DialogPlayer {
     DialogContent getDialog();
     void setDialog(DialogContent dialog);
     void onDialogStartLine(DialogLine line);
     DataComponentHandler components();
+
+    <T> T getInfo(String id, BiFunction<DataInfoHolder, String, T> function);
+    <T> T getInfoOrDefault(String id, BiFunction<DataInfoHolder, String, T> function, T fallback);
 
     String currentDialogLineFor(Audience audience);
 
@@ -36,6 +42,8 @@ public interface DialogPlayer {
     void removeAudience(Audience... audiences);
     boolean hasAudience(Audience audience);
     Collection<Audience> audience();
-    TextParserContext parserContext(Audience audience);
-    MergedTagContainer buildDynamicTags(Audience audience);
+    TextParserContext parserContext();
+    TextParserContext audienceParserContext(Audience audience);
+    MergedTagContainer buildAudienceDynamicTags(Audience audience);
+    MergedTagContainer buildDynamicTags();
 }
