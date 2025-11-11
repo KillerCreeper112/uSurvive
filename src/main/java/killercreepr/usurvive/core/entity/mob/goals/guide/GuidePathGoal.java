@@ -148,30 +148,6 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
             super.onDialogSpeaking(user);
             updateText(dialogDisplay(), currentDialogLine);
         }
-
-        @Override
-        public void onDialogDisplaySpeaking(Player user) {
-            super.onDialogDisplaySpeaking(user);
-            user.playSound(user, Sound.BLOCK_WOOD_BREAK, .5f, 1f);
-        }
-
-        @Override
-        public void onDialogStartLine(DialogLine line) {
-            super.onDialogStartLine(line);
-            if(user == null) return;
-
-            var holder = USurvivePlugin.inst().getPlayerSettingsManager().getPlayerSettingsHolder(user);
-            if(holder == null) return;
-            var setting = holder.getSetting(StandardPlayerSettings.DIALOG_SPEED);
-            int speed;
-            if(setting == StandardPlayerSettingSelections.SLOW){
-                speed = 1;
-            }else if(setting == StandardPlayerSettingSelections.FAST){
-                speed = 3;
-            }else speed = 2;
-            if(getDialogSplitSpeed() == speed) return;
-            setDialogSplitSpeed(speed);
-        }
     };
 
     public void dialogTick(){

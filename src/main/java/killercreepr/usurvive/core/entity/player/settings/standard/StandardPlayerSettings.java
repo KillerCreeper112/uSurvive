@@ -111,6 +111,20 @@ public class StandardPlayerSettings {
         )
     ));
 
+    public static final PlayerSetting DIALOG_WAIT_TIME = register(new SimplePlayerSetting(
+        Crux.key("dialog_wait_time"), StandardPlayerSettingSelections.NORMAL,
+        List.of(
+            StandardPlayerSettingSelections.SLOW,
+            StandardPlayerSettingSelections.NORMAL,
+            StandardPlayerSettingSelections.FAST
+        ),
+        Map.of(
+            StandardPlayerSettingSelections.SLOW, "Slow dialog waiting time",
+            StandardPlayerSettingSelections.NORMAL, "Normal dialog waiting time",
+            StandardPlayerSettingSelections.FAST, "Fast dialog waiting time"
+        )
+    ));
+
     public static PlayerSetting register(PlayerSetting s){
         return USurviveRegistries.PLAYER_SETTING.register(s);
     }

@@ -14,6 +14,7 @@ import killercreepr.usurvive.core.dialog.SimpleDialogContent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FileDialogContent implements FileObjectHandler<DialogContent> {
@@ -41,15 +42,24 @@ public class FileDialogContent implements FileObjectHandler<DialogContent> {
                 o.get("info"), DataExchange.empty()
             )
         );
+
+        List<DialogAction> actions = new ArrayList<>();
+        if(parent != null){
+            actions.addAll(parent.actions());
+        }
+        actions.addAll(
+            r.deserializeFromFileOrDefault(
+                new TypeToken<List<DialogAction>>(){}.getType(),
+                o.get("actions"), List.of()
+            )
+        );
+
         return new SimpleDialogContent(
             r.deserializeFromFileOrDefault(
                 new TypeToken<List<DialogLine>>(){}.getType(),
                 o.get("dialog"), List.of()
             ),
-            r.deserializeFromFileOrDefault(
-                new TypeToken<List<DialogAction>>(){}.getType(),
-                o.get("actions"), List.of()
-            ),
+            actions,
             info
         );
     }
