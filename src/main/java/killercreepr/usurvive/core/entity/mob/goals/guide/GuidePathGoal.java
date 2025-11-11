@@ -148,6 +148,16 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
             super.onDialogSpeaking(user);
             updateText(dialogDisplay(), currentDialogLine);
         }
+
+        @Override
+        public int dialogSplitSpeedValue(int value) {
+            return super.dialogSplitSpeedValue(value) / 2;
+        }
+
+        @Override
+        public int dialogWaitTimeValue(int value) {
+            return super.dialogWaitTimeValue(value) / 2;
+        }
     };
 
     public void dialogTick(){

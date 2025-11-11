@@ -28,20 +28,30 @@ public class UserDialogPlayer extends SimpleDialogPlayer{
         var setting = holder.getSetting(StandardPlayerSettings.DIALOG_SPEED);
         int speed;
         if(setting == StandardPlayerSettingSelections.SLOW){
-            speed = 1;
+            speed = 2;
         }else if(setting == StandardPlayerSettingSelections.FAST){
-            speed = 3;
-        }else speed = 2;
+            speed = 6;
+        }else speed = 4;
+        speed = dialogSplitSpeedValue(speed);
         if(getDialogSplitSpeed() != speed) setDialogSplitSpeed(speed);
 
 
         setting = holder.getSetting(StandardPlayerSettings.DIALOG_WAIT_TIME);
         if(setting == StandardPlayerSettingSelections.SLOW){
-            speed = 18;
+            speed = 36;
         }else if(setting == StandardPlayerSettingSelections.FAST){
-            speed = 8;
-        }else speed = 12;
+            speed = 16;
+        }else speed = 24;
+        speed = dialogWaitTimeValue(speed);
 
         if(getDialogWaitTime() != speed) setDialogWaitTime(speed);
+    }
+
+    public int dialogSplitSpeedValue(int value){
+        return value;
+    }
+
+    public int dialogWaitTimeValue(int value){
+        return value;
     }
 }
