@@ -139,7 +139,7 @@ public class FirstGuideProgression implements GuideProgression, Listener {
 
     @Override
     public void onTick(Player p) {
-        dialogPlayer.dialogTick(p);
+        if(Crux.getCurrentTick() % 2 == 0) dialogPlayer.dialogTick(p);
         int every = 30;//cfg.DEATH_GUIDE_TICK_EVERY().value().intValue();
         if(every==0) return;
         if(Crux.getCurrentTick() % every != 0) return;

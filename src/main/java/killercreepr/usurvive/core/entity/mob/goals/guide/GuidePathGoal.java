@@ -151,12 +151,12 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
 
         @Override
         public int dialogSplitSpeedValue(int value) {
-            return super.dialogSplitSpeedValue(value) / 2;
+            return Math.round(super.dialogSplitSpeedValue(value) / 2f);
         }
 
         @Override
         public int dialogWaitTimeValue(int value) {
-            return super.dialogWaitTimeValue(value) / 2;
+            return Math.round(super.dialogWaitTimeValue(value) / 2f);
         }
     };
 

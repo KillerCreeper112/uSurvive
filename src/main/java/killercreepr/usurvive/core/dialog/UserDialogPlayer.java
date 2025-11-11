@@ -28,10 +28,10 @@ public class UserDialogPlayer extends SimpleDialogPlayer{
         var setting = holder.getSetting(StandardPlayerSettings.DIALOG_SPEED);
         int speed;
         if(setting == StandardPlayerSettingSelections.SLOW){
-            speed = 2;
+            speed = 1;
         }else if(setting == StandardPlayerSettingSelections.FAST){
-            speed = 6;
-        }else speed = 4;
+            speed = 3;
+        }else speed = 2;
         speed = dialogSplitSpeedValue(speed);
         if(getDialogSplitSpeed() != speed) setDialogSplitSpeed(speed);
 
