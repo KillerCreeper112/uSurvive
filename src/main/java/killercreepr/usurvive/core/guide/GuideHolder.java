@@ -30,6 +30,7 @@ public class GuideHolder extends PlayerTickedDataHolder implements AutoSavable, 
     public GuideHolder(@NotNull PlayerMemory parent) {
         this(KEY, parent);
     }
+    protected boolean loaded = false;
 
     @Override
     protected void removingFromMemory(@Nullable Player e) {
@@ -58,6 +59,16 @@ public class GuideHolder extends PlayerTickedDataHolder implements AutoSavable, 
         return file.delete();
     }
 
+    @Override
+    public boolean isLoaded() {
+        return loaded;
+    }
+
+    @Override
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
+
     public boolean hasProgressOrNull(Class<? extends GuideProgression> type){
         return currentProgression == null || type.isAssignableFrom(currentProgression.getClass());
     }
@@ -75,11 +86,17 @@ public class GuideHolder extends PlayerTickedDataHolder implements AutoSavable, 
             this.currentProgression.onEnd(parent.value(), this);
         }
         this.currentProgression = currentProgression;
-        if(currentProgression != null) currentProgression.onStart(parent.value(), this);
+        if(currentProgression != null){
+            if(isLoaded()){
+                currentProgression.onLoaded(parent.value());
+            }
+            currentProgression.onStart(parent.value(), this);
+        }
     }
 
     public void onLoaded(Player p){
         if(currentProgression != null) currentProgression.onLoaded(p);
+        setLoaded(true);
     }
 
     protected GuideProgression currentProgression;

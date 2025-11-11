@@ -1,18 +1,21 @@
 package killercreepr.usurvive.core.dialog;
 
+import killercreepr.crux.api.component.DataComponentHandler;
+import killercreepr.crux.api.text.context.TextParserContext;
+import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import killercreepr.crux.api.text.tags.container.TagContainer;
-import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.text.resolver.Tag;
+import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.usurvive.api.dialog.DialogContent;
 import killercreepr.usurvive.api.dialog.DialogLine;
 import killercreepr.usurvive.api.dialog.DialogPlayer;
+import killercreepr.usurvive.core.component.DialogComponents;
 import killercreepr.usurvive.core.lang.Lang;
 import net.kyori.adventure.audience.Audience;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-
+//todo ADD MULTI-PLAYER SUPPORT for TEXT DISPLAYS
 public class SimpleDialogPlayer implements DialogPlayer {
     protected Queue<DialogContent> queue = new LinkedList<>();
     protected DialogContent dialog;
@@ -20,6 +23,8 @@ public class SimpleDialogPlayer implements DialogPlayer {
     protected String[] currentDialogSplit;
     protected int dialogWait;
     protected final Collection<Audience> audience = new HashSet<>();
+    protected final Map<Audience, TextParserContext> cachedContext = new HashMap<>();
+    protected final DataComponentHandler components = new DataComponentHandler.Simple();
 
     public DialogContent getDialog() {
         return dialog;
@@ -32,11 +37,29 @@ public class SimpleDialogPlayer implements DialogPlayer {
         this.currentDialogLine = null;
         this.currentDialogSplit = null;
         this.lastLine = null;
+        this.cachePreParsedIndex = -1;
     }
 
     @Override
     public void onDialogStartLine(DialogLine line) {
 
+    }
+
+    @Override
+    public DataComponentHandler components() {
+        return components;
+    }
+
+    @Override
+    public String currentDialogLineFor(Audience audience) {
+        String currentDialogLine;
+        if(this.currentDialogLine == null){
+            if(dialog != null && dialogIndex < dialog.dialog().size()){
+                currentDialogLine = dialog.dialog().get(dialogIndex).line();
+            }else return null;
+        }else currentDialogLine = this.currentDialogLine;
+        if(cachePreParsedIndex == dialogIndex) return currentDialogLine;
+        return parserContext(audience).deserializeString(currentDialogLine);
     }
 
     @Override
@@ -61,50 +84,48 @@ public class SimpleDialogPlayer implements DialogPlayer {
 
     }
 
-    public void onDialogDisplay(Player user){
+    public void onDialogDisplay(Audience user){
         if(currentDialogLine == null) return;
-        Lang.DIALOG_LINE_DISPLAY.use(user, TagContainer.merged().hook(new DialogContentLinePair(getDialog(), getCurrentLine()))
-            .add(Tag.parsed("line", currentDialogLine)));
-        //user.sendActionBar(Crux.format().deserialize(currentDialogLine));
+        Lang.DIALOG_LINE_DISPLAY.use(user, parserContext(user));
     }
-    public void onDialogDisplaySpeaking(Player user){
+    public void onDialogDisplaySpeaking(Audience user){
         onDialogDisplay(user);
     }
 
-    public void onDialogWaiting(Player... user){
-        for (Player p : user) {
+    public void onDialogWaiting(){
+        for (Audience p : audience()) {
             onDialogDisplay(p);
         }
     }
 
-    public void onDialogSpeaking(Player... user){
-        for (Player p : user) {
+    public void onDialogSpeaking(){
+        for (Audience p : audience()) {
             onDialogDisplaySpeaking(p);
         }
     }
 
-    public void onDialogTicking(Player... user){
+    public void onDialogTicking(){
 
     }
 
-    public void dialogTick(Player... user){
+    public void dialogTick(){
         if(dialog == null){
             if(queue.isEmpty()) return;
             setDialog(queue.poll());
             return;
         }
-        onDialogTicking(user);
+        onDialogTicking();
         if(dialogWait > 0){
             dialogWait--;
             if(currentDialogLine != null){
-                onDialogWaiting(user);
+                onDialogWaiting();
             }
             return;
         }
 
         String dialog = getToSendDialogLine();
         if(dialog == null) return;
-        onDialogSpeaking(user);
+        onDialogSpeaking();
     }
 
     @Override
@@ -150,6 +171,9 @@ public class SimpleDialogPlayer implements DialogPlayer {
     @Override
     public void removeAudience(Audience... audiences) {
         this.audience.removeAll(Arrays.asList(audiences));
+        for (Audience audience1 : audiences) {
+            this.cachedContext.remove(audience1);
+        }
     }
 
     @Override
@@ -160,6 +184,35 @@ public class SimpleDialogPlayer implements DialogPlayer {
     @Override
     public Collection<Audience> audience() {
         return audience;
+    }
+
+    @Override
+    public TextParserContext parserContext(Audience audience) {
+        var got = cachedContext.get(audience);
+        if(got != null){
+            return TextParserContext.wrapped(got, buildDynamicTags(audience));
+        }
+        var ctx = TextParserContext.builder()
+            .tags(TagContainer.merged().hook(audience))
+            .build();
+        //only cache if this is for an audience for this
+        if(hasAudience(audience)) cachedContext.put(audience, ctx);
+        return TextParserContext.wrapped(ctx, buildDynamicTags(audience));
+    }
+
+    @Override
+    public MergedTagContainer buildDynamicTags(Audience audience) {
+        var tags = TagContainer.merged();
+        if(getCurrentLine() != null){
+            tags.hook(getCurrentLine());
+        }
+        if(getDialog() != null && getCurrentLine() != null){
+            tags.hook(new DialogContentLinePair(getDialog(), getCurrentLine()));
+        }
+        if(currentDialogLine != null){
+            tags.add(Tag.parsed("line", currentDialogLine));
+        }
+        return tags;
     }
 
     protected DialogLine lastLine;
@@ -263,10 +316,20 @@ public class SimpleDialogPlayer implements DialogPlayer {
         return currentDialogLine;
     }
 
+    protected int cachePreParsedIndex;
+
     @NotNull
     private List<String> getDialogStrings() {
         String line = dialog.dialog().get(dialogIndex).line();
         if(line == null) return List.of();
+
+        if(components.getOrDefault(DialogComponents.PRE_PARSE_FOR_SINGLE_AUDIENCE, true) && audience.size() == 1){
+            if(dialogIndex != cachePreParsedIndex){
+                line = currentDialogLineFor(CruxCollection.getFirst(audience()));
+                cachePreParsedIndex = dialogIndex;
+            }
+        }
+
         List<String> split = new ArrayList<>();
         for (int i = 0; i < line.length(); ) {
             if (line.charAt(i) == '<') {

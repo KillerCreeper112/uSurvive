@@ -1,6 +1,5 @@
 package killercreepr.usurvive.core.dialog;
 
-import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.usurvive.api.dialog.DialogLine;
 import killercreepr.usurvive.core.USurvivePlugin;
@@ -14,7 +13,7 @@ public class UserDialogPlayer extends SimpleDialogPlayer{
     public void onDialogCompleteLine(DialogLine line) {
         super.onDialogCompleteLine(line);
         audience().forEach(audience ->{
-            Lang.DIALOG_LINE_COMPLETE.use(audience, TagContainer.merged().hook(new DialogContentLinePair(getDialog(), line)));
+            Lang.DIALOG_LINE_COMPLETE.use(audience, parserContext(audience));
         });
     }
 

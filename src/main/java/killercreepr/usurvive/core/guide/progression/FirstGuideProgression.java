@@ -95,6 +95,15 @@ public class FirstGuideProgression extends GenericGuideProgression implements Li
         }
     }
 
+    @Override
+    public void onEnd(Player p, GuideHolder holder) {
+        super.onEnd(p, holder);
+        if(npc != null){
+            npc.remove();
+            npc = null;
+        }
+    }
+
     protected Mob npc;
 
     public void setupNPC(Player p){
@@ -283,6 +292,7 @@ public class FirstGuideProgression extends GenericGuideProgression implements Li
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         Player p = event.getPlayer();
         if(!p.equals(this.p)) return;
+        if(p.hasPermission("usurvive.guide.restrictions.bypass")) return;
         if(hasEnteredResourceOverworld()) return;
         event.setCancelled(true);
         Lang.GUIDE_1_CANNOT_USE_COMMANDS.use(p);

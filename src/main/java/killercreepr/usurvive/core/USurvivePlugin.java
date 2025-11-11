@@ -92,6 +92,7 @@ import killercreepr.usurvive.core.block.USurviveBlocks;
 import killercreepr.usurvive.core.block.component.USurviveBlockComponents;
 import killercreepr.usurvive.core.charm.CharmTypes;
 import killercreepr.usurvive.core.command.*;
+import killercreepr.usurvive.core.component.DialogComponents;
 import killercreepr.usurvive.core.component.USurviveComponents;
 import killercreepr.usurvive.core.config.CfgHook;
 import killercreepr.usurvive.core.config.Config;
@@ -233,6 +234,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         deathManager = new SimpleDeathManager(this, CruxCore.core().worldManager(), playerSettingsManager);
         USurviveMobCategory.register();
         USurviveComponents.register();
+        DialogComponents.register();
         StandardPlayerSettings.register();
         USurviveStats.register();
         USurviveStatistics.register();

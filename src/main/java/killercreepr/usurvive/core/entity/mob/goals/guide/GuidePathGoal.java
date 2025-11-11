@@ -137,16 +137,17 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
     protected GuidePoint guidePoint;
     protected DialogPlayer dialogPlayer = new UserDialogPlayer(){
         @Override
-        public void onDialogTicking(Player... user) {
-            super.onDialogTicking(user);
-            if(!user[0].getWorld().equals(mob.getWorld())) return;
-            mob.lookAt(user[0]);
+        public void onDialogTicking() {
+            super.onDialogTicking();
+            if(user == null) return;
+            if(!user.getWorld().equals(mob.getWorld())) return;
+            mob.lookAt(user);
         }
 
         @Override
-        public void onDialogSpeaking(Player... user) {
-            super.onDialogSpeaking(user);
-            updateText(dialogDisplay(), currentDialogLine);
+        public void onDialogSpeaking() {
+            super.onDialogSpeaking();
+            updateText(dialogDisplay(), currentDialogLineFor(user));
         }
 
         @Override
@@ -162,7 +163,7 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
 
     public void dialogTick(){
         if(user == null) return;
-        dialogPlayer.dialogTick(user);
+        dialogPlayer.dialogTick();
     }
 
     @Override

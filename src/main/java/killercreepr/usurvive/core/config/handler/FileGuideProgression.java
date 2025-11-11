@@ -17,6 +17,11 @@ public class FileGuideProgression implements FileObjectHandler<GuideProgression>
     public void register(Key key, FileObjectHandler<? extends GuideProgression> handler){
         HANDLERS.put(key, handler);
     }
+
+    public Map<Key, FileObjectHandler<? extends GuideProgression>> getHandlers() {
+        return HANDLERS;
+    }
+
     @Override
     public @NotNull FileElement serializeToFile(@NotNull FileContext<?> ctx, @NotNull GuideProgression guide) {
         FileObjectHandler handler = HANDLERS.get(guide.key());

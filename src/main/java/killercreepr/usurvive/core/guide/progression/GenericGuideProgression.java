@@ -18,6 +18,6 @@ public abstract class GenericGuideProgression implements GuideProgression {
 
     @Override
     public void onTick(Player p) {
-        if(Crux.getCurrentTick() % 2 == 0) dialogPlayer.dialogTick(p);
+        if(Crux.getCurrentTick() % 2 == 0) dialogPlayer.dialogTick();
     }
 }

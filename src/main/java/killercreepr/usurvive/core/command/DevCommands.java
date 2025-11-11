@@ -28,19 +28,26 @@ import killercreepr.cruxadvancements.core.registries.AdvancementRegistries;
 import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
+import killercreepr.cruxconfig.config.common.FileContext;
+import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileArray;
 import killercreepr.cruxconfig.config.common.element.FileObject;
+import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxentities.command.argument.CruxEntitiesArguments;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.core.command.arguments.CruxWorldArgument;
 import killercreepr.usurvive.core.USurvivePlugin;
+import killercreepr.usurvive.core.config.CfgHook;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.memory.NPCControllerHolder;
 import killercreepr.usurvive.core.entity.mob.goals.NPCControlGoal;
+import killercreepr.usurvive.core.guide.GuideHolder;
+import killercreepr.usurvive.core.guide.progression.GuideProgression;
 import killercreepr.usurvive.core.listener.EnchantsListener;
 import killercreepr.usurvive.core.listener.MaintenanceListener;
+import killercreepr.usurvive.core.registries.USurviveRegistries;
 import killercreepr.usurvive.core.vanish.VanishHandler;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -107,6 +114,75 @@ public class DevCommands implements Listener {
             commands.register(
                 Commands.literal("udev")
                     .requires(source -> getExecutor(source).hasPermission("usurvive.cmds.udev.use"))
+                    .then(
+                        Commands.literal("guide")
+                            .then(
+                                Commands.literal("progress")
+                                    .then(
+                                        Commands.literal("clear")
+                                            .then(
+                                                Commands.argument("targets", ArgumentTypes.players())
+                                                    .executes(ctx ->{
+                                                        var sender = getExecutor(ctx.getSource());
+                                                        var targets = ctx.getArgument("targets", PlayerSelectorArgumentResolver.class)
+                                                            .resolve(ctx.getSource());
+                                                        targets.forEach(p ->{
+                                                            GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
+                                                            holder.getCompleted().clear();
+                                                            sender.sendMessage("Cleared " + p.getName() + "'s completed guide progress.");
+                                                        });
+                                                        return 1;
+                                                    })
+                                            )
+                                    )
+                            )
+                            .then(
+                                Commands.literal("completeAndClearCurrent")
+                                    .then(
+                                        Commands.argument("targets", ArgumentTypes.players())
+                                            .executes(ctx ->{
+                                                var sender = getExecutor(ctx.getSource());
+                                                var targets = ctx.getArgument("targets", PlayerSelectorArgumentResolver.class)
+                                                    .resolve(ctx.getSource());
+                                                targets.forEach(p ->{
+                                                    GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
+                                                    holder.completeAndClearCurrent();
+                                                    sender.sendMessage("Completed and cleared " + p.getName() + "'s current guide progress.");
+                                                });
+                                                return 1;
+                                            })
+                                    )
+                            )
+                            .then(
+                                Commands.literal("set")
+                                    .then(
+                                        Commands.argument("targets", ArgumentTypes.players())
+                                            .then(
+                                                Commands.argument("guide_progress", ArgumentTypes.key())
+                                                    .suggests((source, builder) ->{
+                                                        for (Key key : CfgHook.FILE_GUIDE_PROGRESSION.getHandlers().keySet()) {
+                                                            builder.suggest(key.asString());
+                                                        }
+                                                        return builder.buildFuture();
+                                                    })
+                                                    .executes(ctx ->{
+                                                        var sender = getExecutor(ctx.getSource());
+                                                        var targets = ctx.getArgument("targets", PlayerSelectorArgumentResolver.class)
+                                                            .resolve(ctx.getSource());
+                                                        targets.forEach(p ->{
+                                                            GuideProgression progression = CfgHook.FILE_GUIDE_PROGRESSION.getHandlers()
+                                                                .get(ctx.getArgument("guide_progress", Key.class))
+                                                                .deserializeFromFile(new FileContext<>(CfgRegistries.JSON), new FileObject());
+                                                            GuideHolder holder = EntityMemory.getDataHolder(p, GuideHolder.class);
+                                                            holder.setCurrentProgression(progression);
+                                                            sender.sendMessage("Set " + p.getName() + " guide progress to " + progression.key());
+                                                        });
+                                                        return 1;
+                                                    })
+                                            )
+                                    )
+                            )
+                    )
                     .then(
                         Commands.literal("vanish")
                             .requires(source -> getExecutor(source).hasPermission("usurvive.cmds.udev.vanish"))
