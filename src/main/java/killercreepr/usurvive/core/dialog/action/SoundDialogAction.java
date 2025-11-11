@@ -1,6 +1,7 @@
 package killercreepr.usurvive.core.dialog.action;
 
 import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.core.Crux;
 import killercreepr.usurvive.api.dialog.DialogAction;
 import killercreepr.usurvive.api.dialog.DialogPlayer;
 

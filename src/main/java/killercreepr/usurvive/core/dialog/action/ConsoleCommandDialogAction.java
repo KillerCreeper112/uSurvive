@@ -26,10 +26,12 @@ public class ConsoleCommandDialogAction implements DialogAction {
 
     public void performCommand(List<String> cmds, DialogPlayer player){
         if(cmds == null) return;
-        player.audience().forEach(audience -> {
-            if(audience instanceof Player p){
-                performCommand(cmds, p);
-            }
+        Crux.scheduler().runTaskMain(() ->{
+            player.audience().forEach(audience -> {
+                if(audience instanceof Player p){
+                    performCommand(cmds, p);
+                }
+            });
         });
     }
 
