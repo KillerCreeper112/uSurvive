@@ -114,6 +114,10 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
         return dialogPlayer.getDialog() != null;
     }
 
+    public boolean isMoving(){
+        return mob.getPathfinder().hasPath();
+    }
+
     @Override
     public boolean isValidTarget(@NotNull LivingEntity target) {
         return false;
@@ -190,14 +194,6 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
             if(nextGuidePoint != null){
                 if(nextGuidePoint.dialog() != null) return;
             }
-            /*if(guidePoint == null) return;
-
-            if(nextGuidePoint != null){
-                //if(nextGuidePoint.dialog() != null) return;
-            }
-            if(this.pathTarget.hasPath() && this.pathTarget.getPath().getNextNode() instanceof GuidePathGoalNode n && n.guidePoint().dialog() != null){
-                return;
-            }*/
         }else{
             if(dialogDisplay != null){
                 dialogDisplay.remove();

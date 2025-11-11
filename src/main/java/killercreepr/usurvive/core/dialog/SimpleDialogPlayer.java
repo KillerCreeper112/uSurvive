@@ -8,6 +8,7 @@ import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.crux.core.util.CruxCollection;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.usurvive.api.dialog.DialogContent;
 import killercreepr.usurvive.api.dialog.DialogLine;
 import killercreepr.usurvive.api.dialog.DialogPlayer;
@@ -67,6 +68,12 @@ public class SimpleDialogPlayer implements DialogPlayer {
     @Override
     public DataComponentHandler components() {
         return components;
+    }
+
+    @Override
+    public float getProgress() {
+        if(dialog == null) return 1f;
+        return CruxMath.clamp((float) dialogIndex / (float) dialog.dialog().size()-1, 0f, 1f);
     }
 
     @Override

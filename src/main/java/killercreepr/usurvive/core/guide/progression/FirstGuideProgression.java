@@ -92,6 +92,7 @@ public class FirstGuideProgression extends GenericGuideProgression implements Li
         if(npc != null){
             npc.remove();
             npc = null;
+            npcGoal = null;
         }
     }
 
@@ -101,16 +102,18 @@ public class FirstGuideProgression extends GenericGuideProgression implements Li
         if(npc != null){
             npc.remove();
             npc = null;
+            npcGoal = null;
         }
     }
 
     protected Mob npc;
+    protected GuidePathGoal npcGoal;
 
     public void setupNPC(Player p){
         npc = (Mob) USurviveMobs.GUIDE_1_NPC.spawn(cfg().GUIDE_1_POINTS().value().getFirst().pos().toLocation());
         npc.setVisibleByDefault(false);
         p.showEntity(Crux.getMainPlugin(), npc);
-        var goal = CruxGoalUtil.getGoal(npc, GuidePathGoal.class);
+        npcGoal = CruxGoalUtil.getGoal(npc, GuidePathGoal.class);
         List<GoalNode> nodes = new ArrayList<>();
 
         cfg().GUIDE_1_POINTS().valueOr(List.of()).forEach(pos ->{
@@ -120,9 +123,9 @@ public class FirstGuideProgression extends GenericGuideProgression implements Li
             ));
         });
 
-        goal.setUser(p);
+        npcGoal.setUser(p);
         //goal.setDialog(cfg().GUIDE_1_DIALOG().value());
-        goal.setPath(GoalPath.goalPath(nodes));
+        npcGoal.setPath(GoalPath.goalPath(nodes));
     }
 
     @Override
@@ -151,11 +154,13 @@ public class FirstGuideProgression extends GenericGuideProgression implements Li
         if(Crux.getCurrentTick() % every != 0) return;
 
         if(!hasEnteredResourceOverworld() && p.getWorld().key().equals(cfg().GUIDE_1_POINTS().value().getFirst().pos().worldKey())){
-            GuidePoint nearest = CruxCollection.getLast(cfg().GUIDE_1_POINTS().value());
-            if(nearest != null){
-                List<Location> path = new GuidePathfinder(p).findPath(p.getLocation(), nearest.pos().toLocation(), 0.5D,
-                    cfg().GUIDE_1_MAX_PARTICLE_POINTS().value().value().intValue());
-                TrailRenderer.renderTrail(p, path);
+            if((npcGoal == null || !npcGoal.isSpeaking() || npcGoal.isMoving())){
+                GuidePoint nearest = CruxCollection.getLast(cfg().GUIDE_1_POINTS().value());
+                if(nearest != null){
+                    List<Location> path = new GuidePathfinder(p).findPath(p.getLocation(), nearest.pos().toLocation(), 0.5D,
+                        cfg().GUIDE_1_MAX_PARTICLE_POINTS().value().value().intValue());
+                    TrailRenderer.renderTrail(p, path);
+                }
             }
         }
 
@@ -284,6 +289,7 @@ public class FirstGuideProgression extends GenericGuideProgression implements Li
         if(npc != null){
             npc.remove();
             npc = null;
+            npcGoal = null;
         }
     }
 

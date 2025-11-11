@@ -8,13 +8,13 @@ import net.kyori.adventure.audience.Audience;
 
 import java.util.Collection;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public interface DialogPlayer {
     DialogContent getDialog();
     void setDialog(DialogContent dialog);
     void onDialogStartLine(DialogLine line);
     DataComponentHandler components();
+    float getProgress();
 
     <T> T getInfo(String id, BiFunction<DataInfoHolder, String, T> function);
     <T> T getInfoOrDefault(String id, BiFunction<DataInfoHolder, String, T> function, T fallback);
