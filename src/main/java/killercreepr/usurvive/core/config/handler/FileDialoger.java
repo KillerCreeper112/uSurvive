@@ -10,7 +10,6 @@ import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
 import killercreepr.usurvive.api.dialog.DialogAction;
 import killercreepr.usurvive.api.dialog.DialogContent;
 import killercreepr.usurvive.api.dialog.Dialoger;
-import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.dialog.SimpleDialoger;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
 import net.kyori.adventure.key.Key;

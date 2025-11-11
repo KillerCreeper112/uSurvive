@@ -1,9 +1,12 @@
 package killercreepr.usurvive.core.dialog;
 
+import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.usurvive.api.dialog.DialogContent;
 import killercreepr.usurvive.api.dialog.DialogLine;
 import killercreepr.usurvive.api.dialog.DialogPlayer;
+import killercreepr.usurvive.core.lang.Lang;
 import net.kyori.adventure.audience.Audience;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +40,11 @@ public class SimpleDialogPlayer implements DialogPlayer {
     }
 
     @Override
+    public DialogLine getCurrentLine() {
+        return lastLine;
+    }
+
+    @Override
     public void queueDialog(DialogContent dialog) {
         if(dialog == null) return;
         if(this.dialog == null){
@@ -55,7 +63,9 @@ public class SimpleDialogPlayer implements DialogPlayer {
 
     public void onDialogDisplay(Player user){
         if(currentDialogLine == null) return;
-        user.sendActionBar(Crux.format().deserialize(currentDialogLine));
+        Lang.DIALOG_LINE_DISPLAY.use(user, TagContainer.merged().hook(new DialogContentLinePair(getDialog(), getCurrentLine()))
+            .add(Tag.parsed("line", currentDialogLine)));
+        //user.sendActionBar(Crux.format().deserialize(currentDialogLine));
     }
     public void onDialogDisplaySpeaking(Player user){
         onDialogDisplay(user);

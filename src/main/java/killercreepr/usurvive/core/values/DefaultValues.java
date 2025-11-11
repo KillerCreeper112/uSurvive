@@ -284,4 +284,16 @@ public class DefaultValues implements ValuesProvider {
     public NumberProvider ANIMAL_AGGRESSION_CHANCE() {
         return null;
     }
+
+    @NotNull
+    @Override
+    public Holder<List<String>> TEXT_DISPLAY_DIALOG_FORMAT() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Holder<String> TEXT_DISPLAY_DIALOG_FORMAT_LINE() {
+        return null;
+    }
 }

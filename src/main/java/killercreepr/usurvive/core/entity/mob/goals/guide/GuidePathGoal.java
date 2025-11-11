@@ -1,7 +1,9 @@
 package killercreepr.usurvive.core.entity.mob.goals.guide;
 
 import com.destroystokyo.paper.entity.ai.GoalKey;
+import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.crux.core.util.CruxString;
 import killercreepr.cruxentities.api.entity.mob.goal.PathTargetMobGoal;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
@@ -12,6 +14,7 @@ import killercreepr.usurvive.api.dialog.DialogPlayer;
 import killercreepr.usurvive.api.entity.mob.goal.path.GuidePathGoalNode;
 import killercreepr.usurvive.api.guide.GuidePoint;
 import killercreepr.usurvive.core.USurvivePlugin;
+import killercreepr.usurvive.core.dialog.DialogContentLinePair;
 import killercreepr.usurvive.core.dialog.UserDialogPlayer;
 import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettingSelections;
 import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettings;
@@ -21,9 +24,7 @@ import org.bukkit.entity.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.TreeMap;
+import java.util.*;
 
 public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
     protected final PathTargetMobGoal pathTarget = PathTargetMobGoal.pathTargetMobGoal(this, 1);
@@ -72,7 +73,29 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
             display.text(null);
             return;
         }
-        StringBuilder builder = new StringBuilder();
+        List<String> format = USurvivePlugin.inst().values().TEXT_DISPLAY_DIALOG_FORMAT().value();
+        if(format == null) return;
+        var tags = TagContainer.merged()
+            .hook(new DialogContentLinePair(dialogPlayer.getDialog(), dialogPlayer.getCurrentLine()))
+            .add(Tag.parsed("line", msg));
+
+        tags.add(Tag.stringList("line", (args, ctx) ->{
+            String lineFormat = USurvivePlugin.inst().values().TEXT_DISPLAY_DIALOG_FORMAT_LINE().value();
+            if(lineFormat == null) return null;
+            String msgToFormat = ctx.deserializeString(lineFormat, tags);
+            List<String> list = new ArrayList<>();
+            CruxString.buildDescription(
+                msgToFormat, list::add,
+                30
+            );
+            return list;
+        }));
+
+        List<String> formatted = Crux.format().deserializeStringList(format, tags);
+        String finalMsg = String.join("\n", formatted);
+        display.text(Crux.format().deserialize(finalMsg));
+
+        /*StringBuilder builder = new StringBuilder();
         CruxString.buildDescription(
             msg, line ->{
                 builder.append(line);
@@ -83,8 +106,8 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
             30
         );
         display.text(Crux.format().deserialize(
-            builder.toString()
-        ));
+            "" + builder.toString(), TagContainer.string().hook(new DialogContentLinePair(dialogPlayer.getDialog(), dialogPlayer.getCurrentLine()))
+        ));*/
     }
 
     public boolean isSpeaking(){

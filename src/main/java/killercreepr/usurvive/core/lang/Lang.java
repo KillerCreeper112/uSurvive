@@ -350,10 +350,15 @@ public class Lang {
         Communicator.builder()
             .chat(List.of(
                 "",
-                "{add_if:\"IF(<dialog_pair_has_info:prefix> == true, true, false)\":\"<dark_aqua><dialog_pair_info:prefix_color:\"\"><latinfont:\"<dialog_pair_info:prefix>\">\"}",
-                "<yellow><dialog_pair_info:line_color:\"\"><dialog_pair_line/line>"
+                "{add_if:\"IF(<dialog_pair_has_info:prefix> == true, true, false)\":\"<dialog_pair_info:prefix_color:\"\"><latinfont:\"<dialog_pair_info:prefix>\">\"}",
+                "<dialog_pair_info:line_color:\"\"><dialog_pair_line/line>"
             ))
             .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 0.5f, 1.8f))
+            .build()
+    );
+    public static final Msg DIALOG_LINE_DISPLAY = create(
+        Communicator.builder()
+            .actionBar("<dialog_pair_info:line_color:\"\"><line>")
             .build()
     );
     public static final Msg GUIDE_STRUCTURE_NEARBY = create(

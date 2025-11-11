@@ -109,6 +109,14 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg, Graveston
     public final NumCfgValue GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE = new NumCfgValue(NumberProvider.uniform(12,16));
     public final CfgValue<StructureGenerator> GUIDE_RESOURCE_WORLD_STRUCTURE = new CommonValue<>(){};
     public final NumCfgValue ANIMAL_AGGRESSION_CHANCE = new NumCfgValue(28D);
+
+
+    public final CfgValue<List<String>> TEXT_DISPLAY_DIALOG_FORMAT = new CommonValue<>(List.of(
+        "{add_if:\"IF(<dialog_pair_has_info:prefix> == true, true, false)\":\"<dialog_pair_info:prefix_color:\"\"><latinfont:\"<dialog_pair_info:prefix>\">\"}",
+        "{line}"
+    )){};
+    public final CfgValue<String> TEXT_DISPLAY_DIALOG_FORMAT_LINE = new CommonValue<>("<dialog_pair_info:line_color:\"\"><line>"){};
+
     public Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
     }
@@ -443,6 +451,18 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg, Graveston
     @Override
     public NumberProvider ANIMAL_AGGRESSION_CHANCE() {
         return ANIMAL_AGGRESSION_CHANCE.value();
+    }
+
+    @NotNull
+    @Override
+    public Holder<List<String>> TEXT_DISPLAY_DIALOG_FORMAT() {
+        return TEXT_DISPLAY_DIALOG_FORMAT;
+    }
+
+    @NotNull
+    @Override
+    public Holder<String> TEXT_DISPLAY_DIALOG_FORMAT_LINE() {
+        return TEXT_DISPLAY_DIALOG_FORMAT_LINE;
     }
 
     @Override

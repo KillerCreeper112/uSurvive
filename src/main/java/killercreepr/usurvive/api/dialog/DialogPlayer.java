@@ -10,6 +10,8 @@ public interface DialogPlayer {
     void setDialog(DialogContent dialog);
     void onDialogStartLine(DialogLine line);
 
+    DialogLine getCurrentLine();
+
     void queueDialog(DialogContent dialog);
 
     void onDialogDisplay(Player user);

@@ -81,4 +81,6 @@ public interface ValuesProvider extends Reloadable {
     Holder<StructureGenerator> GUIDE_RESOURCE_WORLD_STRUCTURE();
     Holder<NumberProvider> GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE();
     @NotNull NumberProvider ANIMAL_AGGRESSION_CHANCE();
+    @NotNull Holder<List<String>> TEXT_DISPLAY_DIALOG_FORMAT();
+    @NotNull Holder<String> TEXT_DISPLAY_DIALOG_FORMAT_LINE();
 }
