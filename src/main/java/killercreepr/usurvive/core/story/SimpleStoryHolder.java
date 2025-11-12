@@ -112,6 +112,12 @@ public class SimpleStoryHolder extends PlayerTickedDataHolder implements AutoSav
 
     @Override
     public void addProgression(StoryProgression progression, boolean silent) {
+        if(!silent){
+            var got = getStoryProgression(progression.key());
+            if(got != null){
+                got.onEnd(parent.value(), this);
+            }
+        }
         storyProgression.put(progression.key(), progression);
         if(!silent){
             progression.onStart(parent.value(), this);

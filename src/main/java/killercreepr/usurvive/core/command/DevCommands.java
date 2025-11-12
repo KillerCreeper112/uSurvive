@@ -38,6 +38,8 @@ import killercreepr.cruxentities.command.argument.CruxEntitiesArguments;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.core.command.arguments.CruxWorldArgument;
+import killercreepr.usurvive.api.story.StoryHolder;
+import killercreepr.usurvive.api.story.StoryProgression;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.config.CfgHook;
 import killercreepr.usurvive.core.entity.USurviveMobs;
@@ -115,6 +117,94 @@ public class DevCommands implements Listener {
                 Commands.literal("udev")
                     .requires(source -> getExecutor(source).hasPermission("usurvive.cmds.udev.use"))
                     .then(
+                        Commands.literal("story")
+                            .then(
+                                Commands.literal("progress")
+                                    .then(
+                                        Commands.literal("clear")
+                                            .then(
+                                                Commands.argument("targets", ArgumentTypes.players())
+                                                    .executes(ctx ->{
+                                                        var sender = getExecutor(ctx.getSource());
+                                                        var targets = ctx.getArgument("targets", PlayerSelectorArgumentResolver.class)
+                                                            .resolve(ctx.getSource());
+                                                        targets.forEach(p ->{
+                                                            StoryHolder holder = StoryHolder.storyHolder(p);
+                                                            holder.getStoryData().clear();
+                                                            sender.sendMessage("Cleared " + p.getName() + "'s completed story progress.");
+                                                        });
+                                                        return 1;
+                                                    })
+                                            )
+                                    )
+                            )
+                            .then(
+                                Commands.literal("complete")
+                                    .then(
+                                        Commands.argument("story_id", ArgumentTypes.key())
+                                            .suggests((source, builder) ->{
+                                                for (Key key : CfgHook.FILE_STORY_PROGRESSION.getHandlers().keySet()) {
+                                                    builder.suggest(key.asString());
+                                                }
+                                                return builder.buildFuture();
+                                            }).then(
+                                                Commands.argument("targets", ArgumentTypes.players())
+                                                    .executes(ctx ->{
+                                                        var sender = getExecutor(ctx.getSource());
+                                                        var targets = ctx.getArgument("targets", PlayerSelectorArgumentResolver.class)
+                                                            .resolve(ctx.getSource());
+                                                        Key key = ctx.getArgument("story_id", Key.class);
+                                                        targets.forEach(p ->{
+                                                            StoryHolder holder = StoryHolder.storyHolder(p);
+                                                            if(holder != null){
+                                                                var got = holder.getStoryProgression(key);
+                                                                if(got != null){
+                                                                    holder.complete(got);
+                                                                    sender.sendMessage("Completed " + key + " for " + p.getName());
+                                                                }
+                                                            }
+                                                        });
+                                                        return 1;
+                                                    })
+                                            )
+                                    )
+                            )
+                            .then(
+                                Commands.literal("set")
+                                    .then(
+                                        Commands.argument("targets", ArgumentTypes.players())
+                                            .then(
+                                                Commands.argument("story_id", ArgumentTypes.key())
+                                                    .suggests((source, builder) ->{
+                                                        for (Key key : CfgHook.FILE_STORY_PROGRESSION.getHandlers().keySet()) {
+                                                            builder.suggest(key.asString());
+                                                        }
+                                                        return builder.buildFuture();
+                                                    })
+                                                    .executes(ctx ->{
+                                                        var sender = getExecutor(ctx.getSource());
+                                                        var targets = ctx.getArgument("targets", PlayerSelectorArgumentResolver.class)
+                                                            .resolve(ctx.getSource());
+                                                        targets.forEach(p ->{
+                                                            StoryProgression progression = CfgHook.FILE_STORY_PROGRESSION.getHandlers()
+                                                                .get(ctx.getArgument("guide_progress", Key.class))
+                                                                .tempDataHandler()
+                                                                .deserializeFromFile(new FileContext<>(CfgRegistries.JSON), new FileObject());
+                                                            if(progression == null){
+                                                                sender.sendMessage("Progression could not be loaded");
+                                                                return;
+                                                            }
+                                                            StoryHolder holder = StoryHolder.storyHolder(p);
+                                                            holder.addProgression(progression);
+                                                            sender.sendMessage("Added " + p.getName() + " story progress to " + progression.key());
+                                                        });
+                                                        return 1;
+                                                    })
+                                            )
+                                    )
+                            )
+                    )
+                    /*.then(
                         Commands.literal("guide")
                             .then(
                                 Commands.literal("progress")
@@ -182,7 +272,7 @@ public class DevCommands implements Listener {
                                             )
                                     )
                             )
-                    )
+                    )*/
                     .then(
                         Commands.literal("vanish")
                             .requires(source -> getExecutor(source).hasPermission("usurvive.cmds.udev.vanish"))
