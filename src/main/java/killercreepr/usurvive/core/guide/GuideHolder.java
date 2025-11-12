@@ -10,7 +10,7 @@ import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.common.file.DataFile;
 import killercreepr.usurvive.core.USurvivePlugin;
-import killercreepr.usurvive.core.guide.progression.FirstGuideProgression;
+import killercreepr.usurvive.core.guide.progression.Guide1Progression;
 import killercreepr.usurvive.core.guide.progression.GuideProgression;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Entity;
@@ -149,7 +149,7 @@ public class GuideHolder extends PlayerTickedDataHolder implements AutoSavable, 
     public void load() {
         DataFile cfg = getSaveFile(false);
         if(cfg == null){
-            if(currentProgression == null) setCurrentProgression(new FirstGuideProgression());
+            if(currentProgression == null) setCurrentProgression(new Guide1Progression());
             return;
         }
         setCurrentProgression(cfg.deserialize("current_progression", GuideProgression.class));
@@ -157,8 +157,8 @@ public class GuideHolder extends PlayerTickedDataHolder implements AutoSavable, 
         completed.putAll(cfg.deserializeOrDefault("completed", new TypeToken<Map<Key, Long>>(){}.getType(), Map.of()));
         cfg.close();
 
-        if(currentProgression == null && !isCompleted(FirstGuideProgression.KEY)){
-            setCurrentProgression(new FirstGuideProgression());
+        if(currentProgression == null && !isCompleted(Guide1Progression.KEY)){
+            setCurrentProgression(new Guide1Progression());
         }
     }
 }

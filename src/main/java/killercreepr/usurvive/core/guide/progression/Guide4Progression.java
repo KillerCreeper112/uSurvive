@@ -13,12 +13,12 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ThirdGuideProgression implements GuideProgression{
-    public static final Key KEY = Crux.key("third");
+public class Guide4Progression implements GuideProgression{
+    public static final Key KEY = Crux.key("4");
 
-    public static class Loader implements FileObjectHandler<ThirdGuideProgression>{
+    public static class Loader implements FileObjectHandler<Guide4Progression>{
         @Override
-        public @NotNull FileElement serializeToFile(@NotNull FileContext<?> ctx, @NotNull ThirdGuideProgression object) {
+        public @NotNull FileElement serializeToFile(@NotNull FileContext<?> ctx, @NotNull Guide4Progression object) {
             var r = ctx.getRegistry();
             FileObject o = new FileObject();
             return o;
@@ -26,24 +26,24 @@ public class ThirdGuideProgression implements GuideProgression{
 
         @Nullable
         @Override
-        public ThirdGuideProgression deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement e) {
+        public Guide4Progression deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement e) {
             var r = ctx.getRegistry();
             FileObject o = (FileObject) e;
-            ThirdGuideProgression progression = new ThirdGuideProgression();
+            Guide4Progression progression = new Guide4Progression();
             return progression;
         }
     }
 
     @Override
     public void onComplete(Player p, GuideHolder holder) {
-        holder.setCurrentProgression(new FourthGuideProgression());
+        holder.setCurrentProgression(new FifthGuideProgression());
     }
 
     @Override
     public void onStart(Player p, GuideHolder holder) {
         if(GuideUtil.hasGuideDisabled(p)) return;
         Crux.scheduler().runTaskLater(() ->{
-            Lang.GUIDE_THIRD_START.use(p);
+            Lang.GUIDE_FOURTH_START.use(p);
         }, 2L);
     }
 

@@ -24,7 +24,6 @@ import killercreepr.usurvive.api.guide.GuidePoint;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.advancement.objective.GuideDiscoverMeteorObjective;
 import killercreepr.usurvive.core.data.DeathGuide;
-import killercreepr.usurvive.core.dialog.UserDialogPlayer;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.mob.goals.guide.GuidePathGoal;
 import killercreepr.usurvive.core.guide.GuideAdvances;
@@ -52,12 +51,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FirstGuideProgression extends GenericGuideProgression implements Listener {
-    public static final Key KEY = Crux.key("first");
+public class Guide1Progression extends GenericGuideProgression implements Listener {
+    public static final Key KEY = Crux.key("1");
 
-    public static class Loader implements FileObjectHandler<FirstGuideProgression>{
+    public static class Loader implements FileObjectHandler<Guide1Progression>{
         @Override
-        public @NotNull FileElement serializeToFile(@NotNull FileContext<?> ctx, @NotNull FirstGuideProgression object) {
+        public @NotNull FileElement serializeToFile(@NotNull FileContext<?> ctx, @NotNull Guide1Progression object) {
             var r = ctx.getRegistry();
             FileObject o = new FileObject();
             o.add("fallen_meteor_location", r.serializeToFile(object.fallenMeteorLocation));
@@ -69,10 +68,10 @@ public class FirstGuideProgression extends GenericGuideProgression implements Li
 
         @Nullable
         @Override
-        public FirstGuideProgression deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement e) {
+        public Guide1Progression deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement e) {
             var r = ctx.getRegistry();
             FileObject o = (FileObject) e;
-            FirstGuideProgression progression = new FirstGuideProgression();
+            Guide1Progression progression = new Guide1Progression();
             progression.fallenMeteorLocation = r.deserializeFromFile(BlockPos.class, o.get("fallen_meteor_location"));
             progression.fallenMeteorWorldCreatedAt = r.deserializeFromFileOrDefault(Long.class, o.get("fallen_meteor_world_created_at"), 0L);
             progression.fallenMeteorWorld = r.deserializeFromFile(Key.class, o.get("fallen_meteor_world"));
@@ -83,7 +82,7 @@ public class FirstGuideProgression extends GenericGuideProgression implements Li
 
     @Override
     public void onComplete(Player p, GuideHolder holder) {
-        holder.setCurrentProgression(new SecondGuideProgression());
+        holder.setCurrentProgression(new Guide2Progression());
     }
 
     @Override
@@ -110,13 +109,13 @@ public class FirstGuideProgression extends GenericGuideProgression implements Li
     protected GuidePathGoal npcGoal;
 
     public void setupNPC(Player p){
-        npc = (Mob) USurviveMobs.GUIDE_1_NPC.spawn(cfg().GUIDE_1_POINTS().value().getFirst().pos().toLocation());
+        npc = (Mob) USurviveMobs.GUIDE_1_NPC.spawn(cfg().GUIDE_1_POINTS.value().getFirst().pos().toLocation());
         npc.setVisibleByDefault(false);
         p.showEntity(Crux.getMainPlugin(), npc);
         npcGoal = CruxGoalUtil.getGoal(npc, GuidePathGoal.class);
         List<GoalNode> nodes = new ArrayList<>();
 
-        cfg().GUIDE_1_POINTS().valueOr(List.of()).forEach(pos ->{
+        cfg().GUIDE_1_POINTS.valueOr(List.of()).forEach(pos ->{
             nodes.add(GuidePathGoalNode.guidePathGoalNode(
                 GoalNode.distanceGoalNode(pos.pos().toLocation(), 1.5D),
                 pos
@@ -141,8 +140,8 @@ public class FirstGuideProgression extends GenericGuideProgression implements Li
     public void onStart(Player p, GuideHolder holder) {
         this.p = p;
         super.onStart(p, holder);
-        if(hasEnteredResourceOverworld() || !p.getWorld().key().equals(cfg().GUIDE_1_POINTS().value().getFirst().pos().worldKey())) return;
-        WorldPosition spawn = cfg().GUIDE_1_SPAWN().value();
+        if(hasEnteredResourceOverworld() || !p.getWorld().key().equals(cfg().GUIDE_1_POINTS.value().getFirst().pos().worldKey())) return;
+        WorldPosition spawn = cfg().GUIDE_1_SPAWN.value();
         p.teleport(spawn.toLocation());
     }
 
@@ -153,12 +152,12 @@ public class FirstGuideProgression extends GenericGuideProgression implements Li
         if(every==0) return;
         if(Crux.getCurrentTick() % every != 0) return;
 
-        if(!hasEnteredResourceOverworld() && p.getWorld().key().equals(cfg().GUIDE_1_POINTS().value().getFirst().pos().worldKey())){
+        if(!hasEnteredResourceOverworld() && p.getWorld().key().equals(cfg().GUIDE_1_POINTS.value().getFirst().pos().worldKey())){
             if((npcGoal == null || !npcGoal.isSpeaking() || npcGoal.isMoving())){
-                GuidePoint nearest = CruxCollection.getLast(cfg().GUIDE_1_POINTS().value());
+                GuidePoint nearest = CruxCollection.getLast(cfg().GUIDE_1_POINTS.value());
                 if(nearest != null){
                     List<Location> path = new GuidePathfinder(p).findPath(p.getLocation(), nearest.pos().toLocation(), 0.5D,
-                        cfg().GUIDE_1_MAX_PARTICLE_POINTS().value().value().intValue());
+                        cfg().GUIDE_1_MAX_PARTICLE_POINTS.value().value().intValue());
                     TrailRenderer.renderTrail(p, path);
                 }
             }
@@ -240,7 +239,7 @@ public class FirstGuideProgression extends GenericGuideProgression implements Li
         if(advancement.isGranted(p)) return;
 
         lastDistanceSquared = fallenMeteorLocation.distanceSquared(CruxPosition.block(p.getLocation()));
-        if(lastDistanceSquared > (12D*12D)) return;
+        if(lastDistanceSquared > (30D*30D)) return;
 
         AdvancementHolder holder = holder(p);
         if(holder!= null) {
@@ -249,7 +248,10 @@ public class FirstGuideProgression extends GenericGuideProgression implements Li
                 holder.getAdvancementTracker().apply(GuideDiscoverMeteorObjective.class, (man, ad, objective) -> {
                     objective.trigger(p.getUniqueId(), man, ad, LootContext.builder().looter(p).looted(fallenMeteorLocation).build());
                 });
-                if(advancement.isGranted(p)) Lang.GUIDE_STRUCTURE_NEARBY.use(p);
+                if(advancement.isGranted(p)){
+                    dialogPlayer.queueDialog(cfg().GUIDE_1_STRUCTURE_NEARBY.value());
+                    //Lang.GUIDE_STRUCTURE_NEARBY.use(p);
+                }
                 stopTickDistance = false;
             });
         }
@@ -310,7 +312,7 @@ public class FirstGuideProgression extends GenericGuideProgression implements Li
 
     public void onEnteredResourceOverworld(){
         if(p == null) return;
-        dialogPlayer.queueDialog(cfg().GUIDE_1_ENTER_RESOURCE_WORLD_DIALOG().value());
+        dialogPlayer.queueDialog(cfg().GUIDE_1_ENTER_RESOURCE_WORLD_DIALOG.value());
     }
 
     public void setEnteredResourceOverworld(boolean enteredResourceOverworld) {

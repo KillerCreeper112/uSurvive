@@ -1,17 +1,14 @@
 package killercreepr.usurvive.core.guide.progression;
 
 import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
 import killercreepr.cruxcore.CruxCore;
-import killercreepr.usurvive.api.guide.GuidePoint;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.block.ActiveOrbitConduit;
-import killercreepr.usurvive.core.data.DeathGuide;
 import killercreepr.usurvive.core.guide.GuideHolder;
 import killercreepr.usurvive.core.guide.GuideUtil;
 import killercreepr.usurvive.core.guide.particle.TrailRenderer;
@@ -19,7 +16,6 @@ import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.pathfinding.GuidePathfinder;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -28,12 +24,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class SecondGuideProgression extends GenericGuideProgression{
-    public static final Key KEY = Crux.key("second");
+public class Guide2Progression extends GenericGuideProgression{
+    public static final Key KEY = Crux.key("2");
 
-    public static class Loader implements FileObjectHandler<SecondGuideProgression>{
+    public static class Loader implements FileObjectHandler<Guide2Progression>{
         @Override
-        public @NotNull FileElement serializeToFile(@NotNull FileContext<?> ctx, @NotNull SecondGuideProgression object) {
+        public @NotNull FileElement serializeToFile(@NotNull FileContext<?> ctx, @NotNull Guide2Progression object) {
             var r = ctx.getRegistry();
             FileObject o = new FileObject();
             return o;
@@ -41,10 +37,10 @@ public class SecondGuideProgression extends GenericGuideProgression{
 
         @Nullable
         @Override
-        public SecondGuideProgression deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement e) {
+        public Guide2Progression deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement e) {
             var r = ctx.getRegistry();
             FileObject o = (FileObject) e;
-            SecondGuideProgression progression = new SecondGuideProgression();
+            Guide2Progression progression = new Guide2Progression();
             return progression;
         }
     }
@@ -76,7 +72,7 @@ public class SecondGuideProgression extends GenericGuideProgression{
 
     @Override
     public void onComplete(Player p, GuideHolder holder) {
-        holder.setCurrentProgression(new ThirdGuideProgression());
+        holder.setCurrentProgression(new Guide3Progression());
     }
 
     @Override
@@ -114,7 +110,7 @@ public class SecondGuideProgression extends GenericGuideProgression{
         Location pos =  conduit.getLocation();
 
         List<Location> path = new GuidePathfinder(p).findPath(p.getLocation(), pos, 0.5D,
-            cfg().GUIDE_1_MAX_PARTICLE_POINTS().value().value().intValue());
+            cfg().GUIDE_1_MAX_PARTICLE_POINTS.value().value().intValue());
         TrailRenderer.renderTrail(p, path);
 
         /*var cfg = USurvivePlugin.inst().values();

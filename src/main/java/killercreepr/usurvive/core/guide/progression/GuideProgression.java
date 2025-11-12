@@ -2,8 +2,8 @@ package killercreepr.usurvive.core.guide.progression;
 
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxconfig.config.common.file.DataFile;
-import killercreepr.usurvive.api.values.GuideCfg;
 import killercreepr.usurvive.core.USurvivePlugin;
+import killercreepr.usurvive.core.config.GuideConfig;
 import killercreepr.usurvive.core.guide.GuideHolder;
 import net.kyori.adventure.key.Keyed;
 import org.bukkit.entity.Player;
@@ -33,7 +33,7 @@ public interface GuideProgression extends Keyed {
     default void onMemoryUnload(Player p){}
     default void onPlayerChangedWorldEvent(Player p, PlayerChangedWorldEvent event){}
 
-    default GuideCfg cfg(){
+    default GuideConfig cfg(){
         return USurvivePlugin.inst().cfgContainer().GUIDE;
     }
 }

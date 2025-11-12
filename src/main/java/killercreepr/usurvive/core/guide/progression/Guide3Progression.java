@@ -13,12 +13,12 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class FourthGuideProgression implements GuideProgression{
-    public static final Key KEY = Crux.key("fourth");
+public class Guide3Progression implements GuideProgression{
+    public static final Key KEY = Crux.key("3");
 
-    public static class Loader implements FileObjectHandler<FourthGuideProgression>{
+    public static class Loader implements FileObjectHandler<Guide3Progression>{
         @Override
-        public @NotNull FileElement serializeToFile(@NotNull FileContext<?> ctx, @NotNull FourthGuideProgression object) {
+        public @NotNull FileElement serializeToFile(@NotNull FileContext<?> ctx, @NotNull Guide3Progression object) {
             var r = ctx.getRegistry();
             FileObject o = new FileObject();
             return o;
@@ -26,24 +26,24 @@ public class FourthGuideProgression implements GuideProgression{
 
         @Nullable
         @Override
-        public FourthGuideProgression deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement e) {
+        public Guide3Progression deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement e) {
             var r = ctx.getRegistry();
             FileObject o = (FileObject) e;
-            FourthGuideProgression progression = new FourthGuideProgression();
+            Guide3Progression progression = new Guide3Progression();
             return progression;
         }
     }
 
     @Override
     public void onComplete(Player p, GuideHolder holder) {
-        holder.setCurrentProgression(new FifthGuideProgression());
+        holder.setCurrentProgression(new Guide4Progression());
     }
 
     @Override
     public void onStart(Player p, GuideHolder holder) {
         if(GuideUtil.hasGuideDisabled(p)) return;
         Crux.scheduler().runTaskLater(() ->{
-            Lang.GUIDE_FOURTH_START.use(p);
+            Lang.GUIDE_THIRD_START.use(p);
         }, 2L);
     }
 

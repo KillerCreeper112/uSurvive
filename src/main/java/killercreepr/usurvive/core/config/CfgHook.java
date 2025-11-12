@@ -15,12 +15,16 @@ import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.advancement.objective.*;
 import killercreepr.usurvive.core.config.handler.FileGuideProgression;
+import killercreepr.usurvive.core.config.handler.FileStoryProgressData;
+import killercreepr.usurvive.core.config.handler.FileStoryProgression;
 import killercreepr.usurvive.core.loot.condition.BaseItemUpgradedFromCondition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CfgHook {
     public static final FileGuideProgression FILE_GUIDE_PROGRESSION = new FileGuideProgression();
+    public static final FileStoryProgression FILE_STORY_PROGRESSION = new FileStoryProgression();
+    public static final FileStoryProgressData FILE_STORY_PROGRESS_DATA = new FileStoryProgressData(FILE_STORY_PROGRESSION);
     private static final FileAdvancementObjective fileAdvancementObjective = CruxAdvanceCfgData.fileAdvancementObjective();
     public static void load() {
         registerLoot(BukkitCfgHandlers.LOOT_CONDITION);

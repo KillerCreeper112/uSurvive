@@ -83,6 +83,8 @@ import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsManager;
 import killercreepr.usurvive.api.guide.GuidePoint;
+import killercreepr.usurvive.api.story.StoryProgressData;
+import killercreepr.usurvive.api.story.StoryProgression;
 import killercreepr.usurvive.api.tpa.TPAManager;
 import killercreepr.usurvive.api.values.SleeperCfg;
 import killercreepr.usurvive.api.values.ValuesProvider;
@@ -136,6 +138,7 @@ import killercreepr.usurvive.core.potion.inflictor.UDamageEntityInflictor;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
 import killercreepr.usurvive.core.stat.USurviveStats;
 import killercreepr.usurvive.core.statistic.USurviveStatistics;
+import killercreepr.usurvive.core.story.config.StoryCfgLoader;
 import killercreepr.usurvive.core.tags.USurviveTag;
 import killercreepr.usurvive.core.tags.object.*;
 import killercreepr.usurvive.core.tpa.SimpleTPAManager;
@@ -258,6 +261,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         USurviveBlockComponents.register(BukkitCfgHandlers.TYPED_DATA_COMPONENT.typeHandlers());
 
         new GuideCfgLoader(CfgHook.FILE_GUIDE_PROGRESSION).load();
+        new StoryCfgLoader(CfgHook.FILE_STORY_PROGRESSION).load();
 
         if(getServer().getPluginManager().getPlugin("CruxCharms") != null){
             CharmTypes.register();
@@ -782,6 +786,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         registry.registerFileHandler(RandomTPData.class, new FileRandomTPData());
         registry.registerFileHandler(RandomTPData.Pos.class, new FileRandomTPPos());
         registry.registerFileHandler(GuideProgression.class, CfgHook.FILE_GUIDE_PROGRESSION);
+        registry.registerFileHandler(StoryProgression.class, CfgHook.FILE_STORY_PROGRESSION);
+        registry.registerFileHandler(StoryProgressData.class, CfgHook.FILE_STORY_PROGRESS_DATA);
         registry.registerFileHandler(
             new AutoFileHandler<>(PremiumRank.class),
             new AutoFileHandler<>(CfgLootData.class)

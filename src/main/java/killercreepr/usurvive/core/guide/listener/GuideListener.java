@@ -78,7 +78,7 @@ public class GuideListener implements Listener {
         Player p = event.getPlayer();
         GuideHolder holder = getGuideHolder(p);
         if(holder == null) return;
-        if(holder.isCompleted(FirstGuideProgression.KEY)) return;
+        if(holder.isCompleted(Guide1Progression.KEY)) return;
 
         /*new BukkitRunnable(){
             byte tick = 0;
@@ -107,8 +107,8 @@ public class GuideListener implements Listener {
 
         GuideHolder holder = getGuideHolder(p);
         if(holder == null) return;
-        if(holder.getCurrentProgression() instanceof FirstGuideProgression){
-            if(AdvanceUtil.hasAnyAdvancement(p, GuideAdvances.DISCOVER_GUIDE_METEOR)){
+        if(holder.getCurrentProgression() instanceof Guide1Progression){
+            if(AdvanceUtil.hasAnyAdvancement(p, GuideAdvances.DISCOVER_GUIDE_METEOR) && event.getDrops() != null && !event.getDrops().isEmpty()){
                 holder.completeAndClearCurrent();
             }
         }
@@ -134,7 +134,7 @@ public class GuideListener implements Listener {
         }
 
 
-        if(holder.getCurrentProgression() instanceof FourthGuideProgression){
+        if(holder.getCurrentProgression() instanceof Guide4Progression){
             holder.completeAndClearCurrent();
             return;
         }
@@ -146,7 +146,7 @@ public class GuideListener implements Listener {
         String world = cfg.SPAWN_WORLD().value();
         if(world == null) return;
 
-        if(holder.getCurrentProgression() instanceof SecondGuideProgression prog){
+        if(holder.getCurrentProgression() instanceof Guide2Progression prog){
             if(!p.getWorld().getName().equals(world)) return;
             Crux.scheduler().runTaskAsync(() ->{
                 prog.findAndSetConduit(p.getLocation().getBlock());
@@ -165,7 +165,7 @@ public class GuideListener implements Listener {
 
         GuideHolder holder = getGuideHolder(p);
         if(holder == null) return;
-        if(holder.getCurrentProgression() instanceof SecondGuideProgression){
+        if(holder.getCurrentProgression() instanceof Guide2Progression){
             holder.completeAndClearCurrent();
         }
     }
@@ -175,7 +175,7 @@ public class GuideListener implements Listener {
         if(!(event.getEntity() instanceof Player p)) return;
         GuideHolder holder = getGuideHolder(p);
         if(holder == null) return;
-        if(holder.getCurrentProgression() instanceof ThirdGuideProgression){
+        if(holder.getCurrentProgression() instanceof Guide3Progression){
             holder.completeAndClearCurrent();
         }
     }
@@ -304,9 +304,9 @@ public class GuideListener implements Listener {
             p.sendMessage(Component.text("An error occurred. Contact developer. CODE 7391"));
             return;
         }
-        if(!(holder.getCurrentProgression() instanceof FirstGuideProgression first)){
+        if(!(holder.getCurrentProgression() instanceof Guide1Progression first)){
             p.sendMessage(Component.text("An error occurred. Contact developer. CODE 73933-1"));
-            Crux.logError(p.getName() + "' guide progression is " + holder.getCurrentProgression() + " but expected FirstGuideProgression 73933-1");
+            Crux.logError(p.getName() + "' guide progression is " + holder.getCurrentProgression() + " but expected Guide1Progression 73933-1");
             return;
         }
         first.setEnteredResourceOverworld(true);
@@ -335,14 +335,14 @@ public class GuideListener implements Listener {
                 return;
             }
 
-            if(!(holder.getCurrentProgression() instanceof FirstGuideProgression prog)){
+            if(!(holder.getCurrentProgression() instanceof Guide1Progression prog)){
                 p.sendMessage(Component.text("An error occurred. Contact developer. CODE 73933"));
-                Crux.logError(p.getName() + "' guide progression is " + holder.getCurrentProgression() + " but expected FirstGuideProgression 73933");
+                Crux.logError(p.getName() + "' guide progression is " + holder.getCurrentProgression() + " but expected Guide1Progression 73933");
                 return;
             }
             prog.setFallenMeteorLocation(loc);
-            prog.getDialogPlayer().queueDialog(prog.cfg().GUIDE_1_STRUCTURE_SUCCESS_DIALOG().value());
-            Lang.GUIDE_STRUCTURE_PLACED.use(p);
+            prog.getDialogPlayer().queueDialog(prog.cfg().GUIDE_1_STRUCTURE_SUCCESS_DIALOG.value());
+            //Lang.GUIDE_STRUCTURE_PLACED.use(p);
         });
     }
 

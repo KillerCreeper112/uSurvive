@@ -11,10 +11,10 @@ public class GuideCfgLoader {
     }
 
     public void load(){
-        fileGuideProgression.register(FirstGuideProgression.KEY, new FirstGuideProgression.Loader());
-        fileGuideProgression.register(SecondGuideProgression.KEY, new SecondGuideProgression.Loader());
-        fileGuideProgression.register(ThirdGuideProgression.KEY, new ThirdGuideProgression.Loader());
-        fileGuideProgression.register(FourthGuideProgression.KEY, new FourthGuideProgression.Loader());
+        fileGuideProgression.register(Guide1Progression.KEY, new Guide1Progression.Loader());
+        fileGuideProgression.register(Guide2Progression.KEY, new Guide2Progression.Loader());
+        fileGuideProgression.register(Guide3Progression.KEY, new Guide3Progression.Loader());
+        fileGuideProgression.register(Guide4Progression.KEY, new Guide4Progression.Loader());
         fileGuideProgression.register(FifthGuideProgression.KEY, new FifthGuideProgression.Loader());
         fileGuideProgression.register(SixthGuideProgression.KEY, new SixthGuideProgression.Loader());
         fileGuideProgression.register(SeventhGuideProgression.KEY, new SeventhGuideProgression.Loader());
