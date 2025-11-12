@@ -417,7 +417,7 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
                 npcGoal.getDialogPlayer().pushDialog(cfg().PUNCHED_NPC_DIALOG.value());
                 return;
             }
-            //data.punchedNPC = true;
+            data.punchedNPC = true;
             dialogListener().dialogPlayer().pushDialog(cfg().PUNCHED_NPC_DIALOG.value());
         }
     }
