@@ -16,6 +16,8 @@ public interface DialogPlayer {
     DataComponentHandler components();
     float getProgress();
 
+    boolean isEmpty();
+
     <T> T getInfo(String id, BiFunction<DataInfoHolder, String, T> function);
     <T> T getInfoOrDefault(String id, BiFunction<DataInfoHolder, String, T> function, T fallback);
 
@@ -24,8 +26,8 @@ public interface DialogPlayer {
     DialogLine getCurrentLine();
 
     void queueDialog(DialogContent dialog);
-    void push(DialogContent content);
-    void forcePush(DialogContent content);
+    void pushDialog(DialogContent content);
+    void forcePushDialog(DialogContent content);
 
     void onDialogDisplay(Audience user);
     void dialogTick();

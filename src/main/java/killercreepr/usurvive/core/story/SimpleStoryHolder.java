@@ -79,6 +79,7 @@ public class SimpleStoryHolder extends PlayerTickedDataHolder implements AutoSav
     @Override
     protected void onTick(@NotNull Player p) {
         super.onTick(p);
+        if(!loaded) return;
         for (StoryProgression value : storyProgression.values()) {
             value.onTick();
         }
@@ -97,7 +98,7 @@ public class SimpleStoryHolder extends PlayerTickedDataHolder implements AutoSav
         DataFile cfg = getSaveFile(false);
         if(cfg == null){
             if(getCurrentStoryProgression().isEmpty()){
-                addProgression(new Story1Progress());
+                addProgression(new Story1Progress(), true);
             }
             //if(currentProgression == null) setCurrentProgression(new Guide1Progression());
             return;
@@ -121,11 +122,20 @@ public class SimpleStoryHolder extends PlayerTickedDataHolder implements AutoSav
         storyProgression.put(progression.key(), progression);
         if(!silent){
             progression.onStart(parent.value(), this);
+            if(isLoaded()){
+                progression.onLoaded(parent.value(), this);
+            }
         }
     }
 
     @Override
     public void onLoaded(Player p) {
+        if(!loaded){
+            for (StoryProgression value : getCurrentStoryProgression()) {
+                value.onStart(p, this);
+            }
+        }
+
         for (StoryProgression value : getCurrentStoryProgression()) {
             value.onLoaded(p, this);
         }

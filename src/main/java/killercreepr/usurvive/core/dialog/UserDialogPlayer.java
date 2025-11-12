@@ -30,6 +30,8 @@ public class UserDialogPlayer extends SimpleDialogPlayer{
             speed = 1;
         }else if(setting == StandardPlayerSettingSelections.FAST){
             speed = 3;
+        }else if(setting == StandardPlayerSettingSelections.SUPER_FAST){
+            speed = 6;
         }else speed = 2;
         speed = dialogSplitSpeedValue(speed);
         if(getDialogSplitSpeed() != speed) setDialogSplitSpeed(speed);
@@ -40,6 +42,8 @@ public class UserDialogPlayer extends SimpleDialogPlayer{
             speed = 36;
         }else if(setting == StandardPlayerSettingSelections.FAST){
             speed = 16;
+        }else if(setting == StandardPlayerSettingSelections.SUPER_FAST){
+            speed = 8;
         }else speed = 24;
         speed = dialogWaitTimeValue(speed);
 

@@ -1,7 +1,6 @@
 package killercreepr.usurvive.core.story.progression;
 
 import killercreepr.crux.api.data.WorldPosition;
-import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.loot.LootContext;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.Crux;
@@ -9,12 +8,10 @@ import killercreepr.crux.core.math.BlockPos;
 import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.cruxadvancements.api.advancement.CruxAdvancement;
-import killercreepr.cruxadvancements.api.advancement.flag.CruxAdvancementFlag;
 import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementManager;
 import killercreepr.cruxadvancements.api.event.CruxAdvancementGrantEvent;
 import killercreepr.cruxadvancements.core.entity.memory.AdvancementHolder;
 import killercreepr.cruxadvancements.core.registries.AdvancementRegistries;
-import killercreepr.cruxadvancements.crazy.advancement.CrazyAdvancement;
 import killercreepr.cruxconfig.config.common.handler.AutoFileHandler;
 import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
 import killercreepr.cruxcore.CruxCore;
@@ -36,12 +33,9 @@ import killercreepr.usurvive.core.data.DeathGuide;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.mob.goals.guide.GuidePathGoal;
 import killercreepr.usurvive.core.guide.GuideAdvances;
-import killercreepr.usurvive.core.guide.GuideHolder;
 import killercreepr.usurvive.core.guide.GuideStructurePlacer;
 import killercreepr.usurvive.core.guide.GuideUtil;
 import killercreepr.usurvive.core.guide.particle.TrailRenderer;
-import killercreepr.usurvive.core.guide.progression.Guide1Progression;
-import killercreepr.usurvive.core.guide.progression.SixthGuideProgression;
 import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.pathfinding.GuidePathfinder;
 import killercreepr.usurvive.core.story.StoryAdvances;
@@ -59,6 +53,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityPortalEnterEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.jetbrains.annotations.NotNull;
@@ -69,8 +65,6 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-//todo make a gloal dialog player
-//todo properly add onComplete, onLoaded
 public class Story1Progress extends StoryHolderStoryProgress implements Listener {
     public static final Key KEY = Crux.key("1");
 
@@ -91,6 +85,7 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
 
     public static class Data extends GenericStoryProgressData {
         public boolean pushedNPCInPortal;
+        public boolean punchedNPC;
 
         @NotNull
         @Override
@@ -104,6 +99,12 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
     public BlockPos fallenMeteorLocation;
     public long fallenMeteorWorldCreatedAt;
     public boolean enteredResourceOverworld;
+
+    protected transient Mob npc;
+    protected transient GuidePathGoal npcGoal;
+    protected transient double lastDistanceSquared;
+    protected transient boolean stopTickDistance = false;
+    protected transient final double maxParticleShowDistance = 16D*16D;
 
     @Override
     public Story1Config cfg() {
@@ -151,9 +152,6 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
         }
     }
 
-    protected Mob npc;
-    protected GuidePathGoal npcGoal;
-
     public void setupNPC(Player p){
         npc = (Mob) USurviveMobs.GUIDE_1_NPC.spawn(cfg().NPC_POINTS_1.value().getFirst().pos().toLocation());
         npc.setVisibleByDefault(false);
@@ -181,10 +179,8 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
         setupNPC(p);
     }
 
-    protected Player p;
     @Override
     public void onStart(Player p, StoryHolder holder) {
-        this.p = p;
         super.onStart(p, holder);
         if(hasEnteredResourceOverworld() || !p.getWorld().key().equals(cfg().NPC_POINTS_1.value().getFirst().pos().worldKey())) return;
         WorldPosition spawn = cfg().NPC_SPAWN_1.value();
@@ -250,7 +246,6 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
         return x == fallenMeteorWorldCreatedAt;
     }
 
-    protected double lastDistanceSquared;
     public void tickDistance(Player p){
         if(fallenMeteorLocation == null) return;
         if(stopTickDistance) return;
@@ -290,20 +285,18 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
                     objective.trigger(p.getUniqueId(), man, ad, LootContext.builder().looter(p).looted(fallenMeteorLocation).build());
                 });
                 if(advancement.isGranted(p)){
-                    dialogListener().dialogPlayer().push(cfg().STRUCTURE_NEARBY_DIALOG.value());
+                    dialogListener().dialogPlayer().pushDialog(cfg().STRUCTURE_NEARBY_DIALOG.value());
                     //Lang.GUIDE_STRUCTURE_NEARBY.use(p);
                 }
                 stopTickDistance = false;
             });
         }
     }
-    protected boolean stopTickDistance = false;
 
     private AdvancementHolder holder(@NotNull Entity p){
         return AdvancementHolder.holderIfLoaded(p);
     }
 
-    protected final double maxParticleShowDistance = 16D*16D;
     public void tickStructureGuide(@NotNull Player p){
         if(fallenMeteorLocation == null) return;
         if(!p.getWorld().key().equals(fallenMeteorWorld)) return;
@@ -376,7 +369,7 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
                 return;
             }
             setFallenMeteorLocation(loc);
-            dialogListener().dialogPlayer().queueDialog(cfg().STRUCTURE_LOCATED_DIALOG.value());
+            dialogListener().dialogPlayer().pushDialog(cfg().STRUCTURE_LOCATED_DIALOG.value());
             //Lang.GUIDE_STRUCTURE_PLACED.use(p);
         });
     }
@@ -392,6 +385,19 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
         }
     }
 
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onEntityPortalEnter(EntityPortalEnterEvent event) {
+        if(!event.getEntity().equals(npc)) return;
+        if(data.pushedNPCInPortal) return;
+        data.pushedNPCInPortal = true;
+        if(npcGoal != null){
+            npcGoal.getDialogPlayer().pushDialog(cfg().PUSHED_NPC_IN_PORTAL_DIALOG.value());
+            return;
+        }
+        dialogListener().dialogPlayer().pushDialog(cfg().PUSHED_NPC_IN_PORTAL_DIALOG.value());
+    }
+
+
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         Player p = event.getPlayer();
@@ -402,13 +408,28 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
         Lang.GUIDE_1_CANNOT_USE_COMMANDS.use(p);
     }
 
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if(!event.getDamager().equals(p)) return;
+        if(event.getEntity().equals(npc)){
+            if(data.punchedNPC) return;
+            if(npcGoal != null){
+                npcGoal.getDialogPlayer().pushDialog(cfg().PUNCHED_NPC_DIALOG.value());
+                return;
+            }
+            //data.punchedNPC = true;
+            dialogListener().dialogPlayer().pushDialog(cfg().PUNCHED_NPC_DIALOG.value());
+        }
+    }
+
+
     public boolean hasEnteredResourceOverworld() {
         return enteredResourceOverworld;
     }
 
     public void onEnteredResourceOverworld(){
         if(p == null) return;
-        dialogListener().dialogPlayer().push(cfg().ENTER_RESOURCE_WORLD_DIALOG.value());
+        dialogListener().dialogPlayer().pushDialog(cfg().ENTER_RESOURCE_WORLD_DIALOG.value());
     }
 
     public void setEnteredResourceOverworld(boolean enteredResourceOverworld) {

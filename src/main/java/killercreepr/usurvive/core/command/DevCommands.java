@@ -187,7 +187,7 @@ public class DevCommands implements Listener {
                                                             .resolve(ctx.getSource());
                                                         targets.forEach(p ->{
                                                             StoryProgression progression = CfgHook.FILE_STORY_PROGRESSION.getHandlers()
-                                                                .get(ctx.getArgument("guide_progress", Key.class))
+                                                                .get(ctx.getArgument("story_id", Key.class))
                                                                 .tempDataHandler()
                                                                 .deserializeFromFile(new FileContext<>(CfgRegistries.JSON), new FileObject());
                                                             if(progression == null){

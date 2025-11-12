@@ -102,12 +102,14 @@ public class StandardPlayerSettings {
         List.of(
             StandardPlayerSettingSelections.SLOW,
             StandardPlayerSettingSelections.NORMAL,
-            StandardPlayerSettingSelections.FAST
+            StandardPlayerSettingSelections.FAST,
+            StandardPlayerSettingSelections.SUPER_FAST
         ),
         Map.of(
             StandardPlayerSettingSelections.SLOW, "Slow dialog speed",
             StandardPlayerSettingSelections.NORMAL, "Normal dialog speed",
-            StandardPlayerSettingSelections.FAST, "Fast dialog speed"
+            StandardPlayerSettingSelections.FAST, "Fast dialog speed",
+            StandardPlayerSettingSelections.SUPER_FAST, "Super fast dialog speed"
         )
     ));
 
@@ -116,12 +118,14 @@ public class StandardPlayerSettings {
         List.of(
             StandardPlayerSettingSelections.SLOW,
             StandardPlayerSettingSelections.NORMAL,
-            StandardPlayerSettingSelections.FAST
+            StandardPlayerSettingSelections.FAST,
+            StandardPlayerSettingSelections.SUPER_FAST
         ),
         Map.of(
             StandardPlayerSettingSelections.SLOW, "Slow dialog waiting time",
             StandardPlayerSettingSelections.NORMAL, "Normal dialog waiting time",
-            StandardPlayerSettingSelections.FAST, "Fast dialog waiting time"
+            StandardPlayerSettingSelections.FAST, "Fast dialog waiting time",
+            StandardPlayerSettingSelections.SUPER_FAST, "Super fast dialog waiting time"
         )
     ));
 

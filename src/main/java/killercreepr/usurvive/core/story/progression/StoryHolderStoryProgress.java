@@ -29,6 +29,15 @@ public abstract class StoryHolderStoryProgress implements StoryProgression {
     }
 
     @Override
+    public void onStart(Player p, StoryHolder holder) {
+        if(this.p == null){
+            this.p = p;
+            this.holder = holder;
+        }
+        StoryProgression.super.onStart(p, holder);
+    }
+
+    @Override
     public void onLoaded(Player p, StoryHolder holder) {
         this.p = p;
         this.holder = holder;

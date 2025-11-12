@@ -30,6 +30,7 @@ public class StandardPlayerSettingSelections {
 
     public static final PlayerSettingSelection SLOW = register(PlayerSettingSelection.playerSettingSelection(Crux.key("slow")));
     public static final PlayerSettingSelection FAST = register(PlayerSettingSelection.playerSettingSelection(Crux.key("fast")));
+    public static final PlayerSettingSelection SUPER_FAST = register(PlayerSettingSelection.playerSettingSelection(Crux.key("super_fast")));
     public static final PlayerSettingSelection INSTANT = register(PlayerSettingSelection.playerSettingSelection(Crux.key("instant")));
 
     public static PlayerSettingSelection register(PlayerSettingSelection s){

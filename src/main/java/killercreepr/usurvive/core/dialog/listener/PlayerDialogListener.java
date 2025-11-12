@@ -12,6 +12,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PlayerDialogListener extends PlayerTickedDataHolder implements DialogListener {
     public static final Key KEY = Crux.key("dialog/player/listener");
     public PlayerDialogListener(@NotNull Key key, @NotNull PlayerMemory parent) {
@@ -23,13 +26,13 @@ public class PlayerDialogListener extends PlayerTickedDataHolder implements Dial
 
     @Override
     public boolean shouldRemoveFromMemory(@Nullable Player e) {
-        return super.shouldRemoveFromMemory(e) || (dialogPlayer.getDialog() == null && lastHadDialog > 0 && !CruxMath.hasOccurredWithin(lastHadDialog, 60));
+        return super.shouldRemoveFromMemory(e) || (dialogPlayer.isEmpty() && lastHadDialog > 0 && !CruxMath.hasOccurredWithin(lastHadDialog, 60));
     }
 
     protected int tickRate = 2;
     protected long lastHadDialog;
     protected DialogPlayer dialogPlayer = new UserDialogPlayer();
-
+    protected final List<DialogPlayer> subDialogPlayers = new ArrayList<>();
 
     public int getTickRate() {
         return tickRate;
@@ -58,7 +61,7 @@ public class PlayerDialogListener extends PlayerTickedDataHolder implements Dial
     @Override
     protected void onTick(@NotNull Player e) {
         super.onTick(e);
-        if(dialogPlayer.getDialog() != null){
+        if(!dialogPlayer.isEmpty()){
             lastHadDialog = System.currentTimeMillis();
         }
         if(Crux.getCurrentTick() % tickRate == 0){

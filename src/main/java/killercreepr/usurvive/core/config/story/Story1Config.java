@@ -24,6 +24,8 @@ public class Story1Config extends StoryConfig{
     public final CfgValue<DialogContent> ENTER_RESOURCE_WORLD_DIALOG = new CommonValue<>(){};
     public final CfgValue<DialogContent> STRUCTURE_LOCATED_DIALOG = new CommonValue<>(){};
     public final CfgValue<DialogContent> STRUCTURE_NEARBY_DIALOG = new CommonValue<>(){};
+    public final CfgValue<DialogContent> PUSHED_NPC_IN_PORTAL_DIALOG = new CommonValue<>(){};
+    public final CfgValue<DialogContent> PUNCHED_NPC_DIALOG = new CommonValue<>(){};
 
     public Story1Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);

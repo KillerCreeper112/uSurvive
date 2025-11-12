@@ -182,7 +182,7 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
     @Override
     public void tick() {
         dialogTick();
-        if(dialogPlayer.getDialog() != null){
+        if(!dialogPlayer.isEmpty()){
             if(dialogDisplay != null){
                 dialogDisplay.teleport(getDialogLocation());
             }

@@ -43,7 +43,8 @@ public class SimpleDialogPlayer implements DialogPlayer {
     protected final DataComponentHandler components = new DataComponentHandler.Simple();
 
     @Override
-    public void forcePush(DialogContent content) {
+    public void forcePushDialog(DialogContent content) {
+        if(content == null) return;
         var current = getDialog();
         if(current == null){
             setDialog(content);
@@ -54,7 +55,8 @@ public class SimpleDialogPlayer implements DialogPlayer {
     }
 
     @Override
-    public void push(DialogContent content){
+    public void pushDialog(DialogContent content){
+        if(content == null) return;
         var current = getDialog();
         if(current == null){
             setDialog(content);
@@ -115,6 +117,11 @@ public class SimpleDialogPlayer implements DialogPlayer {
     }
 
     @Override
+    public boolean isEmpty() {
+        return getDialog() == null && queue.isEmpty() && pushedQueue.isEmpty();
+    }
+
+    @Override
     public String currentDialogLineFor(Audience audience) {
         String currentDialogLine;
         if(currentDialog.currentDialogLine == null){
@@ -169,6 +176,10 @@ public class SimpleDialogPlayer implements DialogPlayer {
 
     public void dialogTick(){
         if(getDialog() == null){
+            if(!pushedQueue.isEmpty()){
+                currentDialog = pushedQueue.poll();
+                return;
+            }
             if(queue.isEmpty()) return;
             setDialog(queue.poll());
             return;
