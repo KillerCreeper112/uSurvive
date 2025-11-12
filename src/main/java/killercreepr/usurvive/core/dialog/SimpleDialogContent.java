@@ -30,6 +30,11 @@ public class SimpleDialogContent implements DialogContent {
     }
 
     @Override
+    public int priority() {
+        return info.getOrDefault("priority", Integer.class, 0);
+    }
+
+    @Override
     public @NotNull DataExchange info() {
         return info;
     }

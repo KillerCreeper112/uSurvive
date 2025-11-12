@@ -1,7 +1,6 @@
 package killercreepr.usurvive.core.dialog;
 
 import killercreepr.crux.api.component.DataComponentHandler;
-import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.data.holder.DataInfoHolder;
 import killercreepr.crux.api.text.context.TextParserContext;
 import killercreepr.crux.api.text.tags.container.MergedTagContainer;
@@ -19,31 +18,70 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 //todo ADD MULTI-PLAYER SUPPORT for TEXT DISPLAYS
 public class SimpleDialogPlayer implements DialogPlayer {
+    public static class Data{
+        public DialogContent dialog;
+        public String currentDialogLine;
+        public String[] currentDialogSplit;
+        public int dialogWait;
+        public int dialogIndex = 0;
+        public int dialogSplitIndex = 0;
+        protected int cachePreParsedIndex = -1;
+        protected DialogLine lastLine;
+    }
+
     protected Queue<DialogContent> queue = new LinkedList<>();
-    protected DialogContent dialog;
-    protected String currentDialogLine;
-    protected String[] currentDialogSplit;
-    protected int dialogWait;
+    protected Queue<Data> pushedQueue = new LinkedList<>();
+    protected Data currentDialog = new Data();
+    protected int dialogWaitTime = 10;
+    protected int dialogSplitSpeed = 1;
+
     protected final Collection<Audience> audience = new HashSet<>();
     protected final Map<Audience, TextParserContext> cachedContext = new HashMap<>();
     protected final DataComponentHandler components = new DataComponentHandler.Simple();
 
+    @Override
+    public void forcePush(DialogContent content) {
+        var current = getDialog();
+        if(current == null){
+            setDialog(content);
+            return;
+        }
+        pushedQueue.add(currentDialog);
+        setDialog(content);
+    }
+
+    @Override
+    public void push(DialogContent content){
+        var current = getDialog();
+        if(current == null){
+            setDialog(content);
+            return;
+        }
+        if(content.priority() > current.priority()){
+            pushedQueue.add(currentDialog);
+            setDialog(content);
+            return;
+        }
+        queueDialog(content);
+    }
+
     public DialogContent getDialog() {
-        return dialog;
+        return currentDialog.dialog;
     }
 
     public void setDialog(DialogContent dialog) {
-        this.dialog = dialog;
+        /*this.dialog = dialog;
         this.dialogIndex = 0;
         this.dialogSplitIndex = 0;
         this.currentDialogLine = null;
         this.currentDialogSplit = null;
         this.lastLine = null;
-        this.cachePreParsedIndex = -1;
+        this.cachePreParsedIndex = -1;*/
+        this.currentDialog = new Data();
+        this.currentDialog.dialog = dialog;
     }
 
     public <T> T getInfo(String id, BiFunction<DataInfoHolder,String, T> function){
@@ -72,46 +110,41 @@ public class SimpleDialogPlayer implements DialogPlayer {
 
     @Override
     public float getProgress() {
-        if(dialog == null) return 1f;
-        return CruxMath.clamp((float) dialogIndex / (float) dialog.dialog().size()-1, 0f, 1f);
+        if(getDialog() == null) return 1f;
+        return CruxMath.clamp((float) currentDialog.dialogIndex / (float) getDialog().dialog().size()-1, 0f, 1f);
     }
 
     @Override
     public String currentDialogLineFor(Audience audience) {
         String currentDialogLine;
-        if(this.currentDialogLine == null){
-            if(dialog != null && dialogIndex < dialog.dialog().size()){
-                currentDialogLine = dialog.dialog().get(dialogIndex).line();
+        if(currentDialog.currentDialogLine == null){
+            if(getDialog() != null && currentDialog.dialogIndex < getDialog().dialog().size()){
+                currentDialogLine = getDialog().dialog().get(currentDialog.dialogIndex).line();
             }else return null;
-        }else currentDialogLine = this.currentDialogLine;
-        if(cachePreParsedIndex == dialogIndex) return currentDialogLine;
+        }else currentDialogLine = currentDialog.currentDialogLine;
+        if(currentDialog.cachePreParsedIndex == currentDialog.dialogIndex) return currentDialogLine;
         return audienceParserContext(audience).deserializeString(currentDialogLine);
     }
 
     @Override
     public DialogLine getCurrentLine() {
-        return lastLine;
+        return currentDialog.lastLine;
     }
 
     @Override
     public void queueDialog(DialogContent dialog) {
         if(dialog == null) return;
-        if(this.dialog == null){
+        if(getDialog() == null){
             setDialog(dialog);
         }else queue.add(dialog);
     }
-
-    protected int dialogWaitTime = 10;
-    protected int dialogIndex = 0;
-    protected int dialogSplitIndex = 0;
-    protected int dialogSplitSpeed = 1;
 
     public void onDialogCompleteLine(DialogLine line){
 
     }
 
     public void onDialogDisplay(Audience user){
-        if(currentDialogLine == null) return;
+        if(currentDialog.currentDialogLine == null) return;
         Lang.DIALOG_LINE_DISPLAY.use(user, audienceParserContext(user));
     }
     public void onDialogDisplaySpeaking(Audience user){
@@ -135,15 +168,15 @@ public class SimpleDialogPlayer implements DialogPlayer {
     }
 
     public void dialogTick(){
-        if(dialog == null){
+        if(getDialog() == null){
             if(queue.isEmpty()) return;
             setDialog(queue.poll());
             return;
         }
         onDialogTicking();
-        if(dialogWait > 0){
-            dialogWait--;
-            if(currentDialogLine != null){
+        if(currentDialog.dialogWait > 0){
+            currentDialog.dialogWait--;
+            if(currentDialog.currentDialogLine != null){
                 onDialogWaiting();
             }
             return;
@@ -156,7 +189,7 @@ public class SimpleDialogPlayer implements DialogPlayer {
 
     @Override
     public String getCurrentDialogLine() {
-        return currentDialogLine;
+        return currentDialog.currentDialogLine;
     }
 
     @Override
@@ -166,12 +199,12 @@ public class SimpleDialogPlayer implements DialogPlayer {
 
     @Override
     public int getDialogWaiting() {
-        return dialogWait;
+        return currentDialog.dialogWait;
     }
 
     @Override
     public void setDialogWaiting(int time) {
-        dialogWait = time;
+        currentDialog.dialogWait = time;
     }
 
     @Override
@@ -242,8 +275,8 @@ public class SimpleDialogPlayer implements DialogPlayer {
         if(getDialog() != null && getCurrentLine() != null){
             tags.hook(new DialogContentLinePair(getDialog(), getCurrentLine()));
         }
-        if(currentDialogLine != null){
-            tags.add(Tag.parsed("line", currentDialogLine));
+        if(currentDialog.currentDialogLine != null){
+            tags.add(Tag.parsed("line", currentDialog.currentDialogLine));
         }
         return tags;
     }
@@ -253,68 +286,67 @@ public class SimpleDialogPlayer implements DialogPlayer {
         return buildDynamicTags();
     }
 
-    protected DialogLine lastLine;
     public String getToSendDialogLine() {
-        if (currentDialogLine == null) {
-            if (dialogIndex >= dialog.dialog().size()) {
+        if (currentDialog.currentDialogLine == null) {
+            if (currentDialog.dialogIndex >= getDialog().dialog().size()) {
                 setDialog(null);
                 return null;
             }
 
             // Split into characters including formatting tags
-            var line = dialog.dialog().get(dialogIndex);
-            if(!line.equals(lastLine)){
+            var line = getDialog().dialog().get(currentDialog.dialogIndex);
+            if(!line.equals(currentDialog.lastLine)){
                 this.onDialogStartLine(line);
-                dialog.actions().forEach(action ->{
+                getDialog().actions().forEach(action ->{
                     action.onStart(this);
                 });
                 line.actions().forEach(action ->{
                     action.onStart(this);
                 });
                 //if any actions change the wait time
-                if(dialogWait > 0){
-                    lastLine = line;
+                if(currentDialog.dialogWait > 0){
+                    currentDialog.lastLine = line;
                     return null;
                 }
             }
-            lastLine = line;
+            currentDialog.lastLine = line;
             List<String> split = getDialogStrings();
             if(split.isEmpty()){
                 return null;
             }
-            currentDialogSplit = split.toArray(new String[0]);
-            currentDialogLine = currentDialogSplit[0];
-            dialogSplitIndex = 0; // reset index
-            return currentDialogLine;
+            currentDialog.currentDialogSplit = split.toArray(new String[0]);
+            currentDialog.currentDialogLine = currentDialog.currentDialogSplit[0];
+            currentDialog.dialogSplitIndex = 0; // reset index
+            return currentDialog.currentDialogLine;
         }
 
         StringBuilder builder = new StringBuilder();
-        builder.append(currentDialogLine);
+        builder.append(currentDialog.currentDialogLine);
         int dialogSplitSpeed = getDialogSplitSpeed();
         for(int i = 0; i < dialogSplitSpeed; i++){
-            dialogSplitIndex++;
+            currentDialog.dialogSplitIndex++;
 
-            if (dialogSplitIndex >= currentDialogSplit.length) {
+            if (currentDialog.dialogSplitIndex >= currentDialog.currentDialogSplit.length) {
                 if(i != 0){
-                    currentDialogLine = builder.toString();
-                    var line = dialog.dialog().get(dialogIndex);
-                    dialog.actions().forEach(action ->{
+                    currentDialog.currentDialogLine = builder.toString();
+                    var line = getDialog().dialog().get(currentDialog.dialogIndex);
+                    getDialog().actions().forEach(action ->{
                         action.onSpeak(this);
                     });
                     line.actions().forEach(action ->{
                         action.onSpeak(this);
                     });
-                    return currentDialogLine;
+                    return currentDialog.currentDialogLine;
                 }
-                var line = dialog.dialog().get(dialogIndex);
+                var line = getDialog().dialog().get(currentDialog.dialogIndex);
                 onDialogCompleteLine(line);
 
-                dialogSplitIndex = 0;
-                dialogIndex++;
-                currentDialogLine = null;
-                dialogWait = getDialogWaitTime();
+                currentDialog.dialogSplitIndex = 0;
+                currentDialog.dialogIndex++;
+                currentDialog.currentDialogLine = null;
+                currentDialog.dialogWait = getDialogWaitTime();
 
-                dialog.actions().forEach(action ->{
+                getDialog().actions().forEach(action ->{
                     action.onEnd(this);
                 });
                 line.actions().forEach(action ->{
@@ -323,51 +355,49 @@ public class SimpleDialogPlayer implements DialogPlayer {
                 return null;
             }
 
-            String nextPart = currentDialogSplit[dialogSplitIndex];
+            String nextPart = currentDialog.currentDialogSplit[currentDialog.dialogSplitIndex];
 
             // Immediately append formatting tags
             while (nextPart.startsWith("<") && nextPart.endsWith(">")) {
                 builder.append(nextPart);
                 //currentDialogLine += nextPart;
-                dialogSplitIndex++;
-                if (dialogSplitIndex >= currentDialogSplit.length) {
-                    currentDialogLine = null;
-                    dialogIndex++;
-                    dialogWait = getDialogWaitTime();
+                currentDialog.dialogSplitIndex++;
+                if (currentDialog.dialogSplitIndex >= currentDialog.currentDialogSplit.length) {
+                    currentDialog.currentDialogLine = null;
+                    currentDialog.dialogIndex++;
+                    currentDialog.dialogWait = getDialogWaitTime();
                     return null;
                 }
-                nextPart = currentDialogSplit[dialogSplitIndex];
+                nextPart = currentDialog.currentDialogSplit[currentDialog.dialogSplitIndex];
             }
 
             builder.append(nextPart);
             //currentDialogLine += nextPart;
         }
         //dialogWait = 1;
-        currentDialogLine = builder.toString();
-        var line = dialog.dialog().get(dialogIndex);
-        dialog.actions().forEach(action ->{
+        currentDialog.currentDialogLine = builder.toString();
+        var line = getDialog().dialog().get(currentDialog.dialogIndex);
+        getDialog().actions().forEach(action ->{
             action.onSpeak(this);
         });
         line.actions().forEach(action ->{
             action.onSpeak(this);
         });
-        return currentDialogLine;
+        return currentDialog.currentDialogLine;
     }
-
-    protected int cachePreParsedIndex;
 
     @NotNull
     private List<String> getDialogStrings() {
-        String line = dialog.dialog().get(dialogIndex).line();
+        String line = getDialog().dialog().get(currentDialog.dialogIndex).line();
         if(line == null) return List.of();
 
         if(components.getOrDefault(DialogComponents.PRE_PARSE_FOR_SINGLE_AUDIENCE, true) && audience.size() == 1){
-            if(dialogIndex != cachePreParsedIndex){
+            if(currentDialog.dialogIndex != currentDialog.cachePreParsedIndex){
                 line = currentDialogLineFor(CruxCollection.getFirst(audience()));
-                cachePreParsedIndex = dialogIndex;
+                currentDialog.cachePreParsedIndex = currentDialog.dialogIndex;
             }
         }
-        if(cachePreParsedIndex != dialogIndex && components.getOrDefault(DialogComponents.PRE_PARSE_GLOBAL, true)){
+        if(currentDialog.cachePreParsedIndex != currentDialog.dialogIndex && components.getOrDefault(DialogComponents.PRE_PARSE_GLOBAL, true)){
             line = parserContext().deserializeString(line);
         }
 

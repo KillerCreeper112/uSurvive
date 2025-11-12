@@ -7,4 +7,5 @@ import java.util.List;
 public interface DialogContent extends DataInfoHolder {
     List<DialogLine> dialog();
     List<DialogAction> actions();
+    int priority();
 }

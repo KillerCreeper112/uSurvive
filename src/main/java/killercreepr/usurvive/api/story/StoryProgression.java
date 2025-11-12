@@ -3,7 +3,6 @@ package killercreepr.usurvive.api.story;
 import killercreepr.crux.api.data.CruxKeyed;
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxconfig.config.common.file.DataFile;
-import killercreepr.usurvive.core.guide.progression.Guide2Progression;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -13,6 +12,7 @@ public interface StoryProgression extends CruxKeyed {
     default void onTick(){}
 
     default void onComplete(Player p, StoryHolder holder) {
+        onEnd(p, holder);
     }
 
     default void onStart(Player p, StoryHolder holder){
@@ -25,6 +25,8 @@ public interface StoryProgression extends CruxKeyed {
             HandlerList.unregisterAll(l);
         }
     }
+
+    default DataFile cfg(){ return null; }
 
     default void onLoaded(Player p, StoryHolder holder){}
     default void onMemoryUnload(Player p, StoryHolder holder){

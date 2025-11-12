@@ -2,6 +2,8 @@ package killercreepr.usurvive.core.config.handler;
 
 import com.google.common.reflect.TypeToken;
 import killercreepr.crux.api.data.DataExchange;
+import killercreepr.crux.api.data.Holder;
+import killercreepr.crux.core.Crux;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
@@ -11,6 +13,8 @@ import killercreepr.usurvive.api.dialog.DialogContent;
 import killercreepr.usurvive.api.dialog.DialogLine;
 import killercreepr.usurvive.api.dialog.Dialoger;
 import killercreepr.usurvive.core.dialog.SimpleDialogContent;
+import killercreepr.usurvive.core.dialog.SimpleKeyedDialogContent;
+import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,6 +58,22 @@ public class FileDialogContent implements FileObjectHandler<DialogContent> {
             )
         );
 
+        String key = info.get("key", String.class);
+        if(key != null){
+            info = info.append("key", Holder.direct(Crux.key(key)));
+        }
+
+        Key finalKey = info.get("key", Key.class);
+        if(finalKey != null){
+            return new SimpleKeyedDialogContent(
+                r.deserializeFromFileOrDefault(
+                    new TypeToken<List<DialogLine>>(){}.getType(),
+                    o.get("dialog"), List.of()
+                ),
+                actions,
+                info
+            );
+        }
         return new SimpleDialogContent(
             r.deserializeFromFileOrDefault(
                 new TypeToken<List<DialogLine>>(){}.getType(),

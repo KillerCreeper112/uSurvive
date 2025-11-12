@@ -83,6 +83,7 @@ import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsManager;
 import killercreepr.usurvive.api.guide.GuidePoint;
+import killercreepr.usurvive.api.story.StoryHolder;
 import killercreepr.usurvive.api.story.StoryProgressData;
 import killercreepr.usurvive.api.story.StoryProgression;
 import killercreepr.usurvive.api.tpa.TPAManager;
@@ -138,7 +139,9 @@ import killercreepr.usurvive.core.potion.inflictor.UDamageEntityInflictor;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
 import killercreepr.usurvive.core.stat.USurviveStats;
 import killercreepr.usurvive.core.statistic.USurviveStatistics;
+import killercreepr.usurvive.core.story.SimpleStoryHolder;
 import killercreepr.usurvive.core.story.config.StoryCfgLoader;
+import killercreepr.usurvive.core.story.listener.StoryListener;
 import killercreepr.usurvive.core.tags.USurviveTag;
 import killercreepr.usurvive.core.tags.object.*;
 import killercreepr.usurvive.core.tpa.SimpleTPAManager;
@@ -365,7 +368,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             m.getDataHolders().register(new SleeperHolder(m, () -> (SleeperCfg) values()));
             m.getDataHolders().register(new USurviveAdvancementLoaderHolder(m, cfgManagerLoader));
             m.getDataHolders().register(new AdvancementAutoSaveHolder(m, cfgManagerLoader));
-            m.getDataHolders().register(new GuideHolder(m));
+            m.getDataHolders().register(new SimpleStoryHolder(m));
         });
         StandardGrappleHooks.register(USurviveRegistries.GRAPPLE_HOOK);
         StandardWhipHooks.register(USurviveRegistries.WHIP_HOOK);
@@ -542,7 +545,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new VillagerTradeListener(),
             new CustomEntityListener(),
             new SporelinkListener(),
-            new GuideListener(values, values.GUIDE_RESOURCE_WORLD_STRUCTURE(), values.GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE())
+            new StoryListener(values)
             //new WaxPaintingListener()
         );
 

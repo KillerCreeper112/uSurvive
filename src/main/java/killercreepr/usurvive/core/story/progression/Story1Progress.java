@@ -1,21 +1,28 @@
 package killercreepr.usurvive.core.story.progression;
 
 import killercreepr.crux.api.data.WorldPosition;
+import killercreepr.crux.api.entity.memory.EntityMemory;
 import killercreepr.crux.api.loot.LootContext;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.math.BlockPos;
 import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxGoalUtil;
+import killercreepr.cruxadvancements.api.advancement.CruxAdvancement;
+import killercreepr.cruxadvancements.api.advancement.flag.CruxAdvancementFlag;
 import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementManager;
+import killercreepr.cruxadvancements.api.event.CruxAdvancementGrantEvent;
 import killercreepr.cruxadvancements.core.entity.memory.AdvancementHolder;
 import killercreepr.cruxadvancements.core.registries.AdvancementRegistries;
+import killercreepr.cruxadvancements.crazy.advancement.CrazyAdvancement;
 import killercreepr.cruxconfig.config.common.handler.AutoFileHandler;
 import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
+import killercreepr.cruxstructures.api.structure.generation.StructureGenerator;
 import killercreepr.cruxworlds.api.world.CruxWorld;
+import killercreepr.cruxworlds.api.world.type.CruxWorldType;
 import killercreepr.cruxworlds.core.component.CruxWorldsComponents;
 import killercreepr.usurvive.api.entity.mob.goal.path.GuidePathGoalNode;
 import killercreepr.usurvive.api.guide.GuidePoint;
@@ -24,19 +31,25 @@ import killercreepr.usurvive.api.story.StoryHolder;
 import killercreepr.usurvive.api.story.StoryProgressData;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.advancement.objective.GuideDiscoverMeteorObjective;
+import killercreepr.usurvive.core.config.story.Story1Config;
 import killercreepr.usurvive.core.data.DeathGuide;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.mob.goals.guide.GuidePathGoal;
 import killercreepr.usurvive.core.guide.GuideAdvances;
 import killercreepr.usurvive.core.guide.GuideHolder;
+import killercreepr.usurvive.core.guide.GuideStructurePlacer;
 import killercreepr.usurvive.core.guide.GuideUtil;
 import killercreepr.usurvive.core.guide.particle.TrailRenderer;
-import killercreepr.usurvive.core.guide.progression.Guide2Progression;
+import killercreepr.usurvive.core.guide.progression.Guide1Progression;
+import killercreepr.usurvive.core.guide.progression.SixthGuideProgression;
 import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.pathfinding.GuidePathfinder;
+import killercreepr.usurvive.core.story.StoryAdvances;
 import killercreepr.usurvive.core.story.progression.data.GenericStoryProgressData;
 import killercreepr.usurvive.core.util.AdvanceUtil;
+import killercreepr.usurvive.core.world.USurviveWorldTypes;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -52,7 +65,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+//todo make a gloal dialog player
+//todo properly add onComplete, onLoaded
 public class Story1Progress extends StoryHolderStoryProgress implements Listener {
     public static final Key KEY = Crux.key("1");
 
@@ -86,6 +104,11 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
     public BlockPos fallenMeteorLocation;
     public long fallenMeteorWorldCreatedAt;
     public boolean enteredResourceOverworld;
+
+    @Override
+    public Story1Config cfg() {
+        return USurvivePlugin.inst().cfgContainer().STORY_1;
+    }
 
     @Override
     public StoryProgressData getProgress() {
@@ -132,13 +155,13 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
     protected GuidePathGoal npcGoal;
 
     public void setupNPC(Player p){
-        npc = (Mob) USurviveMobs.GUIDE_1_NPC.spawn(cfg().GUIDE_1_POINTS.value().getFirst().pos().toLocation());
+        npc = (Mob) USurviveMobs.GUIDE_1_NPC.spawn(cfg().NPC_POINTS_1.value().getFirst().pos().toLocation());
         npc.setVisibleByDefault(false);
         p.showEntity(Crux.getMainPlugin(), npc);
         npcGoal = CruxGoalUtil.getGoal(npc, GuidePathGoal.class);
         List<GoalNode> nodes = new ArrayList<>();
 
-        cfg().GUIDE_1_POINTS.valueOr(List.of()).forEach(pos ->{
+        cfg().NPC_POINTS_1.valueOr(List.of()).forEach(pos ->{
             nodes.add(GuidePathGoalNode.guidePathGoalNode(
                 GoalNode.distanceGoalNode(pos.pos().toLocation(), 1.5D),
                 pos
@@ -163,8 +186,8 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
     public void onStart(Player p, StoryHolder holder) {
         this.p = p;
         super.onStart(p, holder);
-        if(hasEnteredResourceOverworld() || !p.getWorld().key().equals(cfg().GUIDE_1_POINTS.value().getFirst().pos().worldKey())) return;
-        WorldPosition spawn = cfg().GUIDE_1_SPAWN.value();
+        if(hasEnteredResourceOverworld() || !p.getWorld().key().equals(cfg().NPC_POINTS_1.value().getFirst().pos().worldKey())) return;
+        WorldPosition spawn = cfg().NPC_SPAWN_1.value();
         p.teleport(spawn.toLocation());
     }
 
@@ -175,12 +198,12 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
         if(every==0) return;
         if(Crux.getCurrentTick() % every != 0) return;
 
-        if(!hasEnteredResourceOverworld() && p.getWorld().key().equals(cfg().GUIDE_1_POINTS.value().getFirst().pos().worldKey())){
+        if(!hasEnteredResourceOverworld() && p.getWorld().key().equals(cfg().NPC_POINTS_1.value().getFirst().pos().worldKey())){
             if((npcGoal == null || !npcGoal.isSpeaking() || npcGoal.isMoving())){
-                GuidePoint nearest = CruxCollection.getLast(cfg().GUIDE_1_POINTS.value());
+                GuidePoint nearest = CruxCollection.getLast(cfg().NPC_POINTS_1.value());
                 if(nearest != null){
                     List<Location> path = new GuidePathfinder(p).findPath(p.getLocation(), nearest.pos().toLocation(), 0.5D,
-                        cfg().GUIDE_1_MAX_PARTICLE_POINTS.value().value().intValue());
+                        cfg().MAX_PARTICLE_POINTS.value().value().intValue());
                     TrailRenderer.renderTrail(p, path);
                 }
             }
@@ -267,7 +290,7 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
                     objective.trigger(p.getUniqueId(), man, ad, LootContext.builder().looter(p).looted(fallenMeteorLocation).build());
                 });
                 if(advancement.isGranted(p)){
-                    dialogPlayer.queueDialog(cfg().GUIDE_1_STRUCTURE_NEARBY.value());
+                    dialogListener().dialogPlayer().push(cfg().STRUCTURE_NEARBY_DIALOG.value());
                     //Lang.GUIDE_STRUCTURE_NEARBY.use(p);
                 }
                 stopTickDistance = false;
@@ -291,7 +314,7 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
 
         var cfg = USurvivePlugin.inst().values();
         //Location startingPoint = CruxLoc.shiftToward(p.getEyeLocation(), pos, 1D);
-        new DeathGuide(p, p.getLocation().add(0, p.getHeight()*.65, 0), pos,
+        new DeathGuide(p, p.getLocation().add(0, p.getHeight()*.7, 0), pos,
             cfg.DEATH_GUIDE_PARTICLE_AMOUNT().value().intValue(),
             cfg.DEATH_GUIDE_PARTICLE_SHIFT_START(),
             cfg.DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER(),
@@ -300,6 +323,62 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
             cfg.DEATH_GUIDE_PARTICLE_SHIFT(),
             Particle.FLAME
         ).setStarted();
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onCruxAdvancementGrant(CruxAdvancementGrantEvent event) {
+        CruxAdvancement advancement = event.getAdvancement();
+
+        UUID who = event.getWho();
+        if(!isPlayer(who)) return;
+        if(advancement.key().equals(StoryAdvances.ENTER_RESOURCE_OVERWORLD)){
+            onEnterResourceOverworld(event);
+            return;
+        }
+    }
+
+    public void onEnterResourceOverworld(CruxAdvancementGrantEvent event){
+        CruxAdvancementManager manager = event.getManager();
+        UUID who = event.getWho();
+
+        World world = p.getWorld();
+        CruxWorld cruxWorld = CruxCore.core().worldManager().getWorld(world.key());
+        if(cruxWorld==null) return;
+        CruxWorldType type = cruxWorld.get(CruxWorldsComponents.WORLD_TYPE);
+        if(!USurviveWorldTypes.RESOURCE_OVERWORLD.compare(type)) return;
+
+        StructureGenerator gen = cfg().RESOURCE_WORLD_STRUCTURE_1.value();
+        if(gen == null) return;
+
+        setEnteredResourceOverworld(true);
+
+        GuideStructurePlacer placer = new GuideStructurePlacer(p.getChunk(), 48, gen, cfg().RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE.value(),
+            () -> p.isOnline() && p.getWorld().equals(world));
+        placer.placeStructure().orTimeout(90L, TimeUnit.SECONDS).whenComplete((loc, throwable) ->{
+            if(throwable != null){
+                throwable.printStackTrace();
+                if(throwable instanceof TimeoutException){
+                    manager.revokeAdvancement(who, event.getAdvancement());
+                    p.sendMessage(Component.text("The Guide structure was not able to be placed in time. This is usually due to new chunks taking a long time to load in. Please go back to Spawn and re-travel to the Resource Overworld to try again! It's recommended that you fast travel to the same spot."));
+                    return;
+                }
+                p.sendMessage(Component.text("An error occurred. Contact developer. CODE 7392"));
+                return;
+            }
+
+            if(!p.isOnline()){
+                if(loc != null) Crux.logError(p.getName() + " guide structure was placed even though they are offline!");
+                return;
+            }
+            if(loc == null){
+                manager.revokeAdvancement(who, event.getAdvancement());
+                Lang.GUIDE_STRUCTURE_CANNOT_BE_PLACED.use(p);
+                return;
+            }
+            setFallenMeteorLocation(loc);
+            dialogListener().dialogPlayer().queueDialog(cfg().STRUCTURE_LOCATED_DIALOG.value());
+            //Lang.GUIDE_STRUCTURE_PLACED.use(p);
+        });
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -312,7 +391,6 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
             npcGoal = null;
         }
     }
-
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
@@ -330,7 +408,7 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
 
     public void onEnteredResourceOverworld(){
         if(p == null) return;
-        dialogPlayer.queueDialog(cfg().GUIDE_1_ENTER_RESOURCE_WORLD_DIALOG.value());
+        dialogListener().dialogPlayer().push(cfg().ENTER_RESOURCE_WORLD_DIALOG.value());
     }
 
     public void setEnteredResourceOverworld(boolean enteredResourceOverworld) {

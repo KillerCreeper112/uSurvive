@@ -13,8 +13,7 @@ import killercreepr.usurvive.api.story.StoryHolder;
 import killercreepr.usurvive.api.story.StoryProgressData;
 import killercreepr.usurvive.api.story.StoryProgression;
 import killercreepr.usurvive.core.USurvivePlugin;
-import killercreepr.usurvive.core.guide.progression.Guide1Progression;
-import killercreepr.usurvive.core.guide.progression.GuideProgression;
+import killercreepr.usurvive.core.story.progression.Story1Progress;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -23,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class SimpleStoryHolder extends PlayerTickedDataHolder implements AutoSavable, Loadable, StoryHolder {
@@ -36,7 +34,7 @@ public class SimpleStoryHolder extends PlayerTickedDataHolder implements AutoSav
         this(KEY, parent);
     }
     protected boolean loaded = false;
-    protected final Map<Key, StoryProgressData> storyProgressData = new HashMap<>();
+    protected final Map<Key, StoryProgressData> storyData = new HashMap<>();
     protected final Map<Key, StoryProgression> storyProgression = new HashMap<>();
 
     @Override
@@ -89,7 +87,7 @@ public class SimpleStoryHolder extends PlayerTickedDataHolder implements AutoSav
     @Override
     public void save() {
         DataFile cfg = getSaveFile(true);
-        cfg.serialize("completed", storyProgressData);
+        cfg.serialize("completed", storyData);
         cfg.serialize("current_progression", storyProgression);
         cfg.save();
     }
@@ -98,16 +96,44 @@ public class SimpleStoryHolder extends PlayerTickedDataHolder implements AutoSav
     public void load() {
         DataFile cfg = getSaveFile(false);
         if(cfg == null){
+            if(getCurrentStoryProgression().isEmpty()){
+                addProgression(new Story1Progress());
+            }
             //if(currentProgression == null) setCurrentProgression(new Guide1Progression());
             return;
         }
-        storyProgressData.putAll(cfg.deserializeOrDefault("current_progression", new TypeToken<Map<Key, StoryProgression>>(){}.getType(), Map.of()));
-        storyProgressData.putAll(cfg.deserializeOrDefault("completed", new TypeToken<Map<Key, StoryProgressData>>(){}.getType(), Map.of()));
+        storyProgression.putAll(cfg.deserializeOrDefault("current_progression", new TypeToken<Map<Key, StoryProgression>>(){}.getType(), Map.of()));
+        storyData.putAll(cfg.deserializeOrDefault("completed", new TypeToken<Map<Key, StoryProgressData>>(){}.getType(), Map.of()));
         cfg.close();
-
         /*if(currentProgression == null && !isCompleted(Guide1Progression.KEY)){
             setCurrentProgression(new Guide1Progression());
         }*/
+    }
+
+    @Override
+    public void addProgression(StoryProgression progression, boolean silent) {
+        storyProgression.put(progression.key(), progression);
+        if(!silent){
+            progression.onStart(parent.value(), this);
+        }
+    }
+
+    @Override
+    public void onLoaded(Player p) {
+        for (StoryProgression value : getCurrentStoryProgression()) {
+            value.onLoaded(p, this);
+        }
+        setLoaded(true);
+    }
+
+    @Override
+    public void complete(StoryProgression progression) {
+        var p = getParent().value();
+        storyProgression.remove(progression.key());
+        var data = progression.getProgress();
+        data.complete();
+        storyData.put(progression.key(), data);
+        progression.onComplete(p, this);
     }
 
     @Override
@@ -116,13 +142,13 @@ public class SimpleStoryHolder extends PlayerTickedDataHolder implements AutoSav
     }
 
     @Override
-    public Map<Key, StoryProgressData> getStoryProgressData() {
-        return storyProgressData;
+    public Map<Key, StoryProgressData> getStoryData() {
+        return storyData;
     }
 
     @Override
     public StoryProgressData getStoryProgressData(Key key) {
-        return storyProgressData.get(key);
+        return storyData.get(key);
     }
 
     @Override

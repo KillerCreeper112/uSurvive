@@ -24,6 +24,8 @@ public interface DialogPlayer {
     DialogLine getCurrentLine();
 
     void queueDialog(DialogContent dialog);
+    void push(DialogContent content);
+    void forcePush(DialogContent content);
 
     void onDialogDisplay(Audience user);
     void dialogTick();

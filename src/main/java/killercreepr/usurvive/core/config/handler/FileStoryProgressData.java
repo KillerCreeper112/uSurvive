@@ -26,7 +26,7 @@ public class FileStoryProgressData implements FileObjectHandler<StoryProgressDat
         FileStoryProgressionLoader handler = fileStoryProgression.HANDLERS.get(guide.key());
         FileObject o = new FileObject();
         o.add("type", ctx.getRegistry().serializeToFile(guide.key()));
-        o.add("data", handler.serializeDataToFile(ctx, guide));
+        o.add("data", handler.permanentDataHandler().serializeToFile(ctx, guide));
         return o;
     }
 
@@ -37,6 +37,6 @@ public class FileStoryProgressData implements FileObjectHandler<StoryProgressDat
         FileStoryProgressionLoader<? extends StoryProgression, ? extends StoryProgressData> handler =
             fileStoryProgression.HANDLERS.get(ctx.getRegistry().deserializeFromFile(Key.class, o.get("type")));
         if(handler == null) throw new IllegalArgumentException("No handler of " + o.get("type") + " " + o);
-        return handler.deserializeDataFromFile(ctx, o.get("data"));
+        return handler.permanentDataHandler().deserializeFromFile(ctx, o.get("data"));
     }
 }
