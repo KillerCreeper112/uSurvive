@@ -10,7 +10,7 @@ public interface DialogContent extends DataInfoHolder {
     List<DialogAction> actions();
     int priority();
 
-    default void sendInfo(DataExchange info){
+    default void onSendInfo(DataExchange info){
 
     }
 

@@ -1,10 +1,12 @@
 package killercreepr.usurvive.core.story.progression;
 
+import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.data.WorldPosition;
 import killercreepr.crux.api.loot.LootContext;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.math.BlockPos;
+import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.cruxadvancements.api.advancement.CruxAdvancement;
@@ -12,6 +14,7 @@ import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementMana
 import killercreepr.cruxadvancements.api.event.CruxAdvancementGrantEvent;
 import killercreepr.cruxadvancements.core.entity.memory.AdvancementHolder;
 import killercreepr.cruxadvancements.core.registries.AdvancementRegistries;
+import killercreepr.cruxblocks.core.block.component.standard.EntitySpawnerComponent;
 import killercreepr.cruxconfig.config.common.handler.AutoFileHandler;
 import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
 import killercreepr.cruxcore.CruxCore;
@@ -21,8 +24,6 @@ import killercreepr.cruxstructures.api.structure.generation.StructureGenerator;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.type.CruxWorldType;
 import killercreepr.cruxworlds.core.component.CruxWorldsComponents;
-import killercreepr.usurvive.api.dialog.DialogContent;
-import killercreepr.usurvive.api.dialog.DialogPlayer;
 import killercreepr.usurvive.api.entity.mob.goal.path.GuidePathGoalNode;
 import killercreepr.usurvive.api.guide.GuidePoint;
 import killercreepr.usurvive.api.story.FileStoryProgressionLoader;
@@ -293,8 +294,17 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
                     if(content != null){
                         content = new WrappedDialogContent(content){
                             @Override
-                            public void onEnd(DialogPlayer player) {
-                                super.onEnd(player);
+                            public void onSendInfo(DataExchange info) {
+                                String action = info.get("initiate", String.class);
+                                if(action == null) return;
+                                switch (action.toLowerCase()){
+                                    case "spawn_bounders" ->{
+                                        if(!(CruxRegistries.TYPED_DATA_COMPONENTS.get(Crux.key(info.get("spawner_component", String.class))).getValue() instanceof EntitySpawnerComponent spawner)){
+                                            return;
+                                        }
+                                    }
+                                }
+
                             }
                         };
                         dialogListener().dialogPlayer().pushDialog(content);

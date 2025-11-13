@@ -1,13 +1,8 @@
 package killercreepr.usurvive.core.dialog.action;
 
 import killercreepr.crux.api.data.DataExchange;
-import killercreepr.crux.api.text.tags.container.TagContainer;
-import killercreepr.crux.core.Crux;
 import killercreepr.usurvive.api.dialog.DialogAction;
 import killercreepr.usurvive.api.dialog.DialogPlayer;
-import org.bukkit.entity.Player;
-
-import java.util.List;
 
 public class SendContentInfoDialogAction implements DialogAction {
     protected final DataExchange start;
@@ -27,7 +22,7 @@ public class SendContentInfoDialogAction implements DialogAction {
 
     public void performCommand(DataExchange cmds, DialogPlayer player){
         if(cmds == null) return;
-        player.getDialog().sendInfo(cmds);
+        player.getDialog().onSendInfo(cmds);
     }
 
     @Override
