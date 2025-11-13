@@ -37,7 +37,7 @@ public class UserDialogPlayer extends SimpleDialogPlayer{
         if(getDialogSplitSpeed() != speed) setDialogSplitSpeed(speed);
 
 
-        setting = holder.getSetting(StandardPlayerSettings.DIALOG_WAIT_TIME);
+        setting = holder.getSetting(StandardPlayerSettings.DIALOG_PAUSE_TIME);
         if(setting == StandardPlayerSettingSelections.SLOW){
             speed = 36;
         }else if(setting == StandardPlayerSettingSelections.FAST){

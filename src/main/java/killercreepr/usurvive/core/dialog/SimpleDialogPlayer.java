@@ -51,6 +51,7 @@ public class SimpleDialogPlayer implements DialogPlayer {
             return;
         }
         pushedQueue.add(currentDialog);
+        current.onPause(this);
         setDialog(content);
     }
 
@@ -64,6 +65,7 @@ public class SimpleDialogPlayer implements DialogPlayer {
         }
         if(content.priority() > current.priority()){
             pushedQueue.add(currentDialog);
+            current.onPause(this);
             setDialog(content);
             return;
         }
@@ -84,6 +86,7 @@ public class SimpleDialogPlayer implements DialogPlayer {
         this.cachePreParsedIndex = -1;*/
         this.currentDialog = new Data();
         this.currentDialog.dialog = dialog;
+        if(dialog != null) dialog.onStart(this);
     }
 
     public <T> T getInfo(String id, BiFunction<DataInfoHolder,String, T> function){
@@ -300,7 +303,11 @@ public class SimpleDialogPlayer implements DialogPlayer {
     public String getToSendDialogLine() {
         if (currentDialog.currentDialogLine == null) {
             if (currentDialog.dialogIndex >= getDialog().dialog().size()) {
+                var current = getDialog();
                 setDialog(null);
+                if(current != null){
+                    current.onEnd(this);
+                }
                 return null;
             }
 

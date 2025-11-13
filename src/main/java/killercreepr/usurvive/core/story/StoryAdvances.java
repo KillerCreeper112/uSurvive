@@ -11,4 +11,5 @@ public class StoryAdvances {
     public static final Key BUILD_ABYSS_ALTAR = USurvivePlugin.inst().key("main/build_abyss_altar");
     public static final Key GUIDE_SHARD_CLAIM = USurvivePlugin.inst().key("main/guide_shard_claim");*/
     public static final Key ENTER_RESOURCE_OVERWORLD = USurvivePlugin.inst().key("story/enter_resource_world");
+    public static final Key DISCOVER_GUIDE_METEOR = USurvivePlugin.inst().key("story/discover_guide_meteor");
 }

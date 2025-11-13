@@ -2,6 +2,7 @@ package killercreepr.usurvive.core.config.handler;
 
 import com.google.common.reflect.TypeToken;
 import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.data.util.MapBuilder;
@@ -11,10 +12,7 @@ import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
 import killercreepr.cruxconfig.config.common.handler.GetterFileHandler;
 import killercreepr.usurvive.api.dialog.DialogAction;
-import killercreepr.usurvive.core.dialog.action.ConsoleCommandDialogAction;
-import killercreepr.usurvive.core.dialog.action.PlayerCommandDialogAction;
-import killercreepr.usurvive.core.dialog.action.SetWaitingDialogAction;
-import killercreepr.usurvive.core.dialog.action.SoundDialogAction;
+import killercreepr.usurvive.core.dialog.action.*;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -81,6 +79,21 @@ public class FileDialogAction implements FileObjectHandler<DialogAction> {
                     r.deserializeFromFile(new TypeToken<List<String>>(){}.getType(), o.get("start")),
                     r.deserializeFromFile(new TypeToken<List<String>>(){}.getType(), o.get("end")),
                     r.deserializeFromFile(new TypeToken<List<String>>(){}.getType(), o.get("speak"))
+                );
+            }
+        })
+        .put(Crux.key("send_content_info"), new GetterFileHandler<>() {
+            @Nullable
+            @Override
+            public DialogAction deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement ele) {
+                var r = ctx.getRegistry();
+                if(!(ele instanceof FileObject o)){
+                    return null;
+                }
+                return new SendContentInfoDialogAction(
+                    r.deserializeFromFile(DataExchange.class, o.get("start")),
+                    r.deserializeFromFile(DataExchange.class, o.get("end")),
+                    r.deserializeFromFile(DataExchange.class, o.get("speak"))
                 );
             }
         })

@@ -21,6 +21,8 @@ import killercreepr.cruxstructures.api.structure.generation.StructureGenerator;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.type.CruxWorldType;
 import killercreepr.cruxworlds.core.component.CruxWorldsComponents;
+import killercreepr.usurvive.api.dialog.DialogContent;
+import killercreepr.usurvive.api.dialog.DialogPlayer;
 import killercreepr.usurvive.api.entity.mob.goal.path.GuidePathGoalNode;
 import killercreepr.usurvive.api.guide.GuidePoint;
 import killercreepr.usurvive.api.story.FileStoryProgressionLoader;
@@ -30,6 +32,7 @@ import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.advancement.objective.GuideDiscoverMeteorObjective;
 import killercreepr.usurvive.core.config.story.Story1Config;
 import killercreepr.usurvive.core.data.DeathGuide;
+import killercreepr.usurvive.core.dialog.WrappedDialogContent;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.mob.goals.guide.GuidePathGoal;
 import killercreepr.usurvive.core.guide.GuideAdvances;
@@ -99,6 +102,7 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
     public BlockPos fallenMeteorLocation;
     public long fallenMeteorWorldCreatedAt;
     public boolean enteredResourceOverworld;
+    public boolean enemiesSpawned;
 
     protected transient Mob npc;
     protected transient GuidePathGoal npcGoal;
@@ -251,14 +255,14 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
         if(stopTickDistance) return;
         World world = p.getServer().getWorld(fallenMeteorWorld);
         if(world == null || !compareCreatedTime(world)){
-            if(!AdvanceUtil.hasAnyAdvancement(p, GuideAdvances.DISCOVER_GUIDE_METEOR, GuideAdvances.GUIDE_SHARD_CLAIM)){
+            if(!AdvanceUtil.hasAnyAdvancement(p, StoryAdvances.DISCOVER_GUIDE_METEOR, GuideAdvances.GUIDE_SHARD_CLAIM)){
                 setFallenMeteorLocation(null);
 
                 Lang.GUIDE_WORLD_RESET.use(p);
-                CruxAdvancementManager manager = AdvancementRegistries.ADVANCEMENT_MANAGERS.get(USurvivePlugin.inst().key("main"));
+                CruxAdvancementManager manager = AdvancementRegistries.ADVANCEMENT_MANAGERS.get(USurvivePlugin.inst().key("story"));
                 if(manager == null) return;
 
-                var advancement = manager.getAdvancement(GuideAdvances.ENTER_RESOURCE_WORLD);
+                var advancement = manager.getAdvancement(StoryAdvances.ENTER_RESOURCE_OVERWORLD);
                 if(advancement == null) return;
                 Crux.scheduler().runTaskMain(() ->{
                     manager.revokeAdvancement(p, advancement);
@@ -270,7 +274,7 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
         if(!p.getWorld().key().equals(fallenMeteorWorld)) return;
         CruxAdvancementManager manager = AdvancementRegistries.ADVANCEMENT_MANAGERS.get(USurvivePlugin.inst().key("main"));
         if(manager == null) return;
-        var advancement = manager.getAdvancement(GuideAdvances.DISCOVER_GUIDE_METEOR);
+        var advancement = manager.getAdvancement(StoryAdvances.DISCOVER_GUIDE_METEOR);
         if(advancement == null) return;
         if(advancement.isGranted(p)) return;
 
@@ -285,7 +289,16 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
                     objective.trigger(p.getUniqueId(), man, ad, LootContext.builder().looter(p).looted(fallenMeteorLocation).build());
                 });
                 if(advancement.isGranted(p)){
-                    dialogListener().dialogPlayer().pushDialog(cfg().STRUCTURE_NEARBY_DIALOG.value());
+                    var content = cfg().STRUCTURE_NEARBY_DIALOG.value();
+                    if(content != null){
+                        content = new WrappedDialogContent(content){
+                            @Override
+                            public void onEnd(DialogPlayer player) {
+                                super.onEnd(player);
+                            }
+                        };
+                        dialogListener().dialogPlayer().pushDialog(content);
+                    }
                     //Lang.GUIDE_STRUCTURE_NEARBY.use(p);
                 }
                 stopTickDistance = false;
