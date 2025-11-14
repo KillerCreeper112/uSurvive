@@ -14,6 +14,7 @@ import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementMana
 import killercreepr.cruxadvancements.api.event.CruxAdvancementGrantEvent;
 import killercreepr.cruxadvancements.core.entity.memory.AdvancementHolder;
 import killercreepr.cruxadvancements.core.registries.AdvancementRegistries;
+import killercreepr.cruxblocks.core.block.component.standard.BlockEntitySpawner;
 import killercreepr.cruxblocks.core.block.component.standard.EntitySpawnerComponent;
 import killercreepr.cruxconfig.config.common.handler.AutoFileHandler;
 import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
@@ -51,6 +52,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -273,11 +275,17 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
         }
 
         if(!p.getWorld().key().equals(fallenMeteorWorld)) return;
+
         CruxAdvancementManager manager = AdvancementRegistries.ADVANCEMENT_MANAGERS.get(USurvivePlugin.inst().key("main"));
         if(manager == null) return;
         var advancement = manager.getAdvancement(StoryAdvances.DISCOVER_GUIDE_METEOR);
         if(advancement == null) return;
-        if(advancement.isGranted(p)) return;
+
+        if(advancement.isGranted(p)){
+            if(!enemiesSpawned){
+                manager.revokeAdvancement(p, advancement);
+            }else return;
+        }
 
         lastDistanceSquared = fallenMeteorLocation.distanceSquared(CruxPosition.block(p.getLocation()));
         if(lastDistanceSquared > (30D*30D)) return;
@@ -299,9 +307,18 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
                                 if(action == null) return;
                                 switch (action.toLowerCase()){
                                     case "spawn_bounders" ->{
-                                        if(!(CruxRegistries.TYPED_DATA_COMPONENTS.get(Crux.key(info.get("spawner_component", String.class))).getValue() instanceof EntitySpawnerComponent spawner)){
+                                        if(!(CruxRegistries.TYPED_DATA_COMPONENTS.get(Crux.key(info.get("spawner_component", String.class))).getValue()
+                                            instanceof EntitySpawnerComponent spawner)){
                                             return;
                                         }
+                                        Block b = fallenMeteorLocation.getBlock(world);
+                                        new BlockEntitySpawner(
+                                            b,
+                                            spawner, spawner.spawner
+                                        ).tick();
+                                        enemiesSpawned = true;
+
+                                        dialogListener().dialogPlayer().pushDialog(cfg().BOUNDERS_INVADE_SPAWNED_DIALOG.value());
                                     }
                                 }
 
