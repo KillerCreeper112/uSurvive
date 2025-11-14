@@ -7,8 +7,8 @@ public interface StoryStep {
     boolean canStart(StoryState state);
     boolean isComplete(StoryState state);
 
-    DialogContent getDialog();
+    default DialogContent getDialog(){ return null; }
 
-    void onStart(Player p);
-    void onComplete(Player p);
+    default void onStart(Player p){}
+    default void onComplete(Player p){}
 }

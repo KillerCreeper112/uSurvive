@@ -156,18 +156,8 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
             }
 
             @Override
-            public DialogContent getDialog() {
-                return null;
-            }
-
-            @Override
             public void onStart(Player p) {
                 setup();
-            }
-
-            @Override
-            public void onComplete(Player p) {
-
             }
         },
 
@@ -194,10 +184,6 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
                     onEnterResourceOverworld(p.getWorld());
                 }
             }
-
-            @Override
-            public void onComplete(Player p) {
-            }
         },
 
         new StoryStep() {
@@ -214,14 +200,6 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
             @Override
             public DialogContent getDialog() {
                 return cfg().STRUCTURE_LOCATED_DIALOG.value();
-            }
-
-            @Override
-            public void onStart(Player p) {
-            }
-
-            @Override
-            public void onComplete(Player p) {
             }
         },
 
@@ -284,16 +262,6 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
                 }
                 return content;
             }
-
-            @Override
-            public void onStart(Player p) {
-
-            }
-
-            @Override
-            public void onComplete(Player p) {
-
-            }
         },
 
         new StoryStep() {
@@ -310,16 +278,6 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
             @Override
             public DialogContent getDialog() {
                 return cfg().BOUNDERS_INVADE_SPAWNED_DIALOG.value();
-            }
-
-            @Override
-            public void onStart(Player p) {
-
-            }
-
-            @Override
-            public void onComplete(Player p) {
-
             }
         },
 
@@ -346,15 +304,6 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
                     }
                 };
             }
-
-            @Override
-            public void onStart(Player p) {
-
-            }
-
-            @Override
-            public void onComplete(Player p) {
-            }
         },
 
         new StoryStep() {
@@ -366,16 +315,6 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
             @Override
             public boolean isComplete(StoryState state) {
                 return state.hasFlag(Flags.ORBIT_MINED.flag());
-            }
-
-            @Override
-            public DialogContent getDialog() {
-                return null;//cfg().MINE_ORBIT_DIALOG.value();
-            }
-
-            @Override
-            public void onStart(Player p) {
-
             }
 
             @Override
