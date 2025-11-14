@@ -1,14 +1,17 @@
 package killercreepr.usurvive.core.story.progression;
 
+import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.data.WorldPosition;
 import killercreepr.crux.api.loot.LootContext;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.math.BlockPos;
+import killercreepr.crux.core.persistence.CruxPersistence;
 import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxGoalUtil;
+import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxadvancements.api.advancement.CruxAdvancement;
 import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementManager;
 import killercreepr.cruxadvancements.api.event.CruxAdvancementGrantEvent;
@@ -49,6 +52,7 @@ import killercreepr.usurvive.core.util.AdvanceUtil;
 import killercreepr.usurvive.core.world.USurviveWorldTypes;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -106,6 +110,8 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
     public long fallenMeteorWorldCreatedAt;
     public boolean enteredResourceOverworld;
     public boolean enemiesSpawned;
+    public int enemySpawnCount;
+    public int enemyKillCount;
 
     protected transient Mob npc;
     protected transient GuidePathGoal npcGoal;
@@ -198,7 +204,7 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
     public void onTick() {
         super.onTick();
         int every = 30;//cfg.DEATH_GUIDE_TICK_EVERY().value().intValue();
-        if(every==0) return;
+        //if(every==0) return;
         if(Crux.getCurrentTick() % every != 0) return;
 
         if(!hasEnteredResourceOverworld() && p.getWorld().key().equals(cfg().NPC_POINTS_1.value().getFirst().pos().worldKey())){
@@ -276,15 +282,16 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
 
         if(!p.getWorld().key().equals(fallenMeteorWorld)) return;
 
-        CruxAdvancementManager manager = AdvancementRegistries.ADVANCEMENT_MANAGERS.get(USurvivePlugin.inst().key("main"));
+        CruxAdvancementManager manager = AdvancementRegistries.ADVANCEMENT_MANAGERS.get(USurvivePlugin.inst().key("story"));
         if(manager == null) return;
         var advancement = manager.getAdvancement(StoryAdvances.DISCOVER_GUIDE_METEOR);
         if(advancement == null) return;
 
         if(advancement.isGranted(p)){
-            if(!enemiesSpawned){
-                manager.revokeAdvancement(p, advancement);
-            }else return;
+            if(!enemiesSpawned && dialogListener().dialogPlayer().isEmpty()){
+                Crux.scheduler().runTaskMain(() -> manager.revokeAdvancement(p, advancement));
+            }
+            return;
         }
 
         lastDistanceSquared = fallenMeteorLocation.distanceSquared(CruxPosition.block(p.getLocation()));
@@ -307,17 +314,33 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
                                 if(action == null) return;
                                 switch (action.toLowerCase()){
                                     case "spawn_bounders" ->{
-                                        if(!(CruxRegistries.TYPED_DATA_COMPONENTS.get(Crux.key(info.get("spawner_component", String.class))).getValue()
-                                            instanceof EntitySpawnerComponent spawner)){
-                                            return;
+                                        var typed = CruxRegistries.TYPED_DATA_COMPONENTS.get(Crux.key(info.get("spawner_component", String.class)));
+                                        if(!(typed.getValue() instanceof EntitySpawnerComponent spawner)){
+                                            throw new IllegalStateException("Spawn bounders initiate not have spawner_component of EntitySpawnerComponent!  " + typed.getType() + "   /   " + typed.getValue());
                                         }
-                                        Block b = fallenMeteorLocation.getBlock(world);
-                                        new BlockEntitySpawner(
-                                            b,
-                                            spawner, spawner.spawner
-                                        ).tick();
                                         enemiesSpawned = true;
-
+                                        //Block b = fallenMeteorLocation.getBlock(world);
+                                        Crux.scheduler().runTaskMain(() ->{
+                                            new BlockEntitySpawner(
+                                                p.getLocation().getBlock(),
+                                                spawner, spawner.spawner, e ->{
+                                                if(spawner.persistEntities){
+                                                    e.setPersistent(true);
+                                                    if(e instanceof Mob mob) mob.setRemoveWhenFarAway(false);
+                                                }
+                                            }
+                                            ).navigateSpawner().whenComplete((spawned, throwable) ->{
+                                                if(throwable != null) throwable.printStackTrace();
+                                                if(spawned == null || spawned.isEmpty()){
+                                                    enemiesSpawned = true;
+                                                    return;
+                                                }
+                                                enemySpawnCount = spawned.size();
+                                                spawned.forEach(e ->{
+                                                    setStoryMob(e);
+                                                });
+                                            });
+                                        });
                                         dialogListener().dialogPlayer().pushDialog(cfg().BOUNDERS_INVADE_SPAWNED_DIALOG.value());
                                     }
                                 }
@@ -333,6 +356,14 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
         }
     }
 
+    public void setStoryMob(Entity e){
+        CruxTag.set(e, "story/player", CruxPersistence.UUID, p.getUniqueId());
+    }
+
+    public boolean isStoryMob(Entity e){
+        return p.getUniqueId().equals(CruxTag.get(e, "story/player", CruxPersistence.UUID, null));
+    }
+
     private AdvancementHolder holder(@NotNull Entity p){
         return AdvancementHolder.holderIfLoaded(p);
     }
@@ -340,7 +371,7 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
     public void tickStructureGuide(@NotNull Player p){
         if(fallenMeteorLocation == null) return;
         if(!p.getWorld().key().equals(fallenMeteorWorld)) return;
-        if(GuideUtil.hasGuideDisabled(p)) return;
+        //if(GuideUtil.hasGuideDisabled(p)) return;
         if(lastDistanceSquared < maxParticleShowDistance) return;
         //Entity guardian = death.getGuardian();
         Location pos =  fallenMeteorLocation.toLocation(p.getWorld());
@@ -424,6 +455,16 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
             npcGoal = null;
         }
     }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityRemoveFromWorld(EntityRemoveFromWorldEvent event) {
+        if(!isStoryMob(event.getEntity())) return;
+        enemyKillCount++;
+        if(enemyKillCount >= enemySpawnCount){
+            dialogListener().dialogPlayer().pushDialog(cfg().BOUNDERS_DEFEATED_DIALOG.value());
+        }
+    }
+
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityPortalEnter(EntityPortalEnterEvent event) {

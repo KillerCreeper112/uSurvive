@@ -27,6 +27,8 @@ public class Story1Config extends StoryConfig{
     public final CfgValue<DialogContent> PUSHED_NPC_IN_PORTAL_DIALOG = new CommonValue<>(){};
     public final CfgValue<DialogContent> PUNCHED_NPC_DIALOG = new CommonValue<>(){};
     public final CfgValue<DialogContent> BOUNDERS_INVADE_SPAWNED_DIALOG = new CommonValue<>(){};
+    public final CfgValue<DialogContent> BOUNDERS_DEFEATED_DIALOG = new CommonValue<>(){};
+
 
     public Story1Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
