@@ -1,6 +1,7 @@
 package killercreepr.usurvive.core.dialog;
 
 import killercreepr.crux.api.data.DataExchange;
+import killercreepr.crux.api.loot.conditions.LootCondition;
 import killercreepr.usurvive.api.dialog.DialogAction;
 import killercreepr.usurvive.api.dialog.DialogContent;
 import killercreepr.usurvive.api.dialog.DialogLine;
@@ -11,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class SimpleKeyedDialogContent extends SimpleDialogContent implements KeyedDialogContent{
-    public SimpleKeyedDialogContent(List<DialogLine> dialog, List<DialogAction> actions, DataExchange info) {
-        super(dialog, actions, info);
+    public SimpleKeyedDialogContent(List<DialogLine> dialog, List<DialogAction> actions, DataExchange info, LootCondition canPlay) {
+        super(dialog, actions, info, canPlay);
     }
 
     @Override

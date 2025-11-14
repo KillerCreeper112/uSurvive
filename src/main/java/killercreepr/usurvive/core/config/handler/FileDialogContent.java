@@ -3,6 +3,7 @@ package killercreepr.usurvive.core.config.handler;
 import com.google.common.reflect.TypeToken;
 import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.data.Holder;
+import killercreepr.crux.api.loot.conditions.LootCondition;
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileElement;
@@ -32,7 +33,7 @@ public class FileDialogContent implements FileObjectHandler<DialogContent> {
     public DialogContent deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement ele) {
         var r = ctx.getRegistry();
         if(!(ele instanceof FileObject o)){
-            return new SimpleDialogContent(r.deserializeFromFile(new TypeToken<List<DialogLine>>(){}.getType(), ele), List.of(), DataExchange.empty());
+            return new SimpleDialogContent(r.deserializeFromFile(new TypeToken<List<DialogLine>>(){}.getType(), ele), List.of(), DataExchange.empty(), null);
         }
 
         Dialoger parent = r.deserializeFromFile(Dialoger.class, o.get("parent"));
@@ -63,6 +64,13 @@ public class FileDialogContent implements FileObjectHandler<DialogContent> {
             info = info.append("key", Holder.direct(Crux.key(key)));
         }
 
+        LootCondition canPlay;
+        if(o.get("conditions") instanceof FileObject oo){
+            canPlay = r.deserializeFromFile(LootCondition.class, oo.get("can_play"));
+        }else{
+            canPlay = null;
+        }
+
         Key finalKey = info.get("key", Key.class);
         if(finalKey != null){
             return new SimpleKeyedDialogContent(
@@ -71,7 +79,8 @@ public class FileDialogContent implements FileObjectHandler<DialogContent> {
                     o.get("dialog"), List.of()
                 ),
                 actions,
-                info
+                info,
+                canPlay
             );
         }
         return new SimpleDialogContent(
@@ -80,7 +89,8 @@ public class FileDialogContent implements FileObjectHandler<DialogContent> {
                 o.get("dialog"), List.of()
             ),
             actions,
-            info
+            info,
+            canPlay
         );
     }
 }

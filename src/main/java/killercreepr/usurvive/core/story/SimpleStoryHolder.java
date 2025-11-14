@@ -88,8 +88,8 @@ public class SimpleStoryHolder extends PlayerTickedDataHolder implements AutoSav
     @Override
     public void save() {
         DataFile cfg = getSaveFile(true);
-        cfg.serialize("completed", storyData);
-        cfg.serialize("current_progression", storyProgression);
+        cfg.serialize("completed", storyData.isEmpty() ? null : storyData);
+        cfg.serialize("current_progression", storyProgression.isEmpty() ? null : storyProgression);
         cfg.save();
     }
 

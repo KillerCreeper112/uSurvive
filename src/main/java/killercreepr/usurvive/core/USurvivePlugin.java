@@ -86,6 +86,7 @@ import killercreepr.usurvive.api.guide.GuidePoint;
 import killercreepr.usurvive.api.story.StoryHolder;
 import killercreepr.usurvive.api.story.StoryProgressData;
 import killercreepr.usurvive.api.story.StoryProgression;
+import killercreepr.usurvive.api.story.StoryState;
 import killercreepr.usurvive.api.tpa.TPAManager;
 import killercreepr.usurvive.api.values.SleeperCfg;
 import killercreepr.usurvive.api.values.ValuesProvider;
@@ -140,6 +141,7 @@ import killercreepr.usurvive.core.registries.USurviveRegistries;
 import killercreepr.usurvive.core.stat.USurviveStats;
 import killercreepr.usurvive.core.statistic.USurviveStatistics;
 import killercreepr.usurvive.core.story.SimpleStoryHolder;
+import killercreepr.usurvive.core.story.SimpleStoryState;
 import killercreepr.usurvive.core.story.config.StoryCfgLoader;
 import killercreepr.usurvive.core.story.listener.StoryListener;
 import killercreepr.usurvive.core.tags.USurviveTag;
@@ -800,6 +802,10 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         registry.registerFileHandler(DialogAction.class, new FileDialogAction());
         registry.registerFileHandler(DialogContent.class, new FileDialogContent());
         registry.registerFileHandler(Dialoger.class, FileDialoger.FILE_DIALOGER);
+        registry.registerFileHandler(
+            StoryState.class,
+            new FileStoryState()
+        );
     }
 
     public void registerCfgHandlers(@NotNull FileRegistry registry){

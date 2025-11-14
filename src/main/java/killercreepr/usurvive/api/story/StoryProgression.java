@@ -7,7 +7,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
+import java.util.List;
+
 public interface StoryProgression extends CruxKeyed {
+    List<StoryFlag> getRequiredFlags();
+    default boolean hasAllFlags(){
+        return state().hasAllFlags(getRequiredFlags());
+    }
+    List<StoryStep> getSteps();
+    StoryState state();
 
     default void onTick(){}
 

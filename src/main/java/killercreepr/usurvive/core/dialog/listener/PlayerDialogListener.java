@@ -8,6 +8,7 @@ import killercreepr.usurvive.api.dialog.DialogPlayer;
 import killercreepr.usurvive.api.dialog.listener.DialogListener;
 import killercreepr.usurvive.core.dialog.UserDialogPlayer;
 import net.kyori.adventure.key.Key;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -59,12 +60,22 @@ public class PlayerDialogListener extends PlayerTickedDataHolder implements Dial
     }
 
     @Override
+    public void onMemoryUnload(@NotNull Entity e) {
+        super.onMemoryUnload(e);
+        var content = dialogPlayer.getDialog();
+        if(content != null){
+            content.onEnd(dialogPlayer);
+        }
+    }
+
+    @Override
     protected void onTick(@NotNull Player e) {
         super.onTick(e);
         if(!dialogPlayer.isEmpty()){
             lastHadDialog = System.currentTimeMillis();
         }
         if(Crux.getCurrentTick() % tickRate == 0){
+            if(!e.isValid()) return;
             dialogPlayer.dialogTick();
         }
     }

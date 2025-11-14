@@ -10,6 +10,8 @@ public interface DialogContent extends DataInfoHolder {
     List<DialogAction> actions();
     int priority();
 
+    boolean canPlay(DialogPlayer player);
+
     default void onSendInfo(DataExchange info){
 
     }
@@ -18,6 +20,10 @@ public interface DialogContent extends DataInfoHolder {
 
     }
     default void onPause(DialogPlayer player){
+
+    }
+
+    default void onDialogEnd(DialogPlayer player){
 
     }
 

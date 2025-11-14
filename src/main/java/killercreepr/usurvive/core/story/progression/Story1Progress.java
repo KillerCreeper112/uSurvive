@@ -12,11 +12,8 @@ import killercreepr.crux.core.registries.CruxRegistries;
 import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.crux.core.util.CruxTag;
-import killercreepr.cruxadvancements.api.advancement.CruxAdvancement;
-import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementManager;
-import killercreepr.cruxadvancements.api.event.CruxAdvancementGrantEvent;
 import killercreepr.cruxadvancements.core.entity.memory.AdvancementHolder;
-import killercreepr.cruxadvancements.core.registries.AdvancementRegistries;
+import killercreepr.cruxblocks.api.event.CruxBlockBreakEvent;
 import killercreepr.cruxblocks.core.block.component.standard.BlockEntitySpawner;
 import killercreepr.cruxblocks.core.block.component.standard.EntitySpawnerComponent;
 import killercreepr.cruxconfig.config.common.handler.AutoFileHandler;
@@ -28,35 +25,31 @@ import killercreepr.cruxstructures.api.structure.generation.StructureGenerator;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.type.CruxWorldType;
 import killercreepr.cruxworlds.core.component.CruxWorldsComponents;
+import killercreepr.usurvive.api.dialog.DialogContent;
+import killercreepr.usurvive.api.dialog.DialogPlayer;
 import killercreepr.usurvive.api.entity.mob.goal.path.GuidePathGoalNode;
 import killercreepr.usurvive.api.guide.GuidePoint;
-import killercreepr.usurvive.api.story.FileStoryProgressionLoader;
-import killercreepr.usurvive.api.story.StoryHolder;
-import killercreepr.usurvive.api.story.StoryProgressData;
+import killercreepr.usurvive.api.story.*;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.advancement.objective.GuideDiscoverMeteorObjective;
+import killercreepr.usurvive.core.block.USurviveBlocks;
 import killercreepr.usurvive.core.config.story.Story1Config;
 import killercreepr.usurvive.core.data.DeathGuide;
 import killercreepr.usurvive.core.dialog.WrappedDialogContent;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.mob.goals.guide.GuidePathGoal;
-import killercreepr.usurvive.core.guide.GuideAdvances;
 import killercreepr.usurvive.core.guide.GuideStructurePlacer;
-import killercreepr.usurvive.core.guide.GuideUtil;
 import killercreepr.usurvive.core.guide.particle.TrailRenderer;
 import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.pathfinding.GuidePathfinder;
-import killercreepr.usurvive.core.story.StoryAdvances;
+import killercreepr.usurvive.core.story.SimpleStoryState;
 import killercreepr.usurvive.core.story.progression.data.GenericStoryProgressData;
-import killercreepr.usurvive.core.util.AdvanceUtil;
 import killercreepr.usurvive.core.world.USurviveWorldTypes;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -71,11 +64,379 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
 
 public class Story1Progress extends StoryHolderStoryProgress implements Listener {
+
+    public enum NumFlags{
+        COUNT_ENEMY_SPAWN,
+        COUNT_ENEMY_KILL,
+        ;
+        private final StoryFlag flag;
+        NumFlags(StoryFlag flag) {
+            this.flag = flag;
+        }
+        NumFlags() {
+            this.flag = StoryFlag.f(toString().toLowerCase());
+        }
+        NumFlags(Function<StoryState, Boolean> isComplete) {
+            this.flag = StoryFlag.f(toString().toLowerCase(), isComplete);
+        }
+
+        public StoryFlag flag(){
+            return flag;
+        }
+    }
+    public enum Flags{
+        ENTERED_RESOURCE_OVERWORLD,
+        ENEMIES_SPAWNED,
+        ORBIT_MINED,
+        DEFEATED_DIALOG_DONE,
+
+        FOUND_STRUCTURE,
+        ENEMIES_KILLED(state -> state.getFlagValue(NumFlags.COUNT_ENEMY_KILL.flag()) > 0 && state.getFlagValue(NumFlags.COUNT_ENEMY_KILL.flag()) >= state.getFlagValue(NumFlags.COUNT_ENEMY_SPAWN.flag())),
+        ;
+        private final StoryFlag flag;
+        Flags(StoryFlag flag) {
+            this.flag = flag;
+        }
+        Flags() {
+            this.flag = StoryFlag.f(toString().toLowerCase());
+        }
+        Flags(Function<StoryState, Boolean> isComplete) {
+            this.flag = StoryFlag.f(toString().toLowerCase(), isComplete);
+        }
+
+        public StoryFlag flag(){
+            return flag;
+        }
+    }
+    public enum DataFlags{
+        PUSHED_NPC_IN_PORTAL,
+        PUNCHED_NPC,
+        ;
+        private final StoryFlag flag;
+        DataFlags(StoryFlag flag) {
+            this.flag = flag;
+        }
+        DataFlags() {
+            this.flag = StoryFlag.f(toString().toLowerCase());
+        }
+        DataFlags(Function<StoryState, Boolean> isComplete) {
+            this.flag = StoryFlag.f(toString().toLowerCase(), isComplete);
+        }
+
+        public StoryFlag flag(){
+            return flag;
+        }
+    }
+    protected List<StoryFlag> cacheRequiredFlags;
+    @Override
+    public List<StoryFlag> getRequiredFlags() {
+        if(cacheRequiredFlags != null) return cacheRequiredFlags;
+        cacheRequiredFlags = new ArrayList<>();
+        for (Flags value : Flags.values()) {
+            cacheRequiredFlags.add(value.flag());
+        }
+        return cacheRequiredFlags;
+    }
+
+    public transient final List<StoryStep> steps = List.of(
+        new StoryStep() {
+            @Override
+            public boolean canStart(StoryState state) {
+                return canSetup();
+            }
+
+            @Override
+            public boolean isComplete(StoryState state) {
+                return state.hasFlag(Flags.ENTERED_RESOURCE_OVERWORLD.flag());
+            }
+
+            @Override
+            public DialogContent getDialog() {
+                return null;
+            }
+
+            @Override
+            public void onStart(Player p) {
+                setup();
+            }
+
+            @Override
+            public void onComplete(Player p) {
+
+            }
+        },
+
+        new StoryStep() {
+            @Override
+            public boolean canStart(StoryState state) {
+                return state.hasFlag(Flags.ENTERED_RESOURCE_OVERWORLD.flag());
+            }
+
+            @Override
+            public boolean isComplete(StoryState state) {
+                return fallenMeteorLocation != null;
+            }
+
+            @Override
+            public DialogContent getDialog() {
+                return cfg().ENTER_RESOURCE_WORLD_DIALOG.value();
+            }
+
+            @Override
+            public void onStart(Player p) {
+                if(isComplete(state)) return;
+                if(isResourceOverworld(p.getWorld())){
+                    onEnterResourceOverworld(p.getWorld());
+                }
+            }
+
+            @Override
+            public void onComplete(Player p) {
+            }
+        },
+
+        new StoryStep() {
+            @Override
+            public boolean canStart(StoryState state) {
+                return fallenMeteorLocation != null;
+            }
+
+            @Override
+            public boolean isComplete(StoryState state) {
+                return state.hasFlag(Flags.FOUND_STRUCTURE.flag());
+            }
+
+            @Override
+            public DialogContent getDialog() {
+                return cfg().STRUCTURE_LOCATED_DIALOG.value();
+            }
+
+            @Override
+            public void onStart(Player p) {
+            }
+
+            @Override
+            public void onComplete(Player p) {
+            }
+        },
+
+        new StoryStep() {
+            @Override
+            public boolean canStart(StoryState state) {
+                return state.hasFlag(Flags.FOUND_STRUCTURE.flag());
+            }
+
+            @Override
+            public boolean isComplete(StoryState state) {
+                return state.hasFlag(Flags.ENEMIES_SPAWNED.flag());
+            }
+
+            @Override
+            public DialogContent getDialog() {
+                var content = cfg().STRUCTURE_NEARBY_DIALOG.value();
+                if(content != null){
+                    content = new WrappedDialogContent(content){
+                        @Override
+                        public void onSendInfo(DataExchange info) {
+                            String action = info.get("initiate", String.class);
+                            if(action == null) return;
+                            switch (action.toLowerCase()){
+                                case "spawn_bounders" ->{
+                                    var typed = CruxRegistries.TYPED_DATA_COMPONENTS.get(Crux.key(info.get("spawner_component", String.class)));
+                                    if(!(typed.getValue() instanceof EntitySpawnerComponent spawner)){
+                                        throw new IllegalStateException("Spawn bounders initiate not have spawner_component of EntitySpawnerComponent!  " + typed.getType() + "   /   " + typed.getValue());
+                                    }
+                                    state.grantFlag(Flags.ENEMIES_SPAWNED.flag());
+                                    //Block b = fallenMeteorLocation.getBlock(world);
+                                    Crux.scheduler().runTaskMain(() ->{
+                                        new BlockEntitySpawner(
+                                            p.getLocation().getBlock(),
+                                            spawner, spawner.spawner, e ->{
+                                            if(spawner.persistEntities){
+                                                e.setPersistent(true);
+                                                if(e instanceof Mob mob) mob.setRemoveWhenFarAway(false);
+                                            }
+                                        }
+                                        ).navigateSpawner().whenComplete((spawned, throwable) ->{
+                                            if(throwable != null) throwable.printStackTrace();
+                                            if(spawned == null || spawned.isEmpty()){
+                                                return;
+                                            }
+                                            completeStep(() ->{
+                                                state.grantFlag(Flags.ENEMIES_SPAWNED.flag());
+                                                state.setFlagValue(NumFlags.COUNT_ENEMY_SPAWN.flag(), spawned.size());
+                                                spawned.forEach(e ->{
+                                                    setStoryMob(e);
+                                                });
+                                            });
+                                        });
+                                    });
+                                }
+                            }
+
+                        }
+                    };
+                }
+                return content;
+            }
+
+            @Override
+            public void onStart(Player p) {
+
+            }
+
+            @Override
+            public void onComplete(Player p) {
+
+            }
+        },
+
+        new StoryStep() {
+            @Override
+            public boolean canStart(StoryState state) {
+                return state.hasFlag(Flags.ENEMIES_SPAWNED.flag());
+            }
+
+            @Override
+            public boolean isComplete(StoryState state) {
+                return state.hasFlag(Flags.ENEMIES_KILLED.flag());
+            }
+
+            @Override
+            public DialogContent getDialog() {
+                return cfg().BOUNDERS_INVADE_SPAWNED_DIALOG.value();
+            }
+
+            @Override
+            public void onStart(Player p) {
+
+            }
+
+            @Override
+            public void onComplete(Player p) {
+
+            }
+        },
+
+        new StoryStep() {
+            @Override
+            public boolean canStart(StoryState state) {
+                return state.hasFlag(Flags.ENEMIES_KILLED.flag());
+            }
+
+            @Override
+            public boolean isComplete(StoryState state) {
+                return state.hasFlag(Flags.DEFEATED_DIALOG_DONE.flag());
+            }
+
+            @Override
+            public DialogContent getDialog() {
+                return new WrappedDialogContent(cfg().BOUNDERS_DEFEATED_DIALOG.value()){
+                    @Override
+                    public void onDialogEnd(DialogPlayer player) {
+                        super.onDialogEnd(player);
+                        completeStep(() ->{
+                            state.grantFlag(Flags.DEFEATED_DIALOG_DONE.flag());
+                        });
+                    }
+                };
+            }
+
+            @Override
+            public void onStart(Player p) {
+
+            }
+
+            @Override
+            public void onComplete(Player p) {
+            }
+        },
+
+        new StoryStep() {
+            @Override
+            public boolean canStart(StoryState state) {
+                return state.hasFlag(Flags.DEFEATED_DIALOG_DONE.flag());
+            }
+
+            @Override
+            public boolean isComplete(StoryState state) {
+                return state.hasFlag(Flags.ORBIT_MINED.flag());
+            }
+
+            @Override
+            public DialogContent getDialog() {
+                return null;//cfg().MINE_ORBIT_DIALOG.value();
+            }
+
+            @Override
+            public void onStart(Player p) {
+
+            }
+
+            @Override
+            public void onComplete(Player p) {
+                nextStage();
+            }
+        }
+    );
+
+    public void completeStep(Player p){
+        StoryStep step = getNextStep(state);
+        if(step != null){
+            step.onComplete(p);
+        }
+
+    }
+
+    public StoryStep nextStep(Player p){
+        StoryStep step = getNextStep(state);
+
+        if (step != null) {
+            if(step.getDialog() != null){
+                dialogListener().dialogPlayer().setDialog(step.getDialog());
+            }
+            step.onStart(p);
+        }
+        return step;
+    }
+
+    public StoryStep completeStep(Runnable consumer){
+        StoryStep current = getNextStep(state);
+        consumer.run();
+        if(current != null && current.isComplete(state)){
+            current.onComplete(p);
+        }
+        return nextStep(p);
+    }
+
+    public StoryStep getNextStep(StoryState state) {
+        for (StoryStep step : getSteps()) {
+            if (!step.isComplete(state) && step.canStart(state))
+                return step;
+        }
+        return null;
+    }
+
+    public void restorePlayer(Player p) {
+        nextStep(p);
+    }
+
+
+    @Override
+    public List<StoryStep> getSteps() {
+        return steps;
+    }
+
+    @Override
+    public StoryState state() {
+        return state;
+    }
+
     public static final Key KEY = Crux.key("1");
 
     public static class Loader implements FileStoryProgressionLoader<Story1Progress, Data>{
@@ -94,8 +455,7 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
     }
 
     public static class Data extends GenericStoryProgressData {
-        public boolean pushedNPCInPortal;
-        public boolean punchedNPC;
+        public StoryState state = new SimpleStoryState();
 
         @NotNull
         @Override
@@ -105,13 +465,10 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
     }
 
     public transient Data data = new Data();
+    public StoryState state = new SimpleStoryState();
     public Key fallenMeteorWorld;
     public BlockPos fallenMeteorLocation;
     public long fallenMeteorWorldCreatedAt;
-    public boolean enteredResourceOverworld;
-    public boolean enemiesSpawned;
-    public int enemySpawnCount;
-    public int enemyKillCount;
 
     protected transient Mob npc;
     protected transient GuidePathGoal npcGoal;
@@ -180,24 +537,41 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
         });
 
         npcGoal.setUser(p);
-        //goal.setDialog(cfg().GUIDE_1_DIALOG().value());
         npcGoal.setPath(GoalPath.goalPath(nodes));
+    }
+
+    public boolean canSetup(){
+        return !hasEnteredResourceOverworld() && p.getWorld().key().equals(cfg().NPC_POINTS_1.value().getFirst().pos().worldKey());
+    }
+
+    public void setupPlayer(){
+        WorldPosition spawn = cfg().NPC_SPAWN_1.value();
+        p.teleport(spawn.toLocation());
+    }
+
+    public void setupNPC(){
+        if(npc != null) return;
+        setupNPC(p);
+    }
+
+    public void setup(){
+        setupPlayer();
+        setupNPC();
     }
 
     @Override
     public void onLoaded(Player p, StoryHolder holder) {
         super.onLoaded(p, holder);
-        if(hasEnteredResourceOverworld()) return;
-        if(npc != null) return;
-        setupNPC(p);
+        restorePlayer(p);
+        /*if(!canSetup()) return;
+        setupNPC();*/
     }
 
     @Override
     public void onStart(Player p, StoryHolder holder) {
         super.onStart(p, holder);
-        if(hasEnteredResourceOverworld() || !p.getWorld().key().equals(cfg().NPC_POINTS_1.value().getFirst().pos().worldKey())) return;
-        WorldPosition spawn = cfg().NPC_SPAWN_1.value();
-        p.teleport(spawn.toLocation());
+        /*if(!canSetup()) return;
+        setupPlayer();*/
     }
 
     @Override
@@ -264,93 +638,36 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
         if(stopTickDistance) return;
         World world = p.getServer().getWorld(fallenMeteorWorld);
         if(world == null || !compareCreatedTime(world)){
-            if(!AdvanceUtil.hasAnyAdvancement(p, StoryAdvances.DISCOVER_GUIDE_METEOR, GuideAdvances.GUIDE_SHARD_CLAIM)){
+            if(!state.hasFlag(Flags.FOUND_STRUCTURE.flag())){
                 setFallenMeteorLocation(null);
-
                 Lang.GUIDE_WORLD_RESET.use(p);
-                CruxAdvancementManager manager = AdvancementRegistries.ADVANCEMENT_MANAGERS.get(USurvivePlugin.inst().key("story"));
-                if(manager == null) return;
-
-                var advancement = manager.getAdvancement(StoryAdvances.ENTER_RESOURCE_OVERWORLD);
-                if(advancement == null) return;
-                Crux.scheduler().runTaskMain(() ->{
-                    manager.revokeAdvancement(p, advancement);
-                });
             }
             return;
         }
 
         if(!p.getWorld().key().equals(fallenMeteorWorld)) return;
 
-        CruxAdvancementManager manager = AdvancementRegistries.ADVANCEMENT_MANAGERS.get(USurvivePlugin.inst().key("story"));
-        if(manager == null) return;
-        var advancement = manager.getAdvancement(StoryAdvances.DISCOVER_GUIDE_METEOR);
-        if(advancement == null) return;
-
-        if(advancement.isGranted(p)){
-            if(!enemiesSpawned && dialogListener().dialogPlayer().isEmpty()){
-                Crux.scheduler().runTaskMain(() -> manager.revokeAdvancement(p, advancement));
+        /*if(state.hasFlag(Flags.FOUND_STRUCTURE.flag())){
+            if(!state.hasFlag(Flags.ENEMIES_SPAWNED.flag()) && dialogListener().dialogPlayer().isEmpty()){
+                state.setFlag(Flags.FOUND_STRUCTURE.flag(), false);
             }
             return;
-        }
+        }*/
 
         lastDistanceSquared = fallenMeteorLocation.distanceSquared(CruxPosition.block(p.getLocation()));
+        if(state.hasFlag(Flags.FOUND_STRUCTURE.flag())) return;
         if(lastDistanceSquared > (30D*30D)) return;
 
         AdvancementHolder holder = holder(p);
         if(holder!= null) {
             stopTickDistance = true;
             Crux.scheduler().runTaskMain(() ->{
-                holder.getAdvancementTracker().apply(GuideDiscoverMeteorObjective.class, (man, ad, objective) -> {
-                    objective.trigger(p.getUniqueId(), man, ad, LootContext.builder().looter(p).looted(fallenMeteorLocation).build());
+                completeStep(() ->{
+                    holder.getAdvancementTracker().apply(GuideDiscoverMeteorObjective.class, (man, ad, objective) -> {
+                        objective.trigger(p.getUniqueId(), man, ad, LootContext.builder().looter(p).looted(fallenMeteorLocation).build());
+                    });
+                    state.grantFlag(Flags.FOUND_STRUCTURE.flag());
                 });
-                if(advancement.isGranted(p)){
-                    var content = cfg().STRUCTURE_NEARBY_DIALOG.value();
-                    if(content != null){
-                        content = new WrappedDialogContent(content){
-                            @Override
-                            public void onSendInfo(DataExchange info) {
-                                String action = info.get("initiate", String.class);
-                                if(action == null) return;
-                                switch (action.toLowerCase()){
-                                    case "spawn_bounders" ->{
-                                        var typed = CruxRegistries.TYPED_DATA_COMPONENTS.get(Crux.key(info.get("spawner_component", String.class)));
-                                        if(!(typed.getValue() instanceof EntitySpawnerComponent spawner)){
-                                            throw new IllegalStateException("Spawn bounders initiate not have spawner_component of EntitySpawnerComponent!  " + typed.getType() + "   /   " + typed.getValue());
-                                        }
-                                        enemiesSpawned = true;
-                                        //Block b = fallenMeteorLocation.getBlock(world);
-                                        Crux.scheduler().runTaskMain(() ->{
-                                            new BlockEntitySpawner(
-                                                p.getLocation().getBlock(),
-                                                spawner, spawner.spawner, e ->{
-                                                if(spawner.persistEntities){
-                                                    e.setPersistent(true);
-                                                    if(e instanceof Mob mob) mob.setRemoveWhenFarAway(false);
-                                                }
-                                            }
-                                            ).navigateSpawner().whenComplete((spawned, throwable) ->{
-                                                if(throwable != null) throwable.printStackTrace();
-                                                if(spawned == null || spawned.isEmpty()){
-                                                    enemiesSpawned = true;
-                                                    return;
-                                                }
-                                                enemySpawnCount = spawned.size();
-                                                spawned.forEach(e ->{
-                                                    setStoryMob(e);
-                                                });
-                                            });
-                                        });
-                                        dialogListener().dialogPlayer().pushDialog(cfg().BOUNDERS_INVADE_SPAWNED_DIALOG.value());
-                                    }
-                                }
-
-                            }
-                        };
-                        dialogListener().dialogPlayer().pushDialog(content);
-                    }
-                    //Lang.GUIDE_STRUCTURE_NEARBY.use(p);
-                }
                 stopTickDistance = false;
             });
         }
@@ -389,32 +706,37 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
         ).setStarted();
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onCruxAdvancementGrant(CruxAdvancementGrantEvent event) {
-        CruxAdvancement advancement = event.getAdvancement();
-
-        UUID who = event.getWho();
-        if(!isPlayer(who)) return;
-        if(advancement.key().equals(StoryAdvances.ENTER_RESOURCE_OVERWORLD)){
-            onEnterResourceOverworld(event);
-            return;
-        }
+    public void nextStage(){
+        holder.complete(this);
+        //todo holder.addProg
     }
 
-    public void onEnterResourceOverworld(CruxAdvancementGrantEvent event){
-        CruxAdvancementManager manager = event.getManager();
-        UUID who = event.getWho();
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onCruxBlockBreak(CruxBlockBreakEvent event) {
+        if(!isPlayer(event.getContext().getMiner())) return;
+        if(!event.getBlock().key().equals(USurviveBlocks.ORBIT_ORE.key())) return;
+        if(!state.hasFlag(Flags.ORBIT_MINED.flag())){
+            completeStep(() ->{
+                state.grantFlag(Flags.ORBIT_MINED.flag());
+            });
+            /*state.grantFlag(Flags.ORBIT_MINED.flag());
+            if(state.hasFlag(Flags.ENEMIES_KILLED.flag())){
+                nextStage();
+            }*/
+        }
+       /* if(!minedOrbitOre){
+            minedOrbitOre = true;
+            if(enemyKillCount >= enemySpawnCount){
+                nextStage();
+            }
+        }*/
+    }
 
-        World world = p.getWorld();
-        CruxWorld cruxWorld = CruxCore.core().worldManager().getWorld(world.key());
-        if(cruxWorld==null) return;
-        CruxWorldType type = cruxWorld.get(CruxWorldsComponents.WORLD_TYPE);
-        if(!USurviveWorldTypes.RESOURCE_OVERWORLD.compare(type)) return;
-
+    public void onEnterResourceOverworld(World world){
         StructureGenerator gen = cfg().RESOURCE_WORLD_STRUCTURE_1.value();
         if(gen == null) return;
 
-        setEnteredResourceOverworld(true);
+        //dialogListener().dialogPlayer().pushDialog(cfg().ENTER_RESOURCE_WORLD_DIALOG.value());
 
         GuideStructurePlacer placer = new GuideStructurePlacer(p.getChunk(), 48, gen, cfg().RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE.value(),
             () -> p.isOnline() && p.getWorld().equals(world));
@@ -422,7 +744,6 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
             if(throwable != null){
                 throwable.printStackTrace();
                 if(throwable instanceof TimeoutException){
-                    manager.revokeAdvancement(who, event.getAdvancement());
                     p.sendMessage(Component.text("The Guide structure was not able to be placed in time. This is usually due to new chunks taking a long time to load in. Please go back to Spawn and re-travel to the Resource Overworld to try again! It's recommended that you fast travel to the same spot."));
                     return;
                 }
@@ -435,42 +756,66 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
                 return;
             }
             if(loc == null){
-                manager.revokeAdvancement(who, event.getAdvancement());
                 Lang.GUIDE_STRUCTURE_CANNOT_BE_PLACED.use(p);
                 return;
             }
-            setFallenMeteorLocation(loc);
-            dialogListener().dialogPlayer().pushDialog(cfg().STRUCTURE_LOCATED_DIALOG.value());
-            //Lang.GUIDE_STRUCTURE_PLACED.use(p);
+            completeStep(() ->{
+                setFallenMeteorLocation(loc);
+            });
+            //dialogListener().dialogPlayer().pushDialog(cfg().STRUCTURE_LOCATED_DIALOG.value());
         });
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         Player p = event.getPlayer();
-        if(!p.equals(this.p)) return;
+        if(!isPlayer(event)) return;
         if(npc != null){
             npc.remove();
             npc = null;
             npcGoal = null;
         }
+
+        if(canSetup()){
+            Crux.scheduler().runTaskLater(() ->{
+                if(!canSetup()) return;
+                if(!p.isOnline()) return;
+                setup();
+            }, 5L);
+            return;
+        }
+
+        if(hasEnteredResourceOverworld() && fallenMeteorLocation != null) return;
+        World world = p.getWorld();
+        if(!isResourceOverworld(world)) return;
+
+        completeStep(() ->{
+            state.grantFlag(Flags.ENTERED_RESOURCE_OVERWORLD.flag());
+        });
+    }
+
+    public boolean isResourceOverworld(World world){
+        CruxWorld cruxWorld = CruxCore.core().worldManager().getWorld(world.key());
+        if(cruxWorld==null) return false;
+        CruxWorldType type = cruxWorld.get(CruxWorldsComponents.WORLD_TYPE);
+        if(!USurviveWorldTypes.RESOURCE_OVERWORLD.compare(type)) return false;
+        return true;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityRemoveFromWorld(EntityRemoveFromWorldEvent event) {
         if(!isStoryMob(event.getEntity())) return;
-        enemyKillCount++;
-        if(enemyKillCount >= enemySpawnCount){
-            dialogListener().dialogPlayer().pushDialog(cfg().BOUNDERS_DEFEATED_DIALOG.value());
-        }
+        completeStep(() ->{
+            state.incrementFlag(NumFlags.COUNT_ENEMY_KILL.flag(), 1);
+        });
     }
 
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityPortalEnter(EntityPortalEnterEvent event) {
         if(!event.getEntity().equals(npc)) return;
-        if(data.pushedNPCInPortal) return;
-        data.pushedNPCInPortal = true;
+        if(data.state.hasFlag(DataFlags.PUSHED_NPC_IN_PORTAL.flag())) return;
+        data.state.grantFlag(DataFlags.PUSHED_NPC_IN_PORTAL.flag());
         if(npcGoal != null){
             npcGoal.getDialogPlayer().pushDialog(cfg().PUSHED_NPC_IN_PORTAL_DIALOG.value());
             return;
@@ -493,30 +838,18 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if(!event.getDamager().equals(p)) return;
         if(event.getEntity().equals(npc)){
-            if(data.punchedNPC) return;
+            if(data.state.hasFlag(DataFlags.PUNCHED_NPC.flag())) return;
+            data.state.grantFlag(DataFlags.PUNCHED_NPC.flag());
             if(npcGoal != null){
                 npcGoal.getDialogPlayer().pushDialog(cfg().PUNCHED_NPC_DIALOG.value());
                 return;
             }
-            data.punchedNPC = true;
             dialogListener().dialogPlayer().pushDialog(cfg().PUNCHED_NPC_DIALOG.value());
         }
     }
 
 
     public boolean hasEnteredResourceOverworld() {
-        return enteredResourceOverworld;
-    }
-
-    public void onEnteredResourceOverworld(){
-        if(p == null) return;
-        dialogListener().dialogPlayer().pushDialog(cfg().ENTER_RESOURCE_WORLD_DIALOG.value());
-    }
-
-    public void setEnteredResourceOverworld(boolean enteredResourceOverworld) {
-        if(!this.enteredResourceOverworld && enteredResourceOverworld){
-            onEnteredResourceOverworld();
-        }
-        this.enteredResourceOverworld = enteredResourceOverworld;
+        return state.hasFlag(Flags.ENTERED_RESOURCE_OVERWORLD.flag());
     }
 }

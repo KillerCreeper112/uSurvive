@@ -173,7 +173,7 @@ public class KillMobAdvanceMaker {
 
         CruxCriteria criteria = new NumberCriteria(amount);
         AdvancementObjective objective = new KillEntityObjective(
-            new ObjectiveCommonData("a", new EntityCondition("looted", type, null, null)),
+            new ObjectiveCommonData("a", new EntityCondition("looted", type, null, null,null)),
             amount
         );
 

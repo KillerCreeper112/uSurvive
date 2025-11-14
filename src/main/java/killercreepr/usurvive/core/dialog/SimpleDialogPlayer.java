@@ -32,8 +32,8 @@ public class SimpleDialogPlayer implements DialogPlayer {
         protected DialogLine lastLine;
     }
 
-    protected Queue<DialogContent> queue = new LinkedList<>();
-    protected Queue<Data> pushedQueue = new LinkedList<>();
+    protected LinkedList<DialogContent> queue = new LinkedList<>();
+    protected LinkedList<Data> pushedQueue = new LinkedList<>();
     protected Data currentDialog = new Data();
     protected int dialogWaitTime = 10;
     protected int dialogSplitSpeed = 1;
@@ -177,14 +177,39 @@ public class SimpleDialogPlayer implements DialogPlayer {
 
     }
 
+    public Data pollNextPushed(){
+        int index = -1;
+        for (Data data : pushedQueue) {
+            index++;
+            if(data.dialog.canPlay(this)){
+                return pushedQueue.remove(index);
+            }
+        }
+        return null;
+    }
+
+    public DialogContent pollNextQueued(){
+        int index = -1;
+        for (DialogContent data : queue) {
+            index++;
+            if(data.canPlay(this)){
+                return queue.remove(index);
+            }
+        }
+        return null;
+    }
+
     public void dialogTick(){
-        if(getDialog() == null){
+        var dialog = getDialog();
+        if(dialog == null){
             if(!pushedQueue.isEmpty()){
-                currentDialog = pushedQueue.poll();
+                var nextPushed = pollNextPushed();
+                if(nextPushed != null) currentDialog = nextPushed;
                 return;
             }
             if(queue.isEmpty()) return;
-            setDialog(queue.poll());
+            var next = pollNextQueued();
+            if(next != null) setDialog(next);
             return;
         }
         onDialogTicking();
@@ -195,9 +220,16 @@ public class SimpleDialogPlayer implements DialogPlayer {
             }
             return;
         }
+        if(!dialog.canPlay(this)){
+            dialog.onPause(this);
+            var remove = getInfoOrDefault("remove_on_cant_play", (info, id) -> info.info().getOrDefault(id, Boolean.class, false), false);
+            if(!remove) pushedQueue.offerFirst(currentDialog);
+            setDialog(null);
+            return;
+        }
 
-        String dialog = getToSendDialogLine();
-        if(dialog == null) return;
+        String dialogText = getToSendDialogLine();
+        if(dialogText == null) return;
         onDialogSpeaking();
     }
 
@@ -306,6 +338,7 @@ public class SimpleDialogPlayer implements DialogPlayer {
                 var current = getDialog();
                 setDialog(null);
                 if(current != null){
+                    current.onDialogEnd(this);
                     current.onEnd(this);
                 }
                 return null;

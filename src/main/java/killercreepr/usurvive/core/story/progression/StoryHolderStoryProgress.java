@@ -1,5 +1,7 @@
 package killercreepr.usurvive.core.story.progression;
 
+import killercreepr.cruxblocks.api.mining.user.Miner;
+import killercreepr.cruxblocks.core.mining.user.EntityMiner;
 import killercreepr.usurvive.api.dialog.listener.DialogListener;
 import killercreepr.usurvive.api.story.StoryHolder;
 import killercreepr.usurvive.api.story.StoryProgression;
@@ -15,6 +17,11 @@ public abstract class StoryHolderStoryProgress implements StoryProgression {
 
     public DialogListener dialogListener(){
         return DialogListener.listener(p);
+    }
+
+    protected boolean isPlayer(Miner miner){
+        if(!(miner instanceof EntityMiner m)) return false;
+        return isPlayer(m.getEntity());
     }
 
     protected boolean isPlayer(PlayerEvent event){
