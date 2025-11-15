@@ -296,7 +296,8 @@ public class Story2Progress extends StoryHolderStoryProgress implements Listener
         super.onTick();
         int every = 30;
         if(Crux.getCurrentTick() % every != 0) return;
-        if(!state.hasFlag(Flags.TALKED_TO_NPC_1.flag()) || state.hasFlag(Flags.DEPOSITED_ORBIT.flag())) return;
+        if(!isSpawn(p.getWorld())) return;
+        if(!state.hasFlag(Flags.WENT_TO_SPAWN.flag()) || state.hasFlag(Flags.DEPOSITED_ORBIT.flag())) return;
         tickStructureGuide(p);
     }
 

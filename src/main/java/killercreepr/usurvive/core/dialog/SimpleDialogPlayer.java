@@ -14,7 +14,6 @@ import killercreepr.usurvive.api.dialog.DialogPlayer;
 import killercreepr.usurvive.core.component.DialogComponents;
 import killercreepr.usurvive.core.lang.Lang;
 import net.kyori.adventure.audience.Audience;
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -31,6 +30,7 @@ public class SimpleDialogPlayer implements DialogPlayer {
         public int dialogSplitIndex = 0;
         protected int cachePreParsedIndex = -1;
         protected DialogLine lastLine;
+        protected boolean sentLastLine;
     }
 
     protected LinkedList<DialogContent> queue = new LinkedList<>();
@@ -383,7 +383,8 @@ public class SimpleDialogPlayer implements DialogPlayer {
             currentDialog.dialogSplitIndex++;
 
             if (currentDialog.dialogSplitIndex >= currentDialog.currentDialogSplit.length) {
-                if(i != 0){
+                if(!currentDialog.sentLastLine){
+                    currentDialog.sentLastLine = true;
                     currentDialog.currentDialogLine = builder.toString();
                     var line = getDialog().dialog().get(currentDialog.dialogIndex);
                     getDialog().actions().forEach(action ->{
@@ -401,6 +402,7 @@ public class SimpleDialogPlayer implements DialogPlayer {
                 currentDialog.dialogIndex++;
                 currentDialog.currentDialogLine = null;
                 currentDialog.dialogWait = getDialogWaitTime();
+                currentDialog.sentLastLine = false;
 
                 getDialog().actions().forEach(action ->{
                     action.onEnd(this);

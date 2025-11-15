@@ -51,8 +51,9 @@ public abstract class StoryHolderStoryProgress implements StoryProgression {
         if(current != null && current.isComplete(state())){
             current.onComplete(p);
             onStepCompleted(current);
+            return nextStep(p);
         }
-        return nextStep(p);
+        return current;
     }
 
     public StoryStep getNextStep(StoryState state) {

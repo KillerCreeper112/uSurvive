@@ -146,7 +146,7 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
         new StoryStep() {
             @Override
             public boolean canStart(StoryState state) {
-                return canSetup();
+                return !hasEnteredResourceOverworld();
             }
 
             @Override
@@ -156,6 +156,7 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
 
             @Override
             public void onStart(Player p) {
+                if(!canSetup()) return;
                 setup();
             }
         },
@@ -645,10 +646,20 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         Player p = event.getPlayer();
         if(!isPlayer(event)) return;
+        World world = p.getWorld();
         if(npc != null){
             npc.remove();
             npc = null;
             npcGoal = null;
+        }
+
+        if(isResourceOverworld(world)){
+            if(!hasEnteredResourceOverworld() || fallenMeteorLocation == null){
+                completeStep(() ->{
+                    state.grantFlag(Flags.ENTERED_RESOURCE_OVERWORLD.flag());
+                });
+                return;
+            }
         }
 
         if(canSetup()){
@@ -659,15 +670,7 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
             }, 5L);
             return;
         }
-        World world = p.getWorld();
         testDialog();
-
-        if(hasEnteredResourceOverworld() && fallenMeteorLocation != null) return;
-        if(!isResourceOverworld(world)) return;
-
-        completeStep(() ->{
-            state.grantFlag(Flags.ENTERED_RESOURCE_OVERWORLD.flag());
-        });
     }
 
     public boolean isResourceOverworld(World world){
