@@ -112,17 +112,6 @@ public class Guide2Progression extends GenericGuideProgression{
         List<Location> path = new GuidePathfinder(p).findPath(p.getLocation(), pos, 0.5D,
             cfg().GUIDE_1_MAX_PARTICLE_POINTS.value().value().intValue());
         TrailRenderer.renderTrail(p, path);
-
-        /*var cfg = USurvivePlugin.inst().values();
-        new DeathGuide(p, p.getLocation().add(0, p.getHeight()/2, 0), pos,
-            cfg.DEATH_GUIDE_PARTICLE_AMOUNT().value().intValue(),
-            cfg.DEATH_GUIDE_PARTICLE_SHIFT_START(),
-            cfg.DEATH_GUIDE_PARTICLE_SPEED_DISTANCE_MULTIPLIER(),
-            cfg.DEATH_GUIDE_PARTICLE_OFFSET_VERTICAL(),
-            cfg.DEATH_GUIDE_PARTICLE_OFFSET_SIDE(),
-            cfg.DEATH_GUIDE_PARTICLE_SHIFT(),
-            Particle.FLAME
-        ).setStarted();*/
     }
 
     @NotNull

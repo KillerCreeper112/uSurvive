@@ -3,7 +3,6 @@ package killercreepr.usurvive.core.config.handler;
 import com.google.common.reflect.TypeToken;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileElement;
-import killercreepr.cruxconfig.config.common.element.FileNull;
 import killercreepr.cruxconfig.config.common.handler.AutoFileHandler;
 import killercreepr.cruxconfig.config.common.handler.AutoFileOptions;
 import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
@@ -24,14 +23,14 @@ public class FileStoryState implements FileObjectHandler<StoryState> {
     );
     @Override
     public @NotNull FileElement serializeToFile(@NotNull FileContext<?> ctx, @NotNull StoryState state) {
-        if(state.getCompletedFlags().isEmpty() && state.getIntFlags().isEmpty()) return FileNull.INSTANCE;
+        //if(state.getCompletedFlags().isEmpty() && state.getIntFlags().isEmpty()) return FileNull.INSTANCE;
         return auto.serializeToFile(ctx, (SimpleStoryState) state);
     }
 
     @Nullable
     @Override
     public StoryState deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement e) {
-        if(e instanceof FileNull) return new SimpleStoryState();
+        //if(!(e instanceof FileObject oo) || oo.isEmpty()) return new SimpleStoryState();
         return auto.deserializeFromFile(ctx, e);
     }
 }

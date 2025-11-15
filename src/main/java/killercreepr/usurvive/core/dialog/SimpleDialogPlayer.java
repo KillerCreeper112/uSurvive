@@ -222,7 +222,7 @@ public class SimpleDialogPlayer implements DialogPlayer {
         }
         if(!dialog.canPlay(this)){
             dialog.onPause(this);
-            var remove = getInfoOrDefault("remove_on_cant_play", (info, id) -> info.info().getOrDefault(id, Boolean.class, false), false);
+            var remove = getInfoOrDefault("remove_on_cant_play", (info, id) -> info.info().getOrDefault(id, Boolean.class, true), true);
             if(!remove) pushedQueue.offerFirst(currentDialog);
             setDialog(null);
             return;

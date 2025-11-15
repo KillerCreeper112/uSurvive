@@ -69,7 +69,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 
 public class Story1Progress extends StoryHolderStoryProgress implements Listener {
-
     public enum NumFlags{
         COUNT_ENEMY_SPAWN,
         COUNT_ENEMY_KILL,
@@ -132,7 +131,7 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
             return flag;
         }
     }
-    protected List<StoryFlag> cacheRequiredFlags;
+    protected transient List<StoryFlag> cacheRequiredFlags;
     @Override
     public List<StoryFlag> getRequiredFlags() {
         if(cacheRequiredFlags != null) return cacheRequiredFlags;
@@ -316,55 +315,8 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
             public boolean isComplete(StoryState state) {
                 return state.hasFlag(Flags.ORBIT_MINED.flag());
             }
-
-            @Override
-            public void onComplete(Player p) {
-                nextStage();
-            }
         }
     );
-
-    public void completeStep(Player p){
-        StoryStep step = getNextStep(state);
-        if(step != null){
-            step.onComplete(p);
-        }
-
-    }
-
-    public StoryStep nextStep(Player p){
-        StoryStep step = getNextStep(state);
-
-        if (step != null) {
-            if(step.getDialog() != null){
-                dialogListener().dialogPlayer().setDialog(step.getDialog());
-            }
-            step.onStart(p);
-        }
-        return step;
-    }
-
-    public StoryStep completeStep(Runnable consumer){
-        StoryStep current = getNextStep(state);
-        consumer.run();
-        if(current != null && current.isComplete(state)){
-            current.onComplete(p);
-        }
-        return nextStep(p);
-    }
-
-    public StoryStep getNextStep(StoryState state) {
-        for (StoryStep step : getSteps()) {
-            if (!step.isComplete(state) && step.canStart(state))
-                return step;
-        }
-        return null;
-    }
-
-    public void restorePlayer(Player p) {
-        nextStep(p);
-    }
-
 
     @Override
     public List<StoryStep> getSteps() {
@@ -434,11 +386,6 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
     @Override
     public @NotNull Key key() {
         return KEY;
-    }
-
-    @Override
-    public void onComplete(Player p, StoryHolder holder) {
-        //todo holder.setCurrentProgression(new Guide2Progression());
     }
 
     @Override
@@ -645,30 +592,19 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
         ).setStarted();
     }
 
-    public void nextStage(){
-        holder.complete(this);
-        //todo holder.addProg
+    @Override
+    public void onComplete(Player p, StoryHolder holder) {
+        super.onComplete(p, holder);
+        holder.addProgression(new Story2Progress());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCruxBlockBreak(CruxBlockBreakEvent event) {
         if(!isPlayer(event.getContext().getMiner())) return;
         if(!event.getBlock().key().equals(USurviveBlocks.ORBIT_ORE.key())) return;
-        if(!state.hasFlag(Flags.ORBIT_MINED.flag())){
-            completeStep(() ->{
-                state.grantFlag(Flags.ORBIT_MINED.flag());
-            });
-            /*state.grantFlag(Flags.ORBIT_MINED.flag());
-            if(state.hasFlag(Flags.ENEMIES_KILLED.flag())){
-                nextStage();
-            }*/
-        }
-       /* if(!minedOrbitOre){
-            minedOrbitOre = true;
-            if(enemyKillCount >= enemySpawnCount){
-                nextStage();
-            }
-        }*/
+        completeStep(() ->{
+            state.grantFlag(Flags.ORBIT_MINED.flag());
+        });
     }
 
     public void onEnterResourceOverworld(World world){
@@ -723,9 +659,10 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
             }, 5L);
             return;
         }
+        World world = p.getWorld();
+        testDialog();
 
         if(hasEnteredResourceOverworld() && fallenMeteorLocation != null) return;
-        World world = p.getWorld();
         if(!isResourceOverworld(world)) return;
 
         completeStep(() ->{

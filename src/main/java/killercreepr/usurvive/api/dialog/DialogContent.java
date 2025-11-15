@@ -11,6 +11,7 @@ public interface DialogContent extends DataInfoHolder {
     int priority();
 
     boolean canPlay(DialogPlayer player);
+    boolean hasCustomCanPlayLogic();
 
     default void onSendInfo(DataExchange info){
 

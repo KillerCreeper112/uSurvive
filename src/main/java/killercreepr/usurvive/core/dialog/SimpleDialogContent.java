@@ -42,6 +42,11 @@ public class SimpleDialogContent implements DialogContent {
     }
 
     @Override
+    public boolean hasCustomCanPlayLogic() {
+        return canPlayCondition != null;
+    }
+
+    @Override
     public boolean canPlay(DialogPlayer player) {
         if(canPlayCondition == null) return true;
         if(!(CruxCollection.getFirst(player.audience()) instanceof Player p)) return true;

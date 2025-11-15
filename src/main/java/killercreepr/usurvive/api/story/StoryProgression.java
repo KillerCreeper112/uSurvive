@@ -14,6 +14,8 @@ public interface StoryProgression extends CruxKeyed {
     default boolean hasAllFlags(){
         return state().hasAllFlags(getRequiredFlags());
     }
+    default void onStepStarted(StoryStep step){}
+    default void onStepCompleted(StoryStep step){}
     List<StoryStep> getSteps();
     StoryState state();
 

@@ -1,18 +1,31 @@
 package killercreepr.usurvive.core.story.progression;
 
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxconfig.config.common.handler.AutoFileHandler;
 import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
+import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxcurrency.api.event.CurrencyDepositEvent;
+import killercreepr.usurvive.api.dialog.DialogContent;
 import killercreepr.usurvive.api.story.*;
 import killercreepr.usurvive.core.USurvivePlugin;
+import killercreepr.usurvive.core.block.ActiveOrbitConduit;
 import killercreepr.usurvive.core.config.story.Story2Config;
 import killercreepr.usurvive.core.entity.mob.goals.guide.GuidePathGoal;
+import killercreepr.usurvive.core.guide.particle.TrailRenderer;
+import killercreepr.usurvive.core.pathfinding.GuidePathfinder;
 import killercreepr.usurvive.core.story.SimpleStoryState;
 import killercreepr.usurvive.core.story.progression.data.GenericStoryProgressData;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -20,10 +33,7 @@ import java.util.List;
 import java.util.function.Function;
 
 public class Story2Progress extends StoryHolderStoryProgress implements Listener {
-
     public enum NumFlags{
-        COUNT_ENEMY_SPAWN,
-        COUNT_ENEMY_KILL,
         ;
         private final StoryFlag flag;
         NumFlags(StoryFlag flag) {
@@ -41,13 +51,9 @@ public class Story2Progress extends StoryHolderStoryProgress implements Listener
         }
     }
     public enum Flags{
-        ENTERED_RESOURCE_OVERWORLD,
-        ENEMIES_SPAWNED,
-        ORBIT_MINED,
-        DEFEATED_DIALOG_DONE,
-
-        FOUND_STRUCTURE,
-        ENEMIES_KILLED(state -> state.getFlagValue(NumFlags.COUNT_ENEMY_KILL.flag()) > 0 && state.getFlagValue(NumFlags.COUNT_ENEMY_KILL.flag()) >= state.getFlagValue(NumFlags.COUNT_ENEMY_SPAWN.flag())),
+        WENT_TO_SPAWN,
+        TALKED_TO_NPC_1,
+        DEPOSITED_ORBIT,
         ;
         private final StoryFlag flag;
         Flags(StoryFlag flag) {
@@ -65,8 +71,6 @@ public class Story2Progress extends StoryHolderStoryProgress implements Listener
         }
     }
     public enum DataFlags{
-        PUSHED_NPC_IN_PORTAL,
-        PUNCHED_NPC,
         ;
         private final StoryFlag flag;
         DataFlags(StoryFlag flag) {
@@ -83,7 +87,7 @@ public class Story2Progress extends StoryHolderStoryProgress implements Listener
             return flag;
         }
     }
-    protected List<StoryFlag> cacheRequiredFlags;
+    protected transient List<StoryFlag> cacheRequiredFlags;
     @Override
     public List<StoryFlag> getRequiredFlags() {
         if(cacheRequiredFlags != null) return cacheRequiredFlags;
@@ -95,40 +99,52 @@ public class Story2Progress extends StoryHolderStoryProgress implements Listener
     }
 
     public transient final List<StoryStep> steps = List.of(
-    );
-
-    public StoryStep nextStep(Player p){
-        StoryStep step = getNextStep(state);
-
-        if (step != null) {
-            if(step.getDialog() != null){
-                dialogListener().dialogPlayer().setDialog(step.getDialog());
+        new StoryStep() {
+            @Override
+            public boolean canStart(StoryState state) {
+                return true;
             }
-            step.onStart(p);
-        }
-        return step;
-    }
 
-    public StoryStep completeStep(Runnable consumer){
-        StoryStep current = getNextStep(state);
-        consumer.run();
-        if(current != null && current.isComplete(state)){
-            current.onComplete(p);
-        }
-        return nextStep(p);
-    }
+            @Override
+            public boolean isComplete(StoryState state) {
+                return state.hasFlag(Flags.WENT_TO_SPAWN.flag());
+            }
 
-    public StoryStep getNextStep(StoryState state) {
-        for (StoryStep step : getSteps()) {
-            if (!step.isComplete(state) && step.canStart(state))
-                return step;
-        }
-        return null;
-    }
+            @Override
+            public DialogContent getDialog() {
+                return cfg().START_DIALOG.value();
+            }
+        },
 
-    public void restorePlayer(Player p) {
-        nextStep(p);
-    }
+        new StoryStep() {
+            @Override
+            public boolean canStart(StoryState state) {
+                return state.hasFlag(Flags.WENT_TO_SPAWN.flag());
+            }
+
+            @Override
+            public boolean isComplete(StoryState state) {
+                return state.hasFlag(Flags.TALKED_TO_NPC_1.flag());
+            }
+
+            @Override
+            public DialogContent getDialog() {
+                return cfg().WENT_TO_DIALOG.value();
+            }
+        },
+
+        new StoryStep() {
+            @Override
+            public boolean canStart(StoryState state) {
+                return state.hasFlag(Flags.TALKED_TO_NPC_1.flag());
+            }
+
+            @Override
+            public boolean isComplete(StoryState state) {
+                return state.hasFlag(Flags.DEPOSITED_ORBIT.flag());
+            }
+        }
+    );
 
 
     @Override
@@ -173,6 +189,32 @@ public class Story2Progress extends StoryHolderStoryProgress implements Listener
 
     protected transient Mob npc;
     protected transient GuidePathGoal npcGoal;
+
+    protected transient long lastCheckedConduit;
+    protected transient Block conduit;
+    public void findAndSetConduit(Block center){
+        lastCheckedConduit = System.currentTimeMillis();
+        conduit = findConduit(center);
+    }
+
+    public Block findConduit(Block center){
+        return findConduit(center, 48);
+    }
+
+    public Block findConduit(Block center, int range){
+        for(int x = -range; x <= range; x++){
+            for(int z = -range; z <= range; z++){
+                for(int y = -range; y <= range; y++){
+                    Block b = center.getRelative(x, y, z);
+                    var block = CruxCore.core().cruxBlocks().getActiveBlock(b);
+                    if(block == null) continue;
+                    if(!(block instanceof ActiveOrbitConduit)) continue;
+                    return b;
+                }
+            }
+        }
+        return null;
+    }
 
     @Override
     public Story2Config cfg() {
@@ -254,10 +296,53 @@ public class Story2Progress extends StoryHolderStoryProgress implements Listener
         super.onTick();
         int every = 30;
         if(Crux.getCurrentTick() % every != 0) return;
+        if(!state.hasFlag(Flags.TALKED_TO_NPC_1.flag()) || state.hasFlag(Flags.DEPOSITED_ORBIT.flag())) return;
+        tickStructureGuide(p);
     }
 
-    public void nextStage(){
-        holder.complete(this);
-        //todo holder.addProg
+    public void tickStructureGuide(@NotNull Player p){
+        if(conduit == null){
+            if(!isSpawn(p.getWorld())) return;
+            if(CruxMath.hasOccurredWithin(lastCheckedConduit, 80L)) return;
+            findAndSetConduit(p.getLocation().getBlock());
+            return;
+        }
+        if(!conduit.getWorld().equals(p.getWorld())) return;
+        Location pos =  conduit.getLocation();
+
+        List<Location> path = new GuidePathfinder(p).findPath(p.getLocation(), pos, 0.5D,
+            USurvivePlugin.inst().cfgContainer().STORY_1.MAX_PARTICLE_POINTS.value().value().intValue());
+        TrailRenderer.renderTrail(p, path);
     }
+
+    public boolean isSpawn(World world){
+        return world.getName().equals(USurvivePlugin.inst().values().SPAWN_WORLD().value());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
+        if(!isPlayer(event)) return;
+        World world = p.getWorld();
+        if(isSpawn(world)){
+            if(!state.hasFlag(Flags.WENT_TO_SPAWN.flag())){
+                completeStep(() ->{
+                    state.grantFlag(Flags.WENT_TO_SPAWN.flag());
+                });
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onCurrencyDeposit(CurrencyDepositEvent event) {
+        if(!isPlayer(event.getPlayer())) return;
+        if(!event.getCurrency().key().equals(Crux.key("orbit"))) return;
+        if(!event.getReason().equalsIgnoreCase("usurvive:menu/currency_deposit")) return;
+        Player p = event.getPlayer().getPlayer();
+        if(p == null) return;
+
+        completeStep(() ->{
+            state.grantFlag(Flags.DEPOSITED_ORBIT.flag());
+        });
+    }
+
 }

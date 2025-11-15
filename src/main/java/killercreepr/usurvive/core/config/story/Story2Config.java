@@ -16,6 +16,8 @@ import java.io.File;
 import java.util.List;
 
 public class Story2Config extends StoryConfig{
+    public final CfgValue<DialogContent> START_DIALOG = new CommonValue<>(){};
+    public final CfgValue<DialogContent> WENT_TO_DIALOG = new CommonValue<>(){};
 
     public Story2Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);

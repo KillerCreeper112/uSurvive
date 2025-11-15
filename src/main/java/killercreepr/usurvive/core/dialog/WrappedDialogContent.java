@@ -41,6 +41,11 @@ public class WrappedDialogContent implements DialogContent {
     }
 
     @Override
+    public boolean hasCustomCanPlayLogic() {
+        return child.hasCustomCanPlayLogic();
+    }
+
+    @Override
     public @NotNull DataExchange info() {
         return child.info();
     }
