@@ -14,6 +14,7 @@ import killercreepr.usurvive.api.dialog.DialogPlayer;
 import killercreepr.usurvive.core.component.DialogComponents;
 import killercreepr.usurvive.core.lang.Lang;
 import net.kyori.adventure.audience.Audience;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -221,9 +222,13 @@ public class SimpleDialogPlayer implements DialogPlayer {
             return;
         }
         if(!dialog.canPlay(this)){
-            dialog.onPause(this);
             var remove = getInfoOrDefault("remove_on_cant_play", (info, id) -> info.info().getOrDefault(id, Boolean.class, true), true);
-            if(!remove) pushedQueue.offerFirst(currentDialog);
+            if(remove){
+                dialog.onEnd(this);
+            } else{
+                dialog.onPause(this);
+                pushedQueue.offerFirst(currentDialog);
+            }
             setDialog(null);
             return;
         }

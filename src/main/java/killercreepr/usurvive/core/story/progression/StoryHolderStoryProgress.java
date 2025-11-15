@@ -124,7 +124,9 @@ public abstract class StoryHolderStoryProgress implements StoryProgression {
         var dialog = current.getDialog();
         if(dialog == null || !dialog.hasCustomCanPlayLogic()) return false;
         if(hasAlreadyPlayedDialog(current)) return false;
+        if(!dialog.canPlay(dialogListener().dialogPlayer())) return false;
         dialogListener().dialogPlayer().pushDialog(dialog);
+        stepsAlreadyPlayedDialog.add(current);
         return true;
     }
 }
