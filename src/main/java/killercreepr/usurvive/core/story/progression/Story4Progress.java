@@ -181,6 +181,9 @@ public class Story4Progress extends StoryHolderStoryProgress implements Listener
         String npc = info.get("npc", String.class);
         if(npc == null) return;
         if(!"guide_1".equalsIgnoreCase(npc)) return;
+
+        if(dialogListener().dialogPlayer().isPlaying()) return;
+        startStep();
     }
 
     @Override

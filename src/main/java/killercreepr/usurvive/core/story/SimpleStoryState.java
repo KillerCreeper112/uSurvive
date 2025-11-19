@@ -29,16 +29,19 @@ public class SimpleStoryState implements StoryState {
     }
 
     @Override
-    public void setFlag(StoryFlag flag, boolean value) {
+    public boolean setFlag(StoryFlag flag, boolean value) {
         if(value){
             if(completedFlags.add(f(flag))){
                 onFlagStateChanged(flag, true);
+                return true;
             }
         }else{
             if(completedFlags.remove(f(flag))){
                 onFlagStateChanged(flag, false);
+                return true;
             }
-        };
+        }
+        return false;
     }
 
     @Override

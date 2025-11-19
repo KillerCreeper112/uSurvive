@@ -14,6 +14,7 @@ public class Story3Config extends StoryConfig{
     public final CfgValue<List<String>> GIVE_COMMANDS = new CommonValue<>(){};
     public final CfgValue<DialogContent> START_DIALOG = new CommonValue<>(){};
     public final CfgValue<DialogContent> MERCHANT_BOUGHT_DIALOG = new CommonValue<>(){};
+    public final CfgValue<DialogContent> NPC_INTERACT_AGAIN = new CommonValue<>(){};
 
     public Story3Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);

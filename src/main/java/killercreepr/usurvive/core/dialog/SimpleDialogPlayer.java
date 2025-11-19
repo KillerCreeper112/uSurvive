@@ -126,6 +126,11 @@ public class SimpleDialogPlayer implements DialogPlayer {
     }
 
     @Override
+    public boolean isPlaying() {
+        return getDialog() != null;
+    }
+
+    @Override
     public String currentDialogLineFor(Audience audience) {
         String currentDialogLine;
         if(currentDialog.currentDialogLine == null){

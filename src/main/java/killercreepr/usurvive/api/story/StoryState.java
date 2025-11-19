@@ -17,12 +17,22 @@ public interface StoryState {
         return false;
     }
     boolean hasFlag(StoryFlag flag);
-    void setFlag(StoryFlag flag, boolean value);
-    default void grantFlag(StoryFlag flag){
-        setFlag(flag, true);
+
+    /**
+     * @return Whether the state has changed
+     */
+    boolean setFlag(StoryFlag flag, boolean value);
+    /**
+     * @return Whether the state has changed
+     */
+    default boolean grantFlag(StoryFlag flag){
+        return setFlag(flag, true);
     }
-    default void revokeFlag(StoryFlag flag){
-        setFlag(flag, false);
+    /**
+     * @return Whether the state has changed
+     */
+    default boolean revokeFlag(StoryFlag flag){
+        return setFlag(flag, false);
     }
     Collection<String> getCompletedFlags();
     Map<String, Integer> getIntFlags();

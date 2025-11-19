@@ -36,6 +36,19 @@ public abstract class StoryHolderStoryProgress implements StoryProgression {
         return step;
     }
 
+    public StoryStep startStep(){
+        StoryStep step = getNextStep(state());
+
+        if (step != null) {
+            if(step.getDialog() != null){
+                dialogListener().dialogPlayer().setDialog(step.getDialog());
+            }
+            step.onStart(p);
+            onStepStarted(step);
+        }
+        return step;
+    }
+
     public void nextStage(){
         holder.complete(this);
     }
@@ -58,6 +71,9 @@ public abstract class StoryHolderStoryProgress implements StoryProgression {
             current.onComplete(p);
             onStepCompleted(current);
             return nextStep(p);
+        }
+        if(current == null){
+            nextStep(p);
         }
         return current;
     }

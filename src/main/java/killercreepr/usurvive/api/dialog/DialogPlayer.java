@@ -17,6 +17,7 @@ public interface DialogPlayer {
     float getProgress();
 
     boolean isEmpty();
+    boolean isPlaying();
 
     <T> T getInfo(String id, BiFunction<DataInfoHolder, String, T> function);
     <T> T getInfoOrDefault(String id, BiFunction<DataInfoHolder, String, T> function, T fallback);

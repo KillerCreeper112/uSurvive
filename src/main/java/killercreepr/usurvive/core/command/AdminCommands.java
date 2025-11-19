@@ -14,6 +14,7 @@ import killercreepr.usurvive.api.story.StoryHolder;
 import killercreepr.usurvive.core.USurvivePlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
@@ -135,7 +136,8 @@ public class AdminCommands {
                                                     holder.forEachCurrentStoryProgression(prog ->{
                                                         prog.onInfoInteraction(info);
                                                     });
-                                                    sender.sendMessage("Sent interaction to " + p.getName() + "'s current story progressions.");
+                                                    if(!(sender instanceof ConsoleCommandSender))
+                                                        sender.sendMessage("Sent interaction to " + p.getName() + "'s current story progressions.");
                                                 });
                                                 return 1;
                                             })
