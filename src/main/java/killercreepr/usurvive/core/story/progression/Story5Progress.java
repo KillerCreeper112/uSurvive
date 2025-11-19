@@ -4,9 +4,11 @@ import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxconfig.config.common.handler.AutoFileHandler;
 import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
+import killercreepr.usurvive.api.dialog.DialogContent;
 import killercreepr.usurvive.api.story.*;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.config.story.Story4Config;
+import killercreepr.usurvive.core.config.story.Story5Config;
 import killercreepr.usurvive.core.entity.mob.goals.guide.GuidePathGoal;
 import killercreepr.usurvive.core.story.SimpleStoryState;
 import killercreepr.usurvive.core.story.progression.data.GenericStoryProgressData;
@@ -39,6 +41,7 @@ public class Story5Progress extends StoryHolderStoryProgress implements Listener
         }
     }
     public enum Flags{
+        RANKED_UP,
         ;
         private final StoryFlag flag;
         Flags(StoryFlag flag) {
@@ -84,6 +87,22 @@ public class Story5Progress extends StoryHolderStoryProgress implements Listener
     }
 
     public transient final List<StoryStep> steps = List.of(
+        new StoryStep() {
+            @Override
+            public boolean canStart(StoryState state) {
+                return true;
+            }
+
+            @Override
+            public boolean isComplete(StoryState state) {
+                return state.hasFlag(Flags.RANKED_UP.flag());
+            }
+
+            @Override
+            public DialogContent getDialog() {
+                return cfg().START_DIALOG.value();
+            }
+        }
     );
 
     //ustory interact <player> npc=guide_1
@@ -139,8 +158,8 @@ public class Story5Progress extends StoryHolderStoryProgress implements Listener
     protected transient GuidePathGoal npcGoal;
 
     @Override
-    public Story4Config cfg() {
-        return USurvivePlugin.inst().cfgContainer().STORY_4;
+    public Story5Config cfg() {
+        return USurvivePlugin.inst().cfgContainer().STORY_5;
     }
 
     @Override
