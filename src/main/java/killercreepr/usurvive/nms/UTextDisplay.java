@@ -1,5 +1,5 @@
 package killercreepr.usurvive.nms;
 
-public interface UTextDisplay {
+public interface UTextDisplay extends NMSEntity {
 
 }

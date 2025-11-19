@@ -7,7 +7,6 @@ import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
 import killercreepr.usurvive.api.story.FileStoryProgressionLoader;
 import killercreepr.usurvive.api.story.StoryProgressData;
 import killercreepr.usurvive.api.story.StoryProgression;
-import killercreepr.usurvive.core.guide.progression.GuideProgression;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

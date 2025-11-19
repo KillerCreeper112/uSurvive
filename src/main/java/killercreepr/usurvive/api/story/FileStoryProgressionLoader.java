@@ -1,10 +1,6 @@
 package killercreepr.usurvive.api.story;
 
-import killercreepr.cruxconfig.config.common.FileContext;
-import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public interface FileStoryProgressionLoader<T, D> {
     FileObjectHandler<T> tempDataHandler();

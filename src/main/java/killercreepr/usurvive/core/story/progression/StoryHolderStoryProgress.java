@@ -7,7 +7,9 @@ import killercreepr.usurvive.api.story.StoryHolder;
 import killercreepr.usurvive.api.story.StoryProgression;
 import killercreepr.usurvive.api.story.StoryState;
 import killercreepr.usurvive.api.story.StoryStep;
+import killercreepr.usurvive.core.USurvivePlugin;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerEvent;
@@ -43,6 +45,10 @@ public abstract class StoryHolderStoryProgress implements StoryProgression {
         if(hasAllFlags()){
             nextStage();
         }
+    }
+
+    public boolean isSpawn(World world){
+        return world.getName().equals(USurvivePlugin.inst().values().SPAWN_WORLD().value());
     }
 
     public StoryStep completeStep(Runnable consumer){

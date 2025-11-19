@@ -3,7 +3,6 @@ package killercreepr.usurvive.core.dialog;
 import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.loot.conditions.LootCondition;
 import killercreepr.usurvive.api.dialog.DialogAction;
-import killercreepr.usurvive.api.dialog.DialogContent;
 import killercreepr.usurvive.api.dialog.DialogLine;
 import killercreepr.usurvive.api.dialog.KeyedDialogContent;
 import net.kyori.adventure.key.Key;

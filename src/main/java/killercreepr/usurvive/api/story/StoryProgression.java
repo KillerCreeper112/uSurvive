@@ -1,6 +1,7 @@
 package killercreepr.usurvive.api.story;
 
 import killercreepr.crux.api.data.CruxKeyed;
+import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.core.Crux;
 import killercreepr.cruxconfig.config.common.file.DataFile;
 import org.bukkit.entity.Player;
@@ -10,6 +11,10 @@ import org.bukkit.event.Listener;
 import java.util.List;
 
 public interface StoryProgression extends CruxKeyed {
+    default void onInfoInteraction(DataExchange info){
+
+    }
+
     List<StoryFlag> getRequiredFlags();
     default boolean hasAllFlags(){
         return state().hasAllFlags(getRequiredFlags());

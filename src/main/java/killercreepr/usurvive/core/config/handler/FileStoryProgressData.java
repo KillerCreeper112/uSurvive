@@ -11,9 +11,6 @@ import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class FileStoryProgressData implements FileObjectHandler<StoryProgressData> {
     protected final FileStoryProgression fileStoryProgression;
 

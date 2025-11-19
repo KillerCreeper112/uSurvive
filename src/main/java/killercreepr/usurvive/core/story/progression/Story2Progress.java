@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.story.progression;
 
+import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxconfig.config.common.handler.AutoFileHandler;
@@ -52,7 +53,7 @@ public class Story2Progress extends StoryHolderStoryProgress implements Listener
     }
     public enum Flags{
         WENT_TO_SPAWN,
-        TALKED_TO_NPC_1,
+        //TALKED_TO_NPC_1,
         DEPOSITED_ORBIT,
         ;
         private final StoryFlag flag;
@@ -124,16 +125,16 @@ public class Story2Progress extends StoryHolderStoryProgress implements Listener
 
             @Override
             public boolean isComplete(StoryState state) {
-                return state.hasFlag(Flags.TALKED_TO_NPC_1.flag());
+                return state.hasFlag(Flags.DEPOSITED_ORBIT.flag());
             }
 
             @Override
             public DialogContent getDialog() {
                 return cfg().WENT_TO_DIALOG.value();
             }
-        },
+        }
 
-        new StoryStep() {
+        /*new StoryStep() {
             @Override
             public boolean canStart(StoryState state) {
                 return state.hasFlag(Flags.TALKED_TO_NPC_1.flag());
@@ -143,9 +144,20 @@ public class Story2Progress extends StoryHolderStoryProgress implements Listener
             public boolean isComplete(StoryState state) {
                 return state.hasFlag(Flags.DEPOSITED_ORBIT.flag());
             }
-        }
+        }*/
     );
 
+    //ustory interact <player> npc=guide_1
+    @Override
+    public void onInfoInteraction(DataExchange info) {
+        super.onInfoInteraction(info);
+        /*String npcID = info.get("npc", String.class);
+        if(npcID == null) return;
+        if(!"guide_1".equalsIgnoreCase(npcID)) return;
+        completeStep(() ->{
+            state.grantFlag(Flags.TALKED_TO_NPC_1.flag());
+        });*/
+    }
 
     @Override
     public List<StoryStep> getSteps() {
@@ -239,7 +251,7 @@ public class Story2Progress extends StoryHolderStoryProgress implements Listener
 
     @Override
     public void onComplete(Player p, StoryHolder holder) {
-        //todo holder.setCurrentProgression(new Guide2Progression());
+        holder.addProgression(new Story3Progress());
     }
 
     @Override
@@ -314,10 +326,6 @@ public class Story2Progress extends StoryHolderStoryProgress implements Listener
         List<Location> path = new GuidePathfinder(p).findPath(p.getLocation(), pos, 0.5D,
             USurvivePlugin.inst().cfgContainer().STORY_1.MAX_PARTICLE_POINTS.value().value().intValue());
         TrailRenderer.renderTrail(p, path);
-    }
-
-    public boolean isSpawn(World world){
-        return world.getName().equals(USurvivePlugin.inst().values().SPAWN_WORLD().value());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

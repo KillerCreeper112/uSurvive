@@ -6,8 +6,11 @@ import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.component.parser.TextDataComponentDecoder;
+import killercreepr.usurvive.api.story.StoryHolder;
 import killercreepr.usurvive.core.USurvivePlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -104,6 +107,39 @@ public class AdminCommands {
                                         }
                                         return 1;
                                     })
+                            )
+                    )
+                    .build()
+            );
+            commands.register(
+                Commands.literal("ustory")
+                    .requires(ctx -> ctx.getSender().hasPermission("usurvive.cmds.ustory.use"))
+                    .then(
+                        Commands.literal("interact")
+                            .then(
+                                Commands.argument("targets", ArgumentTypes.players())
+                                    .then(
+                                        Commands.argument("data", StringArgumentType.greedyString())
+                                            .executes(ctx ->{
+                                                var sender = getExecutor(ctx.getSource());
+                                                var targets = ctx.getArgument("targets", PlayerSelectorArgumentResolver.class)
+                                                    .resolve(ctx.getSource());
+                                                String rawData = ctx.getArgument("data", String.class);
+                                                DataExchange info = DataExchange.builder()
+                                                    .edit(builder ->{
+                                                        TextDataComponentDecoder.parseComponentMap(rawData).forEach(builder::put);
+                                                    }).build();
+                                                targets.forEach(p ->{
+                                                    StoryHolder holder = StoryHolder.storyHolder(p);
+                                                    if(holder == null) return;
+                                                    holder.forEachCurrentStoryProgression(prog ->{
+                                                        prog.onInfoInteraction(info);
+                                                    });
+                                                    sender.sendMessage("Sent interaction to " + p.getName() + "'s current story progressions.");
+                                                });
+                                                return 1;
+                                            })
+                                    )
                             )
                     )
                     .build()

@@ -1,6 +1,5 @@
 package killercreepr.usurvive.core.config;
 
-import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.data.Reloadable;
 import killercreepr.crux.api.data.WorldLocation;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
