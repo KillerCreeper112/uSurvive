@@ -2,19 +2,23 @@ package killercreepr.usurvive.core.story.progression;
 
 import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.core.Crux;
+import killercreepr.cruxchat.api.event.EntityBadgeGrantEvent;
 import killercreepr.cruxconfig.config.common.handler.AutoFileHandler;
 import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
 import killercreepr.usurvive.api.dialog.DialogContent;
+import killercreepr.usurvive.api.dialog.DialogPlayer;
 import killercreepr.usurvive.api.story.*;
 import killercreepr.usurvive.core.USurvivePlugin;
-import killercreepr.usurvive.core.config.story.Story4Config;
 import killercreepr.usurvive.core.config.story.Story5Config;
+import killercreepr.usurvive.core.dialog.WrappedDialogContent;
 import killercreepr.usurvive.core.entity.mob.goals.guide.GuidePathGoal;
 import killercreepr.usurvive.core.story.SimpleStoryState;
 import killercreepr.usurvive.core.story.progression.data.GenericStoryProgressData;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,6 +46,8 @@ public class Story5Progress extends StoryHolderStoryProgress implements Listener
     }
     public enum Flags{
         RANKED_UP,
+        RANKED_UP_DIALOG,
+        TALKED_WITH_NPC,
         ;
         private final StoryFlag flag;
         Flags(StoryFlag flag) {
@@ -102,6 +108,43 @@ public class Story5Progress extends StoryHolderStoryProgress implements Listener
             public DialogContent getDialog() {
                 return cfg().START_DIALOG.value();
             }
+        },
+
+        new StoryStep() {
+            @Override
+            public boolean canStart(StoryState state) {
+                return state.hasFlag(Flags.RANKED_UP.flag());
+            }
+
+            @Override
+            public boolean isComplete(StoryState state) {
+                return state.hasFlag(Flags.RANKED_UP_DIALOG.flag());
+            }
+
+            @Override
+            public DialogContent getDialog() {
+                return new WrappedDialogContent(cfg().RANK_UP_DIALOG.value()){
+                    @Override
+                    public void onDialogEnd(DialogPlayer player) {
+                        super.onDialogEnd(player);
+                        completeStep(() ->{
+                           state.grantFlag(Flags.RANKED_UP_DIALOG.flag());
+                        });
+                    }
+                };
+            }
+        },
+
+        new StoryStep() {
+            @Override
+            public boolean canStart(StoryState state) {
+                return state.hasFlag(Flags.RANKED_UP_DIALOG.flag());
+            }
+
+            @Override
+            public boolean isComplete(StoryState state) {
+                return state.hasFlag(Flags.TALKED_WITH_NPC.flag());
+            }
         }
     );
 
@@ -112,6 +155,11 @@ public class Story5Progress extends StoryHolderStoryProgress implements Listener
         String npc = info.get("npc", String.class);
         if(npc == null) return;
         if(!"guide_1".equalsIgnoreCase(npc)) return;
+        if(state.hasFlag(Flags.RANKED_UP_DIALOG.flag())){
+            completeStep(() ->{
+                state.grantFlag(Flags.TALKED_WITH_NPC.flag());
+            });
+        }
     }
 
     @Override
@@ -238,4 +286,18 @@ public class Story5Progress extends StoryHolderStoryProgress implements Listener
         int every = 30;
         if(Crux.getCurrentTick() % every != 0) return;
     }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityBadgeGrant(EntityBadgeGrantEvent event) {
+        if(!isPlayer(event.getEntity())) return;
+        if(!event.getChatBadge().key().value().startsWith("rank/")) return;
+        try{
+            Integer.parseInt(event.getChatBadge().key().value().replace("rank/", ""));
+            completeStep(() ->{
+                state.grantFlag(Flags.RANKED_UP.flag());
+            });
+        } catch (IllegalArgumentException e) {
+        }
+    }
+
 }

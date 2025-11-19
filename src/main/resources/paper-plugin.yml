@@ -47,3 +47,5 @@ dependencies:
       required: false
     Comet:
       required: false
+    CruxChat:
+      required: false

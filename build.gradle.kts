@@ -33,6 +33,7 @@ dependencies {
         "E:\\Plugins\\YO\\CruxMagic\\build\\libs\\CruxMagic-1.0-all.jar",
         "E:\\Plugins\\YO\\CruxEnchantsOverhaul2.0\\build\\libs\\CruxEnchantsOverhaul-2.0.jar",
         "E:\\Plugins\\YO\\CruxAbyss\\build\\libs\\CruxAbyss-1.0.jar",
+        "E:\\Plugins\\YO\\CruxChat\\build\\libs\\CruxChat-1.0-all.jar",
 
         "E:\\Plugins\\YO\\CruxCore\\run\\plugins\\QuickShop-Hikari-6.2.0.8.jar",
 
