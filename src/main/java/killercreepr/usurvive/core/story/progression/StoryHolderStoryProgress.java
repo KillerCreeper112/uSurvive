@@ -1,5 +1,8 @@
 package killercreepr.usurvive.core.story.progression;
 
+import killercreepr.crux.core.util.CruxCollection;
+import killercreepr.crux.core.util.CruxTag;
+import killercreepr.cruxattributes.core.text.tags.CruxAttributeTags;
 import killercreepr.cruxblocks.api.mining.user.Miner;
 import killercreepr.cruxblocks.core.mining.user.EntityMiner;
 import killercreepr.usurvive.api.dialog.listener.DialogListener;
@@ -11,17 +14,42 @@ import killercreepr.usurvive.core.USurvivePlugin;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public abstract class StoryHolderStoryProgress implements StoryProgression {
     protected transient StoryHolder holder;
     protected transient Player p;
     protected transient Collection<StoryStep> stepsAlreadyPlayedDialog = new HashSet<>();
+
+    public LivingEntity findLivingEntity(World world, Predicate<LivingEntity> filter){
+        for (LivingEntity e : world.getLivingEntities()) {
+            if(filter.test(e)) return e;
+        }
+        return null;
+    }
+    public LivingEntity applyLivingEntity(World world, Predicate<LivingEntity> filter,
+                                          Consumer<LivingEntity> consumer){
+        for (LivingEntity e : world.getLivingEntities()) {
+            if(filter.test(e)){
+                consumer.accept(e);
+                return e;
+            }
+        }
+        return null;
+    }
+
+    public boolean isMythicNPC(Entity e, String id){
+        return id.equalsIgnoreCase(CruxTag.get(e, "mythicmobs:type", PersistentDataType.STRING, null));
+    }
 
     public StoryStep nextStep(Player p){
         StoryStep step = getNextStep(state());
@@ -62,6 +90,12 @@ public abstract class StoryHolderStoryProgress implements StoryProgression {
 
     public boolean isSpawn(World world){
         return world.getName().equals(USurvivePlugin.inst().values().SPAWN_WORLD().value());
+    }
+
+    public <T extends StoryStep> StoryStep applyCurrentStep(Class<T> type, Consumer<T> consumer){
+        StoryStep current = getNextStep(state());
+        if(current != null && type.isAssignableFrom(current.getClass())) consumer.accept(type.cast(current));
+        return current;
     }
 
     public StoryStep completeStep(Runnable consumer){

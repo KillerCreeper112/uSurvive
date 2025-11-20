@@ -16,18 +16,20 @@ import killercreepr.usurvive.core.entity.mob.goals.guide.GuidePathGoal;
 import killercreepr.usurvive.core.story.SimpleStoryState;
 import killercreepr.usurvive.core.story.progression.data.GenericStoryProgressData;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public class Story3Progress extends StoryHolderStoryProgress implements Listener {
+public class Story3Progress extends ExclaimHolderStoryProgress {
     public enum NumFlags{
         ;
         private final StoryFlag flag;
@@ -150,7 +152,12 @@ public class Story3Progress extends StoryHolderStoryProgress implements Listener
                 };
             }
         },
-        new StoryStep() {
+        new StoryStep.ChangedWorld() {
+            @Override
+            public void onChangedWorld(World from) {
+                if(isSpawn(from)) spawnNPCExclaim(from);
+            }
+
             @Override
             public boolean canStart(StoryState state) {
                 return state.hasFlag(Flags.COMPLETED_BOUGHT_DIALOG.flag());
@@ -160,8 +167,33 @@ public class Story3Progress extends StoryHolderStoryProgress implements Listener
             public boolean isComplete(StoryState state) {
                 return state.hasFlag(Flags.TALKED_WITH_NPC.flag());
             }
+
+            @Override
+            public void onStart(Player p) {
+                ChangedWorld.super.onStart(p);
+                if(isSpawn(p.getWorld())) spawnNPCExclaim(p.getWorld());
+            }
         }
     );
+
+    @Override
+    public void onStepCompleted(StoryStep step) {
+        super.onStepCompleted(step);
+        clearTexts();
+    }
+
+    public void spawnNPCExclaim(World world){
+        applyLivingEntity(world, e -> isMythicNPC(e, "npc_guide_1"), e ->{
+            Location loc = e.getLocation().add(0, e.getHeight() + 0.75, 0);
+            createTextIfNeeded(e.getUniqueId(), loc, text ->{
+                text.setBillboard(Display.Billboard.CENTER);
+                text.text(Crux.format().deserialize("<red>!"));
+                var t = text.getTransformation();
+                t.getScale().mul(2);
+                text.setTransformation(t);
+            });
+        });
+    }
 
     //ustory interact <player> npc=guide_1
     @Override

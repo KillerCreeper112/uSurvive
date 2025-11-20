@@ -230,7 +230,6 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
                                     if(!(typed.getValue() instanceof EntitySpawnerComponent spawner)){
                                         throw new IllegalStateException("Spawn bounders initiate not have spawner_component of EntitySpawnerComponent!  " + typed.getType() + "   /   " + typed.getValue());
                                     }
-                                    state.grantFlag(Flags.ENEMIES_SPAWNED.flag());
                                     //Block b = fallenMeteorLocation.getBlock(world);
                                     Crux.scheduler().runTaskMain(() ->{
                                         new BlockEntitySpawner(
