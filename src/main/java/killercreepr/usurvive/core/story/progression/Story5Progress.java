@@ -162,9 +162,10 @@ public class Story5Progress extends StoryHolderStoryProgress implements Listener
         if(npc == null) return;
         if(!"guide_1".equalsIgnoreCase(npc)) return;
         if(state.hasFlag(Flags.RANKED_UP_DIALOG.flag())){
-            completeStep(() ->{
+            dialogListener().dialogPlayer().pushDialog(cfg().TODO_DIALOG.value());
+            /*completeStep(() ->{
                 state.grantFlag(Flags.TALKED_WITH_NPC.flag());
-            });
+            });*/
         }
     }
 
@@ -255,8 +256,10 @@ public class Story5Progress extends StoryHolderStoryProgress implements Listener
             if(!(event.getTarget() instanceof User user)) return;
             if(!isPlayer(user.getUniqueId())) return;
             var node = event.getNode();
-            if(!node.getKey().startsWith("group.rankup.")) return;
-            state.grantFlag(Flags.RANKED_UP.flag());
+            if(!node.getKey().startsWith("group.rankup_")) return;
+            completeStep(() ->{
+                state.grantFlag(Flags.RANKED_UP.flag());
+            });
         });
     }
 

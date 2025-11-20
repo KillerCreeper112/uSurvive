@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public class Story4Progress extends StoryHolderStoryProgress implements Listener {
+public class Story4Progress extends ExclaimHolderStoryProgress implements Listener {
     public enum NumFlags{
         ;
         private final StoryFlag flag;
@@ -173,7 +173,12 @@ public class Story4Progress extends StoryHolderStoryProgress implements Listener
                 };
             }
         },
-        new StoryStep() {
+        new StoryStep.ChangedWorld() {
+            @Override
+            public void onChangedWorld(World from) {
+                if(isSpawn(p.getWorld())) Crux.scheduler().runTask(() -> spawnGuide1Exclaim(p.getWorld()));
+            }
+
             @Override
             public boolean canStart(StoryState state) {
                 return state.hasFlag(Flags.QUEST_COMPLETED_DIALOG.flag());
@@ -182,6 +187,12 @@ public class Story4Progress extends StoryHolderStoryProgress implements Listener
             @Override
             public boolean isComplete(StoryState state) {
                 return state.hasFlag(Flags.TALKED_WITH_NPC.flag());
+            }
+
+            @Override
+            public void onStart(Player p) {
+                ChangedWorld.super.onStart(p);
+                if(isSpawn(p.getWorld())) spawnGuide1Exclaim(p.getWorld());
             }
         }
     );

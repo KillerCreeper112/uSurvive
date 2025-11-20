@@ -4,6 +4,8 @@ import killercreepr.crux.core.Crux;
 import killercreepr.usurvive.api.story.StoryHolder;
 import killercreepr.usurvive.api.story.StoryStep;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TextDisplay;
@@ -42,6 +44,25 @@ public abstract class ExclaimHolderStoryProgress extends StoryHolderStoryProgres
     public void clearTexts(){
         forEachTexts(Entity::remove);
         textDisplays.clear();
+    }
+
+    public void spawnGuide1Exclaim(World world){
+        spawnNPCExclaim(world, "npc_guide_1");
+    }
+
+    public void spawnNPCExclaim(World world, String npc){
+        Crux.scheduler().runTaskMain(() ->{
+            applyLivingEntity(world, e -> isMythicNPC(e, npc), e ->{
+                Location loc = e.getLocation().add(0, e.getHeight() + 0.75, 0);
+                createTextIfNeeded(e.getUniqueId(), loc, text ->{
+                    text.setBillboard(Display.Billboard.CENTER);
+                    text.text(Crux.format().deserialize("<yellow><bold>!"));
+                    var t = text.getTransformation();
+                    t.getScale().mul(2);
+                    text.setTransformation(t);
+                });
+            });
+        });
     }
 
     @Override

@@ -155,7 +155,7 @@ public class Story3Progress extends ExclaimHolderStoryProgress {
         new StoryStep.ChangedWorld() {
             @Override
             public void onChangedWorld(World from) {
-                if(isSpawn(from)) spawnNPCExclaim(from);
+                if(isSpawn(p.getWorld())) Crux.scheduler().runTask(() -> spawnGuide1Exclaim(p.getWorld()));
             }
 
             @Override
@@ -171,7 +171,7 @@ public class Story3Progress extends ExclaimHolderStoryProgress {
             @Override
             public void onStart(Player p) {
                 ChangedWorld.super.onStart(p);
-                if(isSpawn(p.getWorld())) spawnNPCExclaim(p.getWorld());
+                if(isSpawn(p.getWorld())) spawnGuide1Exclaim(p.getWorld());
             }
         }
     );
@@ -180,19 +180,6 @@ public class Story3Progress extends ExclaimHolderStoryProgress {
     public void onStepCompleted(StoryStep step) {
         super.onStepCompleted(step);
         clearTexts();
-    }
-
-    public void spawnNPCExclaim(World world){
-        applyLivingEntity(world, e -> isMythicNPC(e, "npc_guide_1"), e ->{
-            Location loc = e.getLocation().add(0, e.getHeight() + 0.75, 0);
-            createTextIfNeeded(e.getUniqueId(), loc, text ->{
-                text.setBillboard(Display.Billboard.CENTER);
-                text.text(Crux.format().deserialize("<red>!"));
-                var t = text.getTransformation();
-                t.getScale().mul(2);
-                text.setTransformation(t);
-            });
-        });
     }
 
     //ustory interact <player> npc=guide_1

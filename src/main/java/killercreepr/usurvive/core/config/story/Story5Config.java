@@ -12,6 +12,7 @@ import java.io.File;
 public class Story5Config extends StoryConfig{
     public final CfgValue<DialogContent> START_DIALOG = new CommonValue<>(){};
     public final CfgValue<DialogContent> RANK_UP_DIALOG = new CommonValue<>(){};
+    public final CfgValue<DialogContent> TODO_DIALOG = new CommonValue<>(){};
 
     public Story5Config(@NotNull Plugin plugin, @NotNull String path) {
         super(plugin, path);
