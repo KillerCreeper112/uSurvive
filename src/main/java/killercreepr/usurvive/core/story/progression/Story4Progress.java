@@ -53,8 +53,9 @@ public class Story4Progress extends StoryHolderStoryProgress implements Listener
     public enum Flags{
         ENTERED_OVERWORLD,
         CLAIMED_CHUNK,
-        CLAIMED_CHUNK_DIALOG,
         QUEST_COMPLETED,
+        QUEST_COMPLETED_DIALOG,
+        TALKED_WITH_NPC,
         ;
         private final StoryFlag flag;
         Flags(StoryFlag flag) {
@@ -140,17 +141,33 @@ public class Story4Progress extends StoryHolderStoryProgress implements Listener
 
             @Override
             public boolean isComplete(StoryState state) {
-                return state.hasFlag(Flags.CLAIMED_CHUNK_DIALOG.flag());
+                return state.hasFlag(Flags.QUEST_COMPLETED.flag());
             }
 
             @Override
             public DialogContent getDialog() {
-                return new WrappedDialogContent(cfg().CLAIM_DIALOG.value()){
+                return cfg().CLAIM_DIALOG.value();
+            }
+        },
+        new StoryStep() {
+            @Override
+            public boolean canStart(StoryState state) {
+                return state.hasFlag(Flags.QUEST_COMPLETED.flag());
+            }
+
+            @Override
+            public boolean isComplete(StoryState state) {
+                return state.hasFlag(Flags.QUEST_COMPLETED_DIALOG.flag());
+            }
+
+            @Override
+            public DialogContent getDialog() {
+                return new WrappedDialogContent(cfg().QUEST_COMPLETED_DIALOG.value()){
                     @Override
                     public void onDialogEnd(DialogPlayer player) {
                         super.onDialogEnd(player);
                         completeStep(() ->{
-                           state.grantFlag(Flags.CLAIMED_CHUNK_DIALOG.flag());
+                            state.grantFlag(Flags.QUEST_COMPLETED_DIALOG.flag());
                         });
                     }
                 };
@@ -159,17 +176,12 @@ public class Story4Progress extends StoryHolderStoryProgress implements Listener
         new StoryStep() {
             @Override
             public boolean canStart(StoryState state) {
-                return state.hasFlag(Flags.CLAIMED_CHUNK_DIALOG.flag());
+                return state.hasFlag(Flags.QUEST_COMPLETED_DIALOG.flag());
             }
 
             @Override
             public boolean isComplete(StoryState state) {
-                return state.hasFlag(Flags.QUEST_COMPLETED.flag());
-            }
-
-            @Override
-            public DialogContent getDialog() {
-                return cfg().QUEST_COMPLETED_DIALOG.value();
+                return state.hasFlag(Flags.TALKED_WITH_NPC.flag());
             }
         }
     );
@@ -183,6 +195,14 @@ public class Story4Progress extends StoryHolderStoryProgress implements Listener
         if(!"guide_1".equalsIgnoreCase(npc)) return;
 
         if(dialogListener().dialogPlayer().isPlaying()) return;
+
+        if(state.hasFlag(Flags.QUEST_COMPLETED.flag()) && !state.hasFlag(Flags.TALKED_WITH_NPC.flag())){
+            completeStep(() ->{
+                state.grantFlag(Flags.TALKED_WITH_NPC.flag());
+            });
+            return;
+        }
+
         startStep();
     }
 

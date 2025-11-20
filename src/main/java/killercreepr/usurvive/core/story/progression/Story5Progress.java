@@ -15,6 +15,12 @@ import killercreepr.usurvive.core.entity.mob.goals.guide.GuidePathGoal;
 import killercreepr.usurvive.core.story.SimpleStoryState;
 import killercreepr.usurvive.core.story.progression.data.GenericStoryProgressData;
 import net.kyori.adventure.key.Key;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.event.EventSubscription;
+import net.luckperms.api.event.node.NodeAddEvent;
+import net.luckperms.api.model.user.User;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -242,12 +248,32 @@ public class Story5Progress extends StoryHolderStoryProgress implements Listener
     }
 
     @Override
+    public void onStart(Player p, StoryHolder holder) {
+        super.onStart(p, holder);
+        LuckPerms api = LuckPermsProvider.get();
+        luckPermsEvent = api.getEventBus().subscribe(Crux.getMainPlugin(), NodeAddEvent.class, event ->{
+            if(!(event.getTarget() instanceof User user)) return;
+            if(!isPlayer(user.getUniqueId())) return;
+            var node = event.getNode();
+            if(!node.getKey().startsWith("group.rankup.")) return;
+            state.grantFlag(Flags.RANKED_UP.flag());
+        });
+    }
+
+    protected EventSubscription<?> luckPermsEvent;
+    @Override
     public void onEnd(Player p, StoryHolder holder) {
         super.onEnd(p, holder);
+
         if(npc != null){
             npc.remove();
             npc = null;
             npcGoal = null;
+        }
+
+        if(luckPermsEvent != null){
+            luckPermsEvent.close();
+            luckPermsEvent = null;
         }
     }
 

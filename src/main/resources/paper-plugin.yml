@@ -49,3 +49,6 @@ dependencies:
       required: false
     CruxChat:
       required: false
+    LuckPerms:
+      required: false
+

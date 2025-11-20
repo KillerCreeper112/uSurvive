@@ -40,6 +40,7 @@ dependencies {
         "E:\\Plugins\\YO\\CruxCore\\run\\plugins\\ProtocolLib.jar"
     ))
 
+    compileOnly("net.luckperms:api:5.4")
     compileOnly("com.github.ZockerAxel", "CrazyAdvancementsAPI", "2.1.19")
     compileOnly("com.github.retrooper:packetevents-spigot:2.8.0")
 
