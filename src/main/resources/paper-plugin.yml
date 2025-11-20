@@ -51,4 +51,6 @@ dependencies:
       required: false
     LuckPerms:
       required: false
+    CrazyAdvancementsAPI:
+      required: false
 

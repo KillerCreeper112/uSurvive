@@ -60,6 +60,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPortalEnterEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -433,7 +434,10 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
 
     public void setupPlayer(){
         WorldPosition spawn = cfg().NPC_SPAWN_1.value();
-        p.teleport(spawn.toLocation());
+        var loc = spawn.toLocation();
+        p.teleport(loc);
+
+        hideEntities(loc.getWorld());
     }
 
     public void setupNPC(){
@@ -444,6 +448,23 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
     public void setup(){
         setupPlayer();
         setupNPC();
+    }
+
+    public void showEntities(World world){
+        for (Mob mob : world.getEntitiesByClass(Mob.class)) {
+            //mythicmobstype npc_guide_1
+            if(!"npc_guide_1".equalsIgnoreCase(CruxTag.get(mob, "mythicmobs:type", PersistentDataType.STRING, null))) continue;
+            if(p.canSee(mob)) continue;
+            p.showEntity(Crux.getMainPlugin(), mob);
+        }
+    }
+
+    public void hideEntities(World world){
+        for (Mob mob : world.getEntitiesByClass(Mob.class)) {
+            //mythicmobstype npc_guide_1
+            if(!"npc_guide_1".equalsIgnoreCase(CruxTag.get(mob, "mythicmobs:type", PersistentDataType.STRING, null))) continue;
+            p.hideEntity(Crux.getMainPlugin(), mob);
+        }
     }
 
     @Override
@@ -646,11 +667,13 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         Player p = event.getPlayer();
         if(!isPlayer(event)) return;
+        World from = event.getFrom();
         World world = p.getWorld();
         if(npc != null){
             npc.remove();
             npc = null;
             npcGoal = null;
+            if(isSpawn(from)) showEntities(from);
         }
 
         if(isResourceOverworld(world)){

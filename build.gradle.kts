@@ -37,11 +37,11 @@ dependencies {
 
         "E:\\Plugins\\YO\\CruxCore\\run\\plugins\\QuickShop-Hikari-6.2.0.8.jar",
 
-        "E:\\Plugins\\YO\\CruxCore\\run\\plugins\\ProtocolLib.jar"
+        "E:\\Plugins\\YO\\CruxCore\\run\\plugins\\ProtocolLib.jar",
+        "E:\\Plugins\\YO\\CruxCore\\run\\plugins\\CrazyAdvancementsAPI-2.21.9.jar",
     ))
 
     compileOnly("net.luckperms:api:5.4")
-    compileOnly("com.github.ZockerAxel", "CrazyAdvancementsAPI", "2.1.19")
     compileOnly("com.github.retrooper:packetevents-spigot:2.8.0")
 
     compileOnly(fileTree("libs"){
