@@ -116,6 +116,7 @@ public class USurviveMobs {
     public static final CruxMob AGGRESSIVE_SKELETON_HORSE = CruxEntityRegistries.ENTITIES.register(new AggressiveSkeletonHorse(Crux.key("aggressive_skeleton_horse")));
 
     public static final CruxMob GUIDE_1_NPC = CruxEntityRegistries.ENTITIES.register(new Guide1NPC(Crux.key("guide/1")));
+    public static final CruxMob BOUNDER = CruxEntityRegistries.ENTITIES.register(new Bounder(Crux.key("bounder")));
 
     private static void registerVariants(Consumer<Class<? extends Mob>> consumer, Class<? extends Mob>... types){
         for(var clazz : types){

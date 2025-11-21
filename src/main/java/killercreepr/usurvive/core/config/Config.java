@@ -109,6 +109,7 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg, Graveston
     public final NumCfgValue GUIDE_RESOURCE_WORLD_STRUCTURE_CHUNK_DISTANCE = new NumCfgValue(NumberProvider.uniform(12,16));
     public final CfgValue<StructureGenerator> GUIDE_RESOURCE_WORLD_STRUCTURE = new CommonValue<>(){};
     public final NumCfgValue ANIMAL_AGGRESSION_CHANCE = new NumCfgValue(28D);
+    public final NumCfgValue BOUNDER_SKIN_AMOUNT = new NumCfgValue(7);
 
 
     public final CfgValue<List<String>> TEXT_DISPLAY_DIALOG_FORMAT = new CommonValue<>(List.of(
@@ -463,6 +464,12 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg, Graveston
     @Override
     public Holder<String> TEXT_DISPLAY_DIALOG_FORMAT_LINE() {
         return TEXT_DISPLAY_DIALOG_FORMAT_LINE;
+    }
+
+    @NotNull
+    @Override
+    public NumberProvider BOUNDER_SKIN_AMOUNT() {
+        return BOUNDER_SKIN_AMOUNT.value();
     }
 
     @Override

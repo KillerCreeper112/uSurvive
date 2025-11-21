@@ -21,6 +21,8 @@ import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
 import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
+import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
+import killercreepr.cruxentities.entity.mob.goal.ICruxGoal;
 import killercreepr.cruxstructures.api.structure.generation.StructureGenerator;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.type.CruxWorldType;
@@ -238,6 +240,12 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
                                             if(spawner.persistEntities){
                                                 e.setPersistent(true);
                                                 if(e instanceof Mob mob) mob.setRemoveWhenFarAway(false);
+                                            }
+                                            if(e instanceof Mob mob){
+                                                ICruxGoal goal = CruxGoalUtil.getGoal(mob, CruxMobGoal.class);
+                                                if(goal != null){
+                                                    goal.setTarget(p);
+                                                }else mob.setTarget(p);
                                             }
                                         }
                                         ).navigateSpawner().whenComplete((spawned, throwable) ->{

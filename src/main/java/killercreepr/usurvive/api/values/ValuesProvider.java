@@ -83,4 +83,5 @@ public interface ValuesProvider extends Reloadable {
     @NotNull NumberProvider ANIMAL_AGGRESSION_CHANCE();
     @NotNull Holder<List<String>> TEXT_DISPLAY_DIALOG_FORMAT();
     @NotNull Holder<String> TEXT_DISPLAY_DIALOG_FORMAT_LINE();
+    @NotNull NumberProvider BOUNDER_SKIN_AMOUNT();
 }

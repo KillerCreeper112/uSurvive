@@ -296,4 +296,10 @@ public class DefaultValues implements ValuesProvider {
     public Holder<String> TEXT_DISPLAY_DIALOG_FORMAT_LINE() {
         return null;
     }
+
+    @NotNull
+    @Override
+    public NumberProvider BOUNDER_SKIN_AMOUNT() {
+        return null;
+    }
 }
