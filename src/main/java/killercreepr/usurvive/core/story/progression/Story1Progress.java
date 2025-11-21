@@ -3,15 +3,14 @@ package killercreepr.usurvive.core.story.progression;
 import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.data.WorldPosition;
+import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.loot.LootContext;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.math.BlockPos;
 import killercreepr.crux.core.persistence.CruxPersistence;
 import killercreepr.crux.core.registries.CruxRegistries;
-import killercreepr.crux.core.util.CruxCollection;
-import killercreepr.crux.core.util.CruxGoalUtil;
-import killercreepr.crux.core.util.CruxTag;
+import killercreepr.crux.core.util.*;
 import killercreepr.cruxadvancements.core.entity.memory.AdvancementHolder;
 import killercreepr.cruxblocks.api.event.CruxBlockBreakEvent;
 import killercreepr.cruxblocks.core.block.component.standard.BlockEntitySpawner;
@@ -23,6 +22,7 @@ import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.entity.mob.goal.ICruxGoal;
+import killercreepr.cruxitems.core.command.argument.CruxItemsArguments;
 import killercreepr.cruxstructures.api.structure.generation.StructureGenerator;
 import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.cruxworlds.api.world.type.CruxWorldType;
@@ -50,8 +50,12 @@ import killercreepr.usurvive.core.world.USurviveWorldTypes;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -62,6 +66,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPortalEnterEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
@@ -246,6 +251,21 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
                                                 if(goal != null){
                                                     goal.setTarget(p);
                                                 }else mob.setTarget(p);
+
+                                                CruxAttributeUtil.editInstance(mob, Attribute.MAX_HEALTH, instance ->{
+                                                    instance.addModifier(new AttributeModifier(
+                                                        Crux.key("story_1"), -0.5D, AttributeModifier.Operation.MULTIPLY_SCALAR_1
+                                                    ));
+                                                });
+
+                                                var equip = mob.getEquipment();
+                                                if(CruxItem.isEmpty(equip.getItemInMainHand())){
+                                                    var item = new ItemStack(Material.STICK);
+                                                    if(CruxMath.testChance(10)){
+                                                        item.addUnsafeEnchantment(Enchantment.SHARPNESS, 1);
+                                                    }
+                                                    equip.setItemInMainHand(item);
+                                                }
                                             }
                                         }
                                         ).navigateSpawner().whenComplete((spawned, throwable) ->{
