@@ -10,16 +10,23 @@ import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.component.parser.TextDataComponentDecoder;
+import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.usurvive.api.story.StoryHolder;
 import killercreepr.usurvive.core.USurvivePlugin;
+import killercreepr.usurvive.core.lang.Lang;
+import killercreepr.usurvive.core.listener.TipListener;
+import killercreepr.usurvive.core.registries.USurviveRegistries;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
 import java.util.Date;
 import java.util.Objects;
+
+import static io.lumine.mythic.bukkit.utils.text.Text.DefaultFontInfo.p;
 
 public class AdminCommands {
     protected final @NotNull USurvivePlugin plugin;
@@ -139,6 +146,32 @@ public class AdminCommands {
                                                     if(!(sender instanceof ConsoleCommandSender))
                                                         sender.sendMessage("Sent interaction to " + p.getName() + "'s current story progressions.");
                                                 });
+                                                return 1;
+                                            })
+                                    )
+                            )
+                    )
+                    .build()
+            );
+            commands.register(
+                Commands.literal("utip")
+                    .requires(ctx -> ctx.getSender().hasPermission("usurvive.cmds.utip.use"))
+                    .then(
+                        Commands.literal("show")
+                            .then(
+                                Commands.argument("targets", ArgumentTypes.players())
+                                    .then(
+                                        Commands.literal("random")
+                                            .executes(ctx ->{
+                                                var sender = getExecutor(ctx.getSource());
+                                                var targets = ctx.getArgument("targets", PlayerSelectorArgumentResolver.class)
+                                                    .resolve(ctx.getSource());
+                                                for (Player target : targets) {
+                                                    var tip = USurviveRegistries.TIPS.randomTip();
+                                                    if(tip == null) continue;
+                                                    sender.sendMessage("Sent random tip message to " + target.getName());
+                                                    Lang.TIP_MESSAGE.use(target, TagContainer.merged().hook(p).add(Tag.parsed("tip_message", tip.message())));
+                                                }
                                                 return 1;
                                             })
                                     )
