@@ -5,12 +5,20 @@ import killercreepr.crux.api.text.tags.container.MergedTagContainer;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.PlayerTickedDataHolder;
+import killercreepr.crux.core.text.resolver.Tag;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxstatistics.api.bukkit.BukkitStatisticHolder;
 import killercreepr.cruxstats.api.bukkit.BukkitStatHolder;
 import killercreepr.usurvive.api.death.DeathManager;
+import killercreepr.usurvive.api.values.TipsCfg;
 import killercreepr.usurvive.api.values.ValuesProvider;
+import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.data.DeathGuide;
 import killercreepr.usurvive.core.death.PlayerDeath;
+import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettingSelections;
+import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettings;
+import killercreepr.usurvive.core.lang.Lang;
+import killercreepr.usurvive.core.registries.USurviveRegistries;
 import killercreepr.usurvive.core.stat.USurviveStats;
 import killercreepr.usurvive.core.statistic.USurviveStatistics;
 import net.kyori.adventure.key.Key;
@@ -65,6 +73,7 @@ public class DeathHolder extends PlayerTickedDataHolder {
     }
 
     //merged tab updater here for optimization.
+    //merged tips handler here for optimization
     protected int tick = 0;
     @Override
     public void onTick(@NotNull Player p) {
@@ -75,6 +84,33 @@ public class DeathHolder extends PlayerTickedDataHolder {
         if(tick % every != 0) return;
         tick = 0;
         tickDeathGuide(p);
+        tipTick(p);
+    }
+
+    protected long lastTip = System.currentTimeMillis();
+    protected int nextTipInTicks;
+    public void tipTick(Player p){
+        if(nextTipInTicks != -1 && CruxMath.hasOccurredWithin(lastTip, nextTipInTicks)) return;
+        lastTip = System.currentTimeMillis();
+        nextTipInTicks = generateNextTipTicks(p);
+        if(nextTipInTicks == -1) return;
+
+        var tip = USurviveRegistries.TIPS.randomTip();
+        if(tip == null) return;
+        Lang.TIP_MESSAGE.use(p, TagContainer.merged().hook(p).add(Tag.parsed("tip_message", tip.message())));
+    }
+
+    public TipsCfg tipsCfg(){
+        return (TipsCfg) USurvivePlugin.inst().values();
+    }
+
+    public int generateNextTipTicks(Player p){
+        var settings = USurvivePlugin.inst().getPlayerSettingsManager().getPlayerSettingsHolder(p);
+        if(settings == null) return CruxMath.random(18000, 36000);
+        var selection = settings.getSetting(StandardPlayerSettings.TIPS);
+        if(selection == StandardPlayerSettingSelections.ENABLED) return tipsCfg().RANDOM_TIP_TIME().value().intValue();
+        if(selection == StandardPlayerSettingSelections.OCCASIONAL) return tipsCfg().RANDOM_TIP_TIME_OCCASIONAL().value().intValue();
+        return -1;
     }
 
     public void tickDeathGuide(@NotNull Player p){

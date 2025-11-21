@@ -15,9 +15,9 @@ public class StandardPlayerSettings {
             StandardPlayerSettingSelections.LOCKED, StandardPlayerSettingSelections.UNLOCKED, StandardPlayerSettingSelections.DISABLED
         ),
         Map.of(
-            StandardPlayerSettingSelections.LOCKED, "Locks the quick access item in your inventory.",
-            StandardPlayerSettingSelections.UNLOCKED, "Unlocks the quick access item in your inventory. This allows you to move it around in anywhere in your inventory.",
-            StandardPlayerSettingSelections.DISABLED, "Disables the quick access item entirely. You can still use <gray>/menu</gray> to open up the quick access menu."
+            StandardPlayerSettingSelections.LOCKED, "Locks the quick access item in your inventory",
+            StandardPlayerSettingSelections.UNLOCKED, "Unlocks the quick access item in your inventory. This allows you to move it around in anywhere in your inventory",
+            StandardPlayerSettingSelections.DISABLED, "Disables the quick access item entirely. You can still use <gray>/menu</gray> to open up the quick access menu"
         )
     ));
 
@@ -29,9 +29,9 @@ public class StandardPlayerSettings {
             StandardPlayerSettingSelections.DISABLED
         ),
         Map.of(
-            StandardPlayerSettingSelections.ENABLED, "You will receive teleport requests from all players.",
-            StandardPlayerSettingSelections.FRIENDS_ONLY, "You will only receive teleport requests from your friends.",
-            StandardPlayerSettingSelections.DISABLED, "You will not receive any teleport requests."
+            StandardPlayerSettingSelections.ENABLED, "You will receive teleport requests from all players",
+            StandardPlayerSettingSelections.FRIENDS_ONLY, "You will only receive teleport requests from your friends",
+            StandardPlayerSettingSelections.DISABLED, "You will not receive any teleport requests"
         )
     ));
 
@@ -43,9 +43,9 @@ public class StandardPlayerSettings {
             StandardPlayerSettingSelections.DISABLED
         ),
         Map.of(
-            StandardPlayerSettingSelections.ENABLED, "You will receive teleport here requests from all players.",
-            StandardPlayerSettingSelections.FRIENDS_ONLY, "You will only receive teleport here requests from your friends.",
-            StandardPlayerSettingSelections.DISABLED, "You will not receive any teleport here requests."
+            StandardPlayerSettingSelections.ENABLED, "You will receive teleport here requests from all players",
+            StandardPlayerSettingSelections.FRIENDS_ONLY, "You will only receive teleport here requests from your friends",
+            StandardPlayerSettingSelections.DISABLED, "You will not receive any teleport here requests"
         )
     ));
 
@@ -56,8 +56,8 @@ public class StandardPlayerSettings {
             StandardPlayerSettingSelections.DISABLED
         ),
         Map.of(
-            StandardPlayerSettingSelections.ENABLED, "When you have a crafting table menu opened, swap your hands (default key is F) to quickly open the custom recipes book.",
-            StandardPlayerSettingSelections.DISABLED, "Swapping your hands while you have a crafting table menu opened will no longer open the custom recipes book. You can still access it via your quick access menu or with /recipes."
+            StandardPlayerSettingSelections.ENABLED, "When you have a crafting table menu opened, swap your hands (default key is F) to quickly open the custom recipes book",
+            StandardPlayerSettingSelections.DISABLED, "Swapping your hands while you have a crafting table menu opened will no longer open the custom recipes book. You can still access it via your quick access menu or with /recipes"
         )
     ));
 
@@ -68,8 +68,8 @@ public class StandardPlayerSettings {
             StandardPlayerSettingSelections.DISABLED
         ),
         Map.of(
-            StandardPlayerSettingSelections.ENABLED, "You will have a general guide to help you get started on the server at your own pace.",
-            StandardPlayerSettingSelections.DISABLED, "You will not have a general guide. This option is not recommended for new players."
+            StandardPlayerSettingSelections.ENABLED, "You will have a general guide to help you get started on the server at your own pace",
+            StandardPlayerSettingSelections.DISABLED, "You will not have a general guide. This option is not recommended for new players"
         )
     ));
 
@@ -80,8 +80,8 @@ public class StandardPlayerSettings {
             StandardPlayerSettingSelections.DISABLED
         ),
         Map.of(
-            StandardPlayerSettingSelections.ENABLED, "Gravestone will spawn upon death.",
-            StandardPlayerSettingSelections.DISABLED, "Gravestone will not spawn upon death."
+            StandardPlayerSettingSelections.ENABLED, "Gravestone will spawn upon death",
+            StandardPlayerSettingSelections.DISABLED, "Gravestone will not spawn upon death"
         )
     ));
 
@@ -126,6 +126,22 @@ public class StandardPlayerSettings {
             StandardPlayerSettingSelections.NORMAL, "Normal dialog pause",
             StandardPlayerSettingSelections.FAST, "Fast dialog pause",
             StandardPlayerSettingSelections.SUPER_FAST, "Super fast dialog pause"
+        )
+    ));
+
+    public static final PlayerSetting TIPS = register(new SimplePlayerSetting(
+        Crux.key("tips"), StandardPlayerSettingSelections.ENABLED,
+        List.of(
+            StandardPlayerSettingSelections.ENABLED,
+            StandardPlayerSettingSelections.OCCASIONAL,
+            StandardPlayerSettingSelections.DEATH_ONLY,
+            StandardPlayerSettingSelections.DISABLED
+        ),
+        Map.of(
+            StandardPlayerSettingSelections.ENABLED, "You will receive tip messages show up every once in a while",
+            StandardPlayerSettingSelections.OCCASIONAL, "Tip messages will appear less frequent",
+            StandardPlayerSettingSelections.DEATH_ONLY, "Tip messages will only appear after you die",
+            StandardPlayerSettingSelections.DISABLED, "You will not receive any tip messages"
         )
     ));
 

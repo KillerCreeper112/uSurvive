@@ -13,6 +13,7 @@ import killercreepr.cruxconfig.config.bukkit.value.NumCfgValue;
 import killercreepr.cruxstructures.api.structure.generation.StructureGenerator;
 import killercreepr.usurvive.api.values.GravestoneCfg;
 import killercreepr.usurvive.api.values.SleeperCfg;
+import killercreepr.usurvive.api.values.TipsCfg;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.data.CfgLootData;
 import killercreepr.usurvive.core.data.PremiumRank;
@@ -34,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 @killercreepr.cruxconfig.config.common.annotations.Config(autoUpdate = true)
-public class Config extends Cfg implements ValuesProvider, SleeperCfg, GravestoneCfg {
+public class Config extends Cfg implements ValuesProvider, SleeperCfg, GravestoneCfg, TipsCfg {
     public final CfgValue<List<PremiumRank>> PREMIUM_RANKS = new CommonValue<>(){};
     public final CfgValue<String> SPAWN_WORLD = new CommonValue<>(DefaultValues.SPAWN_WORLD.value()){};
     public final CfgValue<String> RESPAWN_WORLD = new CommonValue<>(DefaultValues.SPAWN_WORLD.value()){};
@@ -110,6 +111,8 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg, Graveston
     public final CfgValue<StructureGenerator> GUIDE_RESOURCE_WORLD_STRUCTURE = new CommonValue<>(){};
     public final NumCfgValue ANIMAL_AGGRESSION_CHANCE = new NumCfgValue(28D);
     public final NumCfgValue BOUNDER_SKIN_AMOUNT = new NumCfgValue(7);
+    public final NumCfgValue RANDOM_TIP_TIME = new NumCfgValue(NumberProvider.uniform(6000, 30000));
+    public final NumCfgValue RANDOM_TIP_TIME_OCCASIONAL = new NumCfgValue(NumberProvider.uniform(24000, 54000));
 
 
     public final CfgValue<List<String>> TEXT_DISPLAY_DIALOG_FORMAT = new CommonValue<>(List.of(
@@ -485,5 +488,15 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg, Graveston
     @Override
     public NumberProvider MAX_RECENT_DEATHS() {
         return MAX_RECENT_DEATHS.value();
+    }
+
+    @Override
+    public NumberProvider RANDOM_TIP_TIME() {
+        return RANDOM_TIP_TIME.value();
+    }
+
+    @Override
+    public NumberProvider RANDOM_TIP_TIME_OCCASIONAL() {
+        return RANDOM_TIP_TIME_OCCASIONAL.value();
     }
 }

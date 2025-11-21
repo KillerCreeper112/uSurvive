@@ -689,6 +689,15 @@ public class Lang {
             .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 1.8f))
             .build()
     );
+    public static final Msg TIP_MESSAGE = create(
+        Communicator.builder()
+            .chat(List.of(
+                "<tip_chat_prefix>",
+                "<dark_gold>{tip_message}"
+            ))
+            .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 0.1f, 1.7f))
+            .build()
+    );
 
     public static Msg create(@NotNull String id, @Nullable Communicator communicator){
         return new Msg(id, communicator, Lang::lang);

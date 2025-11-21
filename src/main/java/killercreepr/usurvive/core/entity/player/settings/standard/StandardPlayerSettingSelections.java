@@ -32,6 +32,8 @@ public class StandardPlayerSettingSelections {
     public static final PlayerSettingSelection FAST = register(PlayerSettingSelection.playerSettingSelection(Crux.key("fast")));
     public static final PlayerSettingSelection SUPER_FAST = register(PlayerSettingSelection.playerSettingSelection(Crux.key("super_fast")));
     public static final PlayerSettingSelection INSTANT = register(PlayerSettingSelection.playerSettingSelection(Crux.key("instant")));
+    public static final PlayerSettingSelection DEATH_ONLY = register(PlayerSettingSelection.playerSettingSelection(Crux.key("death_only")));
+    public static final PlayerSettingSelection OCCASIONAL = register(PlayerSettingSelection.playerSettingSelection(Crux.key("occasional")));
 
     public static PlayerSettingSelection register(PlayerSettingSelection s){
         return USurviveRegistries.PLAYER_SETTING_SELECTION.register(s);

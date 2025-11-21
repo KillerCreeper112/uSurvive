@@ -26,6 +26,7 @@ import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxString;
 import killercreepr.cruxadvancements.core.config.loader.CfgCrazyAdvancementManagerCfgLoader;
 import killercreepr.cruxadvancements.core.config.loader.GlobalAdvancementManagerCfgLoader;
+import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.handler.BukkitCfgHandlers;
 import killercreepr.cruxconfig.config.bukkit.loader.CfgLoader;
@@ -81,6 +82,8 @@ import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsManager;
 import killercreepr.usurvive.api.guide.GuidePoint;
+import killercreepr.usurvive.api.guide.tips.Tip;
+import killercreepr.usurvive.api.guide.tips.TipCategory;
 import killercreepr.usurvive.api.story.StoryProgressData;
 import killercreepr.usurvive.api.story.StoryProgression;
 import killercreepr.usurvive.api.story.StoryState;
@@ -541,7 +544,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new VillagerTradeListener(),
             new CustomEntityListener(),
             new SporelinkListener(),
-            new StoryListener(values)
+            new StoryListener(values),
+            new TipListener(playerSettingsManager, USurviveRegistries.TIPS)
             //new WaxPaintingListener()
         );
 
@@ -774,6 +778,24 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             KillMobAdvanceMaker.registerAll();
         });
         globalManagerLoader.refresh();
+
+        DataFile tipsFile = tipsFile();
+        if(tipsFile != null){
+            if(tipsFile.getElement("categories") instanceof FileObject o){
+                var ctx = new FileContext<>(tipsFile.fileRegistry());
+                o.forEach((key, element) ->{
+                    Key finalKey = Crux.key(key);
+                    TipCategory tipCategory = CfgHook.TIP_CATEGORY.deserializeFromFile(ctx, element, finalKey);
+                    if(tipCategory == null || tipCategory.tips().isEmpty()) return;
+                    USurviveRegistries.TIPS.register(tipCategory);
+                });
+            }
+            tipsFile.close();
+        }
+    }
+
+    public DataFile tipsFile(){
+        return BukkitDataFile.parseFromGeneralPath(CruxFolder.file(this, "tips.json"));
     }
 
     public void registerSimpleCfgHandlers(@NotNull FileRegistry registry){
@@ -800,6 +822,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             StoryState.class,
             new FileStoryState()
         );
+        registry.registerFileHandler(Tip.class, new FileTip());
+        registry.registerFileHandler(TipCategory.class, CfgHook.TIP_CATEGORY);
     }
 
     public void registerCfgHandlers(@NotNull FileRegistry registry){
