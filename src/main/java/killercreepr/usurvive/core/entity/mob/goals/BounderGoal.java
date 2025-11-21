@@ -2,6 +2,8 @@ package killercreepr.usurvive.core.entity.mob.goals;
 
 import com.destroystokyo.paper.entity.ai.GoalKey;
 import killercreepr.crux.api.communication.CreateSound;
+import killercreepr.cruxentities.api.entity.mob.goal.PathTargetMobGoal;
+import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import org.bukkit.Sound;
@@ -11,7 +13,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BounderGoal extends CruxMobGoal {
+public class BounderGoal extends CruxMobGoal implements PathTargetMobGoal {
+    protected final PathTargetMobGoal pathTarget = PathTargetMobGoal.pathTargetMobGoal(this, 1.1D);
     public BounderGoal(@NotNull Mob mob) {
         this(defaultKey(), mob);
     }
@@ -60,5 +63,21 @@ public class BounderGoal extends CruxMobGoal {
     public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
         if(!(target instanceof Player)) return false;
         return super.isValidNaturalTarget(target);
+    }
+
+    @Override
+    public @Nullable GoalPath getPath() {
+        return this.pathTarget.getPath();
+    }
+
+    @Override
+    public void setPath(@Nullable GoalPath goalPath) {
+        this.pathTarget.setPath(goalPath);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if(target == null) pathTarget.tick();
     }
 }

@@ -18,6 +18,7 @@ import killercreepr.cruxblocks.core.block.component.standard.EntitySpawnerCompon
 import killercreepr.cruxconfig.config.common.handler.AutoFileHandler;
 import killercreepr.cruxconfig.config.common.handler.FileObjectHandler;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxentities.api.entity.mob.goal.PathTargetMobGoal;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
@@ -49,10 +50,7 @@ import killercreepr.usurvive.core.story.progression.data.GenericStoryProgressDat
 import killercreepr.usurvive.core.world.USurviveWorldTypes;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
@@ -68,6 +66,8 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -252,6 +252,12 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
                                                     goal.setTarget(p);
                                                 }else mob.setTarget(p);
 
+                                                if(goal instanceof PathTargetMobGoal g){
+                                                    g.setPath(GoalPath.goalPath(List.of(
+                                                        GoalNode.dynamicDistanceGoalNode(() -> p.getLocation(), 4D)
+                                                    )));
+                                                }
+
                                                 CruxAttributeUtil.editInstance(mob, Attribute.MAX_HEALTH, instance ->{
                                                     instance.addModifier(new AttributeModifier(
                                                         Crux.key("story_1"), -0.5D, AttributeModifier.Operation.MULTIPLY_SCALAR_1
@@ -266,6 +272,7 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
                                                     }
                                                     equip.setItemInMainHand(item);
                                                 }
+                                                mob.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 200, 0, false, false));
                                             }
                                         }
                                         ).navigateSpawner().whenComplete((spawned, throwable) ->{

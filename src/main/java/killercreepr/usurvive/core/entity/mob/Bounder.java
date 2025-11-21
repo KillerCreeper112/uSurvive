@@ -83,7 +83,11 @@ public class Bounder extends UCruxMob {
 
         CruxGoalUtil.addIfNotPresent(mob, BounderGoal.class, 0, () -> new BounderGoal(mob));
 
-        String skin = CruxTag.get(e, "bounder_skin", PersistentDataType.STRING, generateBounderSkinID());
+        String skin = CruxTag.get(e, "bounder_skin", PersistentDataType.STRING, null);
+        if(skin == null){
+            skin = generateBounderSkinID();
+            CruxTag.set(e, "bounder_skin", PersistentDataType.STRING, skin);
+        }
         var disguise = new PlayerDisguise(skin);
         disguise.setName("");
         disguise.setNameVisible(false);
