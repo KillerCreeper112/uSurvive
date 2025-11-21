@@ -1,6 +1,7 @@
 package killercreepr.usurvive.core.listener;
 
 import killercreepr.crux.api.text.tags.container.TagContainer;
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsManager;
 import killercreepr.usurvive.core.entity.player.settings.standard.StandardPlayerSettingSelections;
@@ -29,7 +30,7 @@ public class TipListener implements Listener {
         if(settings != null){
             if(settings.hasSetting(StandardPlayerSettings.TIPS, StandardPlayerSettingSelections.DISABLED)) return;
         }
-        var tip = tips.randomTip();
+        var tip = tips.randomTipSkewed(Crux.key("death"), 1.5D);
         if(tip == null) return;
         Lang.TIP_MESSAGE.use(p, TagContainer.merged().hook(p).add(Tag.parsed("tip_message", tip.message())));
     }

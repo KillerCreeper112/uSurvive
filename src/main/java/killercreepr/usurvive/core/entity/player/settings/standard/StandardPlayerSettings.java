@@ -138,7 +138,7 @@ public class StandardPlayerSettings {
             StandardPlayerSettingSelections.DISABLED
         ),
         Map.of(
-            StandardPlayerSettingSelections.ENABLED, "You will receive tip messages show up every once in a while",
+            StandardPlayerSettingSelections.ENABLED, "You will receive tip messages every once in a while",
             StandardPlayerSettingSelections.OCCASIONAL, "Tip messages will appear less frequent",
             StandardPlayerSettingSelections.DEATH_ONLY, "Tip messages will only appear after you die",
             StandardPlayerSettingSelections.DISABLED, "You will not receive any tip messages"
