@@ -97,6 +97,21 @@ public class FileDialogAction implements FileObjectHandler<DialogAction> {
                 );
             }
         })
+        .put(Crux.key("close_inventory"), new GetterFileHandler<>() {
+            @Nullable
+            @Override
+            public DialogAction deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileElement ele) {
+                var r = ctx.getRegistry();
+                if(!(ele instanceof FileObject o)){
+                    return null;
+                }
+                return new CloseInventoryDialogAction(
+                    r.deserializeFromFileOrDefault(Boolean.class, o.get("start"), false),
+                    r.deserializeFromFileOrDefault(Boolean.class, o.get("end"), false),
+                    r.deserializeFromFileOrDefault(Boolean.class, o.get("speak"), false)
+                );
+            }
+        })
         .build();
 
     @Override
