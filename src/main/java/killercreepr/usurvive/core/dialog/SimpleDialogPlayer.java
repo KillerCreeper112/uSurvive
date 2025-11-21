@@ -64,6 +64,9 @@ public class SimpleDialogPlayer implements DialogPlayer {
             setDialog(content);
             return;
         }
+
+        if(queue.contains(content)) return;
+
         if(content.priority() > current.priority()){
             pushedQueue.add(currentDialog);
             current.onPause(this);
@@ -426,9 +429,29 @@ public class SimpleDialogPlayer implements DialogPlayer {
                 //currentDialogLine += nextPart;
                 currentDialog.dialogSplitIndex++;
                 if (currentDialog.dialogSplitIndex >= currentDialog.currentDialogSplit.length) {
+                    if(!currentDialog.sentLastLine){
+                        currentDialog.sentLastLine = true;
+                        currentDialog.currentDialogLine = builder.toString();
+                        var line = getDialog().dialog().get(currentDialog.dialogIndex);
+                        getDialog().actions().forEach(action ->{
+                            action.onSpeak(this);
+                        });
+                        line.actions().forEach(action ->{
+                            action.onSpeak(this);
+                        });
+                        return currentDialog.currentDialogLine;
+                    }
+                    var line = getDialog().dialog().get(currentDialog.dialogIndex);
                     currentDialog.currentDialogLine = null;
                     currentDialog.dialogIndex++;
                     currentDialog.dialogWait = getDialogWaitTime();
+
+                    getDialog().actions().forEach(action ->{
+                        action.onEnd(this);
+                    });
+                    line.actions().forEach(action ->{
+                        action.onEnd(this);
+                    });
                     return null;
                 }
                 nextPart = currentDialog.currentDialogSplit[currentDialog.dialogSplitIndex];

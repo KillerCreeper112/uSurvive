@@ -46,6 +46,11 @@ public class BounderGoal extends CruxMobGoal {
     }
 
     @Override
+    public boolean shouldConstantlyLookAtTarget() {
+        return true;
+    }
+
+    @Override
     public boolean preAttemptAttack() {
         mob.swingMainHand();
         return super.preAttemptAttack();
