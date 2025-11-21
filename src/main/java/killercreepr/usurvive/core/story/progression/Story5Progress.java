@@ -263,7 +263,7 @@ public class Story5Progress extends StoryHolderStoryProgress implements Listener
         });
     }
 
-    protected EventSubscription<?> luckPermsEvent;
+    protected transient EventSubscription<?> luckPermsEvent;
     @Override
     public void onEnd(Player p, StoryHolder holder) {
         super.onEnd(p, holder);

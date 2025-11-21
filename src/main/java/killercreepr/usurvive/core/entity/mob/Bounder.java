@@ -3,6 +3,7 @@ package killercreepr.usurvive.core.entity.mob;
 import com.destroystokyo.paper.entity.ai.Goal;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.util.CruxAttributeUtil;
 import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.CruxTag;
@@ -19,10 +20,7 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Pig;
-import org.bukkit.entity.Wolf;
+import org.bukkit.entity.*;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,10 +36,11 @@ public class Bounder extends UCruxMob {
 
     @Override
     protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
-        return location.getWorld().spawn(location, Pig.class, e ->{
+        return location.getWorld().spawn(location, Zombie.class, e ->{
             e.customName(Component.text("Bounder"));
             e.setCustomNameVisible(false);
             e.setSilent(true);
+            e.setShouldBurnInDay(false);
             load(e);
 
             e.getAttribute(Attribute.FOLLOW_RANGE).setBaseValue(
@@ -52,8 +51,10 @@ public class Bounder extends UCruxMob {
             );
             e.setHealth(e.getAttribute(Attribute.MAX_HEALTH).getBaseValue());
             e.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(
-                e.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 1.15
+                e.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue() * 1.25
             );
+
+            CruxAttributeUtil.editInstance(e, Attribute.ATTACK_DAMAGE, instance -> instance.setBaseValue(0D));
 
             //CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(7D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(10D));
@@ -75,9 +76,9 @@ public class Bounder extends UCruxMob {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
         for (Goal<Mob> goal : Crux.getServer().getMobGoals().getAllGoals(mob)) {
-            if(goal.getKey().getNamespacedKey().asString().equalsIgnoreCase("minecraft:nearest_attackable")){
-                Crux.getServer().getMobGoals().removeGoal(mob, goal);
-            }
+            var s = goal.getKey().getNamespacedKey().asString();
+            if(s.contains("random_") || s.contains("look_")) continue;
+            Crux.getServer().getMobGoals().removeGoal(mob, goal);
         }
 
         CruxGoalUtil.addIfNotPresent(mob, BounderGoal.class, 0, () -> new BounderGoal(mob));

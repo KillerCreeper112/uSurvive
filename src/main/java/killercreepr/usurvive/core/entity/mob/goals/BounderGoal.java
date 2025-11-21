@@ -46,6 +46,12 @@ public class BounderGoal extends CruxMobGoal {
     }
 
     @Override
+    public boolean preAttemptAttack() {
+        mob.swingMainHand();
+        return super.preAttemptAttack();
+    }
+
+    @Override
     public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
         if(!(target instanceof Player)) return false;
         return super.isValidNaturalTarget(target);
