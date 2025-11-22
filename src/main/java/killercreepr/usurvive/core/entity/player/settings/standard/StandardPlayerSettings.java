@@ -98,7 +98,7 @@ public class StandardPlayerSettings {
     ));
 
     public static final PlayerSetting DIALOG_SPEED = register(new SimplePlayerSetting(
-        Crux.key("dialog_speed"), StandardPlayerSettingSelections.NORMAL,
+        Crux.key("dialog_speed"), StandardPlayerSettingSelections.FAST,
         List.of(
             StandardPlayerSettingSelections.SLOW,
             StandardPlayerSettingSelections.NORMAL,
@@ -114,7 +114,7 @@ public class StandardPlayerSettings {
     ));
 
     public static final PlayerSetting DIALOG_PAUSE_TIME = register(new SimplePlayerSetting(
-        Crux.key("dialog_pause_time"), StandardPlayerSettingSelections.NORMAL,
+        Crux.key("dialog_pause_time"), StandardPlayerSettingSelections.FAST,
         List.of(
             StandardPlayerSettingSelections.SLOW,
             StandardPlayerSettingSelections.NORMAL,
