@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.story.progression;
 
+import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxattributes.core.text.tags.CruxAttributeTags;
@@ -86,6 +87,10 @@ public abstract class StoryHolderStoryProgress implements StoryProgression {
         if(hasAllFlags()){
             nextStage();
         }
+    }
+
+    public World getSpawn(){
+        return Crux.getServer().getWorld(USurvivePlugin.inst().values().SPAWN_WORLD().value());
     }
 
     public boolean isSpawn(World world){

@@ -88,12 +88,19 @@ public class DeathHolder extends PlayerTickedDataHolder {
     }
 
     protected long lastTip = System.currentTimeMillis();
-    protected int nextTipInTicks;
+    protected int nextTipInTicks = -1;
     public void tipTick(Player p){
         if(nextTipInTicks != -1 && CruxMath.hasOccurredWithin(lastTip, nextTipInTicks)) return;
         lastTip = System.currentTimeMillis();
-        nextTipInTicks = generateNextTipTicks(p);
-        if(nextTipInTicks == -1) return;
+        int nextTipInTicks = generateNextTipTicks(p);
+        if(nextTipInTicks != -1 && this.nextTipInTicks == -1){
+            this.nextTipInTicks = nextTipInTicks;
+            return;
+        }
+        this.nextTipInTicks = nextTipInTicks;
+        if(nextTipInTicks == -1){
+            return;
+        }
 
         var tip = USurviveRegistries.TIPS.randomTip();
         if(tip == null) return;

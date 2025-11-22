@@ -1,8 +1,12 @@
 package killercreepr.usurvive.core.entity.mob.guide;
 
+import killercreepr.crux.api.entity.CruxEntity;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.component.CruxComponents;
+import killercreepr.crux.core.persistence.CruxPersist;
 import killercreepr.crux.core.util.CruxAttributeUtil;
 import killercreepr.crux.core.util.CruxGoalUtil;
+import killercreepr.cruxentities.component.CruxEntityComponents;
 import killercreepr.cruxentities.entity.SimpleCruxMob;
 import killercreepr.usurvive.core.entity.mob.goals.guide.GuidePathGoal;
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -27,6 +31,8 @@ public class Guide1NPC extends SimpleCruxMob {
     protected @NotNull Entity spawnAt(@NotNull Location loc, @Nullable Consumer<Entity> consumer) {
         return loc.getWorld().spawn(loc, Husk.class, e ->{
             e.setSilent(true);
+            var crux = CruxEntity.entity(e);
+            crux.set(CruxComponents.INVULNERABLE, true);
             e.setAdult();
 
             CruxAttributeUtil.editInstance(e, Attribute.MOVEMENT_SPEED, instance ->{

@@ -693,7 +693,7 @@ public class Lang {
         Communicator.builder()
             .chat(List.of(
                 "<tip_chat_prefix>",
-                "<dark_gold>{tip_message}"
+                "<gold>{tip_message}"
             ))
             .sound(CreateSound.sound(Sound.BLOCK_COMPARATOR_CLICK, 0.1f, 1.7f))
             .build()

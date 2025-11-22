@@ -111,6 +111,7 @@ import killercreepr.usurvive.core.data.entity.DeathHolder;
 import killercreepr.usurvive.core.data.entity.MemoryPlayerSettingsHolder;
 import killercreepr.usurvive.core.death.PlayerDeath;
 import killercreepr.usurvive.core.death.SimpleDeathManager;
+import killercreepr.usurvive.core.entity.SimpleEntityHiderHolder;
 import killercreepr.usurvive.core.entity.USurviveMobs;
 import killercreepr.usurvive.core.entity.memory.*;
 import killercreepr.usurvive.core.entity.mob.USurviveMobCategory;
@@ -368,6 +369,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             m.getDataHolders().register(new USurviveAdvancementLoaderHolder(m, cfgManagerLoader));
             m.getDataHolders().register(new AdvancementAutoSaveHolder(m, cfgManagerLoader));
             m.getDataHolders().register(new SimpleStoryHolder(m));
+            m.getDataHolders().register(new SimpleEntityHiderHolder(m));
         });
         StandardGrappleHooks.register(USurviveRegistries.GRAPPLE_HOOK);
         StandardWhipHooks.register(USurviveRegistries.WHIP_HOOK);
@@ -545,7 +547,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new CustomEntityListener(),
             new SporelinkListener(),
             new StoryListener(values),
-            new TipListener(playerSettingsManager, USurviveRegistries.TIPS)
+            new TipListener(playerSettingsManager, USurviveRegistries.TIPS),
+            new EntityHiderListener(this)
             //new WaxPaintingListener()
         );
 

@@ -30,6 +30,8 @@ import killercreepr.cruxworlds.api.world.type.CruxWorldType;
 import killercreepr.cruxworlds.core.component.CruxWorldsComponents;
 import killercreepr.usurvive.api.dialog.DialogContent;
 import killercreepr.usurvive.api.dialog.DialogPlayer;
+import killercreepr.usurvive.api.entity.hider.EntityHider;
+import killercreepr.usurvive.api.entity.hider.HiddenEntities;
 import killercreepr.usurvive.api.entity.mob.goal.path.GuidePathGoalNode;
 import killercreepr.usurvive.api.guide.GuidePoint;
 import killercreepr.usurvive.api.story.*;
@@ -166,6 +168,14 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
             public void onStart(Player p) {
                 if(!canSetup()) return;
                 setup();
+            }
+
+            @Override
+            public void onComplete(Player p) {
+                StoryStep.super.onComplete(p);
+                EntityHider.applyEntityHider(p, hider ->{
+                    hider.removeHiddenEntities(hiddenEntities);
+                });
             }
         },
 
@@ -474,9 +484,14 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
         hideEntities(loc.getWorld());
     }
 
+    protected transient final HiddenEntities hiddenEntities = HiddenEntities.worldType(Player.class, this::getSpawn);
     public void setupNPC(){
         if(npc != null) return;
         setupNPC(p);
+
+        EntityHider.applyEntityHider(p, hider ->{
+            hider.addHiddenEntities(hiddenEntities);
+        });
     }
 
     public void setup(){
@@ -765,7 +780,7 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
         Player p = event.getPlayer();
         if(!p.equals(this.p)) return;
         if(p.hasPermission("usurvive.guide.restrictions.bypass")) return;
-        if(hasEnteredResourceOverworld()) return;
+        if(hasEnteredResourceOverworld() || !canSetup()) return;
         event.setCancelled(true);
         Lang.GUIDE_1_CANNOT_USE_COMMANDS.use(p);
     }

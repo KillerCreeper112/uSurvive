@@ -199,7 +199,6 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
                 guidePoint = nextGuidePoint;
                 nextGuidePoint = null;
 
-
                 if(guidePoint.dialog() != null) dialogPlayer.queueDialog(guidePoint.dialog());
                 return;
             }
@@ -210,7 +209,6 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
             if(user.getWorld().equals(mob.getWorld())) mob.lookAt(user);
             return;
         }
-
         this.pathTarget.tick();
     }
 
