@@ -9,4 +9,7 @@ public interface StoryProgressData extends CruxKeyed {
     default boolean isComplete(){
         return completedTime() != null;
     }
+    default boolean shouldSave(){
+        return true;
+    }
 }

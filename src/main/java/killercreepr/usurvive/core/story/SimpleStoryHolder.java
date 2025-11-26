@@ -8,11 +8,17 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.entity.memory.PlayerTickedDataHolder;
 import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
+import killercreepr.cruxconfig.config.common.element.FileArray;
+import killercreepr.cruxconfig.config.common.element.FileElement;
+import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.common.file.DataFile;
 import killercreepr.usurvive.api.story.StoryHolder;
 import killercreepr.usurvive.api.story.StoryProgressData;
 import killercreepr.usurvive.api.story.StoryProgression;
 import killercreepr.usurvive.core.USurvivePlugin;
+import killercreepr.usurvive.core.config.CfgHook;
+import killercreepr.usurvive.core.config.handler.FileStoryProgressData;
+import killercreepr.usurvive.core.config.handler.FileStoryProgression;
 import killercreepr.usurvive.core.story.progression.Story1Progress;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Entity;
@@ -88,8 +94,28 @@ public class SimpleStoryHolder extends PlayerTickedDataHolder implements AutoSav
     @Override
     public void save() {
         DataFile cfg = getSaveFile(true);
-        cfg.serialize("completed", storyData.isEmpty() ? null : storyData);
-        cfg.serialize("current_progression", storyProgression.isEmpty() ? null : storyProgression);
+        FileObject completed;
+        if(storyData.isEmpty()) completed = null;
+        else{
+            completed = new FileObject();
+            storyData.forEach((key, data) ->{
+                if(!data.shouldSave()) return;
+                completed.add(key.asString(), cfg.fileRegistry().serializeToFile(data));
+            });
+        }
+        cfg.serialize("completed", completed == null || completed.isEmpty() ? null : completed);
+
+        FileArray currentProgression;
+        if(storyProgression.isEmpty()){
+            currentProgression = null;
+        }else{
+            currentProgression = new FileArray();
+            storyProgression.forEach((key, prog) ->{
+                if(CfgHook.FILE_STORY_PROGRESSION.getHandlers().get(key) == null) return;
+                currentProgression.add(cfg.fileRegistry().serializeToFile(prog));
+            });
+        }
+        cfg.serialize("current_progression", currentProgression == null || currentProgression.isEmpty() ? null : currentProgression);
         cfg.save();
     }
 
