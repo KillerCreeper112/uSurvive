@@ -1,6 +1,7 @@
 package killercreepr.usurvive.core.config;
 
 import killercreepr.crux.api.loot.conditions.LootCondition;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.cruxadvancements.api.advancement.objective.AdvancementObjective;
 import killercreepr.cruxadvancements.core.advancement.objective.ObjectiveCommonData;
 import killercreepr.cruxadvancements.core.config.CruxAdvanceCfgData;
@@ -19,6 +20,7 @@ import killercreepr.usurvive.core.config.handler.FileStoryProgressData;
 import killercreepr.usurvive.core.config.handler.FileStoryProgression;
 import killercreepr.usurvive.core.config.handler.FileTipCategory;
 import killercreepr.usurvive.core.loot.condition.BaseItemUpgradedFromCondition;
+import killercreepr.usurvive.core.loot.condition.EntityHasRankCondition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -104,6 +106,15 @@ public class CfgHook {
                 FileRegistry registry = ctx.getRegistry();
                 return new BaseItemUpgradedFromCondition(
                     target, e.getOrDefaultObject("type", null)
+                );
+            }
+        });
+        file.registerCustomHandler(new SimpleFileLootCondition<>(USurvivePlugin.inst().key("has_rank")) {
+            @Override
+            public @NotNull LootCondition deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e, @NotNull String target) {
+                FileRegistry registry = ctx.getRegistry();
+                return new EntityHasRankCondition(
+                    target, registry.deserializeFromFile(NumberProvider.class, e.get("rank"))
                 );
             }
         });

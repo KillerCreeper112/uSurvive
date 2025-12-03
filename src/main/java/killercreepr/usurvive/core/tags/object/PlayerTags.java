@@ -21,7 +21,9 @@ import killercreepr.usurvive.core.vanish.VanishHandler;
 import net.kyori.adventure.key.Key;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,12 +41,32 @@ public class PlayerTags implements ObjectTag<OfflinePlayer> {
         return FormatPrefix.simple("player_");
     }
 
+    public int getURank(Entity e){
+        int highest = 0;
+        for (PermissionAttachmentInfo perm : e.getEffectivePermissions()) {
+            if(!perm.getValue()) continue;
+            String x = perm.getPermission();
+            if(x.startsWith("usurvive.rank.")){
+                try{
+                    int value = Integer.parseInt(x.replace("usurvive.rank.", ""));
+                    if(value > highest) highest = value;
+                }catch (IllegalArgumentException ignored){}
+            }
+        }
+        return highest;
+    }
+
     @Override
     public @Nullable TagContainer<StringResolver> requestStrings(@NotNull OfflinePlayer offline, @NotNull TagParser tags) {
         return TagContainer.string(tags)
             .add(Tag.string("is_vanished",(args, ctx) ->{
                 if(!offline.isOnline()) return "false";
                 return VanishHandler.isVanished(offline.getPlayer()) + "";
+            }))
+            .add(Tag.string("urank",(args, ctx) ->{
+                if(!offline.isOnline()) return "false";
+                var p = offline.getPlayer();
+                return getURank(p) + "";
             }))
             .add(Tag.string("is_afk",(args, ctx) ->{
                 if(!offline.isOnline()) return "false";
