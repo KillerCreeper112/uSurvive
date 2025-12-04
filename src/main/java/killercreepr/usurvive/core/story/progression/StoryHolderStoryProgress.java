@@ -1,9 +1,7 @@
 package killercreepr.usurvive.core.story.progression;
 
 import killercreepr.crux.core.Crux;
-import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxTag;
-import killercreepr.cruxattributes.core.text.tags.CruxAttributeTags;
 import killercreepr.cruxblocks.api.mining.user.Miner;
 import killercreepr.cruxblocks.core.mining.user.EntityMiner;
 import killercreepr.usurvive.api.dialog.listener.DialogListener;
@@ -130,7 +128,7 @@ public abstract class StoryHolderStoryProgress implements StoryProgression {
     }
 
     public DialogListener dialogListener(){
-        return DialogListener.listener(p);
+        return DialogListener.dialogListener(p);
     }
 
     protected boolean isPlayer(Miner miner){

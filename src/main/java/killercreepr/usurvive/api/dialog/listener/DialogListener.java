@@ -9,11 +9,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public interface DialogListener {
-    static DialogListener listener(Audience e){
-        if(e instanceof Entity ee) return listener(ee);
+    static DialogListener dialogListener(Audience e){
+        if(e instanceof Entity ee) return dialogListener(ee);
         return null;
     }
-    static DialogListener listener(Entity e){
+    static DialogListener dialogListener(Entity e){
         if(e instanceof Player){
             return EntityMemory.getOrCreateDataHolder(e, PlayerDialogListener.class, mem ->{
                 if(mem instanceof PlayerMemory m) return new PlayerDialogListener(m);

@@ -5,4 +5,6 @@ public class USurviveArgs {
     public static final TPARequestArgument TPA_REQUEST = new TPARequestArgument();
     public static final SettingArgument SETTING = new SettingArgument();
     public static final SettingSelectionArgument SETTING_SELECTION = new SettingSelectionArgument();
+
+    public static final DialogContentArgument DIALOG_CONTENT = new DialogContentArgument();
 }
