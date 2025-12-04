@@ -1,7 +1,6 @@
 package killercreepr.usurvive.core.entity.mob;
 
 import com.destroystokyo.paper.entity.ai.Goal;
-import com.ticxo.modelengine.api.model.ActiveModel;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.util.CruxAttributeUtil;
 import killercreepr.crux.core.util.CruxGoalUtil;
@@ -10,23 +9,22 @@ import killercreepr.crux.core.util.CruxTag;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxentities.entity.MobCategory;
-import killercreepr.cruxentities.modelengine.wrapper.DesignEntity;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.entity.mob.goals.BounderGoal;
-import killercreepr.usurvive.core.entity.mob.goals.SkeletonWolfGoal;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Mob;
+import org.bukkit.entity.Zombie;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class Bounder extends UCruxMob {

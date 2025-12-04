@@ -9,7 +9,6 @@ import killercreepr.usurvive.api.dialog.KeyedDialogContent;
 import killercreepr.usurvive.api.dialog.KeyedDialoger;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
-import killercreepr.usurvive.api.guide.tips.TipCategory;
 import killercreepr.usurvive.api.mechanics.grapple.GrappleHook;
 import killercreepr.usurvive.api.mechanics.whip.WhipHook;
 

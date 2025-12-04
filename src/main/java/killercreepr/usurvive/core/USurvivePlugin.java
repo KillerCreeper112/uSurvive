@@ -767,6 +767,26 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         }.loadConfiguration(
             new CruxFolder(this, "npcs").file()
         );
+        new CfgLoader() {
+            public void loadConfiguration(@NotNull DataFile cfg, @Nullable String path) {
+                KeyedDialogContent table;
+                if (path == null) {
+                    table = cfg.deserialize("", DialogContent.class);
+                } else {
+                    FileElement var5 = cfg.getRoot();
+                    if (!(var5 instanceof FileObject root)) {
+                        return;
+                    }
+
+                    table = (KeyedDialogContent) FileDialogContent.FILE_DIALOG_CONTENT.deserializeFromFile(new FileContext<>(cfg.fileRegistry()), root, Crux.key(path));
+                }
+
+                Crux.log(Level.INFO, "Registered dialog content: " + table.key());
+                USurviveRegistries.DIALOG_CONTENT.register(table);
+            }
+        }.loadConfiguration(
+            new CruxFolder(this, "dialog_content").file()
+        );
 
         values.reload(this);
         langProvider.reload(this);
@@ -819,7 +839,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         registry.registerFileHandler(GuidePoint.class, new FileGuidePoint());
         registry.registerFileHandler(DialogLine.class, new FileDialogLine());
         registry.registerFileHandler(DialogAction.class, new FileDialogAction());
-        registry.registerFileHandler(DialogContent.class, new FileDialogContent());
+        registry.registerFileHandler(DialogContent.class, FileDialogContent.FILE_DIALOG_CONTENT);
         registry.registerFileHandler(Dialoger.class, FileDialoger.FILE_DIALOGER);
         registry.registerFileHandler(
             StoryState.class,
