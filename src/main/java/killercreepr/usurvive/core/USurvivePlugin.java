@@ -26,6 +26,7 @@ import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxString;
 import killercreepr.cruxadvancements.core.config.loader.CfgCrazyAdvancementManagerCfgLoader;
 import killercreepr.cruxadvancements.core.config.loader.GlobalAdvancementManagerCfgLoader;
+import killercreepr.cruxclaims.core.menu.data.CruxClaimsDataParser;
 import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.handler.BukkitCfgHandlers;
@@ -63,6 +64,7 @@ import killercreepr.cruxmenus.api.menu.config.handler.FileMenuHolder;
 import killercreepr.cruxmenus.api.menu.holder.MenuItems;
 import killercreepr.cruxmenus.api.menu.module.MenuModule;
 import killercreepr.cruxmenus.api.menu.module.config.MenuModuleBuilder;
+import killercreepr.cruxmenus.api.menu.registry.MenuRegistry;
 import killercreepr.cruxmenus.core.menu.holder.SimpleMenuHolder;
 import killercreepr.cruxmenus.core.menu.module.standard.SimpleFilePagedCfg;
 import killercreepr.cruxmenus.core.menu.module.standard.SimplePagedMenuModule;
@@ -134,6 +136,7 @@ import killercreepr.usurvive.core.mechanics.grapple.standard.StandardGrappleHook
 import killercreepr.usurvive.core.mechanics.whip.standard.StandardWhipHooks;
 import killercreepr.usurvive.core.menu.ItemPackMenu;
 import killercreepr.usurvive.core.menu.action.*;
+import killercreepr.usurvive.core.menu.data.USurviveDataParser;
 import killercreepr.usurvive.core.menu.module.AdvancementShowcaseModule;
 import killercreepr.usurvive.core.menu.module.CurrencyDepositModule;
 import killercreepr.usurvive.core.potion.USurvivePotions;
@@ -335,7 +338,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             }
         });
         CruxMenusModule menusModule = CruxCore.inst().cruxMenus();
-        registerMenuModules(menusModule.menuRegistry().menuModule(), menusModule.menuModuleRegistry());
+        registerMenuModules(menusModule.menuRegistry(), menusModule.menuRegistry().menuModule(), menusModule.menuModuleRegistry());
 
         menusModule.menuRegistry().menuHolders().register(new SimpleMenuHolder(
             Crux.key("items_pack"), "Items Pack", NumberProvider.zero(), MenuItems.items(new TreeMap<>()),
@@ -585,7 +588,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         UQuickShop.setup(this);
     }
 
-    public void registerMenuModules(@NotNull FileMenuHolder<?> fileMenuHolder, @NotNull KeyedRegistry<MenuModuleBuilder> registry) {
+    public void registerMenuModules(MenuRegistry menuRegistry, @NotNull FileMenuHolder<?> fileMenuHolder, @NotNull KeyedRegistry<MenuModuleBuilder> registry) {
         registry.register(new SimpleFilePagedCfg(fileMenuHolder, Crux.key("paged_player_deaths")) {
             @NotNull
             @Override
@@ -709,6 +712,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
                 };
             }
         });
+
+        menuRegistry.itemDataParsers().register(2, new USurviveDataParser(key("main")));
     }
 
     /*@EventHandler(ignoreCancelled = true)
