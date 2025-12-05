@@ -830,7 +830,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             if(ranksFile.getElement("values") instanceof FileObject o){
                 var ctx = new FileContext<>(ranksFile.fileRegistry());
                 o.forEach((key, ele) ->{
-                    Rank rank = CfgHook.FILE_RANK.deserializeFromFile(ctx, ele, Crux.key(key));
+                    Rank rank = CfgHook.FILE_RANK.deserializeFromFile(ctx, ele, Crux.key(key), (FileObject) ranksFile.getRoot());
                     if(rank == null) return;
                     USurviveRegistries.RANK.register(rank);
                 });
