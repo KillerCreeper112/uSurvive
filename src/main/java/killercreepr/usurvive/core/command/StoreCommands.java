@@ -28,7 +28,7 @@ public class StoreCommands {
 
             commands.register(
                 Commands.literal("premiumshop")
-                    .requires(source -> getExecutor(source).hasPermission("usurvive.cmds.premiumshop.use"))
+                    .requires(source -> getExecutor(source).hasPermission("usurvive.command.premiumshop"))
                     .then(
                         Commands.literal("purchased")
                             .then(

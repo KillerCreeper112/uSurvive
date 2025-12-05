@@ -11,6 +11,7 @@ import killercreepr.usurvive.api.entity.player.settings.PlayerSetting;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingSelection;
 import killercreepr.usurvive.api.mechanics.grapple.GrappleHook;
 import killercreepr.usurvive.api.mechanics.whip.WhipHook;
+import killercreepr.usurvive.api.rank.Rank;
 
 public class USurviveRegistries {
     public static final KeyedRegistry<GrappleHook> GRAPPLE_HOOK = new SimpleKeyedRegistry<>();
@@ -21,5 +22,6 @@ public class USurviveRegistries {
     public static final KeyedRegistry<KeyedDialoger> DIALOGER = KeyedRegistry.keyedRegistry();
     public static final KeyedRegistry<KeyedDialogContent> DIALOG_CONTENT = KeyedRegistry.keyedRegistry();
     public static final TipCategoryRegistry TIPS = new TipCategoryRegistry();
+    public static final KeyedRegistry<Rank> RANK = KeyedRegistry.keyedRegistry();
 
 }

@@ -111,7 +111,7 @@ public class DevCommands implements Listener {
             //manager="usurvive:combat"
             commands.register(
                 Commands.literal("udev")
-                    .requires(source -> getExecutor(source).hasPermission("usurvive.cmds.udev.use"))
+                    .requires(source -> getExecutor(source).hasPermission("usurvive.command.udev"))
                     .then(
                         Commands.literal("story")
                             .then(
@@ -271,7 +271,7 @@ public class DevCommands implements Listener {
                     )*/
                     .then(
                         Commands.literal("vanish")
-                            .requires(source -> getExecutor(source).hasPermission("usurvive.cmds.udev.vanish"))
+                            .requires(source -> getExecutor(source).hasPermission("usurvive.command.udev.vanish"))
                             .executes(ctx ->{
                                 if(!(getExecutor(ctx.getSource()) instanceof Player p)) return -1;
                                 p.sendMessage("Vanish set to: " + VanishHandler.toggleVanish(p));

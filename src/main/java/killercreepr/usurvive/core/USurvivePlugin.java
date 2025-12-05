@@ -33,6 +33,7 @@ import killercreepr.cruxconfig.config.bukkit.loader.CfgLoader;
 import killercreepr.cruxconfig.config.bukkit.standard.SimpleLangConfig;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
+import killercreepr.cruxconfig.config.common.element.FileArray;
 import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.common.file.DataFile;
@@ -84,6 +85,7 @@ import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsManager;
 import killercreepr.usurvive.api.guide.GuidePoint;
 import killercreepr.usurvive.api.guide.tips.Tip;
 import killercreepr.usurvive.api.guide.tips.TipCategory;
+import killercreepr.usurvive.api.rank.Rank;
 import killercreepr.usurvive.api.story.StoryProgressData;
 import killercreepr.usurvive.api.story.StoryProgression;
 import killercreepr.usurvive.api.story.StoryState;
@@ -815,6 +817,21 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             }
             tipsFile.close();
         }
+
+        DataFile ranksFile = BukkitDataFile.parseFromGeneralPath(
+            CruxFolder.file(this, "ranks"), false
+        );
+        if(ranksFile != null){
+            if(ranksFile.getElement("values") instanceof FileObject o){
+                var ctx = new FileContext<>(ranksFile.fileRegistry());
+                o.forEach((key, ele) ->{
+                    Rank rank = CfgHook.FILE_RANK.deserializeFromFile(ctx, ele, Crux.key(key));
+                    if(rank == null) return;
+                    USurviveRegistries.RANK.register(rank);
+                });
+            }
+            ranksFile.close();
+        }
     }
 
     public DataFile tipsFile(){
@@ -830,6 +847,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         registry.registerFileHandler(RandomTPData.class, new FileRandomTPData());
         registry.registerFileHandler(RandomTPData.Pos.class, new FileRandomTPPos());
         registry.registerFileHandler(GuideProgression.class, CfgHook.FILE_GUIDE_PROGRESSION);
+        registry.registerFileHandler(Rank.class, CfgHook.FILE_RANK);
         registry.registerFileHandler(StoryProgression.class, CfgHook.FILE_STORY_PROGRESSION);
         registry.registerFileHandler(StoryProgressData.class, CfgHook.FILE_STORY_PROGRESS_DATA);
         registry.registerFileHandler(
