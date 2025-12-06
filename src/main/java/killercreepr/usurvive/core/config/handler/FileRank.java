@@ -42,7 +42,11 @@ public class FileRank implements FileObjectHandler<Rank> {
             );
         }
 
-        DataExchange info = r.deserializeFromFileOrDefault(DataExchange.class, o.get("data"), DataExchange.empty());
+        DataExchange generalInfo = DataExchange.builder()
+            .put("rank", key.value())
+            .build();
+
+        DataExchange info = generalInfo.append(r.deserializeFromFileOrDefault(DataExchange.class, o.get("data"), DataExchange.empty()));
 
         if(!r.deserializeFromFileOrDefault(Boolean.class, o.get("override_default_data"), false)){
             info = r.deserializeFromFileOrDefault(DataExchange.class, defaultData.get("default_data"), DataExchange.empty())
