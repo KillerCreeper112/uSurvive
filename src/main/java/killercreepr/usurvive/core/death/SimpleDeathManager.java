@@ -16,6 +16,7 @@ import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsManager;
 import killercreepr.usurvive.api.event.PlayerEchoDeathEvent;
+import killercreepr.usurvive.api.event.PrePlayerUDeathEvent;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.api.world.module.DeathWorldModule;
 import killercreepr.usurvive.core.USurvivePlugin;
@@ -237,6 +238,11 @@ public class SimpleDeathManager implements DeathManager, Listener {
         if(crux == null) return;
         DeathWorldModule module = crux.getModule(DeathWorldModule.class);
         if(module == null) return;
+
+        PrePlayerUDeathEvent preEvent = new PrePlayerUDeathEvent(p, this, event);
+        if(!preEvent.callEvent()){
+            return;
+        }
 
         int totalExperience = p.calculateTotalExperiencePoints();
 
