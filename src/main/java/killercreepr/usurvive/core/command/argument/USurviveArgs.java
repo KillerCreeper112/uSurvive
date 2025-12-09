@@ -7,4 +7,6 @@ public class USurviveArgs {
     public static final SettingSelectionArgument SETTING_SELECTION = new SettingSelectionArgument();
 
     public static final DialogContentArgument DIALOG_CONTENT = new DialogContentArgument();
+
+    public static final RankArgument RANK = new RankArgument();
 }

@@ -15,6 +15,7 @@ import killercreepr.crux.core.component.parser.TextDataComponentDecoder;
 import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.usurvive.api.dialog.KeyedDialogContent;
 import killercreepr.usurvive.api.dialog.listener.DialogListener;
+import killercreepr.usurvive.api.rank.Rank;
 import killercreepr.usurvive.api.story.StoryHolder;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.command.argument.USurviveArgs;
@@ -40,6 +41,33 @@ public class AdminCommands {
     public void register() {
         plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             final Commands commands = event.registrar();
+
+            commands.register(
+                Commands.literal("urank")
+                    .requires(ctx -> ctx.getSender().hasPermission("usurvive.command.urank"))
+                    .then(
+                        Commands.literal("perform")
+                            .then(
+                                Commands.argument("targets", ArgumentTypes.players())
+                                    .then(
+                                        Commands.argument("rank", USurviveArgs.RANK)
+                                            .executes(ctx ->{
+                                                var sender = getExecutor(ctx.getSource());
+                                                var rank = ctx.getArgument("rank", Rank.class);
+                                                var targets = ctx.getArgument("targets", PlayerSelectorArgumentResolver.class)
+                                                    .resolve(ctx.getSource());
+
+                                                for (Player p : targets) {
+                                                    rank.onRankUp(p);
+                                                    sender.sendMessage("On rank up " + rank.key() + ": " + p.getName());
+                                                }
+                                                return 1;
+                                            })
+                                    )
+                            )
+                    )
+                    .build()
+            );
 
             commands.register(
                 Commands.literal("udialog")

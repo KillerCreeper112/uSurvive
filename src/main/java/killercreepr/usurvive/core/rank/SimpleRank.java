@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.rank;
 
+import killercreepr.crux.api.communication.Communicator;
 import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
@@ -15,11 +16,13 @@ import java.util.List;
 public class SimpleRank extends SimpleKeyed implements Rank {
     protected final DataExchange info;
     protected final List<String> rankUpCommands;
+    protected final Communicator communicator;
 
-    public SimpleRank(Key key, DataExchange info, List<String> rankUpCommands) {
+    public SimpleRank(Key key, DataExchange info, List<String> rankUpCommands, Communicator communicator) {
         super(key);
         this.info = info;
         this.rankUpCommands = rankUpCommands;
+        this.communicator = communicator;
     }
 
     @NotNull
@@ -39,5 +42,6 @@ public class SimpleRank extends SimpleKeyed implements Rank {
                Crux.getServer().dispatchCommand(Crux.getServer().getConsoleSender(), s);
            }
        }
+        communicator.use(p);
     }
 }

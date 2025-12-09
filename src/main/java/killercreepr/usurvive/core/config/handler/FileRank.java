@@ -1,6 +1,7 @@
 package killercreepr.usurvive.core.config.handler;
 
 import com.google.common.reflect.TypeToken;
+import killercreepr.crux.api.communication.Communicator;
 import killercreepr.crux.api.data.DataExchange;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.element.FileElement;
@@ -53,6 +54,11 @@ public class FileRank implements FileObjectHandler<Rank> {
                 .append(info);
         }
 
-        return new SimpleRank(key, info, rankUpCommands);
+        Communicator communicator;
+        if(o.has("communicator")){
+            communicator = r.deserializeFromFile(Communicator.class, o.get("communicator"));
+        }else communicator = r.deserializeFromFile(Communicator.class, defaultData.get("default_communicator"));
+
+        return new SimpleRank(key, info, rankUpCommands, communicator);
     }
 }
