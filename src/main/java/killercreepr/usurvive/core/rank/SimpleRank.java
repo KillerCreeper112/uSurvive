@@ -38,10 +38,10 @@ public class SimpleRank extends SimpleKeyed implements Rank {
             .hookAllWithPrefix(info)
             ;
         if(rankUpCommands != null){
-           for (String s : Crux.format().deserializeStringList(rankUpCommands, tags)) {
-               Crux.getServer().dispatchCommand(Crux.getServer().getConsoleSender(), s);
-           }
-       }
-        communicator.use(p);
+            for (String s : Crux.format().deserializeStringList(rankUpCommands, tags)) {
+                Crux.getServer().dispatchCommand(Crux.getServer().getConsoleSender(), s);
+            }
+        }
+        communicator.use(p, tags);
     }
 }
