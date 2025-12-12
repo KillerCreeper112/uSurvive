@@ -3,6 +3,7 @@ package killercreepr.usurvive.core.story.progression;
 import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.data.WorldPosition;
+import killercreepr.crux.api.data.WorldLocation;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.loot.LootContext;
 import killercreepr.crux.api.math.CruxPosition;
@@ -479,7 +480,7 @@ public class Story1Progress extends StoryHolderStoryProgress implements Listener
     }
 
     public void setupPlayer(){
-        WorldPosition spawn = cfg().NPC_SPAWN_1.value();
+        WorldLocation spawn = cfg().NPC_SPAWN_1.value();
         var loc = spawn.toLocation();
         p.teleport(loc);
 

@@ -1,6 +1,6 @@
 package killercreepr.usurvive.core.guide.progression;
 
-import killercreepr.crux.api.data.WorldPosition;
+import killercreepr.crux.api.data.WorldLocation;
 import killercreepr.crux.api.loot.LootContext;
 import killercreepr.crux.api.math.CruxPosition;
 import killercreepr.crux.core.Crux;
@@ -141,7 +141,7 @@ public class Guide1Progression extends GenericGuideProgression implements Listen
         this.p = p;
         super.onStart(p, holder);
         if(hasEnteredResourceOverworld() || !p.getWorld().key().equals(cfg().GUIDE_1_POINTS.value().getFirst().pos().worldKey())) return;
-        WorldPosition spawn = cfg().GUIDE_1_SPAWN.value();
+        WorldLocation spawn = cfg().GUIDE_1_SPAWN.value();
         p.teleport(spawn.toLocation());
     }
 
