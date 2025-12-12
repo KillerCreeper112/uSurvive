@@ -11,9 +11,13 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.text.hook.StringHookedObjectTag;
 import killercreepr.crux.core.text.hook.StringListHookedObjectTag;
 import killercreepr.crux.core.text.resolver.Tag;
+import killercreepr.cruxattributes.api.attribute.CruxAttributeContainer;
+import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxstatistics.api.bukkit.BukkitStatisticHolder;
+import killercreepr.cruxworlds.api.world.CruxWorld;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.api.entity.player.settings.PlayerSettingsHolder;
+import killercreepr.usurvive.core.component.USurviveComponents;
 import killercreepr.usurvive.core.data.entity.MemoryPlayerSettingsHolder;
 import killercreepr.usurvive.core.entity.memory.SleeperHolder;
 import killercreepr.usurvive.core.statistic.USurviveStatistics;
@@ -129,6 +133,18 @@ public class PlayerTags implements ObjectTag<OfflinePlayer> {
                 var pos = u.getRandomTPData().getLastTeleported(world);
                 if(pos==null) return "0";
                 return pos.getTime() + "";
+            }))
+            .add(Tag.string("uhas_same_last_rtp_time", (args, ctx) ->{
+                var u = UPlayer.getPlayer(offline.getUniqueId());
+                if(u == null) return "false";
+                if(u.getRandomTPData() == null) return "false";
+                Key world = Crux.key(ctx.deserializeString(args.get(0)));
+                var pos = u.getRandomTPData().getLastTeleported(world);
+                if(pos==null) return "false";
+                CruxWorld crux = CruxCore.core().worldManager().getWorld(world);
+                if(crux == null) return "false";
+                Long time = crux.get(USurviveComponents.WORLD_RANDOM_TELEPORT_TIME);
+                return (time != null && time == pos.getWorldTime()) + "";
             }))
             ;
     }
