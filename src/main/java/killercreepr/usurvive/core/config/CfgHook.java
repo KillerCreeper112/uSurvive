@@ -18,6 +18,7 @@ import killercreepr.usurvive.core.advancement.objective.*;
 import killercreepr.usurvive.core.config.handler.*;
 import killercreepr.usurvive.core.loot.condition.BaseItemUpgradedFromCondition;
 import killercreepr.usurvive.core.loot.condition.EntityHasRankCondition;
+import killercreepr.usurvive.core.loot.condition.PlayerHasItemCondition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -114,6 +115,17 @@ public class CfgHook {
                 FileRegistry registry = ctx.getRegistry();
                 return new EntityHasRankCondition(
                     target, registry.deserializeFromFile(NumberProvider.class, e.get("rank"))
+                );
+            }
+        });
+        file.registerCustomHandler(new SimpleFileLootCondition<>(USurvivePlugin.inst().key("player_has_item")) {
+            @Override
+            public @NotNull LootCondition deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e, @NotNull String target) {
+                FileRegistry registry = ctx.getRegistry();
+                return new PlayerHasItemCondition(
+                    target,
+                    registry.deserializeFromFile(LootCondition.class, e.get("item_condition")),
+                    registry.deserializeFromFileOrDefault(Integer.class, e.get("amount"), 1)
                 );
             }
         });

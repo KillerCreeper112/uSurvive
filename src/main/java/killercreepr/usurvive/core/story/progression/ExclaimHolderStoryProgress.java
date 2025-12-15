@@ -19,7 +19,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 public abstract class ExclaimHolderStoryProgress extends StoryHolderStoryProgress implements Listener {
-    protected final Map<UUID, TextDisplay> textDisplays = new HashMap<>();
+    protected transient final Map<UUID, TextDisplay> textDisplays = new HashMap<>();
     protected TextDisplay createText(UUID entity, Location loc, Consumer<TextDisplay> consumer){
         var e = loc.getWorld().spawn(loc, TextDisplay.class, spawned ->{
             spawned.setPersistent(false);
