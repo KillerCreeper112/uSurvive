@@ -3,12 +3,18 @@ package killercreepr.usurvive.core.util;
 import killercreepr.crux.api.item.CruxItem;
 import killercreepr.usurvive.core.data.Pack;
 import killercreepr.usurvive.core.entity.memory.ItemPackHolder;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.inventory.meta.BundleMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -80,7 +86,13 @@ public class ApplyToItem {
 
     public Result applyItem(ItemStack item){
         if(CruxItem.isEmpty(item)) return Result.DEFAULT;
-        return itemConsumer.applyItem(item);
+
+        var result = itemConsumer.applyItem(item);
+        if(result.shouldStopIterating()) return result;
+
+        if(CruxItem.isEmpty(item)) return Result.DEFAULT;
+
+        return applyItemsIfStorage(item, item.getItemMeta());
     }
 
     public Result executeIfIterating(Result result, Supplier<Result> run){
@@ -107,6 +119,68 @@ public class ApplyToItem {
         if(itemPackHolder != null) applyItems(itemPackHolder);
         return this;*/
     }
+
+    public Result applyItemsIfStorage(ItemStack item, ItemMeta meta){
+        if(meta instanceof BundleMeta m && m.hasItems()){
+            var list = new ArrayList<>(m.getItems());
+            var result = applyItems(list, true);
+            m.setItems(list);
+            item.setItemMeta(m);
+
+            if(result.shouldStopIterating()) return result;
+        }
+        if(meta instanceof BlockStateMeta m){
+            if(m.getBlockState() instanceof InventoryHolder h){
+                var result = applyItems(h.getInventory());
+                m.setBlockState((BlockState) h);
+                item.setItemMeta(m);
+                if(result.shouldStopIterating()) return result;
+            }
+        }
+        return Result.DEFAULT;
+    }
+
+    public Result applyItems(Collection<ItemStack> list, boolean removeIfEmpty){
+        if(list.isEmpty()) return Result.DEFAULT;
+
+        if(removeIfEmpty){
+            var iterator = list.iterator();
+            while(iterator.hasNext()){
+                var item = iterator.next();
+                var result = applyItem(item);
+
+                if(CruxItem.isEmpty(item)){
+                    iterator.remove();
+                }
+
+                if(result.shouldStopIterating()){
+                    return Result.STOP_ITERATING;
+                }
+            }
+
+            return Result.DEFAULT;
+        }
+
+        for (ItemStack item : list) {
+            var result = applyItem(item);
+            if(result.shouldStopIterating()){
+                return result;
+            }
+        }
+        return Result.DEFAULT;
+    }
+
+    /*public Result applyItems(Collection<ItemStack> list, boolean removeIfEmpty){
+        if(!removeIfEmpty) return applyItems(list);
+
+        for (ItemStack item : list) {
+            var result = applyItem(item);
+            if(result.shouldStopIterating()){
+                return result;
+            }
+        }
+        return Result.DEFAULT;
+    }*/
 
     public Result applyItems(Inventory inv){
         for (ItemStack item : inv) {
