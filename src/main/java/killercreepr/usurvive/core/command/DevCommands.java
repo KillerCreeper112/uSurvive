@@ -15,6 +15,7 @@ import io.papermc.paper.command.brigadier.argument.resolvers.selector.EntitySele
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import killercreepr.crux.api.entity.memory.EntityMemory;
+import killercreepr.crux.api.item.predicate.ItemPredicate;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.component.parser.TextDataComponentDecoder;
@@ -25,11 +26,15 @@ import killercreepr.cruxadvancements.api.advancement.manager.CruxAdvancementMana
 import killercreepr.cruxadvancements.api.event.CruxAdvancementRewardEvent;
 import killercreepr.cruxadvancements.core.entity.memory.AdvancementHolder;
 import killercreepr.cruxadvancements.core.registries.AdvancementRegistries;
+import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
 import killercreepr.cruxconfig.config.bukkit.file.CruxConfig;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.file.CruxJson;
+import killercreepr.cruxconfig.config.bukkit.handler.BukkitCfgHandlers;
 import killercreepr.cruxconfig.config.common.FileContext;
+import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileArray;
+import killercreepr.cruxconfig.config.common.element.FileGeneric;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.registry.CfgRegistries;
 import killercreepr.cruxcore.CruxCore;
@@ -46,6 +51,7 @@ import killercreepr.usurvive.core.entity.memory.NPCControllerHolder;
 import killercreepr.usurvive.core.entity.mob.goals.NPCControlGoal;
 import killercreepr.usurvive.core.listener.EnchantsListener;
 import killercreepr.usurvive.core.listener.MaintenanceListener;
+import killercreepr.usurvive.core.util.ApplyToItem;
 import killercreepr.usurvive.core.vanish.VanishHandler;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -112,6 +118,38 @@ public class DevCommands implements Listener {
             commands.register(
                 Commands.literal("udev")
                     .requires(source -> getExecutor(source).hasPermission("usurvive.command.udev"))
+                    .then(
+                        Commands.literal("items")
+                            .then(
+                                Commands.literal("remove")
+                                    .then(
+                                        Commands.argument("targets", ArgumentTypes.entities())
+                                            .then(
+                                                Commands.argument("item", StringArgumentType.string())
+                                                    .then(
+                                                        Commands.argument("amount", IntegerArgumentType.integer())
+                                                            .executes(ctx ->{
+                                                                var sender = getExecutor(ctx.getSource());
+                                                                var targets = ctx.getArgument("targets", EntitySelectorArgumentResolver.class)
+                                                                    .resolve(ctx.getSource());
+                                                                FileContext<?> fileCtx = new FileContext<FileRegistry>(CfgRegistries.YAML);
+                                                                ItemPredicate item = BukkitCfgHandlers.ITEM_PREDICATE.deserializeFromFile(
+                                                                    fileCtx, new FileGeneric(ctx.getArgument("item", String.class))
+                                                                );
+                                                                int amount = ctx.getArgument("amount", Integer.class);
+                                                                for (Entity p : targets) {
+                                                                    int removed = ApplyToItem.removeItemsApply(
+                                                                        item, amount, apply -> apply.applyAllItems(p)
+                                                                    );
+                                                                    sender.sendMessage("Removed " + removed + " items from " + p.getName());
+                                                                }
+                                                                return 1;
+                                                            })
+                                                    )
+                                            )
+                                    )
+                            )
+                    )
                     .then(
                         Commands.literal("story")
                             .then(

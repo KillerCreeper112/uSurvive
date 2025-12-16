@@ -4,6 +4,7 @@ import killercreepr.crux.api.item.CruxItem;
 import killercreepr.usurvive.core.data.Pack;
 import killercreepr.usurvive.core.entity.memory.ItemPackHolder;
 import org.bukkit.block.BlockState;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -98,6 +99,11 @@ public class ApplyToItem {
     public Result executeIfIterating(Result result, Supplier<Result> run){
         if(result.shouldStopIterating()) return result;
         return run.get();
+    }
+
+    public Result applyAllItems(Entity e){
+        if(e instanceof HumanEntity p) return applyAllItems(p);
+        return Result.DEFAULT;
     }
 
     public Result applyAllItems(HumanEntity p){
