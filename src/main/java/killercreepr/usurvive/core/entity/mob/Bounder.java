@@ -39,6 +39,7 @@ public class Bounder extends UCruxMob {
             e.setCustomNameVisible(false);
             e.setSilent(true);
             e.setShouldBurnInDay(false);
+            e.setAdult();
             load(e);
 
             e.getAttribute(Attribute.FOLLOW_RANGE).setBaseValue(
