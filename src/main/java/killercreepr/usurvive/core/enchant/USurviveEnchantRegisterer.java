@@ -124,7 +124,7 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
         );
         register(
             "joy_whirl", b -> b.description(Component.text("Joy Whirl"))
-                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_SWORD))
+                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.SWORDS))
                 .anvilCost(1)
                 .maxLevel(3)
                 .weight(3)

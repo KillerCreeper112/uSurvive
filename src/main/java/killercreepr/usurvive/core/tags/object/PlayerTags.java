@@ -25,6 +25,7 @@ import killercreepr.usurvive.core.vanish.VanishHandler;
 import net.kyori.adventure.key.Key;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -85,6 +86,16 @@ public class PlayerTags implements ObjectTag<OfflinePlayer> {
                     playTime -= (timeSeconds * 20L);
                 }
                 return Math.max(playTime, 0) + "";
+            }))
+            .add(Tag.string("uworld/players", (args, ctx) ->{
+                if(!offline.isOnline()) return "0";
+                World world = offline.getPlayer().getWorld();
+                int got = 0;
+                for (Player p : world.getPlayers()) {
+                    if(VanishHandler.isVanished(p)) continue;
+                    got++;
+                }
+                return got + "";
             }))
             .add(Tag.string("urecent_deaths", (args, ctx) ->{
                 UPlayer u = UPlayer.getPlayer(offline.getUniqueId());
