@@ -2,6 +2,7 @@ package killercreepr.usurvive.core.entity.mob;
 
 import com.destroystokyo.paper.entity.ai.Goal;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.persistence.CruxPersist;
 import killercreepr.crux.core.util.CruxAttributeUtil;
 import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.crux.core.util.CruxMath;
@@ -41,6 +42,7 @@ public class Bounder extends UCruxMob {
             e.setSilent(true);
             e.setShouldBurnInDay(false);
             e.getEquipment().setItemInMainHand(null);
+            CruxPersist.DISABLE_VANILLA_ATTACK.set(e, true);
             //e.setAdult();
             load(e);
 

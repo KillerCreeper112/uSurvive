@@ -41,6 +41,8 @@ dependencies {
         "E:\\Plugins\\YO\\CruxCore\\run\\plugins\\CrazyAdvancementsAPI-2.21.9.jar",
     ))
 
+    implementation("fr.skytasul", "glowingentities", "1.4.9")
+
     compileOnly("net.luckperms:api:5.4")
     compileOnly("com.github.retrooper:packetevents-spigot:2.8.0")
 

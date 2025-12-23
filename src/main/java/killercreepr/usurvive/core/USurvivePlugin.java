@@ -26,7 +26,6 @@ import killercreepr.crux.core.util.CruxCollection;
 import killercreepr.crux.core.util.CruxString;
 import killercreepr.cruxadvancements.core.config.loader.CfgCrazyAdvancementManagerCfgLoader;
 import killercreepr.cruxadvancements.core.config.loader.GlobalAdvancementManagerCfgLoader;
-import killercreepr.cruxclaims.core.menu.data.CruxClaimsDataParser;
 import killercreepr.cruxconfig.config.bukkit.file.BukkitDataFile;
 import killercreepr.cruxconfig.config.bukkit.file.CruxFolder;
 import killercreepr.cruxconfig.config.bukkit.handler.BukkitCfgHandlers;
@@ -34,7 +33,6 @@ import killercreepr.cruxconfig.config.bukkit.loader.CfgLoader;
 import killercreepr.cruxconfig.config.bukkit.standard.SimpleLangConfig;
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
-import killercreepr.cruxconfig.config.common.element.FileArray;
 import killercreepr.cruxconfig.config.common.element.FileElement;
 import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.cruxconfig.config.common.file.DataFile;
@@ -132,6 +130,7 @@ import killercreepr.usurvive.core.item.QuickAccessItem;
 import killercreepr.usurvive.core.item.USurviveItems;
 import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.listener.*;
+import killercreepr.usurvive.core.listener.glowapi.GlowingInitListener;
 import killercreepr.usurvive.core.mechanics.grapple.standard.StandardGrappleHooks;
 import killercreepr.usurvive.core.mechanics.whip.standard.StandardWhipHooks;
 import killercreepr.usurvive.core.menu.ItemPackMenu;
@@ -175,6 +174,7 @@ import java.util.*;
 import java.util.logging.Level;
 
 public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider {
+
     private static USurvivePlugin instance;
     public static USurvivePlugin inst(){ return instance; }
 
@@ -553,7 +553,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new SporelinkListener(),
             new StoryListener(values),
             new TipListener(playerSettingsManager, USurviveRegistries.TIPS),
-            new EntityHiderListener(this)
+            new EntityHiderListener(this),
+            new GlowingInitListener(this)
             //new WaxPaintingListener()
         );
 
