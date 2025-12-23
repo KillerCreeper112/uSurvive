@@ -3,6 +3,7 @@ package killercreepr.usurvive.core.listener.glowapi;
 import fr.skytasul.glowingentities.GlowingEntities;
 import killercreepr.usurvive.external.glowing.GlowAPI;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.plugin.Plugin;
@@ -19,5 +20,6 @@ public class GlowingInitListener implements Listener {
         if(GlowAPI.glowingEntities() == null){
             GlowAPI.glowingEntities(new GlowingEntities(plugin));
         }
+        HandlerList.unregisterAll(this);
     }
 }
