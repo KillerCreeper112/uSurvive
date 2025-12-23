@@ -111,6 +111,7 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg, Graveston
     public final CfgValue<StructureGenerator> GUIDE_RESOURCE_WORLD_STRUCTURE = new CommonValue<>(){};
     public final NumCfgValue ANIMAL_AGGRESSION_CHANCE = new NumCfgValue(28D);
     public final NumCfgValue BOUNDER_SKIN_AMOUNT = new NumCfgValue(7);
+    public final NumCfgValue BOUNDER_BRUTE_SKIN_AMOUNT = new NumCfgValue(7);
     public final NumCfgValue RANDOM_TIP_TIME = new NumCfgValue(NumberProvider.uniform(6000, 30000));
     public final NumCfgValue RANDOM_TIP_TIME_OCCASIONAL = new NumCfgValue(NumberProvider.uniform(24000, 54000));
 
@@ -473,6 +474,11 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg, Graveston
     @Override
     public NumberProvider BOUNDER_SKIN_AMOUNT() {
         return BOUNDER_SKIN_AMOUNT.value();
+    }
+    @NotNull
+    @Override
+    public NumberProvider BOUNDER_BRUTE_SKIN_AMOUNT() {
+        return BOUNDER_BRUTE_SKIN_AMOUNT.value();
     }
 
     @Override

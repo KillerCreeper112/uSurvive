@@ -302,4 +302,10 @@ public class DefaultValues implements ValuesProvider {
     public NumberProvider BOUNDER_SKIN_AMOUNT() {
         return null;
     }
+
+    @NotNull
+    @Override
+    public NumberProvider BOUNDER_BRUTE_SKIN_AMOUNT() {
+        return null;
+    }
 }

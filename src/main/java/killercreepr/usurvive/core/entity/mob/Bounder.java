@@ -19,6 +19,7 @@ import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
+import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Zombie;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
@@ -34,13 +35,16 @@ public class Bounder extends UCruxMob {
 
     @Override
     protected @NotNull Entity spawnAt(@NotNull Location location, @Nullable Consumer<Entity> consumer) {
-        return location.getWorld().spawn(location, Zombie.class, e ->{
+        return location.getWorld().spawn(location, Skeleton.class, e ->{
             e.customName(Component.text("Bounder"));
             e.setCustomNameVisible(false);
             e.setSilent(true);
             e.setShouldBurnInDay(false);
-            e.setAdult();
+            e.getEquipment().setItemInMainHand(null);
+            //e.setAdult();
             load(e);
+
+            double scale = CruxMath.randomSkewedToward(0.9D, 1.1D, 1.17D, 1D);
 
             e.getAttribute(Attribute.FOLLOW_RANGE).setBaseValue(
                 32
@@ -54,6 +58,7 @@ public class Bounder extends UCruxMob {
             );
 
             CruxAttributeUtil.editInstance(e, Attribute.ATTACK_DAMAGE, instance -> instance.setBaseValue(0D));
+            CruxAttributeUtil.editInstance(e, Attribute.SCALE, instance -> instance.setBaseValue(scale));
 
             //CruxAttribute.addModifier(e, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(7D));
             CruxAttribute.addModifier(e, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(10D));
