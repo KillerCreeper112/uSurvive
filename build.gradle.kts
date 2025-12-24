@@ -49,6 +49,9 @@ dependencies {
     compileOnly(fileTree("libs"){
         include("*.jar")
     })
+    compileOnly(files(
+        "E:\\Plugins\\YO\\CruxCore\\run\\plugins\\MobFarmManager3.0.4.3.jar"
+    ))
 }
 
 paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION

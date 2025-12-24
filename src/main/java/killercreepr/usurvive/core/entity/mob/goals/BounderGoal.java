@@ -4,6 +4,8 @@ import com.destroystokyo.paper.entity.ai.GoalKey;
 import killercreepr.crux.api.communication.CreateSound;
 import killercreepr.cruxentities.api.entity.mob.goal.PathTargetMobGoal;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
+import killercreepr.cruxentities.entity.CruxMob;
+import killercreepr.cruxentities.entity.MobCategory;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.cruxentities.entity.mob.goal.sound.CruxGoalSounds;
 import org.bukkit.Sound;
@@ -61,7 +63,7 @@ public class BounderGoal extends CruxMobGoal implements PathTargetMobGoal {
 
     @Override
     public boolean isValidNaturalTarget(@NotNull LivingEntity target) {
-        if(!(target instanceof Player)) return false;
+        if(!(target instanceof Player || CruxMob.isInCategory(target, MobCategory.FRIEND))) return false;
         return super.isValidNaturalTarget(target);
     }
 
