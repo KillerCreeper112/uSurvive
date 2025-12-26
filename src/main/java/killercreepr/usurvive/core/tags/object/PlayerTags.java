@@ -73,6 +73,11 @@ public class PlayerTags implements ObjectTag<OfflinePlayer> {
                 var p = offline.getPlayer();
                 return getURank(p) + "";
             }))
+            .add(Tag.string("uhas_rank",(args, ctx) ->{
+                if(!offline.isOnline()) return "false";
+                var p = offline.getPlayer();
+                return p.hasPermission("usurvive.rank." + ctx.deserializeString(args.get(0))) + "";
+            }))
             .add(Tag.string("is_afk",(args, ctx) ->{
                 if(!offline.isOnline()) return "false";
                 Player object = offline.getPlayer();
