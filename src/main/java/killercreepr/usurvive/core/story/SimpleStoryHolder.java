@@ -126,7 +126,14 @@ public class SimpleStoryHolder extends PlayerTickedDataHolder implements AutoSav
             //if(currentProgression == null) setCurrentProgression(new Guide1Progression());
             return;
         }
-        storyProgression.putAll(cfg.deserializeOrDefault("current_progression", new TypeToken<Map<Key, StoryProgression>>(){}.getType(), Map.of()));
+        if(cfg.getElement("current_progression") instanceof FileArray a){
+            a.forEach(ele ->{
+                StoryProgression value = cfg.fileRegistry().deserializeFromFile(StoryProgression.class, ele);
+                if(value == null) return;
+                storyProgression.put(value.key(), value);
+            });
+        }
+        //storyProgression.putAll(cfg.deserializeOrDefault("current_progression", new TypeToken<Map<Key, StoryProgression>>(){}.getType(), Map.of()));
         storyData.putAll(cfg.deserializeOrDefault("completed", new TypeToken<Map<Key, StoryProgressData>>(){}.getType(), Map.of()));
         cfg.close();
         /*if(currentProgression == null && !isCompleted(Guide1Progression.KEY)){
