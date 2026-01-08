@@ -24,6 +24,8 @@ import killercreepr.usurvive.core.entity.sleeper.BedSlumberData;
 import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.util.RespawnUtil;
 import killercreepr.usurvive.core.world.module.SimpleSleeperWorldModule;
+import net.minecraft.world.attribute.BedRule;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Bed;
@@ -44,7 +46,7 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.UUID;
 
 public class BedListener implements Listener {
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerInteract(PlayerInteractEvent event) {
         if(!event.getAction().isRightClick()) return;
         Player p = event.getPlayer();
@@ -112,7 +114,9 @@ public class BedListener implements Listener {
     public boolean canSleepInBed(Block b){
         World world = b.getWorld();
         if(world.getEnvironment() == World.Environment.NETHER) return false;
-        return world.isNatural();//todo || world.isBedWorks();
+        BedRule bedRule = ((CraftWorld) world).getHandle().environmentAttributes().getDimensionValue(EnvironmentAttributes.BED_RULE);
+        return !bedRule.explodes();
+        //return world.isBedWorks(); //world.isNatural();//todo || world.isBedWorks();
     }
 
     public boolean isBedOccupied(Block b, Bed bed){
