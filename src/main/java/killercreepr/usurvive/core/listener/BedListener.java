@@ -24,11 +24,10 @@ import killercreepr.usurvive.core.entity.sleeper.BedSlumberData;
 import killercreepr.usurvive.core.lang.Lang;
 import killercreepr.usurvive.core.util.RespawnUtil;
 import killercreepr.usurvive.core.world.module.SimpleSleeperWorldModule;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Bed;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -112,7 +111,8 @@ public class BedListener implements Listener {
 
     public boolean canSleepInBed(Block b){
         World world = b.getWorld();
-        return world.isNatural() || world.isBedWorks();
+        if(world.getEnvironment() == World.Environment.NETHER) return false;
+        return world.isNatural();//todo || world.isBedWorks();
     }
 
     public boolean isBedOccupied(Block b, Bed bed){
