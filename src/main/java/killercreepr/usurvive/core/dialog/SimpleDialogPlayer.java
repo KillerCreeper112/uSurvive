@@ -208,6 +208,14 @@ public class SimpleDialogPlayer implements DialogPlayer {
         return null;
     }
 
+    @Override
+    public void endCurrentDialog(){
+        var dialog = getDialog();
+        if(dialog == null) return;
+        dialog.onEnd(this);
+        setDialog(null);
+    }
+
     public void dialogTick(){
         var dialog = getDialog();
         if(dialog == null){

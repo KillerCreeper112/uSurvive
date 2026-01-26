@@ -18,6 +18,7 @@ public interface DialogPlayer {
 
     boolean isEmpty();
     boolean isPlaying();
+    void endCurrentDialog();
 
     <T> T getInfo(String id, BiFunction<DataInfoHolder, String, T> function);
     <T> T getInfoOrDefault(String id, BiFunction<DataInfoHolder, String, T> function, T fallback);
