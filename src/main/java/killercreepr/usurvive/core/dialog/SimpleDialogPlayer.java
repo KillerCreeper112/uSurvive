@@ -11,6 +11,8 @@ import killercreepr.crux.core.util.CruxMath;
 import killercreepr.usurvive.api.dialog.DialogContent;
 import killercreepr.usurvive.api.dialog.DialogLine;
 import killercreepr.usurvive.api.dialog.DialogPlayer;
+import killercreepr.usurvive.api.event.DialogNaturallyEndEvent;
+import killercreepr.usurvive.api.event.DialogStartEvent;
 import killercreepr.usurvive.core.component.DialogComponents;
 import killercreepr.usurvive.core.lang.Lang;
 import net.kyori.adventure.audience.Audience;
@@ -18,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 //todo ADD MULTI-PLAYER SUPPORT for TEXT DISPLAYS
 public class SimpleDialogPlayer implements DialogPlayer {
@@ -90,7 +93,10 @@ public class SimpleDialogPlayer implements DialogPlayer {
         this.cachePreParsedIndex = -1;*/
         this.currentDialog = new Data();
         this.currentDialog.dialog = dialog;
-        if(dialog != null) dialog.onStart(this);
+        if(dialog != null){
+            dialog.onStart(this);
+            new DialogStartEvent(this, dialog).callEvent();
+        }
     }
 
     public <T> T getInfo(String id, BiFunction<DataInfoHolder,String, T> function){
@@ -313,6 +319,11 @@ public class SimpleDialogPlayer implements DialogPlayer {
     }
 
     @Override
+    public void forEachAudience(Consumer<Audience> consumer){
+        audience.forEach(consumer);
+    }
+
+    @Override
     public TextParserContext parserContext() {
         return TextParserContext.builder()
             .tags(buildDynamicTags())
@@ -360,6 +371,7 @@ public class SimpleDialogPlayer implements DialogPlayer {
                 setDialog(null);
                 if(current != null){
                     current.onDialogEnd(this);
+                    new DialogNaturallyEndEvent(this, current).callEvent();
                     current.onEnd(this);
                 }
                 return null;

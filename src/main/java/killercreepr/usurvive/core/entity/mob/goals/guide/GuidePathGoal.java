@@ -10,6 +10,7 @@ import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.usurvive.api.dialog.DialogPlayer;
+import killercreepr.usurvive.api.dialog.DialogTalker;
 import killercreepr.usurvive.api.guide.GuidePoint;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.dialog.DialogContentLinePair;
@@ -134,7 +135,25 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
 
     protected Player user;
     protected GuidePoint guidePoint;
-    protected DialogPlayer dialogPlayer = new UserDialogPlayer(){
+
+    public static abstract class Dialoger extends UserDialogPlayer implements DialogTalker {
+        @Override
+        public int dialogSplitSpeedValue(int value) {
+            return Math.round(super.dialogSplitSpeedValue(value) / 2f);
+        }
+
+        @Override
+        public int dialogWaitTimeValue(int value) {
+            return Math.round(super.dialogWaitTimeValue(value) / 2f);
+        }
+    }
+
+    protected DialogPlayer dialogPlayer = new Dialoger(){
+        @Override
+        public Entity getTalker() {
+            return mob;
+        }
+
         @Override
         public void onDialogTicking() {
             super.onDialogTicking();
@@ -150,16 +169,6 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
         public void onDialogSpeaking() {
             super.onDialogSpeaking();
             updateText(dialogDisplay(), currentDialogLineFor(user));
-        }
-
-        @Override
-        public int dialogSplitSpeedValue(int value) {
-            return Math.round(super.dialogSplitSpeedValue(value) / 2f);
-        }
-
-        @Override
-        public int dialogWaitTimeValue(int value) {
-            return Math.round(super.dialogWaitTimeValue(value) / 2f);
         }
     };
 

@@ -8,6 +8,7 @@ import net.kyori.adventure.audience.Audience;
 
 import java.util.Collection;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 public interface DialogPlayer {
     DialogContent getDialog();
@@ -48,6 +49,7 @@ public interface DialogPlayer {
     void removeAudience(Audience... audiences);
     boolean hasAudience(Audience audience);
     Collection<Audience> audience();
+    void forEachAudience(Consumer<Audience> consumer);
     TextParserContext parserContext();
     TextParserContext audienceParserContext(Audience audience);
     MergedTagContainer buildAudienceDynamicTags(Audience audience);

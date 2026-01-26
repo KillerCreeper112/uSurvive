@@ -3,14 +3,41 @@ package killercreepr.usurvive.core.loot;
 import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.loot.LootContext;
 import killercreepr.cruxentities.api.combat.EntityDamager;
-import killercreepr.usurvive.api.event.EntityDeepSlumberEvent;
-import killercreepr.usurvive.api.event.EntityLeaveSlumberEvent;
-import killercreepr.usurvive.api.event.EntitySlumberEvent;
-import killercreepr.usurvive.api.event.PostItemInfusePotionsEvent;
+import killercreepr.usurvive.api.dialog.DialogTalker;
+import killercreepr.usurvive.api.event.*;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 public class USurviveEventLootContexts {
+    public static LootContext.Builder builder(@NotNull DialogNaturallyEndEvent event){
+        return builder((DialogEvent) event);
+    }
+    public static LootContext.Builder builder(@NotNull DialogStartEvent event){
+        return builder((DialogEvent) event);
+    }
+    private static LootContext.Builder builder(@NotNull DialogEvent event){
+        var talker = event.getDialogPlayer() instanceof DialogTalker t ? t.getTalker() : null;
+        Entity mainTarget = null;
+        for (Audience audience : event.getDialogPlayer().audience()) {
+            if(audience instanceof Entity e){
+                mainTarget = e;
+                break;
+            }
+        }
+        return builder()
+          .info(
+            DataExchange.builder()
+              .putAll(event.getDialogPlayer(), "dialog_player")
+              .putAll(event.getDialogContent(), "dialog_content")
+              .putAll(talker, "talker")
+              .build()
+          )
+          .location(talker == null ? (mainTarget == null ? null : mainTarget.getLocation()) : talker.getLocation())
+          .looter(mainTarget)
+          .looted(talker == null ? event.getDialogPlayer() : talker)
+          ;
+    }
     public static LootContext.Builder builder(@NotNull PostItemInfusePotionsEvent event){
         Entity itemHolder = event.getItemHolder();
         Entity owner = EntityDamager.getOwner(itemHolder);
