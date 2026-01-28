@@ -156,6 +156,7 @@ public class EntityDialogerHolder extends PlayerTickedDataHolder {
       public Reference<Entity> entity;
       public Reference<TextDisplay> display;
       public Supplier<TextDisplay> displaySpawner;
+      public Runnable onRemoved;
 
       public Builder entity(Entity entity){
         this.entityUUID = entity.getUniqueId();
@@ -168,8 +169,15 @@ public class EntityDialogerHolder extends PlayerTickedDataHolder {
         return this;
       }
 
+      public Builder onRemoved(Runnable runnable){
+        onRemoved = runnable;
+        return this;
+      }
+
       public Entry build(){
-        return new Entry(holder, entityUUID, entity, display, displaySpawner);
+        var entry = new Entry(holder, entityUUID, entity, display, displaySpawner);
+        entry.onRemoved = onRemoved;
+        return entry;
       }
     }
 
@@ -178,6 +186,7 @@ public class EntityDialogerHolder extends PlayerTickedDataHolder {
     public final Reference<Entity> entity;
     public Reference<TextDisplay> display;
     public final Supplier<TextDisplay> displaySpawner;
+    public Runnable onRemoved;
 
     public DialogPlayer dialogPlayer = new Dialoger(){
       @Override
@@ -219,7 +228,8 @@ public class EntityDialogerHolder extends PlayerTickedDataHolder {
       }
     };
 
-    public Entry(EntityDialogerHolder holder, UUID entityUUID, Reference<Entity> entity, Reference<TextDisplay> display, Supplier<TextDisplay> displaySpawner) {
+    public Entry(EntityDialogerHolder holder, UUID entityUUID, Reference<Entity> entity, Reference<TextDisplay> display,
+                 Supplier<TextDisplay> displaySpawner) {
       this.holder = holder;
       this.entityUUID = entityUUID;
       this.entity = entity;
@@ -228,7 +238,7 @@ public class EntityDialogerHolder extends PlayerTickedDataHolder {
     }
 
     public void onRemoved(){
-
+      if(onRemoved != null) onRemoved.run();
     }
 
     public Location getDialogLocation(){
