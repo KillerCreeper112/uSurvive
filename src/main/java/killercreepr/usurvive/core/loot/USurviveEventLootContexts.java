@@ -1,6 +1,7 @@
 package killercreepr.usurvive.core.loot;
 
 import killercreepr.crux.api.data.DataExchange;
+import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.loot.LootContext;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.usurvive.api.dialog.DialogTalker;
@@ -15,6 +16,15 @@ public class USurviveEventLootContexts {
     }
     public static LootContext.Builder builder(@NotNull DialogStartEvent event){
         return builder((DialogEvent) event);
+    }
+    public static LootContext.Builder builder(@NotNull DialogSendContentInfoEvent event){
+        return builder((DialogEvent) event)
+          .edit(builder ->{
+              builder.info(
+                builder.info().append(event.getInfo())
+                  .append("event_info", Holder.direct(event.getInfo()))
+              );
+          });
     }
     private static LootContext.Builder builder(@NotNull DialogEvent event){
         var talker = event.getDialogPlayer() instanceof DialogTalker t ? t.getTalker() : null;
