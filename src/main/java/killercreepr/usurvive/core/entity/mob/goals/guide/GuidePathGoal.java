@@ -52,6 +52,7 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
         if(dialogDisplay != null) return dialogDisplay;
         Location loc = getDialogLocation();
         TextDisplay text = loc.getWorld().spawn(loc, TextDisplay.class, e ->{
+            e.setPersistent(false);
             e.setSeeThrough(true);
             e.setBillboard(Display.Billboard.CENTER);
             e.setVisibleByDefault(false);
