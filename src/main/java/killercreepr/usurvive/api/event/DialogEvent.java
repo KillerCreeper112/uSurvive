@@ -1,5 +1,6 @@
 package killercreepr.usurvive.api.event;
 
+import killercreepr.crux.core.Crux;
 import killercreepr.usurvive.api.dialog.DialogContent;
 import killercreepr.usurvive.api.dialog.DialogPlayer;
 import org.bukkit.event.Event;
@@ -13,6 +14,7 @@ public class DialogEvent extends Event {
   protected final DialogContent dialogContent;
 
   public DialogEvent(DialogPlayer dialogPlayer, DialogContent dialogContent) {
+    super(!Crux.isPrimaryThread());
     this.dialogPlayer = dialogPlayer;
     this.dialogContent = dialogContent;
   }

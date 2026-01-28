@@ -49,4 +49,29 @@ public class WrappedDialogContent implements DialogContent {
     public @NotNull DataExchange info() {
         return child.info();
     }
+
+    @Override
+    public void onSendInfo(DataExchange info) {
+        child.onSendInfo(info);
+    }
+
+    @Override
+    public void onStart(DialogPlayer player) {
+        child.onStart(player);
+    }
+
+    @Override
+    public void onPause(DialogPlayer player) {
+        child.onPause(player);
+    }
+
+    @Override
+    public void onDialogEnd(DialogPlayer player) {
+        child.onDialogEnd(player);
+    }
+
+    @Override
+    public void onEnd(DialogPlayer player) {
+        child.onEnd(player);
+    }
 }
