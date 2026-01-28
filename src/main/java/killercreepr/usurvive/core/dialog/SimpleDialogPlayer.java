@@ -252,12 +252,14 @@ public class SimpleDialogPlayer implements DialogPlayer {
             var remove = getInfoOrDefault("remove_on_cant_play", (info, id) -> info.info().getOrDefault(id, Boolean.class, true), true);
             if(remove){
                 dialog.onEnd(this);
-                onDialogEnd(currentDialog);
+                var copyData = currentDialog;
+                setDialog(null);
+                onDialogEnd(copyData);
             } else{
                 dialog.onPause(this);
                 pushedQueue.offerFirst(currentDialog);
+                setDialog(null);
             }
-            setDialog(null);
             return;
         }
 

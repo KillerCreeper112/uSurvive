@@ -135,6 +135,7 @@ public class EntityDialogerHolder extends PlayerTickedDataHolder {
 
   public TextDisplay spawnDefaultTextDisplay(Location loc, Player user){
     TextDisplay text = loc.getWorld().spawn(loc, TextDisplay.class, e ->{
+      e.setPersistent(false);
       e.setSeeThrough(true);
       e.setBillboard(Display.Billboard.CENTER);
       e.setVisibleByDefault(false);

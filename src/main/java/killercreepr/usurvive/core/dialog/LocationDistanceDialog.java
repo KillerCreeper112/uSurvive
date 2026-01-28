@@ -28,13 +28,13 @@ public class LocationDistanceDialog extends SimpleDialogContent {
 
   @Override
   public boolean canPlay(DialogPlayer player) {
-    return super.canPlay(player) || isAnyNotNear(player.audience());
+    return super.canPlay(player) && isAnyNear(player.audience());
   }
 
-  public boolean isAnyNotNear(Collection<Audience> list){
+  public boolean isAnyNear(Collection<Audience> list){
     var loc = location.value();
     for (Audience audience : list) {
-      if(audience instanceof Entity e && !isNear(e, loc)) return true;
+      if(audience instanceof Entity e && isNear(e, loc)) return true;
     }
     return false;
   }
