@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.config;
 
+import killercreepr.crux.api.entity.predicate.EntityPredicate;
 import killercreepr.crux.api.loot.conditions.LootCondition;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.cruxadvancements.api.advancement.objective.AdvancementObjective;
@@ -16,10 +17,8 @@ import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.advancement.objective.*;
 import killercreepr.usurvive.core.config.handler.*;
-import killercreepr.usurvive.core.loot.condition.BaseItemUpgradedFromCondition;
-import killercreepr.usurvive.core.loot.condition.EntityHasRankCondition;
-import killercreepr.usurvive.core.loot.condition.EntityMythicMobCondition;
-import killercreepr.usurvive.core.loot.condition.PlayerHasItemCondition;
+import killercreepr.usurvive.core.entity.predicate.MythicMobsEntityPredicate;
+import killercreepr.usurvive.core.loot.condition.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,6 +32,8 @@ public class CfgHook {
 
     public static void load() {
         registerLoot(BukkitCfgHandlers.LOOT_CONDITION);
+
+        BukkitCfgHandlers.ENTITY_PREDICATE.NAMESPACED_TYPES.put("mythicmobs", MythicMobsEntityPredicate::new);
 
         fileAdvancementObjective.registerCustomHandler(new FileSimpleAdvanceObjective<>(USurvivePlugin.inst().key("item_infuse_potion")) {
 
@@ -137,6 +138,16 @@ public class CfgHook {
                 return new EntityMythicMobCondition(
                     target,
                     registry.deserializeFromFile(String.class, e.get("mythic_mob"))
+                );
+            }
+        });
+        file.registerCustomHandler(new SimpleFileLootCondition<>(USurvivePlugin.inst().key("entity_dialoger/has_dialog")) {
+            @Override
+            public @NotNull LootCondition deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e, @NotNull String target) {
+                FileRegistry registry = ctx.getRegistry();
+                return new EntityDialogerHasDialogCondition(
+                  target,
+                  registry.deserializeFromFile(EntityPredicate.class, e.get("talker"))
                 );
             }
         });
