@@ -75,6 +75,7 @@ public class EntityDialogerHolder extends PlayerTickedDataHolder {
       if(got == null) continue;
       entries.remove(got.entityUUID);
       removeBuffer[i] = null;
+      got.onRemoved();
     }
     removeCount = 0;
   }
@@ -224,6 +225,10 @@ public class EntityDialogerHolder extends PlayerTickedDataHolder {
       this.entity = entity;
       this.display = display;
       this.displaySpawner = displaySpawner;
+    }
+
+    public void onRemoved(){
+
     }
 
     public Location getDialogLocation(){
