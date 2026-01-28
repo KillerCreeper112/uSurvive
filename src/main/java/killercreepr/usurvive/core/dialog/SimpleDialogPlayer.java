@@ -382,8 +382,8 @@ public class SimpleDialogPlayer implements DialogPlayer {
                     current.onDialogEnd(this);
                     new DialogNaturallyEndEvent(this, current).callEvent();
                     current.onEnd(this);
-                    onDialogEnd(currentData);
                 }
+                onDialogEnd(currentData);
                 return null;
             }
 
