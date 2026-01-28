@@ -3,6 +3,7 @@ package killercreepr.usurvive.core.dialog.action;
 import killercreepr.crux.api.data.DataExchange;
 import killercreepr.usurvive.api.dialog.DialogAction;
 import killercreepr.usurvive.api.dialog.DialogPlayer;
+import killercreepr.usurvive.api.event.DialogSendContentInfoEvent;
 
 public class SendContentInfoDialogAction implements DialogAction {
     protected final DataExchange start;
@@ -22,7 +23,9 @@ public class SendContentInfoDialogAction implements DialogAction {
 
     public void performCommand(DataExchange cmds, DialogPlayer player){
         if(cmds == null) return;
-        player.getDialog().onSendInfo(cmds);
+        var dialog = player.getDialog();
+        dialog.onSendInfo(cmds);
+        new DialogSendContentInfoEvent(player, dialog, cmds).callEvent();
     }
 
     @Override
