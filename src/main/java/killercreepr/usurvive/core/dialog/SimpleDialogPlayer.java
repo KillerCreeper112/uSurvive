@@ -99,6 +99,10 @@ public class SimpleDialogPlayer implements DialogPlayer {
         }
     }
 
+    public void onDialogEnd(SimpleDialogPlayer.Data data){
+
+    }
+
     public <T> T getInfo(String id, BiFunction<DataInfoHolder,String, T> function){
         return getInfoOrDefault(id, function, null);
     }
@@ -219,6 +223,7 @@ public class SimpleDialogPlayer implements DialogPlayer {
         var dialog = getDialog();
         if(dialog == null) return;
         dialog.onEnd(this);
+        onDialogEnd(currentDialog);
         setDialog(null);
     }
 
@@ -247,6 +252,7 @@ public class SimpleDialogPlayer implements DialogPlayer {
             var remove = getInfoOrDefault("remove_on_cant_play", (info, id) -> info.info().getOrDefault(id, Boolean.class, true), true);
             if(remove){
                 dialog.onEnd(this);
+                onDialogEnd(currentDialog);
             } else{
                 dialog.onPause(this);
                 pushedQueue.offerFirst(currentDialog);
@@ -368,11 +374,13 @@ public class SimpleDialogPlayer implements DialogPlayer {
         if (currentDialog.currentDialogLine == null) {
             if (currentDialog.dialogIndex >= getDialog().dialog().size()) {
                 var current = getDialog();
+                var currentData = currentDialog;
                 setDialog(null);
                 if(current != null){
                     current.onDialogEnd(this);
                     new DialogNaturallyEndEvent(this, current).callEvent();
                     current.onEnd(this);
+                    onDialogEnd(currentData);
                 }
                 return null;
             }
