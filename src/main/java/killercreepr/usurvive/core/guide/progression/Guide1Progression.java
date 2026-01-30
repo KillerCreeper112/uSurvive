@@ -109,7 +109,8 @@ public class Guide1Progression extends GenericGuideProgression implements Listen
     protected GuidePathGoal npcGoal;
 
     public void setupNPC(Player p){
-        npc = (Mob) USurviveMobs.GUIDE_1_NPC.spawn(cfg().GUIDE_1_POINTS.value().getFirst().pos().toLocation());
+        var worldKey = p.getWorld().key();
+        npc = (Mob) USurviveMobs.GUIDE_1_NPC.spawn(cfg().GUIDE_1_POINTS.value().getFirst().posWithDefaultWorld(worldKey).toLocation());
         npc.setVisibleByDefault(false);
         p.showEntity(Crux.getMainPlugin(), npc);
         npcGoal = CruxGoalUtil.getGoal(npc, GuidePathGoal.class);
@@ -117,7 +118,7 @@ public class Guide1Progression extends GenericGuideProgression implements Listen
 
         cfg().GUIDE_1_POINTS.valueOr(List.of()).forEach(pos ->{
             nodes.add(GuidePathGoalNode.guidePathGoalNode(
-                GoalNode.distanceGoalNode(pos.pos().toLocation(), 1.5D),
+                GoalNode.distanceGoalNode(pos.posWithDefaultWorld(worldKey).toLocation(), 1.5D),
                 pos
             ));
         });
@@ -156,7 +157,7 @@ public class Guide1Progression extends GenericGuideProgression implements Listen
             if((npcGoal == null || !npcGoal.isSpeaking() || npcGoal.isMoving())){
                 GuidePoint nearest = CruxCollection.getLast(cfg().GUIDE_1_POINTS.value());
                 if(nearest != null){
-                    List<Location> path = new GuidePathfinder(p).findPath(p.getLocation(), nearest.pos().toLocation(), 0.5D,
+                    List<Location> path = new GuidePathfinder(p).findPath(p.getLocation(), nearest.posWithDefaultWorld(p.getWorld().key()).toLocation(), 0.5D,
                         cfg().GUIDE_1_MAX_PARTICLE_POINTS.value().value().intValue());
                     TrailRenderer.renderTrail(p, path);
                 }
