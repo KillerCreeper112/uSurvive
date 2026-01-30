@@ -4,6 +4,7 @@ import killercreepr.crux.core.Crux;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.registries.CruxEntityRegistries;
 import killercreepr.usurvive.core.entity.mob.*;
+import killercreepr.usurvive.core.entity.mob.guide.GenericNPCHusk;
 import killercreepr.usurvive.core.entity.mob.guide.Guide1NPC;
 import org.bukkit.entity.*;
 
@@ -118,6 +119,7 @@ public class USurviveMobs {
     public static final CruxMob GUIDE_1_NPC = CruxEntityRegistries.ENTITIES.register(new Guide1NPC(Crux.key("guide/1")));
     public static final CruxMob BOUNDER = CruxEntityRegistries.ENTITIES.register(new Bounder(Crux.key("bounder")));
     public static final CruxMob BOUNDER_BRUTE = CruxEntityRegistries.ENTITIES.register(new BounderBrute(Crux.key("bounder_brute")));
+    public static final CruxMob GENERIC_NPC_HUSK = CruxEntityRegistries.ENTITIES.register(new GenericNPCHusk(Crux.key("npc/generic_husk")));
 
     private static void registerVariants(Consumer<Class<? extends Mob>> consumer, Class<? extends Mob>... types){
         for(var clazz : types){

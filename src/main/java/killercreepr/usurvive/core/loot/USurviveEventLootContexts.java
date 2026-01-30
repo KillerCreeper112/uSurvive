@@ -4,6 +4,9 @@ import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.loot.LootContext;
 import killercreepr.cruxentities.api.combat.EntityDamager;
+import killercreepr.cruxentities.api.event.EntityPathTargetEvent;
+import killercreepr.cruxentities.api.event.EntityPathTargetFinishEvent;
+import killercreepr.cruxentities.api.event.EntityPathTargetStartEvent;
 import killercreepr.usurvive.api.dialog.DialogTalker;
 import killercreepr.usurvive.api.event.*;
 import net.kyori.adventure.audience.Audience;
@@ -16,6 +19,25 @@ public class USurviveEventLootContexts {
     }
     public static LootContext.Builder builder(@NotNull DialogStartEvent event){
         return builder((DialogEvent) event);
+    }
+    public static LootContext.Builder builder(@NotNull EntityPathTargetFinishEvent event){
+        return builder((EntityPathTargetEvent) event);
+    }
+    public static LootContext.Builder builder(@NotNull EntityPathTargetStartEvent event){
+        return builder((EntityPathTargetEvent) event);
+    }
+    private static LootContext.Builder builder(@NotNull EntityPathTargetEvent event){
+        var e = event.getEntity();
+        var goal = event.getGoal();
+        return builder()
+          .info(
+            DataExchange.builder()
+              .build()
+          )
+          .location(e.getLocation())
+          .looter(e)
+          .looted(goal)
+          ;
     }
     public static LootContext.Builder builder(@NotNull DialogSendContentInfoEvent event){
         return builder((DialogEvent) event)

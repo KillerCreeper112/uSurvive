@@ -151,6 +151,16 @@ public class CfgHook {
                 );
             }
         });
+        file.registerCustomHandler(new SimpleFileLootCondition<>(USurvivePlugin.inst().key("mob/path/has_path_target")) {
+            @Override
+            public @NotNull LootCondition deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e, @NotNull String target) {
+                FileRegistry registry = ctx.getRegistry();
+                return new EntityDialogerHasDialogCondition(
+                  target,
+                  registry.deserializeFromFile(EntityPredicate.class, e.get("talker"))
+                );
+            }
+        });
     }
 
 }
