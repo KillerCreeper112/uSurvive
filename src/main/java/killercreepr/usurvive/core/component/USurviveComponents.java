@@ -126,6 +126,9 @@ public class USurviveComponents {
     public static final DataComponentType<PartyBurstComponent> PARTY_BURST = register("party_burst", builder ->
         builder.persistTextParser(USurviveCompParsers.PARTY_BURST.createInput(Crux.key("party_burst"))));
 
+    public static final DataComponentType<EjectiveItemLootComponent> EJECTIVE_ITEM_LOOT = register("ejective_item_loot", builder ->
+      builder.persistTextParser(USurviveCompParsers.EJECTIVE_ITEM_LOOT.createInput(Crux.key("ejective_item_loot"))));
+
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());
     }

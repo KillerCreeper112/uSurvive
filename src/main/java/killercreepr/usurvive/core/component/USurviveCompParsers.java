@@ -4,6 +4,7 @@ import killercreepr.crux.api.component.parser.InputDecodeContext;
 import killercreepr.crux.api.component.parser.hybrid.PersistTextParser;
 import killercreepr.crux.api.component.parser.hybrid.TextInputField;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import killercreepr.crux.core.component.parser.type.ComponentInputListParsers;
 import killercreepr.crux.core.component.parser.type.ComponentInputParsers;
 import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.cruxattributes.core.component.CruxAttributeCompParsers;
@@ -471,4 +472,12 @@ public class USurviveCompParsers {
             ctx.get("attributes"),
             ctx.get("vanilla_particles")
         ));
+
+  public static final PersistTextParser<EjectiveItemLootComponent> EJECTIVE_ITEM_LOOT = PersistTextParser.mapBuilder(EjectiveItemLootComponent.class)
+    .field("eject_rate", TextInputField.field(PersistTextParser.INTEGER, e -> e.ejectRate))
+    .field("loot", TextInputField.field(ComponentInputParsers.LIST.ITEM_LOOT_TABLE, e -> e.loot))
+    .apply(ctx -> new EjectiveItemLootComponent(
+      ctx.get("loot"),
+      ctx.getOptional("eject_rate", 10)
+    ));
 }

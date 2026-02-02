@@ -554,7 +554,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new StoryListener(values),
             new TipListener(playerSettingsManager, USurviveRegistries.TIPS),
             new EntityHiderListener(this),
-            new GlowingInitListener(this)
+            new GlowingInitListener(this),
+            new EjectiveItemLootListener()
             //new WaxPaintingListener()
         );
 
