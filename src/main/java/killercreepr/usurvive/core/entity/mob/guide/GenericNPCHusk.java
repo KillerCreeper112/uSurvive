@@ -46,10 +46,10 @@ public class GenericNPCHusk extends SimpleCruxMob {
     public void load(@NotNull Entity e) {
         super.load(e);
         if(!(e instanceof Mob mob)) return;
-        var disguise = new PlayerDisguise("guide_1");
+        /*var disguise = new PlayerDisguise("guide_1");
         disguise.setNameVisible(false);
         disguise.setName("");
-        DisguiseAPI.disguiseEntity(mob, disguise);
+        DisguiseAPI.disguiseEntity(mob, disguise);*/
         Crux.getServer().getMobGoals().removeAllGoals(mob);
         CruxGoalUtil.addIfNotPresent(mob, GuidePathGoal.class, 0, () -> new GuidePathGoal(mob));
     }

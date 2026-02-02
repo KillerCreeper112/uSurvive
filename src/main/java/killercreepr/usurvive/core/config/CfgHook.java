@@ -1,14 +1,17 @@
 package killercreepr.usurvive.core.config;
 
+import killercreepr.crux.api.entity.dynamic.DynamicEntityApplierSingleComponent;
 import killercreepr.crux.api.entity.predicate.EntityPredicate;
 import killercreepr.crux.api.loot.conditions.LootCondition;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
+import killercreepr.crux.core.entity.dynamic.component.DynamicEntityApplierGlowing;
 import killercreepr.cruxadvancements.api.advancement.objective.AdvancementObjective;
 import killercreepr.cruxadvancements.core.advancement.objective.ObjectiveCommonData;
 import killercreepr.cruxadvancements.core.config.CruxAdvanceCfgData;
 import killercreepr.cruxadvancements.core.config.handler.FileAdvancementObjective;
 import killercreepr.cruxadvancements.core.config.handler.FileSimpleAdvanceObjective;
 import killercreepr.cruxconfig.config.bukkit.handler.BukkitCfgHandlers;
+import killercreepr.cruxconfig.config.bukkit.handler.impl.entity.component.FileSingleDynamicEntityApplierComponent;
 import killercreepr.cruxconfig.config.bukkit.handler.impl.loot.FileLootCondition;
 import killercreepr.cruxconfig.config.bukkit.handler.impl.loot.SimpleFileLootCondition;
 import killercreepr.cruxconfig.config.common.FileContext;
@@ -17,6 +20,7 @@ import killercreepr.cruxconfig.config.common.element.FileObject;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.advancement.objective.*;
 import killercreepr.usurvive.core.config.handler.*;
+import killercreepr.usurvive.core.entity.dynamic.component.DynamicEntityApplierDisguiseAsPlayer;
 import killercreepr.usurvive.core.entity.predicate.MythicMobsEntityPredicate;
 import killercreepr.usurvive.core.loot.condition.*;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +36,20 @@ public class CfgHook {
 
     public static void load() {
         registerLoot(BukkitCfgHandlers.LOOT_CONDITION);
+
+        var entityApplierReg = BukkitCfgHandlers.DYNAMIC_ENTITY_APPLIER.getComponentRegistry();
+        entityApplierReg.register("libs_disguises/disguise_as_player", new FileSingleDynamicEntityApplierComponent<>(DynamicEntityApplierSingleComponent.class) {
+
+            @Override
+            public DynamicEntityApplierSingleComponent deserialize(Object value) {
+                return new DynamicEntityApplierDisguiseAsPlayer(value);
+            }
+
+            @Override
+            public @NotNull String jsonSerializerID() {
+                return "dynamic_entity_applier_libs_disguises/disguise_as_player";
+            }
+        });
 
         BukkitCfgHandlers.ENTITY_PREDICATE.NAMESPACED_TYPES.put("mythicmobs", MythicMobsEntityPredicate::new);
 
