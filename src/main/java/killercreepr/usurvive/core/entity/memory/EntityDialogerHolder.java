@@ -26,23 +26,23 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class EntityDialogerHolder extends PlayerTickedDataHolder {
-  public static EntityDialogerHolder holder(Entity p){
+  public static EntityDialogerHolder holder(Entity p) {
     var mem = EntityMemory.getMain(p.getUniqueId());
-    if(mem == null) return null;
+    if (mem == null) return null;
     return mem.getDataHolder(EntityDialogerHolder.class);
     //return EntityMemory.getDataHolder(p, EntityDialogerHolder.class);
   }
 
-  public static EntityDialogerHolder holderOrCreate(Entity e){
-    if(!(e instanceof Player p)) return null;
+  public static EntityDialogerHolder holderOrCreate(Entity e) {
+    if (!(e instanceof Player p)) return null;
 
     var mem = EntityMemory.getMain(p.getUniqueId());
-    if(mem == null){
+    if (mem == null) {
       mem = new SimplePlayerMemoryMainThread(p);
       EntityMemory.registerSilent(mem);
     }
-    return mem.getDataHolderOrCompute(EntityDialogerHolder.class, mm ->{
-      if(!(mm instanceof PlayerMemory m)) return null;
+    return mem.getDataHolderOrCompute(EntityDialogerHolder.class, mm -> {
+      if (!(mm instanceof PlayerMemory m)) return null;
       return new EntityDialogerHolder(m);
     });
 
@@ -53,9 +53,11 @@ public class EntityDialogerHolder extends PlayerTickedDataHolder {
   }
 
   public static final Key KEY = Crux.key("quest/entity_dialoger");
+
   public EntityDialogerHolder(@NotNull Key key, @NotNull PlayerMemory parent) {
     super(key, parent);
   }
+
   public EntityDialogerHolder(@NotNull PlayerMemory parent) {
     this(KEY, parent);
   }
@@ -65,14 +67,35 @@ public class EntityDialogerHolder extends PlayerTickedDataHolder {
     return super.shouldRemoveFromMemory(e) || (removeCount < 1 && entries.isEmpty());
   }
 
+  @Override
+  protected void removingFromMemory(@Nullable Player e) {
+    super.removingFromMemory(e);
+    Crux.scheduler().runTaskMain(this::cleanUp);
+  }
+
+  @Override
+  public void onMemoryUnload(@NotNull Entity e) {
+    super.onMemoryUnload(e);
+    Crux.scheduler().runTaskMain(this::cleanUp);
+  }
+
+  public void cleanUp() {
+    for (Entry value : entries.values()) {
+      value.cleanUp();
+    }
+    entries.clear();
+  }
+
+
   protected final Map<UUID, Entry> entries = new HashMap<>();
 
   protected Entry[] removeBuffer = new Entry[16];
   protected int removeCount = 0;
-  protected void bufferRemove(){
+
+  protected void bufferRemove() {
     for (int i = 0; i < removeCount; i++) {
       var got = removeBuffer[i];
-      if(got == null) continue;
+      if (got == null) continue;
       entries.remove(got.entityUUID);
       removeBuffer[i] = null;
       got.onRemoved();
@@ -100,21 +123,22 @@ public class EntityDialogerHolder extends PlayerTickedDataHolder {
       if (holder.shouldRemove()) {
         addRemove(holder);
         holder.cleanUp();
-      } holder.tick(e);
+      }
+      holder.tick(e);
     }
     bufferRemove();
   }
 
-  public void addEntry(Entry entry, Consumer<DialogPlayer> dialogPlayer){
+  public void addEntry(Entry entry, Consumer<DialogPlayer> dialogPlayer) {
     var current = entries.get(entry.entityUUID);
-    if(current != null){
-      if(!current.shouldRemove()){
+    if (current != null) {
+      if (!current.shouldRemove()) {
         dialogPlayer.accept(current.dialogPlayer);
         return;
       }
     }
     var e = parent.value();
-    if(e == null) return;
+    if (e == null) return;
 
     var display = entry.displaySpawner.get();
     entry.display = new WeakReference<>(display);
@@ -124,18 +148,18 @@ public class EntityDialogerHolder extends PlayerTickedDataHolder {
     dialogPlayer.accept(entry.dialogPlayer);
   }
 
-  public Entry.Builder entryBuilder(){
+  public Entry.Builder entryBuilder() {
     var builder = new Entry.Builder();
     builder.holder = this;
     return builder;
   }
 
-  public Supplier<TextDisplay> defaultDisplaySpawner(Location loc, Player user){
+  public Supplier<TextDisplay> defaultDisplaySpawner(Location loc, Player user) {
     return () -> spawnDefaultTextDisplay(loc, user);
   }
 
-  public TextDisplay spawnDefaultTextDisplay(Location loc, Player user){
-    TextDisplay text = loc.getWorld().spawn(loc, TextDisplay.class, e ->{
+  public TextDisplay spawnDefaultTextDisplay(Location loc, Player user) {
+    TextDisplay text = loc.getWorld().spawn(loc, TextDisplay.class, e -> {
       e.setPersistent(false);
       e.setSeeThrough(true);
       e.setBillboard(Display.Billboard.CENTER);
@@ -149,8 +173,8 @@ public class EntityDialogerHolder extends PlayerTickedDataHolder {
     return entries;
   }
 
-  public static class Entry{
-    public static class Builder{
+  public static class Entry {
+    public static class Builder {
       public EntityDialogerHolder holder;
       public UUID entityUUID;
       public Reference<Entity> entity;
@@ -158,23 +182,23 @@ public class EntityDialogerHolder extends PlayerTickedDataHolder {
       public Supplier<TextDisplay> displaySpawner;
       public Runnable onRemoved;
 
-      public Builder entity(Entity entity){
+      public Builder entity(Entity entity) {
         this.entityUUID = entity.getUniqueId();
         this.entity = new WeakReference<>(entity);
         return this;
       }
 
-      public Builder display(TextDisplay display){
+      public Builder display(TextDisplay display) {
         this.display = new WeakReference<>(display);
         return this;
       }
 
-      public Builder onRemoved(Runnable runnable){
+      public Builder onRemoved(Runnable runnable) {
         onRemoved = runnable;
         return this;
       }
 
-      public Entry build(){
+      public Entry build() {
         var entry = new Entry(holder, entityUUID, entity, display, displaySpawner);
         entry.onRemoved = onRemoved;
         return entry;
@@ -188,7 +212,7 @@ public class EntityDialogerHolder extends PlayerTickedDataHolder {
     public final Supplier<TextDisplay> displaySpawner;
     public Runnable onRemoved;
 
-    public DialogPlayer dialogPlayer = new Dialoger(){
+    public DialogPlayer dialogPlayer = new Dialoger() {
       @Override
       public Entity getTalker() {
         return entity.get();
@@ -198,15 +222,15 @@ public class EntityDialogerHolder extends PlayerTickedDataHolder {
       public void onDialogTicking() {
         super.onDialogTicking();
         var user = holder.parent.value();
-        if(user == null) return;
+        if (user == null) return;
         var talker = getTalker();
-        if(talker == null) return;
-        if(!user.getWorld().equals(talker.getWorld())) return;
+        if (talker == null) return;
+        if (!user.getWorld().equals(talker.getWorld())) return;
         Mob mob = talker instanceof Mob m ? m : null;
 
-        if(mob == null) return;
-        if(getInfoOrDefault("look_at", (info, id) ->
-          info.info().getOrDefault(id, Boolean.class, !mob.getPathfinder().hasPath()), !mob.getPathfinder().hasPath())){
+        if (mob == null) return;
+        if (getInfoOrDefault("look_at", (info, id) ->
+          info.info().getOrDefault(id, Boolean.class, !mob.getPathfinder().hasPath()), !mob.getPathfinder().hasPath())) {
           mob.lookAt(user);
         }
       }
@@ -215,14 +239,14 @@ public class EntityDialogerHolder extends PlayerTickedDataHolder {
       public void onDialogSpeaking() {
         super.onDialogSpeaking();
         var user = holder.parent.value();
-        if(user == null) return;
+        if (user == null) return;
         updateText(display.get(), currentDialogLineFor(user));
       }
 
       @Override
       public void onDialogEnd(Data data) {
         super.onDialogEnd(data);
-        if(isEmpty()){
+        if (isEmpty()) {
           scheduleRemoval();
         }
       }
@@ -237,70 +261,70 @@ public class EntityDialogerHolder extends PlayerTickedDataHolder {
       this.displaySpawner = displaySpawner;
     }
 
-    public void onRemoved(){
-      if(onRemoved != null) onRemoved.run();
+    public void onRemoved() {
+      if (onRemoved != null) onRemoved.run();
     }
 
-    public Location getDialogLocation(){
+    public Location getDialogLocation() {
       var e = entity.get();
-      if(e == null) return null;
+      if (e == null) return null;
       return e.getLocation().add(0, 0.5 + e.getHeight(), 0);
     }
 
-    public void cleanUp(){
+    public void cleanUp() {
       var e = display.get();
-      if(e == null) return;
-      if(!e.isValid()) return;
+      if (e == null) return;
+      if (!e.isValid()) return;
       e.remove();
     }
 
-    public void tick(Player p){
+    public void tick(Player p) {
       dialogPlayer.dialogTick();
 
       var display = this.display.get();
-      if(display == null) return;
+      if (display == null) return;
       var loc = getDialogLocation();
-      if(loc == null) return;
+      if (loc == null) return;
       display.teleport(loc);
     }
 
     protected boolean scheduledRemove = false;
 
-    public void scheduleRemoval(){
+    public void scheduleRemoval() {
       scheduledRemove = true;
     }
 
-    public boolean shouldRemove(){
+    public boolean shouldRemove() {
       return scheduledRemove || !isEntityValid() || !isDisplayValid();
     }
 
-    public boolean isEntityValid(){
-      var e =  entity.get();
-      if(e == null) return false;
+    public boolean isEntityValid() {
+      var e = entity.get();
+      if (e == null) return false;
       return e.isValid();
     }
 
-    public boolean isDisplayValid(){
-      var e =  display.get();
-      if(e == null) return false;
+    public boolean isDisplayValid() {
+      var e = display.get();
+      if (e == null) return false;
       return e.isValid();
     }
 
-    public void updateText(TextDisplay display, String msg){
-      if(display == null) return;
-      if(msg == null || msg.isEmpty()){
+    public void updateText(TextDisplay display, String msg) {
+      if (display == null) return;
+      if (msg == null || msg.isEmpty()) {
         display.text(null);
         return;
       }
       List<String> format = USurvivePlugin.inst().values().TEXT_DISPLAY_DIALOG_FORMAT().value();
-      if(format == null) return;
+      if (format == null) return;
       var tags = TagContainer.merged()
         .hook(new DialogContentLinePair(dialogPlayer.getDialog(), dialogPlayer.getCurrentLine()))
         .add(Tag.parsed("line", msg));
 
-      tags.add(Tag.stringList("line", (args, ctx) ->{
+      tags.add(Tag.stringList("line", (args, ctx) -> {
         String lineFormat = USurvivePlugin.inst().values().TEXT_DISPLAY_DIALOG_FORMAT_LINE().value();
-        if(lineFormat == null) return null;
+        if (lineFormat == null) return null;
         String msgToFormat = ctx.deserializeString(lineFormat, tags);
         List<String> list = new ArrayList<>();
         CruxString.buildDescription(
@@ -316,7 +340,7 @@ public class EntityDialogerHolder extends PlayerTickedDataHolder {
     }
   }
 
-  public abstract static class Dialoger extends UserDialogPlayer implements DialogTalker{
+  public abstract static class Dialoger extends UserDialogPlayer implements DialogTalker {
 
   }
 }

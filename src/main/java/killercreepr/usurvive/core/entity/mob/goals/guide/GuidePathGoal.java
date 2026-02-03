@@ -9,6 +9,7 @@ import killercreepr.cruxentities.api.entity.mob.goal.PathTargetMobGoal;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
+import killercreepr.cruxentities.entity.mob.goal.path.CruxGoalPathTargetMobGoal;
 import killercreepr.usurvive.api.dialog.DialogContent;
 import killercreepr.usurvive.api.dialog.DialogPlayer;
 import killercreepr.usurvive.api.dialog.DialogTalker;
@@ -17,7 +18,6 @@ import killercreepr.usurvive.api.guide.GuidePoint;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.dialog.DialogContentLinePair;
 import killercreepr.usurvive.core.dialog.UserDialogPlayer;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.*;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +26,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
-    protected final PathTargetMobGoal pathTarget = PathTargetMobGoal.pathTargetMobGoal(this, 1);
+    protected final PathTargetMobGoal pathTarget = new CruxGoalPathTargetMobGoal(this, 1D, true){
+        @Override
+        public void onPathFinish() {
+            super.onPathFinish();
+            if(dialogPlayer.isEmpty()){
+                new NPCFinishPathAndDialogEvent(mob, this, dialogPlayer, lastDialogContent).callEvent();
+            }
+        }
+    };
     public GuidePathGoal(@NotNull Mob mob) {
         super(mob);
     }
