@@ -17,6 +17,7 @@ import killercreepr.usurvive.api.guide.GuidePoint;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.dialog.DialogContentLinePair;
 import killercreepr.usurvive.core.dialog.UserDialogPlayer;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.*;
 import org.jetbrains.annotations.NotNull;
@@ -206,7 +207,7 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
             if(dialogDisplay != null){
                 dialogDisplay.remove();
                 dialogDisplay = null;
-                if(nextGuidePoint == null){
+                if(nextGuidePoint != null && !pathTarget.hasPath()){
                     new NPCFinishPathAndDialogEvent(mob, this, dialogPlayer, lastDialogContent).callEvent();
                 }
             }
@@ -216,8 +217,11 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
                 nextGuidePoint = null;
 
                 if(guidePoint.dialog() != null){
-                    dialogPlayer.queueDialog(guidePoint.dialog());
-                    lastDialogContent = guidePoint.dialog();
+                    var dialogContent = guidePoint.dialog();
+                    if(dialogContent != null){
+                        dialogPlayer.queueDialog(dialogContent);
+                        lastDialogContent = dialogContent;
+                    }
                 }
                 return;
             }
