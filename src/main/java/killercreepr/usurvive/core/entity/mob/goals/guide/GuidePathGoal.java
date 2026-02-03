@@ -9,6 +9,7 @@ import killercreepr.cruxentities.api.entity.mob.goal.PathTargetMobGoal;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalNode;
 import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
+import killercreepr.usurvive.api.dialog.DialogContent;
 import killercreepr.usurvive.api.dialog.DialogPlayer;
 import killercreepr.usurvive.api.dialog.DialogTalker;
 import killercreepr.usurvive.api.event.NPCFinishPathAndDialogEvent;
@@ -137,6 +138,7 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
 
     protected Player user;
     protected GuidePoint guidePoint;
+    protected DialogContent lastDialogContent;
 
     public static abstract class Dialoger extends UserDialogPlayer implements DialogTalker {
         @Override
@@ -205,7 +207,7 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
                 dialogDisplay.remove();
                 dialogDisplay = null;
                 if(nextGuidePoint == null){
-                    new NPCFinishPathAndDialogEvent(mob, this, dialogPlayer).callEvent();
+                    new NPCFinishPathAndDialogEvent(mob, this, dialogPlayer, lastDialogContent).callEvent();
                 }
             }
 
@@ -213,7 +215,10 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
                 guidePoint = nextGuidePoint;
                 nextGuidePoint = null;
 
-                if(guidePoint.dialog() != null) dialogPlayer.queueDialog(guidePoint.dialog());
+                if(guidePoint.dialog() != null){
+                    dialogPlayer.queueDialog(guidePoint.dialog());
+                    lastDialogContent = guidePoint.dialog();
+                }
                 return;
             }
         }
