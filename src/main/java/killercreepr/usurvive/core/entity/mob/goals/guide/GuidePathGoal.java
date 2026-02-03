@@ -11,6 +11,7 @@ import killercreepr.cruxentities.api.entity.mob.goal.path.GoalPath;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
 import killercreepr.usurvive.api.dialog.DialogPlayer;
 import killercreepr.usurvive.api.dialog.DialogTalker;
+import killercreepr.usurvive.api.event.NPCFinishPathAndDialogEvent;
 import killercreepr.usurvive.api.guide.GuidePoint;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.dialog.DialogContentLinePair;
@@ -203,6 +204,9 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
             if(dialogDisplay != null){
                 dialogDisplay.remove();
                 dialogDisplay = null;
+                if(nextGuidePoint == null){
+                    new NPCFinishPathAndDialogEvent(mob, this, dialogPlayer).callEvent();
+                }
             }
 
             if(nextGuidePoint != null){

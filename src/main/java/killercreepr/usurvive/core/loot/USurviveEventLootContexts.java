@@ -26,6 +26,23 @@ public class USurviveEventLootContexts {
               );
           });
     }
+    public static LootContext.Builder builder(@NotNull NPCFinishPathAndDialogEvent event){
+        var entity = event.getEntity();
+        var goal = event.getGoal();
+        var dialogPlayer = event.getDialogPlayer();
+        return builder()
+          .info(
+            DataExchange.builder()
+              .putAll(entity, "entity")
+              .putAll(goal, "goal")
+              .putAll(dialogPlayer, "dialog_player")
+              .build()
+          )
+          .location(entity.getLocation())
+          .looted(goal)
+          .looter(entity)
+          ;
+    }
     private static LootContext.Builder builder(@NotNull DialogEvent event){
         var talker = event.getDialogPlayer() instanceof DialogTalker t ? t.getTalker() : null;
         Entity mainTarget = null;
