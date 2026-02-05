@@ -30,7 +30,7 @@ public class PlayerDialogListener extends PlayerTickedDataHolder implements Dial
         return super.shouldRemoveFromMemory(e) || (dialogPlayer.isEmpty() && lastHadDialog > 0 && !CruxMath.hasOccurredWithin(lastHadDialog, 60));
     }
 
-    protected int tickRate = 2;
+    protected int tickRate = 1;
     protected long lastHadDialog;
     protected DialogPlayer dialogPlayer = new UserDialogPlayer();
     protected final List<DialogPlayer> subDialogPlayers = new ArrayList<>();

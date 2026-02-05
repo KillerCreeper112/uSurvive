@@ -4,7 +4,6 @@ import killercreepr.crux.api.entity.dynamic.DynamicEntityApplierSingleComponent;
 import killercreepr.crux.api.entity.predicate.EntityPredicate;
 import killercreepr.crux.api.loot.conditions.LootCondition;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
-import killercreepr.crux.core.entity.dynamic.component.DynamicEntityApplierGlowing;
 import killercreepr.cruxadvancements.api.advancement.objective.AdvancementObjective;
 import killercreepr.cruxadvancements.core.advancement.objective.ObjectiveCommonData;
 import killercreepr.cruxadvancements.core.config.CruxAdvanceCfgData;
@@ -17,6 +16,7 @@ import killercreepr.cruxconfig.config.bukkit.handler.impl.loot.SimpleFileLootCon
 import killercreepr.cruxconfig.config.common.FileContext;
 import killercreepr.cruxconfig.config.common.FileRegistry;
 import killercreepr.cruxconfig.config.common.element.FileObject;
+import killercreepr.cruxentities.loot.condition.MobHasPathTargetCondition;
 import killercreepr.usurvive.core.USurvivePlugin;
 import killercreepr.usurvive.core.advancement.objective.*;
 import killercreepr.usurvive.core.config.handler.*;
@@ -173,7 +173,16 @@ public class CfgHook {
             @Override
             public @NotNull LootCondition deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e, @NotNull String target) {
                 FileRegistry registry = ctx.getRegistry();
-                return new EntityDialogerHasDialogCondition(
+                return new MobHasPathTargetCondition(
+                  target
+                );
+            }
+        });
+        file.registerCustomHandler(new SimpleFileLootCondition<>(USurvivePlugin.inst().key("entity_has_dialog")) {
+            @Override
+            public @NotNull LootCondition deserializeFromFile(@NotNull FileContext<?> ctx, @NotNull FileObject e, @NotNull String target) {
+                FileRegistry registry = ctx.getRegistry();
+                return new EntityHasDialogCondition(
                   target,
                   registry.deserializeFromFile(EntityPredicate.class, e.get("talker"))
                 );
