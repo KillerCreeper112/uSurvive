@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+@Deprecated
 public class StoryListener implements Listener {
     protected final ValuesProvider cfg;
 

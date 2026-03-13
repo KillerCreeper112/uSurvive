@@ -152,12 +152,12 @@ public class GuidePathGoal extends CruxMobGoal implements PathTargetMobGoal {
     public static abstract class Dialoger extends UserDialogPlayer implements DialogTalker {
         @Override
         public int dialogSplitSpeedValue(int value) {
-            return Math.round(super.dialogSplitSpeedValue(value) / 2f);
+            return Math.round(super.dialogSplitSpeedValue(value) / 2.5f);
         }
 
         @Override
         public int dialogWaitTimeValue(int value) {
-            return Math.round(super.dialogWaitTimeValue(value) / 2f);
+            return Math.round(super.dialogWaitTimeValue(value) / 2.5f);
         }
     }
 

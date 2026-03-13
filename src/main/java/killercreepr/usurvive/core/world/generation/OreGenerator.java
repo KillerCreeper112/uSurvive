@@ -65,7 +65,7 @@ public abstract class OreGenerator extends BlockPopulator {
                 int zz = z + (chunkZ * 16);
                 if(spawned > 0){
                     if(CruxMath.random(1, 100) <= 40) continue;
-                    float noise = oreSpawnNoise.noise(xx, zz);
+                    var noise = oreSpawnNoise.noise(xx, zz);
                     if(noise < .6) continue;
                 }
                 NumberProvider betweenY = betweenYValues == null ? generateBetweenYValues(worldInfo) : betweenYValues.value();

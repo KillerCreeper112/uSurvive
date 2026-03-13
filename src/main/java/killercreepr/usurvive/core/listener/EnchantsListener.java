@@ -527,7 +527,7 @@ public class EnchantsListener implements Listener {
                     double dist = Math.sqrt(x * x + y * y + z * z);
 
                     // Get noise for this block position
-                    float n = noise.noise((float) (cx + x), (float) (cy + y), (float) (cz + z));
+                    var n = noise.noise((cx + x), (cy + y), (cz + z));
 
                     // Noise influences the radius threshold
                     if (dist <= radius + (n * threshold)) {

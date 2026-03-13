@@ -2,9 +2,7 @@ package killercreepr.usurvive.core.world.entity;
 
 import com.destroystokyo.paper.MaterialSetTag;
 import killercreepr.crux.core.data.util.CollectionBuilder;
-import killercreepr.crux.core.util.CruxEntityUtil;
-import killercreepr.crux.core.util.CruxLoc;
-import killercreepr.crux.core.util.CruxMath;
+import killercreepr.crux.core.util.*;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.world.entity.NaturalCruxMobSpawn;
 import killercreepr.cruxworlds.api.world.entity.NaturalEntitySpawn;
@@ -63,7 +61,9 @@ public class USurviveEntitySpawns {
             if(!SPAWN_INSIDE.contains(b.getType())) return false;
 
             //must have solid blocks all around the spawn
-            for(Block loc : CruxLoc.getAdjBlocks(b, false, true)){
+            var blocks = CruxLoc.getAdjBlocksOrEmptyIfUnloaded(b, false, true);
+            if(blocks.isEmpty()) return false;
+            for(Block loc : blocks){
                 if(!SPAWN_INSIDE.contains(loc.getType())) return false;
             }
 
@@ -93,8 +93,9 @@ public class USurviveEntitySpawns {
             if(isPassableAndNotLiquid(b) && isPassableAndNotLiquid(b.getRelative(BlockFace.UP))){
                 Block down = b.getRelative(BlockFace.DOWN);
                 if(!down.isSolid() || SPAWNABLE_ON_NOT.contains(down.getType())) return false;
-                for(BlockFace f : BlockFace.values()){
-                    if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                for(BlockFace f : CruxBlockFace.CARTESIAN){
+                    if(f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                    if(!CruxWorldUtil.isLoaded(down, f)) return false;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
                 return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 6;
@@ -122,6 +123,7 @@ public class USurviveEntitySpawns {
             for(int x = 0; x < 4; x++){
                 for(int z = 0;z < 4; z++){
                     for(int y = 0;y < 4; y++){
+                        if(!CruxWorldUtil.isLoaded(b, x, z)) return false;
                         Block check = b.getRelative(x, y, z);
                         if(!check.isEmpty()) return false;
                     }
@@ -159,6 +161,7 @@ public class USurviveEntitySpawns {
             for(int x = 0; x < 4; x++){
                 for(int z = 0;z < 4; z++){
                     for(int y = 0;y < 4; y++){
+                        if(!CruxWorldUtil.isLoaded(b, x, z)) return false;
                         Block check = b.getRelative(x, y, z);
                         if(!check.isEmpty()) return false;
                     }
@@ -196,6 +199,7 @@ public class USurviveEntitySpawns {
             for(int x = 0; x < 4; x++){
                 for(int z = 0;z < 4; z++){
                     for(int y = 0;y < 4; y++){
+                        if(!CruxWorldUtil.isLoaded(b, x, z)) return false;
                         Block check = b.getRelative(x, y, z);
                         if(!check.isEmpty()) return false;
                     }
@@ -232,8 +236,9 @@ public class USurviveEntitySpawns {
             if(isPassableAndNotLiquid(b) && isPassableAndNotLiquid(b.getRelative(BlockFace.UP))){
                 Block down = b.getRelative(BlockFace.DOWN);
                 if(!down.isSolid() || SPAWNABLE_ON_NOT.contains(down.getType())) return false;
-                for(BlockFace f : BlockFace.values()){
-                    if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                for(BlockFace f : CruxBlockFace.CARTESIAN){
+                    if(f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                    if(!CruxWorldUtil.isLoaded(down, f)) return false;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
                 return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 7, e -> CruxMob.is(e, mob)) < 6;
@@ -261,8 +266,9 @@ public class USurviveEntitySpawns {
             if(isPassableAndNotLiquid(b) && isPassableAndNotLiquid(b.getRelative(BlockFace.UP))){
                 Block down = b.getRelative(BlockFace.DOWN);
                 if(!down.isSolid() || SPAWNABLE_ON_NOT.contains(down.getType())) return false;
-                for(BlockFace f : BlockFace.values()){
-                    if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                for(BlockFace f : CruxBlockFace.CARTESIAN){
+                    if(f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                    if(!CruxWorldUtil.isLoaded(down, f)) return false;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
                 return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 7, e -> CruxMob.is(e, mob)) < 5;
@@ -290,8 +296,9 @@ public class USurviveEntitySpawns {
             if(isPassableAndNotLiquid(b) && isPassableAndNotLiquid(b.getRelative(BlockFace.UP))){
                 Block down = b.getRelative(BlockFace.DOWN);
                 if(!down.isSolid() || SPAWNABLE_ON_NOT.contains(down.getType())) return false;
-                for(BlockFace f : BlockFace.values()){
-                    if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                for(BlockFace f : CruxBlockFace.CARTESIAN){
+                    if(f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                    if(!CruxWorldUtil.isLoaded(down, f)) return false;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
                 return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 7, e -> CruxMob.is(e, mob)) < 3;
@@ -319,8 +326,9 @@ public class USurviveEntitySpawns {
             if(isPassableAndNotLiquid(b) && isPassableAndNotLiquid(b.getRelative(BlockFace.UP))){
                 Block down = b.getRelative(BlockFace.DOWN);
                 if(!down.isSolid() || SPAWNABLE_ON_NOT.contains(down.getType())) return false;
-                for(BlockFace f : BlockFace.values()){
-                    if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                for(BlockFace f : CruxBlockFace.CARTESIAN){
+                    if(f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                    if(!CruxWorldUtil.isLoaded(down, f)) return false;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
                 return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 7, e -> CruxMob.is(e, mob)) < 4;
@@ -348,8 +356,9 @@ public class USurviveEntitySpawns {
             if(isPassableAndNotLiquid(b) && isPassableAndNotLiquid(b.getRelative(BlockFace.UP))){
                 Block down = b.getRelative(BlockFace.DOWN);
                 if(!down.isSolid() || SPAWNABLE_ON_NOT.contains(down.getType())) return false;
-                for(BlockFace f : BlockFace.values()){
-                    if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                for(BlockFace f : CruxBlockFace.CARTESIAN){
+                    if(f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                    if(!CruxWorldUtil.isLoaded(down, f)) return false;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
                 return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 6, e -> CruxMob.is(e, mob)) < 2;
@@ -378,8 +387,9 @@ public class USurviveEntitySpawns {
             if(isPassableAndNotLiquid(b) && isPassableAndNotLiquid(b.getRelative(BlockFace.UP))){
                 Block down = b.getRelative(BlockFace.DOWN);
                 if(!down.isSolid() || SPAWNABLE_ON_NOT.contains(down.getType())) return false;
-                for(BlockFace f : BlockFace.values()){
-                    if(!f.isCartesian() || f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                for(BlockFace f : CruxBlockFace.CARTESIAN){
+                    if(f == BlockFace.UP || f == BlockFace.DOWN) continue;
+                    if(!CruxWorldUtil.isLoaded(down, f)) return false;
                     if(!down.getRelative(f).isSolid()) return false;
                 }
                 return CruxEntityUtil.getEntityAmountNearChunk(b.getChunk(), 8, e -> CruxMob.is(e, mob)) < 2;
@@ -415,7 +425,10 @@ public class USurviveEntitySpawns {
             Block b = ctx.getBlock();
             if(!isWater(b)) return false;
 
-            for(Block check : CruxLoc.getNearbyBlocks(b, 3)){
+            var blocks = CruxLoc.getNearbyBlocksOrEmptyIfUnloaded(b, 3);
+            if(blocks.isEmpty()) return false;
+
+            for(Block check : blocks){
                 if(!isWater(check)) return false;
             }
             return b.getWorld().getNearbyEntities(b.getLocation(), 28D, 28D, 28D,

@@ -3,6 +3,7 @@ package killercreepr.usurvive.core.story.config;
 import killercreepr.usurvive.core.config.handler.FileStoryProgression;
 import killercreepr.usurvive.core.story.progression.*;
 
+@Deprecated
 public class StoryCfgLoader {
     protected final FileStoryProgression fileStoryProgression;
 

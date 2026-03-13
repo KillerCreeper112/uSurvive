@@ -143,9 +143,7 @@ import killercreepr.usurvive.core.potion.inflictor.UDamageEntityInflictor;
 import killercreepr.usurvive.core.registries.USurviveRegistries;
 import killercreepr.usurvive.core.stat.USurviveStats;
 import killercreepr.usurvive.core.statistic.USurviveStatistics;
-import killercreepr.usurvive.core.story.SimpleStoryHolder;
 import killercreepr.usurvive.core.story.config.StoryCfgLoader;
-import killercreepr.usurvive.core.story.listener.StoryListener;
 import killercreepr.usurvive.core.tags.USurviveTag;
 import killercreepr.usurvive.core.tags.object.*;
 import killercreepr.usurvive.core.tpa.SimpleTPAManager;
@@ -373,7 +371,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             m.getDataHolders().register(new SleeperHolder(m, () -> (SleeperCfg) values()));
             m.getDataHolders().register(new USurviveAdvancementLoaderHolder(m, cfgManagerLoader));
             m.getDataHolders().register(new AdvancementAutoSaveHolder(m, cfgManagerLoader));
-            m.getDataHolders().register(new SimpleStoryHolder(m));
+            //m.getDataHolders().register(new SimpleStoryHolder(m));
             m.getDataHolders().register(new SimpleEntityHiderHolder(m));
         });
         StandardGrappleHooks.register(USurviveRegistries.GRAPPLE_HOOK);
@@ -551,7 +549,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             new VillagerTradeListener(),
             new CustomEntityListener(),
             new SporelinkListener(),
-            new StoryListener(values),
+            //new StoryListener(values),
             new TipListener(playerSettingsManager, USurviveRegistries.TIPS),
             new EntityHiderListener(this),
             new GlowingInitListener(this),
