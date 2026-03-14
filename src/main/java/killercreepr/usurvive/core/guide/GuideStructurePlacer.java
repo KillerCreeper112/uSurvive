@@ -3,6 +3,7 @@ package killercreepr.usurvive.core.guide;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.util.CruxMath;
+import killercreepr.cruxstructures.api.structure.Structure;
 import killercreepr.cruxstructures.api.structure.generation.StructureGenerator;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -11,9 +12,6 @@ import org.bukkit.World;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class GuideStructurePlacer {
     protected final World world;
@@ -33,7 +31,72 @@ public class GuideStructurePlacer {
         this.stillValid = stillValid;
     }
 
-    public CompletableFuture<Location> placeStructure(){
+    public CompletableFuture<Location> placeStructure() {
+        return placeStructureAttempt(0);
+    }
+
+    private CompletableFuture<Location> placeStructureAttempt(int attempt) {
+        if (attempt >= maxAttempts) {
+            return CompletableFuture.completedFuture(null);
+        }
+
+        if (!stillValid.value()) {
+            return CompletableFuture.completedFuture(null);
+        }
+
+        int x = maxChunkDistance.value().intValue();
+        int z = maxChunkDistance.value().intValue();
+        if (CruxMath.random().nextBoolean()) x *= -1;
+        if (CruxMath.random().nextBoolean()) z *= -1;
+
+        int chunkX = center.getX() + x;
+        int chunkZ = center.getZ() + z;
+        long key = Chunk.getChunkKey(chunkX, chunkZ);
+
+        if (alreadyChecked.contains(key)) {
+            return placeStructureAttempt(attempt + 1);
+        }
+
+        alreadyChecked.add(key);
+
+        return world.getChunkAtAsync(chunkX, chunkZ)
+          .thenCompose(chunk -> {
+              if (!stillValid.value()) {
+                  return CompletableFuture.completedFuture(null);
+              }
+              return attemptPlace(chunk, gen);
+          })
+          .handle((location, throwable) -> {
+              if (throwable != null) {
+                  throwable.printStackTrace();
+                  return null;
+              }
+              return location;
+          })
+          .thenCompose(location -> {
+              if (location != null) {
+                  return CompletableFuture.completedFuture(location);
+              }
+              return placeStructureAttempt(attempt + 1);
+          });
+    }
+
+    public CompletableFuture<Location> attemptPlace(Chunk chunk, StructureGenerator gen) {
+        Structure structure = gen.generateStructure(chunk);
+        if (structure == null) {
+            return CompletableFuture.completedFuture(null);
+        }
+
+        return gen.generate(structure, chunk)
+          .thenApply(result -> {
+              if (result == null) return null;
+
+              var event = result.getPlaceEvent();
+              return (event == null || event.isCancelled()) ? null : event.getLocation();
+          });
+    }
+
+    /*public CompletableFuture<Location> placeStructure(){
         return CompletableFuture.supplyAsync(() ->{
             for(int i = 0; i < maxAttempts; i++){
                 int x = maxChunkDistance.value().intValue();
@@ -63,8 +126,11 @@ public class GuideStructurePlacer {
     }
 
     public Location attemptPlace(Chunk chunk, StructureGenerator gen){
-        var result = gen.generate(chunk);
+        var structure = gen.generateStructure(chunk);
+        if(structure == null) return null;
+        var result = gen.generate(structure, chunk);
+        result.whenComplete()
         var event = result.getPlaceEvent();
         return event == null || event.isCancelled() ? null : event.getLocation();
-    }
+    }*/
 }
