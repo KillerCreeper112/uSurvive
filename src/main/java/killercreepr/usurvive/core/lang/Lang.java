@@ -59,6 +59,30 @@ public class Lang {
             .build()
     );
 
+    public static final Msg ITEM_HOLDING_AIR = create(
+      Communicator.builder()
+        .chat("<red>Hold an item in your hand")
+        .build()
+    );
+
+    public static final Msg SENT_PLAYER_ORBITS = create(
+      Communicator.builder()
+        .chat("<yellow>You sent <orbit_color><amount> orbits</color> to <target_name>")
+        .build()
+    );
+
+    public static final Msg PAY_NOT_ENOUGH_FUNDS = create(
+      Communicator.builder()
+        .chat("<red>You don't have <amount> orbits to send")
+        .build()
+    );
+
+    public static final Msg RECEIVED_PLAYER_ORBITS = create(
+      Communicator.builder()
+        .chat("<yellow><player_name> has sent sent you <orbit_color><amount> orbits</color>")
+        .build()
+    );
+
     public static final Msg ADVANCEMENT_PROGRESS = create(
         Communicator.builder()
             .chat(List.of(

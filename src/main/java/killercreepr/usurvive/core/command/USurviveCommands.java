@@ -16,6 +16,7 @@ import killercreepr.crux.api.component.parser.DataComponentDecoder;
 import killercreepr.crux.api.data.DataExchange;
 import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.entity.memory.EntityMemory;
+import killercreepr.crux.api.item.CruxItem;
 import killercreepr.crux.api.item.dynamic.DynamicItem;
 import killercreepr.crux.api.text.context.TextParserContext;
 import killercreepr.crux.api.text.tags.TagsPrefixBuilder;
@@ -23,10 +24,13 @@ import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.text.resolver.Tag;
+import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxclaims.api.claiming.Claimer;
 import killercreepr.cruxclaims.core.CruxClaims;
 import killercreepr.cruxcore.CruxCore;
+import killercreepr.cruxcurrency.api.currency.CruxCurrency;
 import killercreepr.cruxcurrency.core.entity.memory.CurrencyHolder;
+import killercreepr.cruxcurrency.core.registry.CruxCurrencyRegistries;
 import killercreepr.cruxteleport.api.teleport.CruxTeleport;
 import killercreepr.cruxteleport.api.teleport.CruxTeleporter;
 import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;
@@ -44,12 +48,14 @@ import killercreepr.usurvive.core.config.Config;
 import killercreepr.usurvive.core.death.PlayerDeath;
 import killercreepr.usurvive.core.lang.Lang;
 import net.kyori.adventure.key.Key;
+import org.bukkit.EntityEffect;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Pose;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.jetbrains.annotations.NotNull;
@@ -238,6 +244,76 @@ public class USurviveCommands {
                         return 1;
                     })
                     .build(), List.of("orbit", "balance", "bal", "nova", "novas")
+            );
+
+          commands.register(
+            Commands.literal("item")
+              .requires(source -> source.getSender().hasPermission("usurvive.command.item"))
+              .executes(ctx ->{
+                var sender = getExecutor(ctx.getSource());
+                if(!(sender instanceof Player p)) return -1;
+                var item = p.getInventory().getItemInMainHand();
+                if(CruxItem.isEmpty(item)){
+                  Lang.ITEM_HOLDING_AIR.use(sender);
+                  return -1;
+                }
+                p.chat("[item]");
+                return 1;
+              })
+              .build(), List.of("showitem")
+          );
+
+            commands.register(
+              Commands.literal("pay")
+                .requires(source -> source.getSender().hasPermission("usurvive.command.pay"))
+                .then(
+                  Commands.argument("target", ArgumentTypes.player())
+                    .then(
+                      Commands.argument("orbits", IntegerArgumentType.integer(1))
+                        .executes(ctx ->{
+                          var sender = getExecutor(ctx.getSource());
+                          if(!(sender instanceof Player p)) return -1;
+
+                          var target = ctx.getArgument("target", PlayerSelectorArgumentResolver.class)
+                            .resolve(ctx.getSource()).getFirst();
+                          CurrencyHolder holder = EntityMemory.getOrCreateDataHolder(p, CurrencyHolder.class);
+                          CurrencyHolder targetHolder = EntityMemory.getOrCreateDataHolder(target, CurrencyHolder.class);
+                          if(holder == null || targetHolder == null){
+                            Communicator.chat("<red>Error. Contact developer.").use(sender);
+                            return 0;
+                          }
+
+                          if(target.equals(sender) && !sender.hasPermission("usurvive.command.pay.send_yourself")){
+                            Communicator.chat("<red>You can't pay yourself.").use(sender);
+                            return 0;
+                          }
+                          var amount = ctx.getArgument("orbits",  Integer.class);
+                          var orbitKey = Crux.key("orbit");
+                          var orbitCurrency = CruxCurrencyRegistries.CURRENCY.get(orbitKey);
+                          if(orbitCurrency == null){
+                            Communicator.chat("<red>Error 881. Contact developer.").use(sender);
+                            return -1;
+                          }
+                          var tags = TagContainer.merged()
+                            .hook(p)
+                            .hook(target, TagsPrefixBuilder.overwriteBase("target_"))
+                            .add(Tag.parsed("amount", CruxMath.format(amount)));
+
+                          var current = holder.getBank().getCurrency(orbitCurrency);
+                          if(current < amount){
+                            Lang.PAY_NOT_ENOUGH_FUNDS.use(sender, tags);
+                            return 0;
+                          }
+                          holder.getBank().withdraw(orbitCurrency, amount, "command.pay");
+                          targetHolder.getBank().deposit(orbitCurrency, amount, "command.pay");
+
+                          Lang.SENT_PLAYER_ORBITS.use(sender, tags);
+                          Lang.RECEIVED_PLAYER_ORBITS.use(target, tags);
+                          return 1;
+                        })
+                    )
+                )
+                .build()
             );
 
             commands.register(
