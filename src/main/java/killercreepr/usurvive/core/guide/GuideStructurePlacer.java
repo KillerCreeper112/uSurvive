@@ -5,6 +5,7 @@ import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxstructures.api.structure.Structure;
 import killercreepr.cruxstructures.api.structure.generation.StructureGenerator;
+import killercreepr.cruxstructures.api.structure.generation.result.GenerateResult;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -78,6 +79,21 @@ public class GuideStructurePlacer {
                   return CompletableFuture.completedFuture(location);
               }
               return placeStructureAttempt(attempt + 1);
+          });
+    }
+
+    public CompletableFuture<GenerateResult> attemptPlaceResult(Chunk chunk, StructureGenerator gen) {
+        Structure structure = gen.generateStructure(chunk);
+        if (structure == null) {
+            return CompletableFuture.completedFuture(null);
+        }
+
+        return gen.generate(structure, chunk)
+          .thenApply(result -> {
+              if (result == null) return null;
+
+              var event = result.getPlaceEvent();
+              return (event == null || event.isCancelled()) ? null : result;
           });
     }
 
