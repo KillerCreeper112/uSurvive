@@ -11,6 +11,7 @@ repositories {
     mavenCentral()
     maven("https://jitpack.io")
     maven { url = uri("https://repo.codemc.io/repository/maven-releases/") }
+    maven("https://nexus.scarsz.me/content/groups/public/")
 }
 
 dependencies {
@@ -45,6 +46,7 @@ dependencies {
 
     compileOnly("net.luckperms:api:5.4")
     compileOnly("com.github.retrooper:packetevents-spigot:2.8.0")
+    compileOnly("com.discordsrv:discordsrv:1.30.4")
 
     compileOnly(fileTree("libs"){
         include("*.jar")

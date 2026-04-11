@@ -156,6 +156,8 @@ import killercreepr.usurvive.core.world.module.GenericOverworldModule;
 import killercreepr.usurvive.core.world.module.OverworldMobSpawnsModule;
 import killercreepr.usurvive.core.world.module.ResetWorldModule;
 import killercreepr.usurvive.core.world.module.ResourceWorldModule;
+import killercreepr.usurvive.external.discordsrv.DiscordSRVHook;
+import killercreepr.usurvive.external.discordsrv.DiscordSRVListener;
 import killercreepr.usurvive.external.quickshop.UQuickShop;
 import net.kyori.adventure.key.Key;
 import org.bukkit.OfflinePlayer;
@@ -567,6 +569,12 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             registerListeners(
                 new ClaimingListener()
             );
+        }
+
+
+
+        if(getServer().getPluginManager().getPlugin("DiscordSRV") != null){
+            DiscordSRVHook.onEnable(this);
         }
 
         super.enabled();
