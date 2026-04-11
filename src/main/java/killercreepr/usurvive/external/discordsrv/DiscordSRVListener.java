@@ -4,12 +4,8 @@ import github.scarsz.discordsrv.api.ListenerPriority;
 import github.scarsz.discordsrv.api.Subscribe;
 import github.scarsz.discordsrv.api.events.AchievementMessagePreProcessEvent;
 import github.scarsz.discordsrv.api.events.DeathMessagePreProcessEvent;
-import github.scarsz.discordsrv.api.events.Event;
 import github.scarsz.discordsrv.api.events.GameChatMessagePreProcessEvent;
 import killercreepr.usurvive.core.vanish.VanishHandler;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 
 public class DiscordSRVListener {
   @Subscribe(priority = ListenerPriority.LOWEST)

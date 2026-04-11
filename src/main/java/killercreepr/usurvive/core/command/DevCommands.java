@@ -53,6 +53,7 @@ import killercreepr.usurvive.core.listener.EnchantsListener;
 import killercreepr.usurvive.core.listener.MaintenanceListener;
 import killercreepr.usurvive.core.util.ApplyToItem;
 import killercreepr.usurvive.core.vanish.VanishHandler;
+import killercreepr.usurvive.external.discordsrv.DiscordSRVHook;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -324,9 +325,15 @@ public class DevCommands implements Listener {
                                         if(VanishHandler.isVanished(p)){
                                             Bukkit.broadcast(Crux.format().deserialize("<yellow><player_name> left the game", TagContainer.merged()
                                                 .hook(p)));
+                                            if(DiscordSRVHook.enabled){
+                                              DiscordSRVHook.fakeLeave(p);
+                                            }
                                         }else{
                                             Bukkit.broadcast(Crux.format().deserialize("<yellow><player_name> joined the game", TagContainer.merged()
                                                 .hook(p)));
+                                          if(DiscordSRVHook.enabled){
+                                            DiscordSRVHook.fakeJoin(p);
+                                          }
                                         }
                                         return 1;
                                     })

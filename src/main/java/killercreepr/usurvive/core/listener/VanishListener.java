@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
@@ -31,6 +32,14 @@ public class VanishListener implements Listener {
         if(removed.get() == 0) return;
         event.setNumPlayers(Math.max(event.getNumPlayers() - removed.get(), 0));
     }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        if(!VanishHandler.isVanished(event.getPlayer())) return;
+        event.deathMessage(null);
+    }
+
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPlayerAdvancementDone(PlayerAdvancementDoneEvent event) {
         if(!VanishHandler.isVanished(event.getPlayer())) return;
