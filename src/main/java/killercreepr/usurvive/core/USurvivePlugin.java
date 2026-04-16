@@ -90,6 +90,7 @@ import killercreepr.usurvive.api.story.StoryProgressData;
 import killercreepr.usurvive.api.story.StoryProgression;
 import killercreepr.usurvive.api.story.StoryState;
 import killercreepr.usurvive.api.tpa.TPAManager;
+import killercreepr.usurvive.api.values.AnimalsCfg;
 import killercreepr.usurvive.api.values.SleeperCfg;
 import killercreepr.usurvive.api.values.ValuesProvider;
 import killercreepr.usurvive.core.advancement.auto.KillMobAdvanceMaker;
@@ -881,6 +882,8 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
     }
 
     public void registerCfgHandlers(@NotNull FileRegistry registry){
+        registry.registerFileHandler(AnimalsCfg.AnimalAttributeData.FILE_HANDLER);
+
         registry.registerFileHandler(PlayerDeath.class, new FilePlayerDeath());
         AutoFileOptions cacheDisabled = AutoFileOptions.builder()
             .disabledFields(f -> f.getName().equalsIgnoreCase("cache"))

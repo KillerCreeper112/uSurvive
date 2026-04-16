@@ -2,17 +2,24 @@ package killercreepr.usurvive.core.entity.mob.goals.animal;
 
 import com.destroystokyo.paper.entity.ai.GoalKey;
 import killercreepr.crux.api.data.holder.LocationHolder;
+import killercreepr.crux.api.text.context.InputContext;
+import killercreepr.crux.api.text.tags.container.TagContainer;
+import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.location.DynamicLocation;
+import killercreepr.crux.core.text.tags.standard.object.EntityTags;
 import killercreepr.crux.core.util.CruxGoalUtil;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.core.util.GetEntityNear;
 import killercreepr.cruxattributes.api.attribute.CruxAttribute;
 import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
+import killercreepr.cruxattributes.core.registries.CruxAttributeRegistries;
 import killercreepr.cruxentities.entity.mob.goal.CruxMobGoal;
+import killercreepr.usurvive.api.values.AnimalsCfg;
 import killercreepr.usurvive.core.USurvivePlugin;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
+import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.LivingEntity;
@@ -25,6 +32,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Map;
 
 public class AnimalEnhancedGoal extends CruxMobGoal implements Listener {
     public static final GoalKey<Mob> KEY = GoalKey.of(Mob.class, Crux.key("animal_enhanced"));
@@ -36,30 +44,45 @@ public class AnimalEnhancedGoal extends CruxMobGoal implements Listener {
         super(key, mob);
     }
 
+    public void editAttribute(Key key, NumberProvider amount, InputContext ctx){
+        if(amount == null) return;
+        var attribute = CruxAttributeRegistries.ATTRIBUTES.get(key);
+        if(attribute == null){
+            var bukkit = Registry.ATTRIBUTE.get(key);
+            if(bukkit == null) throw new IllegalArgumentException("Unknown attribute key " + key);
+            var instance = mob.getAttribute(bukkit);
+            if(instance != null){
+                instance.setBaseValue(amount.sample(ctx).doubleValue());
+            }
+            return;
+        }
+        CruxAttribute.addModifier(mob, attribute, CruxAttributeModifier.baseModifier(amount.sample(ctx).doubleValue()));
+    }
+
     @Override
     public void start() {
         super.start();
         if(CruxAttribute.hasAttributeData(mob)) return;
-        double width = mob.getWidth();
-        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_RANGE, CruxAttributeModifier.baseModifier(
-            CruxMath.random(.5D, 1D) + width
-        ));
+        var cfg = (AnimalsCfg) USurvivePlugin.inst().values();
+        var tags = InputContext.inputContext(TagContainer.string().hook(mob));
 
-        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_AOE, CruxAttributeModifier.baseModifier(
-            CruxMath.random(0D, .25D)
-        ));
+        var data = cfg.ANIMAL_ATTRIBUTES_PER_TYPE().valueOr(Map.of()).get(Crux.handlers().entity().getType(mob));
 
-        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_SPEED, CruxAttributeModifier.baseModifier(
-            CruxMath.random(-20D, -6D)
-        ));
-
-        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_KNOCKBACK, CruxAttributeModifier.baseModifier(
-            CruxMath.random(5D, 10D)
-        ));
-
-        CruxAttribute.addModifier(mob, CruxAttribute.ATTACK_DAMAGE, CruxAttributeModifier.baseModifier(
-            CruxMath.random(2D, 8D)
-        ));
+        if(data == null){
+            cfg.ANIMAL_ATTRIBUTES().valueOr(Map.of()).forEach((key, value) -> {
+                editAttribute(key, value, tags);
+            });
+        }else{
+            data.attributes().forEach((key, value) -> {
+                editAttribute(key, value, tags);
+            });
+            if(data.use_global()){
+                cfg.ANIMAL_ATTRIBUTES().valueOr(Map.of()).forEach((key, value) -> {
+                    if(data.attributes().containsKey(key)) return;
+                    editAttribute(key, value, tags);
+                });
+            }
+        }
 
         CruxAttribute.addModifier(mob, CruxAttribute.MOVEMENT_SPEED, CruxAttributeModifier.baseModifier(
             mob.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue()

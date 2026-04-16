@@ -11,10 +11,7 @@ import killercreepr.cruxconfig.config.bukkit.value.CfgValue;
 import killercreepr.cruxconfig.config.bukkit.value.CommonValue;
 import killercreepr.cruxconfig.config.bukkit.value.NumCfgValue;
 import killercreepr.cruxstructures.api.structure.generation.StructureGenerator;
-import killercreepr.usurvive.api.values.GravestoneCfg;
-import killercreepr.usurvive.api.values.SleeperCfg;
-import killercreepr.usurvive.api.values.TipsCfg;
-import killercreepr.usurvive.api.values.ValuesProvider;
+import killercreepr.usurvive.api.values.*;
 import killercreepr.usurvive.core.data.CfgLootData;
 import killercreepr.usurvive.core.data.PremiumRank;
 import killercreepr.usurvive.core.data.ResourcePackRequestData;
@@ -35,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 @killercreepr.cruxconfig.config.common.annotations.Config(autoUpdate = true)
-public class Config extends Cfg implements ValuesProvider, SleeperCfg, GravestoneCfg, TipsCfg {
+public class Config extends Cfg implements ValuesProvider, SleeperCfg, GravestoneCfg, TipsCfg, AnimalsCfg {
     public final CfgValue<List<PremiumRank>> PREMIUM_RANKS = new CommonValue<>(){};
     public final CfgValue<String> SPAWN_WORLD = new CommonValue<>(DefaultValues.SPAWN_WORLD.value()){};
     public final CfgValue<String> RESPAWN_WORLD = new CommonValue<>(DefaultValues.SPAWN_WORLD.value()){};
@@ -114,6 +111,8 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg, Graveston
     public final NumCfgValue BOUNDER_BRUTE_SKIN_AMOUNT = new NumCfgValue(7);
     public final NumCfgValue RANDOM_TIP_TIME = new NumCfgValue(NumberProvider.uniform(6000, 30000));
     public final NumCfgValue RANDOM_TIP_TIME_OCCASIONAL = new NumCfgValue(NumberProvider.uniform(24000, 54000));
+    public final CfgValue<Map<Key, NumberProvider>> ANIMAL_ATTRIBUTES = new CommonValue<>(){};
+    public final CfgValue<Map<Key, AnimalAttributeData>> ANIMAL_ATTRIBUTES_PER_TYPE = new CommonValue<>(){};
 
 
     public final CfgValue<List<String>> TEXT_DISPLAY_DIALOG_FORMAT = new CommonValue<>(List.of(
@@ -139,6 +138,16 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg, Graveston
     public void reload(@NotNull CruxPlugin plugin) {
         reload();
         setup();
+    }
+
+    @Override
+    public CfgValue<Map<Key, NumberProvider>> ANIMAL_ATTRIBUTES() {
+        return ANIMAL_ATTRIBUTES;
+    }
+
+    @Override
+    public CfgValue<Map<Key, AnimalAttributeData>> ANIMAL_ATTRIBUTES_PER_TYPE() {
+        return ANIMAL_ATTRIBUTES_PER_TYPE;
     }
 
     @Override
