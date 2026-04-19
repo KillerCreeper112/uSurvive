@@ -10,6 +10,7 @@ import killercreepr.usurvive.api.enchant.component.CruxEnchantInteractable;
 import killercreepr.usurvive.core.USurvivePlugin;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Particle;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.entity.Player;
@@ -30,6 +31,7 @@ public class AutoPlantEnchant implements CruxEnchantInteractable {
 
   @Override
   public void onPlayerInteract(PlayerInteractEvent event, int level) {
+    if(!event.getAction().isRightClick()) return;
     var p = event.getPlayer();
     var block = event.getClickedBlock();
     if(block == null || block.isEmpty()) return;
@@ -53,6 +55,7 @@ public class AutoPlantEnchant implements CruxEnchantInteractable {
     var result = findSeeds(p.getInventory(), seeds.key(), cost);
     if(!result.getSecond()) return false;
 
+    var sounds = block.getBlockSoundGroup();
     if(!p.breakBlock(block)) return false;
 
     var removed = 0;
@@ -66,12 +69,14 @@ public class AutoPlantEnchant implements CruxEnchantInteractable {
 
     block.setType(type, false);
 
+    var loc = block.getLocation().toCenterLocation();
     new ParticleBuilder(Particle.HAPPY_VILLAGER)
-      .location(block.getLocation().toCenterLocation())
+      .location(loc)
       .count(CruxMath.random(3, 5))
       .extra(0.1)
       .offset(0.3, 0.3, 0.3)
       .spawn();
+    block.getWorld().playSound(loc, sounds.getBreakSound(), SoundCategory.BLOCKS, sounds.getVolume(), sounds.getPitch());
     return true;
   }
 

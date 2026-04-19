@@ -26,15 +26,6 @@ import java.util.Map;
 @killercreepr.cruxconfig.config.common.annotations.Config(autoUpdate = true)
 public class EnchantsConfig extends Cfg implements Reloadable {
     public final CfgValue<Map<Key, ItemHolder>> BLOCK_TO_SEEDS = new CommonValue<>(){
-        @Override
-        public void setDefault(@NonNull DataFile cfg, @NotNull String path) {
-            FileObject o = new FileObject();
-            o.addProperty("minecraft:potatoes", "minecraft:potato");
-            o.addProperty("minecraft:carrots", "minecraft:carrot");
-            o.addProperty("minecraft:beetroots", "minecraft:beetroot_seeds");
-            o.addProperty("minecraft:pitcher_crop", "minecraft:pitcher_pod");
-            cfg.serialize(path, o);
-        }
     };
 
     public EnchantsConfig(@NotNull Plugin plugin, @NotNull String path) {
