@@ -24,6 +24,9 @@ import killercreepr.cruxattributes.api.attribute.CruxAttributeModifier;
 import killercreepr.cruxattributes.api.equipment.CruxSlot;
 import killercreepr.cruxattributes.api.equipment.CruxSlotGroup;
 import killercreepr.cruxattributes.bukkit.AttributeBukkitAdaptor;
+import killercreepr.cruxblocks.api.event.CruxBlockBreakEvent;
+import killercreepr.cruxblocks.core.mining.user.EntityMiner;
+import killercreepr.cruxenchants.core.registries.CruxEnchantRegistries;
 import killercreepr.cruxentities.api.combat.EntityDamager;
 import killercreepr.cruxentities.entity.CruxMob;
 import killercreepr.cruxentities.entity.MobCategory;
@@ -40,6 +43,7 @@ import killercreepr.cruxtickables.core.entity.memory.EntityTickablesHolder;
 import killercreepr.usurvive.api.entity.player.UPlayer;
 import killercreepr.usurvive.api.event.EntityTrampleEnchantEvent;
 import killercreepr.usurvive.api.event.ProjectileRicochetEvent;
+import killercreepr.usurvive.core.component.USurviveEnchantComponents;
 import killercreepr.usurvive.core.damage.type.USurviveDamageTypes;
 import killercreepr.usurvive.core.data.entity.TrampleHolder;
 import killercreepr.usurvive.core.enchant.USurviveEnchant;
@@ -73,6 +77,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.*;
@@ -113,6 +118,47 @@ public class EnchantsListener implements Listener {
                return true;
            }
            return false;
+        });
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBlockDropItemMonitor(BlockDropItemEvent event) {
+        var p = event.getPlayer();
+        var item = p.getInventory().getItemInMainHand();
+        if(CruxItem.isEmpty(item)) return;
+        item.getEnchantments().forEach((ench, level) ->{
+            var cruxEnchant = CruxEnchantRegistries.CRUX_ENCHANT.get(ench.key());
+            if(cruxEnchant == null) return;
+            var comp = cruxEnchant.get(USurviveEnchantComponents.BLOCK_DROPS);
+            if(comp != null) comp.onBlockDropItem(event, level);
+        });
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onCruxBlockBreakMonitor(CruxBlockBreakEvent event) {
+        var ctx = event.getContext();
+        if(!(ctx.getMiner() instanceof EntityMiner miner)) return;
+        var item = miner.getTool();
+        if(CruxItem.isEmpty(item)) return;
+
+        item.getEnchantments().forEach((ench, level) ->{
+            var cruxEnchant = CruxEnchantRegistries.CRUX_ENCHANT.get(ench.key());
+            if(cruxEnchant == null) return;
+            var comp = cruxEnchant.get(USurviveEnchantComponents.BLOCK_DROPS);
+            if(comp != null) comp.onCruxBlockBreak(event, level, miner);
+        });
+    }
+
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        var item = event.getItem();
+        if(CruxItem.isEmpty(item)) return;
+        item.getEnchantments().forEach((ench, level) ->{
+            var cruxEnchant = CruxEnchantRegistries.CRUX_ENCHANT.get(ench.key());
+            if(cruxEnchant == null) return;
+            var comp = cruxEnchant.get(USurviveEnchantComponents.INTERACTABLE);
+            if(comp != null) comp.onPlayerInteract(event, level);
         });
     }
 

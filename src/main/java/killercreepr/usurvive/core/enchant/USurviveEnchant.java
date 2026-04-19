@@ -40,6 +40,8 @@ public class USurviveEnchant {
     public static final Enchantment SOULBOUND = get("soulbound");
     public static final Enchantment EMOTIVE = get("emotive");
     public static final Enchantment YOINK = get("yoink");
+    public static final Enchantment AUTO_REPLANT = get("auto_replant");
+    public static final Enchantment COLLECTOR = get("collector");
 
     //may become a charm or something else
     public static final Enchantment REMNANT = get("remnant");

@@ -21,6 +21,9 @@ import killercreepr.cruxenchants.api.enchant.ApplicableItemGroup;
 import killercreepr.cruxenchants.api.enchant.ApplicableItemType;
 import killercreepr.cruxenchants.api.enchant.CruxEnchant;
 import killercreepr.cruxenchants.core.util.EnchantRegistererUtil;
+import killercreepr.usurvive.core.component.USurviveEnchantComponents;
+import killercreepr.usurvive.core.enchant.component.AutoPlantEnchant;
+import killercreepr.usurvive.core.enchant.component.CollectorEnchant;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -43,6 +46,7 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
     public static final TagKey<ItemType> BOW_CROSSBOW_TRIDENT = TagKey.create(RegistryKey.ITEM, Key.key("crux", "bow_crossbow_trident"));
     public static final TagKey<ItemType> CHESTPLATE_LEGGINGS = TagKey.create(RegistryKey.ITEM, Key.key("crux", "chestplate_leggings"));
     public static final TagKey<ItemType> WEAPONS_TOOLS_ARMOR = TagKey.create(RegistryKey.ITEM, Key.key("crux", "weapons_tools_armor"));
+    public static final TagKey<ItemType> TOOLS = TagKey.create(RegistryKey.ITEM, Key.key("crux", "tools"));
 
     public static void register(LifecycleEventManager<BootstrapContext> manager){
         manager.registerEventHandler(LifecycleEvents.TAGS.preFlatten(RegistryKey.ITEM), event -> {
@@ -80,6 +84,12 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 TagEntry.tagEntry(ItemTypeTagKeys.AXES, true),
                 TagEntry.tagEntry(ItemTypeTagKeys.SHOVELS, true),
                 TagEntry.tagEntry(ItemTypeTagKeys.HOES, true)
+            ));
+            registrar.setTag(TOOLS, Set.of(
+              TagEntry.tagEntry(ItemTypeTagKeys.PICKAXES, true),
+              TagEntry.tagEntry(ItemTypeTagKeys.AXES, true),
+              TagEntry.tagEntry(ItemTypeTagKeys.SHOVELS, true),
+              TagEntry.tagEntry(ItemTypeTagKeys.HOES, true)
             ));
         });
 
@@ -623,6 +633,48 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 .applicableItemGroup(ApplicableItemGroup.builder()
                     .add(ApplicableItemType.FISHING_ROD)
                     .build())
+        );
+        register(
+          "auto_replant", b -> b.description(Component.text("Auto Replant"))
+            .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.HOES))
+            .anvilCost(1)
+            .maxLevel(3)
+            .weight(1)
+            .exclusiveWith(RegistrySet.keySet(
+              RegistryKey.ENCHANTMENT,
+              minecraftTyped("silk_touch")
+            ))
+            .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+            .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+            .activeSlots(EquipmentSlotGroup.MAINHAND),
+          crux -> crux.description("Right click to harvest crops and automatically replant them. Deals extra durability damage and consumes more seeds from inventory, but higher levels reduce durability loss and seed usage")
+            .applicableItemGroup(ApplicableItemGroup.builder()
+              .add(ApplicableItemType.HOE)
+              .build())
+            .editComponents(components ->{
+                components.set(USurviveEnchantComponents.INTERACTABLE, new AutoPlantEnchant(3));
+            })
+        );
+        register(
+          "collector", b -> b.description(Component.text("Collector"))
+            .supportedItems(event.getOrCreateTag(TOOLS))
+            .anvilCost(1)
+            .maxLevel(1)
+            .weight(1)
+            .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+            .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+            .exclusiveWith(RegistrySet.keySet(
+              RegistryKey.ENCHANTMENT,
+              minecraftTyped("fortune")
+            ))
+            .activeSlots(EquipmentSlotGroup.MAINHAND),
+          crux -> crux.description("Item drops go directly into inventory")
+            .applicableItemGroup(ApplicableItemGroup.builder()
+              .add(ApplicableItemGroup.TOOLS)
+              .build())
+            .editComponents(components ->{
+                components.set(USurviveEnchantComponents.BLOCK_DROPS, new CollectorEnchant());
+            })
         );
     }
 
