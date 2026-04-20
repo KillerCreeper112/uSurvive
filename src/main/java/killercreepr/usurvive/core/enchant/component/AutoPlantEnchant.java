@@ -6,13 +6,16 @@ import killercreepr.crux.core.Crux;
 import killercreepr.crux.core.data.util.Pair;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.crux.paper.ItemHolder;
+import killercreepr.cruxblocks.api.block.component.BushBlock;
 import killercreepr.usurvive.api.enchant.component.CruxEnchantInteractable;
 import killercreepr.usurvive.core.USurvivePlugin;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Particle;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Ageable;
+import org.bukkit.block.data.Bisected;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
@@ -35,6 +38,7 @@ public class AutoPlantEnchant implements CruxEnchantInteractable {
     var p = event.getPlayer();
     var block = event.getClickedBlock();
     if(block == null || block.isEmpty()) return;
+
     var item = event.getItem();
     var result = harvestBlock(block, p, item, level);
     if(result){
@@ -46,6 +50,17 @@ public class AutoPlantEnchant implements CruxEnchantInteractable {
   public boolean harvestBlock(Block block, Player p, ItemStack item, int level){
     if(!(block.getBlockData() instanceof Ageable ageable)) return false;
     if(ageable.getAge() < ageable.getMaximumAge()) return false;
+    if(ageable instanceof Bisected bisected){
+      if(bisected.getHalf() == Bisected.Half.TOP){
+        var bottom = block.getRelative(BlockFace.DOWN);
+        if(bottom.getType() != block.getType()) return false;
+        if(!(bottom.getBlockData() instanceof Bisected bottomBisected)) return false;
+        if(bottomBisected.getHalf() != Bisected.Half.BOTTOM) return false;
+        block = bottom;
+      }
+    }
+
+
     var type = block.getType();
 
     var seeds = seeds(type.key());

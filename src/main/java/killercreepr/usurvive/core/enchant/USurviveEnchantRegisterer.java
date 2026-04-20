@@ -24,6 +24,7 @@ import killercreepr.cruxenchants.core.util.EnchantRegistererUtil;
 import killercreepr.usurvive.core.component.USurviveEnchantComponents;
 import killercreepr.usurvive.core.enchant.component.AutoPlantEnchant;
 import killercreepr.usurvive.core.enchant.component.CollectorEnchant;
+import killercreepr.usurvive.core.enchant.component.SoftStepEnchant;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -676,9 +677,34 @@ public class USurviveEnchantRegisterer extends EnchantRegistererUtil {
                 components.set(USurviveEnchantComponents.BLOCK_DROPS, new CollectorEnchant());
             })
         );
+        register(
+          "soft_step", b -> b.description(Component.text("Soft Step"))
+            .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.ENCHANTABLE_FOOT_ARMOR))
+            .anvilCost(1)
+            .maxLevel(3)
+            .weight(1)
+            .minimumCost(EnchantmentRegistryEntry.EnchantmentCost.of(1, 1))
+            .maximumCost(EnchantmentRegistryEntry.EnchantmentCost.of(3, 1))
+            .exclusiveWith(RegistrySet.keySet(
+              RegistryKey.ENCHANTMENT,
+              cruxTyped("trample")
+            ))
+            .activeSlots(EquipmentSlotGroup.FEET),
+          crux -> crux.description("Prevents farmland from breaking while also decreasing stepping sound volume per level")
+            .applicableItemGroup(ApplicableItemGroup.builder()
+              .add(ApplicableItemType.BOOTS)
+              .build())
+            .editComponents(components ->{
+                components.set(USurviveEnchantComponents.PHYSICAL_INTERACTABLE, new SoftStepEnchant(3));
+            })
+        );
     }
 
     private TypedKey<Enchantment> minecraftTyped(String key){
         return RegistryKey.ENCHANTMENT.typedKey(Key.key(key));
+    }
+
+    private TypedKey<Enchantment> cruxTyped(String key){
+        return RegistryKey.ENCHANTMENT.typedKey(Crux.key(key));
     }
 }

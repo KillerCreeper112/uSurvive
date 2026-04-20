@@ -13,6 +13,7 @@ import killercreepr.usurvive.api.component.PotionInfusable;
 import killercreepr.usurvive.api.component.WaterProjectile;
 import killercreepr.usurvive.api.enchant.component.CruxEnchantBlockDrops;
 import killercreepr.usurvive.api.enchant.component.CruxEnchantInteractable;
+import killercreepr.usurvive.api.enchant.component.CruxEnchantPhysicalInteractable;
 import killercreepr.usurvive.api.mechanics.grapple.Grapple;
 import killercreepr.usurvive.api.mechanics.whip.Whip;
 import killercreepr.usurvive.core.block.GlintingOreBlockComponent;
@@ -31,6 +32,7 @@ public class USurviveEnchantComponents {
     public static void register(){}
     public static final DataComponentType<CruxEnchantInteractable> INTERACTABLE = register("crux/enchant/interactable", builder -> builder);
     public static final DataComponentType<CruxEnchantBlockDrops> BLOCK_DROPS = register("crux/enchant/block_drops", builder -> builder);
+    public static final DataComponentType<CruxEnchantPhysicalInteractable> PHYSICAL_INTERACTABLE = register("crux/enchant/physical_interactable", builder -> builder);
 
     private static <T> DataComponentType<T> register(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator){
         return CruxRegistries.DATA_COMPONENT_TYPE.register(Crux.key(id), builderOperator.apply(DataComponentType.builder()).build());

@@ -55,4 +55,6 @@ dependencies:
       required: false
     DiscordSRV:
       required: false
+    packetevents:
+      required: false
 

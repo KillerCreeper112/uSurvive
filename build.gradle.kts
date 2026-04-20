@@ -1,3 +1,4 @@
+import org.codehaus.groovy.tools.shell.util.Logger.io
 
 plugins {
     java
@@ -45,7 +46,7 @@ dependencies {
     implementation("fr.skytasul", "glowingentities", "1.4.9")
 
     compileOnly("net.luckperms:api:5.4")
-    compileOnly("com.github.retrooper:packetevents-spigot:2.8.0")
+    compileOnly("com.github.retrooper:packetevents-spigot:2.12.1")
     compileOnly("com.discordsrv:discordsrv:1.30.4")
 
     compileOnly(fileTree("libs"){
@@ -56,7 +57,7 @@ dependencies {
     ))
 }
 
-paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
+//paperweight.reobfArtifactConfiguration = ReobfArtifactConfiguration.MOJANG_PRODUCTION
 
 tasks{
     assemble{

@@ -73,6 +73,7 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.*;
@@ -152,6 +153,20 @@ public class EnchantsListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerInteract(PlayerInteractEvent event) {
+        var p = event.getPlayer();
+        var action = event.getAction();
+        if(action == Action.PHYSICAL){
+            var boots = p.getInventory().getBoots();
+            if(!CruxItem.isEmpty(boots)){
+                boots.getEnchantments().forEach((ench, level) ->{
+                    var cruxEnchant = CruxEnchantRegistries.CRUX_ENCHANT.get(ench.key());
+                    if(cruxEnchant == null) return;
+                    var comp = cruxEnchant.get(USurviveEnchantComponents.PHYSICAL_INTERACTABLE);
+                    if(comp != null) comp.onPlayerPhysicalInteract(event, level);
+                });
+            }
+        }
+
         var item = event.getItem();
         if(CruxItem.isEmpty(item)) return;
         item.getEnchantments().forEach((ench, level) ->{

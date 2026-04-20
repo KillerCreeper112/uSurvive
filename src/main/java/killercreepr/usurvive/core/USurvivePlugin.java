@@ -1,5 +1,7 @@
 package killercreepr.usurvive.core;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.google.common.reflect.TypeToken;
 import killercreepr.crux.api.communication.Communicator;
 import killercreepr.crux.api.communication.lang.CreateLang;
@@ -160,6 +162,7 @@ import killercreepr.usurvive.core.world.module.ResetWorldModule;
 import killercreepr.usurvive.core.world.module.ResourceWorldModule;
 import killercreepr.usurvive.external.discordsrv.DiscordSRVHook;
 import killercreepr.usurvive.external.discordsrv.DiscordSRVListener;
+import killercreepr.usurvive.external.packetevents.PlayerStepPacketListener;
 import killercreepr.usurvive.external.quickshop.UQuickShop;
 import net.kyori.adventure.key.Key;
 import org.bukkit.OfflinePlayer;
@@ -574,8 +577,6 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
             );
         }
 
-
-
         if(getServer().getPluginManager().getPlugin("DiscordSRV") != null){
             DiscordSRVHook.onEnable(this);
         }
@@ -593,6 +594,10 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
 
         reloadConfig();
         MaintenanceListener.maintenance = getConfig().getBoolean("maintenance");
+
+        if(getServer().getPluginManager().getPlugin("packetevents") != null){
+            PacketEvents.getAPI().getEventManager().registerListener(new PlayerStepPacketListener(), PacketListenerPriority.NORMAL);
+        }
     }
 
     public void setupQuickShop(){
