@@ -113,6 +113,9 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg, Graveston
     public final NumCfgValue RANDOM_TIP_TIME_OCCASIONAL = new NumCfgValue(NumberProvider.uniform(24000, 54000));
     public final CfgValue<Map<Key, NumberProvider>> ANIMAL_ATTRIBUTES = new CommonValue<>(){};
     public final CfgValue<Map<Key, AnimalAttributeData>> ANIMAL_ATTRIBUTES_PER_TYPE = new CommonValue<>(){};
+    public final CfgValue<Collection<Key>> SELL_COMMAND_SHOPS = new CommonValue<>(){};
+    public final CfgValue<Key> SELL_COMMAND_MENU = new CommonValue<>(){};
+    public final CfgValue<Key> SELL_COMMAND_VIEW_MENU = new CommonValue<>(){};
 
 
     public final CfgValue<List<String>> TEXT_DISPLAY_DIALOG_FORMAT = new CommonValue<>(List.of(

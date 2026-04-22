@@ -65,6 +65,12 @@ public class Lang {
         .build()
     );
 
+    public static final Msg ITEM_CANNOT_BE_SOLD = create(
+      Communicator.builder()
+        .chat("<red>This item cannot be sold to any of the merchants at spawn")
+        .build()
+    );
+
     public static final Msg SENT_PLAYER_ORBITS = create(
       Communicator.builder()
         .chat("<yellow>You sent <orbit_color><amount> orbits</color> to <target_name>")

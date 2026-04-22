@@ -23,6 +23,7 @@ import killercreepr.crux.api.text.tags.TagsPrefixBuilder;
 import killercreepr.crux.api.text.tags.container.TagContainer;
 import killercreepr.crux.api.valueproviders.number.NumberProvider;
 import killercreepr.crux.core.Crux;
+import killercreepr.crux.core.data.util.Pair;
 import killercreepr.crux.core.text.resolver.Tag;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxclaims.api.claiming.Claimer;
@@ -31,6 +32,15 @@ import killercreepr.cruxcore.CruxCore;
 import killercreepr.cruxcurrency.api.currency.CruxCurrency;
 import killercreepr.cruxcurrency.core.entity.memory.CurrencyHolder;
 import killercreepr.cruxcurrency.core.registry.CruxCurrencyRegistries;
+import killercreepr.cruxmenus.api.menu.CfgMenu;
+import killercreepr.cruxshops.api.shop.trade.ShopTrade;
+import killercreepr.cruxshops.api.shop.trade.ShopTradeIngredient;
+import killercreepr.cruxshops.api.shop.trade.ShopTradeResult;
+import killercreepr.cruxshops.api.shop.trade.TraderTrade;
+import killercreepr.cruxshops.api.trader.ShopTrader;
+import killercreepr.cruxshops.core.registries.ShopsRegistries;
+import killercreepr.cruxshops.core.shop.trade.ingredient.PluginItemTradeIngredient;
+import killercreepr.cruxshops.core.shop.trade.result.PluginItemTradeResult;
 import killercreepr.cruxteleport.api.teleport.CruxTeleport;
 import killercreepr.cruxteleport.api.teleport.CruxTeleporter;
 import killercreepr.cruxteleport.api.teleport.world.RandomWorldTP;
@@ -66,6 +76,51 @@ public class USurviveCommands {
     protected final @NotNull USurvivePlugin plugin;
     public USurviveCommands(@NotNull USurvivePlugin plugin) {
         this.plugin = plugin;
+    }
+
+    public Pair<ShopTrader, TraderTrade> findShop(Entity e, ItemStack item, Collection<Key> shops){
+      Pair<ShopTrader, TraderTrade> buyingTrade = null;
+      for (Key shopKey : shops) {
+        var shop = ShopsRegistries.SHOP_TRADER.get(shopKey);
+        if(shop == null){
+          Crux.logError("No shop trader of " + shopKey + " found!");
+          continue;
+        }
+        var trades = shop.getTrades(e);
+        if(trades.isEmpty()) continue;
+        for (TraderTrade trade : trades) {
+          if(!trade.canView(e)) continue;
+          var selling = trade.getSellingTrade();
+          if(selling != null){
+            if(canTrade(item, selling)) return Pair.of(shop, trade);
+          }
+          var buying = trade.getBuyingTrade();
+          if(buying != null && buyingTrade == null && canBuy(item, buying)){
+            buyingTrade = Pair.of(shop, trade);
+          }
+        }
+      }
+      return buyingTrade;
+    }
+
+  public boolean canBuy(ItemStack item, ShopTrade trade){
+      var checkType = Crux.handlers().item().getType(item);
+    for (ShopTradeResult result : trade.getResults()) {
+      if(result instanceof PluginItemTradeResult r){
+        var rItem = Crux.handlers().item().getType(r.item());
+        if(rItem.equals(checkType)) return true;
+      }
+    }
+    return false;
+  }
+
+    public boolean canTrade(ItemStack item, ShopTrade trade){
+      for (ShopTradeIngredient ingredient : trade.getIngredients()) {
+        if(ingredient instanceof PluginItemTradeIngredient i){
+          if(i.isValidItem(item)) return true;
+        }
+      }
+      return false;
     }
 
     public void registerHelp(){
@@ -139,6 +194,48 @@ public class USurviveCommands {
                     return 1;
                 }).build();
             commands.register(cmd, List.of("s"));
+
+            commands.register(
+              Commands.literal("sell")
+                .requires(source -> source.getSender().hasPermission("usurvive.command.sell"))
+                .executes(ctx ->{
+                  if(!(getExecutor(ctx.getSource()) instanceof Player p)) return -1;
+                  var cfg = (Config) plugin.values();
+                  var shops = cfg.SELL_COMMAND_SHOPS.valueOr(Set.of());
+                  if(shops.isEmpty()) return -1;
+                  var item = p.getInventory().getItemInMainHand();
+                  if(CruxItem.isEmpty(item)){
+                    item = p.getInventory().getItemInOffHand();
+                    if(CruxItem.isEmpty(item)){
+                      Lang.ITEM_HOLDING_AIR.use(p);
+                      return -1;
+                    }
+                  }
+
+                  var shop = findShop(p, item, shops);
+                  if(shop == null){
+                    Lang.ITEM_CANNOT_BE_SOLD.use(p);
+                    return 0;
+                  }
+                  var menu = CruxCore.core().cruxMenus().menuRegistry().menuHolders().get(cfg.SELL_COMMAND_MENU.valueOrThrow());
+                  var viewMenu = CruxCore.core().cruxMenus().menuRegistry().menuHolders().get(cfg.SELL_COMMAND_VIEW_MENU.valueOrThrow());
+                  DataExchange.Builder builder = DataExchange.builder();
+                  builder.put("viewer", p);
+                  builder.put("trader", shop.getFirst());
+                  CfgMenu menuBuilt = menu.createMenu(builder.build());
+                  menuBuilt.load();
+
+                  viewMenu.open(
+                    p, DataExchange.builder()
+                      .put(menuBuilt)
+                      .put("trade", shop.getSecond())
+                      .put("trader", shop.getFirst())
+                      .build()
+                  );
+                  return 1;
+                })
+                .build()
+            );
 
             commands.register(
                 Commands.literal("quickaccess")
