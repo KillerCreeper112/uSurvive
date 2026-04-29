@@ -43,7 +43,7 @@ dependencies {
         "E:\\Plugins\\YO\\CruxCore\\run\\plugins\\CrazyAdvancementsAPI-2.21.9.jar",
     ))
 
-    implementation("fr.skytasul", "glowingentities", "1.4.9")
+    implementation("fr.skytasul", "glowingentities", "1.4.11")
 
     compileOnly("net.luckperms:api:5.4")
     compileOnly("com.github.retrooper:packetevents-spigot:2.12.1")
@@ -63,6 +63,12 @@ tasks{
     assemble{
         //dependsOn(reobfJar)
         dependsOn(shadowJar)
+    }
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(25))
     }
 }
 
