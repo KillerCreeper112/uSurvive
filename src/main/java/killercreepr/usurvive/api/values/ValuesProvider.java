@@ -85,4 +85,5 @@ public interface ValuesProvider extends Reloadable {
     @NotNull Holder<String> TEXT_DISPLAY_DIALOG_FORMAT_LINE();
     @NotNull NumberProvider BOUNDER_SKIN_AMOUNT();
     @NotNull NumberProvider BOUNDER_BRUTE_SKIN_AMOUNT();
+    @NotNull Holder<Boolean> DISABLE_CUSTOM_MOB_SPAWNING();
 }

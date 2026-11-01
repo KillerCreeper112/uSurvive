@@ -450,7 +450,7 @@ public class USurvivePlugin extends CruxPlugin implements Listener, LangProvider
         worldManager.getModuleCreatorRegistry().register(Key.key("overworld"), new CruxWorldModuleCreator() {
             @Override
             public @NotNull WorldModule create(@NotNull CruxWorld world) {
-                return new USurviveOverworld(world);
+                return new USurviveOverworld(world, values.DISABLE_CUSTOM_MOB_SPAWNING());
             }
         });
         var customNether = new CruxWorldModuleCreator() {

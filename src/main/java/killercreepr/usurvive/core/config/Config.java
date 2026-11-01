@@ -25,6 +25,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.io.File;
 import java.util.Collection;
@@ -116,6 +117,7 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg, Graveston
     public final CfgValue<Collection<Key>> SELL_COMMAND_SHOPS = new CommonValue<>(){};
     public final CfgValue<Key> SELL_COMMAND_MENU = new CommonValue<>(){};
     public final CfgValue<Key> SELL_COMMAND_VIEW_MENU = new CommonValue<>(){};
+    public final CfgValue<Boolean> DISABLE_CUSTOM_MOB_SPAWNING = new CommonValue<>(){};
 
 
     public final CfgValue<List<String>> TEXT_DISPLAY_DIALOG_FORMAT = new CommonValue<>(List.of(
@@ -491,6 +493,11 @@ public class Config extends Cfg implements ValuesProvider, SleeperCfg, Graveston
     @Override
     public NumberProvider BOUNDER_BRUTE_SKIN_AMOUNT() {
         return BOUNDER_BRUTE_SKIN_AMOUNT.value();
+    }
+
+    @Override
+    public @NonNull Holder<Boolean> DISABLE_CUSTOM_MOB_SPAWNING() {
+        return DISABLE_CUSTOM_MOB_SPAWNING;
     }
 
     @Override

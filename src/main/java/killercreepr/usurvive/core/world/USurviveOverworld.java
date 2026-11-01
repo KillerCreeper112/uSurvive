@@ -1,5 +1,6 @@
 package killercreepr.usurvive.core.world;
 
+import killercreepr.crux.api.data.Holder;
 import killercreepr.crux.api.data.tick.Ticked;
 import killercreepr.crux.core.util.CruxMath;
 import killercreepr.cruxworlds.api.world.CruxWorld;
@@ -15,9 +16,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class USurviveOverworld extends SimpleWorldModule implements Ticked {
     protected final NaturalEntitySpawnManager entitySpawnManager;
+    protected final Holder<Boolean> disableCustomMobSpawning;
 
-    public USurviveOverworld(@NotNull CruxWorld world) {
+    public USurviveOverworld(@NotNull CruxWorld world, Holder<Boolean> disableCustomMobSpawning) {
         super(world);
+        this.disableCustomMobSpawning = disableCustomMobSpawning;
         entitySpawnManager = new NaturalEntitySpawnManager(world, createEntitySpawner()){
             @Override
             public boolean onSpawnNavigation() {
@@ -39,6 +42,7 @@ public class USurviveOverworld extends SimpleWorldModule implements Ticked {
 
     @Override
     public void tick(){
+        if(disableCustomMobSpawning.valueOr(false)) return;
         entitySpawnManager.tick();
     }
 

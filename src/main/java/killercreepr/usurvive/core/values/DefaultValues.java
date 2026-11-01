@@ -13,6 +13,7 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -307,5 +308,10 @@ public class DefaultValues implements ValuesProvider {
     @Override
     public NumberProvider BOUNDER_BRUTE_SKIN_AMOUNT() {
         return null;
+    }
+
+    @Override
+    public @NonNull Holder<Boolean> DISABLE_CUSTOM_MOB_SPAWNING() {
+        return Holder.empty();
     }
 }
