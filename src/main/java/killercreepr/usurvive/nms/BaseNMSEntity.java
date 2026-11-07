@@ -1,6 +1,7 @@
 package killercreepr.usurvive.nms;
 
 import killercreepr.crux.api.data.Holder;
+import killercreepr.crux.core.util.CruxMath;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -17,7 +18,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public abstract class BaseNMSEntity implements NMSEntity {
-    protected final int id = Entity.nextEntityId();
+    protected final int id = CruxMath.random(0, Integer.MAX_VALUE);//Entity.nextEntityId();
     protected final Collection<Holder<Player>> audience = new HashSet<>();
     @Override
     public Collection<Holder<Player>> getAudience() {

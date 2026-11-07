@@ -127,7 +127,7 @@ public class EjectiveItemLootComponent {
         .location(spawnLoc)
         .count(CruxMath.random(6, 10))
         .offset(.3, .3, .3)
-        .extra(.1)
+        .speed(.1)
         .spawn();
     }
 
@@ -149,7 +149,7 @@ public class EjectiveItemLootComponent {
       new ParticleBuilder(Particle.SMOKE)
         .location(spawnLoc)
         .offset(.2, .2, .2)
-        .extra(.05)
+        .speed(.05)
         .count(CruxMath.random(3, 4))
         .spawn();
     }

@@ -134,7 +134,7 @@ public class ClingPotion extends InflictedPotion implements Listener {
             .playAt(entity);
         new ParticleBuilder(Particle.CRIT)
             .location(loc)
-            .extra(.1)
+            .speed(.1)
             .spawn();
         //optimize for other entities
         if(!isPlayer) return;

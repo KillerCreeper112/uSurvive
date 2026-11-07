@@ -115,7 +115,7 @@ public class BedListener implements Listener {
         World world = b.getWorld();
         if(world.getEnvironment() == World.Environment.NETHER) return false;
         BedRule bedRule = ((CraftWorld) world).getHandle().environmentAttributes().getDimensionValue(EnvironmentAttributes.BED_RULE);
-        return !bedRule.explodes();
+        return !bedRule.destroyOnUse();
         //return world.isBedWorks(); //world.isNatural();//todo || world.isBedWorks();
     }
 

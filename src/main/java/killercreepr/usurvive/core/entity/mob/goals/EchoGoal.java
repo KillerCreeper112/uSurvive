@@ -99,7 +99,7 @@ public class EchoGoal extends CruxMobModeledGoal implements Listener {
         CreateSound.sound(Sound.BLOCK_SOUL_SOIL_BREAK, .7f).playAt(mob);
         CreateSound.sound(Sound.ENTITY_ZOMBIE_CONVERTED_TO_DROWNED, 1.5f).playAt(mob);
         new ParticleBuilder(Particle.SOUL_FIRE_FLAME)
-            .extra(.3)
+            .speed(.3)
             .offset(1, 1, 1)
             .count(CruxMath.random(10, 20))
             .location(mob.getLocation().add(0, mob.getHeight()/2, 0))
@@ -149,7 +149,7 @@ public class EchoGoal extends CruxMobModeledGoal implements Listener {
             .location(mob.getLocation().add(0, mob.getHeight()*.7, 0))
             .count(CruxMath.random(1,3))
             .offset(.2, .2, .2)
-            .extra(.01)
+            .speed(.01)
             .spawn();
     }
 
@@ -356,7 +356,7 @@ public class EchoGoal extends CruxMobModeledGoal implements Listener {
         CreateSound.sound(Sound.ENTITY_VEX_DEATH, 1.5f).playAt(mob);
         CreateSound.sound(Sound.ENTITY_ZOMBIE_CONVERTED_TO_DROWNED, 2f).playAt(mob);
         new ParticleBuilder(Particle.SOUL_FIRE_FLAME)
-            .extra(.5)
+            .speed(.5)
             .offset(.5, .5, .5)
             .count(CruxMath.random(8, 15))
             .location(mob.getLocation().add(0, mob.getHeight()/2, 0))
@@ -364,7 +364,7 @@ public class EchoGoal extends CruxMobModeledGoal implements Listener {
 
             .particle(Particle.SOUL)
             .count(0)
-            .extra(0)
+            .speed(0)
             .offset(0, 0, 0)
             .spawn()
         ;

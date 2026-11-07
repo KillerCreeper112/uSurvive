@@ -120,7 +120,7 @@ public class WhispershadeGoal extends CruxMobModeledGoal implements Listener {
 
 
         new ParticleBuilder(Particle.SQUID_INK)
-            .extra(.3)
+            .speed(.3)
             .offset(.6, .6, .6)
             .count(CruxMath.random(5, 7))
             .location(mob.getLocation().add(0, mob.getHeight()/2, 0))
@@ -215,7 +215,7 @@ public class WhispershadeGoal extends CruxMobModeledGoal implements Listener {
             if(!isPlayingAnimation("despawn")){
                 mob.remove();
                 new ParticleBuilder(Particle.PORTAL)
-                    .extra(.3)
+                    .speed(.3)
                     .offset(.4, .4, .4)
                     .count(CruxMath.random(9, 13))
                     .location(mob.getLocation().add(0, mob.getHeight()/2, 0))
@@ -268,7 +268,7 @@ public class WhispershadeGoal extends CruxMobModeledGoal implements Listener {
         playAnimation("scream", true);
         CreateSound.sound(Sound.ENTITY_GHAST_HURT, 1.6f).playAt(mob);
         new ParticleBuilder(Particle.SQUID_INK)
-            .extra(.3)
+            .speed(.3)
             .offset(.6, .6, .6)
             .count(CruxMath.random(9, 13))
             .location(mob.getLocation().add(0, mob.getHeight()/2, 0))

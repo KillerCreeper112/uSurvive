@@ -46,7 +46,7 @@ public class TendrilGraspPotion extends AttributesPotion implements Listener {
         );
         new ParticleBuilder(Particle.HEART)
             .location(dmger.getLocation().add(0, dmger.getHeight()/2, 0))
-            .extra(.1)
+            .speed(.1)
             .offset(.3, .3, .3)
             .count(CruxMath.random(2, 4))
             .spawn()

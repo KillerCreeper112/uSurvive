@@ -183,7 +183,7 @@ public class VaneGoal extends CruxMobModeledGoal {
             .location(mob.getLocation().add(0, mob.getHeight()/2, 0))
             .offset(1, 1, 1)
             .count(CruxMath.random(15, 20))
-            .extra(0.2)
+            .speed(0.2)
             .spawn();
     }
 

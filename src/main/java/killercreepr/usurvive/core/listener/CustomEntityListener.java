@@ -87,7 +87,7 @@ public class CustomEntityListener implements Listener {
         new ParticleBuilder(Particle.EXPLOSION)
             .offset(range*.5, range*.5, range *.5)
             .count(CruxMath.random(8,12))
-            .extra(.1)
+            .speed(.1)
             .location(tnt.getLocation())
             .spawn();
         CreateSound.sound(Sound.ENTITY_GENERIC_EXPLODE, net.kyori.adventure.sound.Sound.Source.NEUTRAL, 2.3f, 1.2f)

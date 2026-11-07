@@ -230,7 +230,7 @@ public class SpettleGoal extends CruxMobModeledGoal implements Listener {
                             attack(hit);
                         });
                         new ParticleBuilder(Particle.ENTITY_EFFECT)
-                            .extra(.05)
+                            .speed(.05)
                             .offset(box.getWidthX()/2, box.getHeight()/2,box.getWidthZ()/2)
                             .count(CruxMath.random(3, 5))
                             .color(Color.fromRGB(0x70818A))
@@ -238,7 +238,7 @@ public class SpettleGoal extends CruxMobModeledGoal implements Listener {
                             .spawn()
                         ;
                         new ParticleBuilder(Particle.SNEEZE)
-                            .extra(.05)
+                            .speed(.05)
                             .location(getMouthPos())
                             .spawn()
                         ;

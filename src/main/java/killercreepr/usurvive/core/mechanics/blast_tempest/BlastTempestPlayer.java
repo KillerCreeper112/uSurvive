@@ -162,7 +162,7 @@ public class BlastTempestPlayer extends GenericBlastTempestPlayer {
             .locationTick(ctx ->{
                 Location loc = ctx.getLocation().toLocation(ray.location.value().getWorld());
                 new ParticleBuilder(Particle.DUST)
-                    .extra(0D)
+                    .speed(0D)
                     .offset(0D, 0D, 0D)
                     .location(loc)
                     .color(Color.RED)

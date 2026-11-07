@@ -89,7 +89,7 @@ public class SporelinkVisualizer extends SimpleCruxTick {
                         new ParticleBuilder(Particle.ELECTRIC_SPARK)
                             .location(ctx.getLocation().toLocation(main.getWorld()))
                             .offset(0, 0, 0)
-                            .extra(0)
+                            .speed(0)
                             .spawn();
                     })
                     .shape(CreateWarpedLine.builder()

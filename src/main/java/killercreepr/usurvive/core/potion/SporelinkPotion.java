@@ -79,7 +79,7 @@ public class SporelinkPotion extends ActiveEntityPotion<LivingEntity> {
             .location(entity.getLocation().add(0, entity.getHeight()/2, 0))
             .count(CruxMath.random(5, 7))
             .offset(.5, .5, .5)
-            .extra(.1)
+            .speed(.1)
             .spawn();
     }
 
@@ -132,7 +132,7 @@ public class SporelinkPotion extends ActiveEntityPotion<LivingEntity> {
             .location(entity.getLocation().add(0, entity.getHeight()/2, 0))
             .count(CruxMath.random(5, 7))
             .offset(.5, .5, .5)
-            .extra(.1)
+            .speed(.1)
             .colorTransition(Color.fromRGB(0xF2F280), Color.fromRGB(0x836A7D),
                 CruxMath.random(0.7f, 0.9f))
             .spawn();

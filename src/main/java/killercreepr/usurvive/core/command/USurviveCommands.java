@@ -312,7 +312,7 @@ public class USurviveCommands {
                                 .open(p);
                             return 1;
                         }
-                        p.openBook(meta);
+                        p.openBook(book);
                         return 1;
                     })
                     .build(), List.of("guidelines", "tos", "terms")

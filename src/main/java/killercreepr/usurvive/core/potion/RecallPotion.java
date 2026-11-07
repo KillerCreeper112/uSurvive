@@ -33,7 +33,7 @@ public class RecallPotion extends SimpleActivePotion {
 
     protected final ParticleBuilder particle = new ParticleBuilder(Particle.DUST)
         .data(new Particle.DustOptions(Color.PURPLE, .5f))
-        .extra(.1)
+        .speed(.1)
         ;
     @Override
     protected void onTick() {
@@ -67,7 +67,7 @@ public class RecallPotion extends SimpleActivePotion {
                 new ParticleBuilder(Particle.WITCH)
                     .count(15)
                     .offset(.5, .5, .5)
-                    .extra(.7)
+                    .speed(.7)
                     .location(parLoc)
                     .spawn()
                 ;

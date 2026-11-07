@@ -10,6 +10,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.PositionMoveRotation;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
@@ -50,7 +51,7 @@ public class NMSTextDisplay extends BaseNMSEntity implements UTextDisplay{
             loc.getZ(),
             loc.getPitch(),
             loc.getYaw(),
-            EntityType.TEXT_DISPLAY,
+            EntityTypes.TEXT_DISPLAY,
             0,
             Vec3.ZERO,
             0.0

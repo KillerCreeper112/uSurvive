@@ -54,13 +54,13 @@ public class RemnantSpiritGoal extends CruxMobModeledGoal implements Listener {
             .location(mob.getLocation().add(0, mob.getHeight()*.5, 0))
             .offset(.3, .3, .3)
             .count(CruxMath.random(5, 8))
-            .extra(.05)
+            .speed(.05)
             .spawn();
         new ParticleBuilder(Particle.SOUL_FIRE_FLAME)
             .location(mob.getLocation().add(0, mob.getHeight()*.5, 0))
             .offset(.3, .3, .3)
             .count(CruxMath.random(5, 8))
-            .extra(.05)
+            .speed(.05)
             .spawn();
     }
 }

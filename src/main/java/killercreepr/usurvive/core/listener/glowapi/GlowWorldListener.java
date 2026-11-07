@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 public class GlowWorldListener implements Listener {
     protected final World world;
     protected final GlowingEntities glowingEntities;
-    protected final Map<Integer, Data> data = new HashMap<>();
+    protected final Map<GlowingEntities.EntityIdentifier, Data> data = new HashMap<>();
 
     public GlowWorldListener(World world, GlowingEntities glowingEntities) {
         this.world = world;
@@ -46,7 +46,7 @@ public class GlowWorldListener implements Listener {
     public void onEntityDeath(EntityDeathEvent event) {
         var e = event.getEntity();
         if(!world.equals(e.getWorld())) return;
-        data.remove(e.getEntityId());
+        data.remove(new GlowingEntities.EntityidentifierRealEntity(e));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -90,17 +90,18 @@ public class GlowWorldListener implements Listener {
         setGlowing(entity, null);
     }
 
-    public void setData(int id, Data data){
+    public void setData(GlowingEntities.EntityIdentifier id, Data data){
         this.data.put(id, data);
     }
 
-    public Data removeData(int id){
+    public Data removeData(GlowingEntities.EntityIdentifier id){
         return this.data.remove(id);
     }
 
     public void setGlowing(Entity entity, ChatColor color) {
+        var id = new GlowingEntities.EntityidentifierRealEntity(entity);
         Data data = new Data(
-            entity.getEntityId(),
+            id,
             entityHolder(entity),
             (i, p) -> {
                 try {
@@ -122,10 +123,10 @@ public class GlowWorldListener implements Listener {
     }
 
     public void unsetGlowing(Entity entity){
-        unsetGlowing(entity.getEntityId());
+        unsetGlowing(new GlowingEntities.EntityidentifierRealEntity(entity));
     }
 
-    public void unsetGlowing(int id){
+    public void unsetGlowing(GlowingEntities.EntityIdentifier id){
         var data = removeData(id);
         if(data == null) return;
         forEachPlayer(this::unapply);
@@ -136,12 +137,12 @@ public class GlowWorldListener implements Listener {
     }
 
     public static class Data{
-        public final int id;
+        public final GlowingEntities.EntityIdentifier id;
         public final Holder<Entity> entity;
         public final BiConsumer<Entity, Player> apply;
-        public final BiConsumer<Integer, Player> unapply;
+        public final BiConsumer<GlowingEntities.EntityIdentifier, Player> unapply;
 
-        public Data(int id, Holder<Entity> entity, BiConsumer<Entity, Player> apply, BiConsumer<Integer, Player> unapply) {
+        public Data(GlowingEntities.EntityIdentifier id, Holder<Entity> entity, BiConsumer<Entity, Player> apply, BiConsumer<GlowingEntities.EntityIdentifier, Player> unapply) {
             this.id = id;
             this.entity = entity;
             this.apply = apply;

@@ -20,7 +20,6 @@ dependencies {
     compileOnly(files(
         "E:\\Plugins\\YO\\CruxCore\\build\\libs\\CruxCore-1.0-all.jar",
         "E:\\Plugins\\YO\\CruxTeleport\\build\\libs\\CruxTeleport-1.0-all.jar",
-        "E:\\Plugins\\YO\\CruxCore\\run\\plugins\\CrazyAdvancementsAPI-2.1.19.jar",
         "D:\\MythicMobs-5.6.2.jar",
         "D:\\ModelEngine-R4.0.9.jar",
         "E:\\Plugins\\YO\\CruxCurrency\\build\\libs\\CruxCurrency-1.0.jar",
@@ -40,10 +39,10 @@ dependencies {
         "E:\\Plugins\\YO\\CruxCore\\run\\plugins\\QuickShop-Hikari-6.2.0.8.jar",
 
         "E:\\Plugins\\YO\\CruxCore\\run\\plugins\\ProtocolLib.jar",
-        "E:\\Plugins\\YO\\CruxCore\\run\\plugins\\CrazyAdvancementsAPI-2.21.9.jar",
+        "E:\\Plugins\\YO\\CruxCore\\run\\plugins\\CrazyAdvancementsAPI-26.3.0-mojmap.jar"
     ))
 
-    implementation("fr.skytasul", "glowingentities", "1.4.11")
+    implementation("fr.skytasul:glowingentities:2.0.2")
 
     compileOnly("net.luckperms:api:5.4")
     compileOnly("com.github.retrooper:packetevents-spigot:2.12.1")

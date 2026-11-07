@@ -671,7 +671,7 @@ public class EnchantsListener implements Listener {
                         CruxMath.random(-.5, .5),
                         CruxMath.random(-.5, .5)
                     )
-                    .extra(1)
+                  .speed(1)
                     .count(0)
                     .spawn();
             }
@@ -780,7 +780,7 @@ public class EnchantsListener implements Listener {
             .location(e.getLocation())
             .offset(.6, .6, .6)
             .count(CruxMath.random(2, 4))
-            .extra(.1)
+          .speed(.1)
             .spawn()
         ;
         CreateSound.sound(Sound.ENTITY_GENERIC_EXPLODE, 1.6f).playAt(e);
@@ -865,13 +865,13 @@ public class EnchantsListener implements Listener {
         new ParticleBuilder(Particle.SOUL_FIRE_FLAME)
             .location(e.getLocation().add(0, e.getHeight()*.5, 0))
             .count(CruxMath.random(10, 15))
-            .extra(.1)
+          .speed(.1)
             .offset(.25, .25, .25)
             .spawn();
         new ParticleBuilder(Particle.SOUL)
             .location(e.getLocation().add(0, e.getHeight()*.5, 0))
             .count(CruxMath.random(4, 6))
-            .extra(.05)
+          .speed(.05)
             .offset(.1, .1, .1)
             .spawn();
         if(e instanceof Player p){
@@ -1060,7 +1060,7 @@ public class EnchantsListener implements Listener {
             .count(CruxMath.random(8, 12))
             .location(victim.getLocation().add(0, victim.getHeight()*.5, 0))
             .offset(.1, .1, .1)
-            .extra(.07)
+          .speed(.07)
             .spawn();
     }
 
@@ -1110,7 +1110,7 @@ public class EnchantsListener implements Listener {
         new ParticleBuilder(Particle.ENCHANTED_HIT)
             .location(e.getLocation().add(0, e.getHeight()*.5, 0))
             .offset(width *.5, width *.5, width *.5)
-            .extra(.1)
+          .speed(.1)
             .count(CruxMath.random(10, 15))
             .spawn();
         CreateSound.sound(Sound.BLOCK_ANVIL_LAND, net.kyori.adventure.sound.Sound.Source.PLAYER,
@@ -1193,7 +1193,7 @@ public class EnchantsListener implements Listener {
                 new ParticleBuilder(Particle.CRIT)
                     .location(backLoc)
                     .count(CruxMath.random(3, 5))
-                    .extra(.05)
+                  .speed(.05)
                     .offset(.05 * width, .05 * height, .05 * width)
                     .spawn();
             }
@@ -1208,7 +1208,7 @@ public class EnchantsListener implements Listener {
                     .data(ItemType.IRON_CHESTPLATE.createItemStack())
                     .location(vic.getLocation().add(0, height*.5, 0))
                     .count(CruxMath.random(12, 15))
-                    .extra(.05)
+                  .speed(.05)
                     .offset(.01 * width, .01 * height, .01 * width)
                     .spawn();
             }
@@ -1298,7 +1298,7 @@ public class EnchantsListener implements Listener {
             new ParticleBuilder(Particle.BLOCK)
                 .location(snare.getLocation().add(0, snare.getHeight()*.5, 0))
                 .offset(.1, .1, .1)
-                .extra(.15)
+              .speed(.15)
                 .count(CruxMath.random(13, 17))
                 .data(Material.DIRT.createBlockData())
                 .spawn();
@@ -1437,7 +1437,7 @@ public class EnchantsListener implements Listener {
 
         new ParticleBuilder(Particle.TRIAL_OMEN)
             .location(visualLocation)
-            .extra(.05)
+          .speed(.05)
             .spawn();
     }
 

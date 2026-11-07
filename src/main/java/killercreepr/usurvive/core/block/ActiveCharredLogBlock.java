@@ -20,7 +20,7 @@ public class ActiveCharredLogBlock extends SimpleActiveCruxBlock {
         new ParticleBuilder(Particle.LARGE_SMOKE)
             .count(CruxMath.random(3, 5))
             .offset(.5, .5, .5)
-            .extra(.05)
+            .speed(.05)
             .location(block.getLocation().toCenterLocation())
             .spawn()
         ;

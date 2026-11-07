@@ -23,14 +23,14 @@ public class GlintingOreBlockComponent implements CruxBlockComponent {
             .location(spawn)
             .count(CruxMath.random(5, 8))
             .offset(.3, .3,.3)
-            .extra(.3)
+            .speed(.3)
             .spawn()
         ;
         new ParticleBuilder(Particle.FIREWORK)
             .location(spawn)
             .count(CruxMath.random(5, 8))
             .offset(.3, .3,.3)
-            .extra(.3)
+            .speed(.3)
             .spawn()
         ;
 

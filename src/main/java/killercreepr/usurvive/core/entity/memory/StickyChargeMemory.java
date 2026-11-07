@@ -102,7 +102,7 @@ public class StickyChargeMemory extends SimpleEntityMemoryMainThread {
             .count(CruxMath.random(4,6))
             .location(entity.getLocation())
             .offset(range/3, range/3, range/3)
-            .extra(.1)
+            .speed(.1)
             .spawn()
             ;
         CreateSound.sound(Sound.ENTITY_GENERIC_EXPLODE, 1f, 1.4f).playAt(entity);

@@ -50,7 +50,7 @@ public class GuideShardAction extends SimpleMenuAction {
         }
         new ParticleBuilder(Particle.TOTEM_OF_UNDYING)
             .location(p.getLocation().add(0, p.getHeight()/2, 0))
-            .extra(.05)
+            .speed(.05)
             .offset(.4, .4, .4)
             .count(CruxMath.random(9, 12))
             .spawn();

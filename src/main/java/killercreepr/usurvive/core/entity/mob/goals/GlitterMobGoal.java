@@ -107,7 +107,7 @@ public class GlitterMobGoal extends CruxMobGoal implements Listener {
             new ParticleBuilder(Particle.FIREWORK)
                 .location(mob.getLocation().add(0, mob.getHeight()*.5, 0))
                 .count(0)
-                .extra(.35)
+                .speed(.35)
                 .offset(x.getX(), x.getY(), x.getZ())
                 .spawn();
         }

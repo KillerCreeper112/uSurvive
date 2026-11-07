@@ -149,7 +149,7 @@ public class GoldenItemCauldronHolder extends EntityTickedDataHolder {
         new ParticleBuilder(Particle.WITCH)
             .location(spawnLoc)
             .count(CruxMath.random(8, 15))
-            .extra(.1)
+            .speed(.1)
             .offset(.1, .1, .1)
             .spawn()
             ;
@@ -163,7 +163,7 @@ public class GoldenItemCauldronHolder extends EntityTickedDataHolder {
                     CruxMath.random(-.2, .2)
                 ))
                 .count(0)
-                .extra(.1)
+                .speed(.1)
                 .offset(0, 1, 0)
                 .spawn()
             ;

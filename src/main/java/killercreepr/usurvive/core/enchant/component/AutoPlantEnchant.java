@@ -88,7 +88,7 @@ public class AutoPlantEnchant implements CruxEnchantInteractable {
     new ParticleBuilder(Particle.HAPPY_VILLAGER)
       .location(loc)
       .count(CruxMath.random(3, 5))
-      .extra(0.1)
+      .speed(0.1)
       .offset(0.3, 0.3, 0.3)
       .spawn();
     block.getWorld().playSound(loc, sounds.getBreakSound(), SoundCategory.BLOCKS, sounds.getVolume(), sounds.getPitch());

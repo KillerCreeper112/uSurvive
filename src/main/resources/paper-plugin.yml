@@ -52,6 +52,7 @@ dependencies:
     LuckPerms:
       required: false
     CrazyAdvancementsAPI:
+      load: AFTER
       required: false
     DiscordSRV:
       required: false

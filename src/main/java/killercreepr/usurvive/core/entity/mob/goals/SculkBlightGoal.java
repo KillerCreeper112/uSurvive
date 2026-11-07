@@ -100,7 +100,7 @@ public class SculkBlightGoal extends CruxMobModeledGoal {
                     .count(CruxMath.random(1, 3))
                     .location(mob.getEyeLocation().add(0, 1, 0))
                     .offset(0,0,0)
-                    .extra(.1)
+                    .speed(.1)
                     .spawn()
                 ;
                 return;
@@ -183,7 +183,7 @@ public class SculkBlightGoal extends CruxMobModeledGoal {
                             .count(10)
                             .location(mob.getLocation())
                             .offset(.5, .5, .5)
-                            .extra(.1)
+                            .speed(.1)
                             .data(b.getBlockData())
                             .spawn()
                         ;
@@ -207,7 +207,7 @@ public class SculkBlightGoal extends CruxMobModeledGoal {
                     .count(10)
                     .location(mob.getLocation())
                     .offset(.5, .5, .5)
-                    .extra(.1)
+                    .speed(.1)
                     .data(b.getBlockData())
                     .spawn()
                 ;
@@ -243,7 +243,7 @@ public class SculkBlightGoal extends CruxMobModeledGoal {
                 .count(10)
                 .location(mob.getLocation())
                 .offset(.5, .5, .5)
-                .extra(.1)
+                .speed(.1)
                 .data(current.getBlockData())
                 .spawn()
             ;
@@ -277,7 +277,7 @@ public class SculkBlightGoal extends CruxMobModeledGoal {
                         .count(10)
                         .location(parLoc)
                         .offset(.2, .2, .2)
-                        .extra(.1)
+                        .speed(.1)
                         .data(current.getBlockData())
                         .spawn()
                     ;

@@ -97,7 +97,7 @@ public class SmallTNTMemory extends SimpleEntityMemoryMainThread {
             .count(CruxMath.random(4,6))
             .location(entity.getLocation())
             .offset(range/3, range/3, range/3)
-            .extra(.1)
+            .speed(.1)
             .spawn()
             ;
         CreateSound.sound(Sound.ENTITY_GENERIC_EXPLODE, 1f, 1.4f).playAt(entity);
@@ -166,7 +166,7 @@ public class SmallTNTMemory extends SimpleEntityMemoryMainThread {
             new ParticleBuilder(Particle.FIREWORK)
                 .location(entity.value().getLocation())
                 .offset(0D,0D,0D)
-                .extra(0D)
+                .speed(0D)
                 .spawn();
         }
         if(fullCooldown > 0){

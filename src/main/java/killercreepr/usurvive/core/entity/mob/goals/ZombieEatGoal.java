@@ -72,7 +72,7 @@ public class ZombieEatGoal extends CruxMobModeledGoal implements Listener {
         net.minecraft.world.entity.Mob mob = ((CraftMob) this.mob).getHandle();
         int i = 4;
         int i1 = 1;
-        if (mob.random.nextInt(i * i1) == 0) {
+        if (mob.getRandom().nextInt(i * i1) == 0) {
             PotionEffect effect = CruxCollection.getRandom(this.mob.getActivePotionEffects());
             this.mob.getWorld().spawnParticle(
                 Particle.ENTITY_EFFECT,
@@ -127,7 +127,7 @@ public class ZombieEatGoal extends CruxMobModeledGoal implements Listener {
                             CruxMath.random(.1, .3),
                             CruxMath.random(-.1, 1)
                         )
-                        .extra(.08)
+                        .speed(.08)
                         .data(item)
                         .spawn();
                 }

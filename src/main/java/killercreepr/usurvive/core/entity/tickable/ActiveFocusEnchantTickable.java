@@ -95,7 +95,7 @@ public class ActiveFocusEnchantTickable extends ListenerActiveEntityTickable {
         if(chargeLevel < 1) return;
 
         ParticleBuilder particle = new ParticleBuilder(Particle.TRIAL_OMEN)
-            .extra(.05);
+            .speed(.05);
         int tickRate = switch (chargeLevel){
             case 2 -> 7;
             case 3 -> 5;

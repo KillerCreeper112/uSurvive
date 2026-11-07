@@ -28,7 +28,7 @@ public class StandardGrappleHooks {
             return new ActiveParticleGrappleHook(
                 ctx.getLocation(), ctx,
                 12, ctx.getThrowForce(), .3D, .5D,
-                new ParticleBuilder(Particle.CRIT).extra(0D)
+                new ParticleBuilder(Particle.CRIT).speed(0D)
             );
         }
     };
